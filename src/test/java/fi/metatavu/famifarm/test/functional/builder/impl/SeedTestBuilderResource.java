@@ -96,7 +96,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
     }
   }
 
-    /**
+  /**
    * Asserts create status fails with given status code
    * 
    * @param expectedStatus expected status code
@@ -106,12 +106,26 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
       Seed seed = new Seed();
       seed.setName(name);
       getApi().createSeed(seed);
-      fail(String.format("Expected find to fail with status %d", expectedStatus));
+      fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
     }
   }
 
+  /**
+   * Asserts create status fails with given status code
+   * 
+   * @param expectedStatus expected status code
+   */
+  public void assertUpdateFailStatus(int expectedStatus, Seed seed) {
+    try {
+      getApi().updateSeed(seed, seed.getId());
+      fail(String.format("Expected update to fail with status %d", expectedStatus));
+    } catch (FeignException e) {
+      assertEquals(expectedStatus, e.status());
+    }
+  }
+  
   /**
    * Asserts list status fails with given status code
    * 

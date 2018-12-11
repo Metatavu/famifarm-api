@@ -16,6 +16,22 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
  * @author Antti Leppä
  */
 public class SeedTestsIT {
+
+  @Test
+  public void testCreateSeed() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      assertNotNull(builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola")));
+    }
+  }
+
+  @Test
+  public void testCreateSeedPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      builder.worker1().seeds().assertCreateFailStatus(403, builder.createLocalizedEntry("Rocket", "Rucola"));
+      builder.anonymous().seeds().assertCreateFailStatus(401, builder.createLocalizedEntry("Rocket", "Rucola"));
+      builder.invalid().seeds().assertCreateFailStatus(401, builder.createLocalizedEntry("Rocket", "Rucola"));
+    }
+  }
   
   @Test
   public void testFindSeed() throws Exception {
@@ -32,28 +48,18 @@ public class SeedTestsIT {
   public void testFindSeedPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      
       assertNotNull(builder.admin().seeds().findSeed(seed.getId()));
+      assertNotNull(builder.manager().seeds().findSeed(seed.getId()));
       assertNotNull(builder.worker1().seeds().findSeed(seed.getId()));
-      
       builder.invalid().seeds().assertFindFailStatus(401, seed.getId());
       builder.anonymous().seeds().assertFindFailStatus(401, seed.getId());
-    }
-  }
-
-  @Test
-  public void testCreateSeedPermissions() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      builder.worker1().seeds().assertCreateFailStatus(403, builder.createLocalizedEntry("Rocket", "Rucola"));
-      builder.anonymous().seeds().assertCreateFailStatus(401, builder.createLocalizedEntry("Rocket", "Rucola"));
-      builder.invalid().seeds().assertCreateFailStatus(401, builder.createLocalizedEntry("Rocket", "Rucola"));
     }
   }
   
   @Test
   public void testListSeeds() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      builder.admin().seeds().assertCount(0);
+      
       builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       builder.admin().seeds().assertCount(1);
       builder.admin().seeds().create(builder.createLocalizedEntry("lettuce", "Lehtisalaatti"));
@@ -62,7 +68,19 @@ public class SeedTestsIT {
   }
   
   @Test
-  public void testUpdateSeeds() throws Exception {
+  public void testListSeedPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+      builder.worker1().seeds().assertCount(1);
+      builder.manager().seeds().assertCount(1);
+      builder.admin().seeds().assertCount(1);
+      builder.invalid().seeds().assertFindFailStatus(401, seed.getId());
+      builder.anonymous().seeds().assertFindFailStatus(401, seed.getId());
+    }
+  }
+  
+  @Test
+  public void testUpdateSeed() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Seed createdSeed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       builder.admin().seeds().assertSeedsEqual(createdSeed, builder.admin().seeds().findSeed(createdSeed.getId()));
@@ -73,6 +91,16 @@ public class SeedTestsIT {
      
       builder.admin().seeds().updateSeed(updateSeed);
       builder.admin().seeds().assertSeedsEqual(updateSeed, builder.admin().seeds().findSeed(createdSeed.getId()));
+    }
+  }
+  
+  @Test
+  public void testUpdateSeedPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+      builder.worker1().seeds().assertUpdateFailStatus(403, seed);
+      builder.anonymous().seeds().assertUpdateFailStatus(401, seed);
+      builder.invalid().seeds().assertUpdateFailStatus(401, seed);
     }
   }
   
