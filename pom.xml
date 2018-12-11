@@ -160,6 +160,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-ejb3</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
       <scope>provided</scope>
@@ -547,7 +553,7 @@
                   <url>http://download.jboss.org/wildfly/${wildfly.version}/wildfly-${wildfly.version}.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
-                </zipUrlInstaller>         
+                </zipUrlInstaller>
               </container>
               <configuration>
                 <properties>
@@ -626,6 +632,8 @@
                     <command>/subsystem=undertow/server=default-server/host=famifarm-api:add(alias=["${it.host}"],default-web-module="famifarm-api.war")</command>
                     <command>/system-property=it-test:add(value="true")</command>
                     <command>/subsystem=keycloak/secure-deployment=famifarm-api.war:add(realm="test", auth-server-url="http://localhost:8280/auth",bearer-only=true,ssl-required="EXTERNAL",resource="api")</command>
+                    <command>/subsystem=security/security-domain=keycloak/:add</command>
+                    <command>/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ "code" => "org.keycloak.adapters.jboss.KeycloakLoginModule","flag" => "required"}])</command>
                   </commands>
                 </configuration>
               </execution>

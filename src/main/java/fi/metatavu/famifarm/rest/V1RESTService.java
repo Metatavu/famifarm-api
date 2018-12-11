@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.rest.api.V1Api;
@@ -36,6 +39,8 @@ import fi.metatavu.famifarm.seeds.SeedsController;
 @Stateful
 @Consumes({ "application/json" })
 @Produces({ "application/json" })
+@SecurityDomain("keycloak")
+@RolesAllowed("user")
 public class V1RESTService extends AbstractApi implements V1Api {
   
   @Inject
