@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response.Status;
  * @author Antti Leppä
  * @author Heikki Kurhinen
  */
-@Path ("/system")
+@Path ("/v1/system")
 @RequestScoped
 @Produces (MediaType.APPLICATION_JSON)
 @Consumes (MediaType.APPLICATION_JSON)

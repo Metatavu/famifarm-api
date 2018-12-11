@@ -46,7 +46,7 @@ public class LiquibaseProducer {
     
     String contexts = StringUtils.join(contextList, ',');
     CDILiquibaseConfig config = new CDILiquibaseConfig();
-    config.setChangeLog("fi/metatavu/tulistop/server/farmifarm/changelog.xml");
+    config.setChangeLog("fi/metatavu/famifarm/server/liquibase/changelog.xml");
     config.setContexts(contexts);
 
     return config;

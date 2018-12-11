@@ -47,6 +47,10 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     
+    <!-- Famifarm -->
+    
+    <famifarm-api-spec.version>1.0.1-SNAPSHOT</famifarm-api-spec.version>
+    
     <!-- Maven -->
 
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -80,7 +84,7 @@
     <rest-assured.version>3.2.0</rest-assured.version>
     <wiremock.version>2.19.0</wiremock.version>
     <jsonassert.version>1.5.0</jsonassert.version>
-
+    <famifarm-api-client.version>1.0.0-SNAPSHOT</famifarm-api-client.version>
   </properties>
 
   <dependencyManagement>
@@ -130,7 +134,13 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
+    <dependency>
+      <groupId>fi.metatavu.famifarm</groupId>
+      <artifactId>famifarm-api-spec</artifactId>
+      <version>${famifarm-api-spec.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
@@ -398,6 +408,13 @@
       </exclusions>
     </dependency>
     
+    <dependency>
+      <artifactId>famifarm-api-client</artifactId>
+      <groupId>fi.metatavu.famifarm.client</groupId>
+      <version>${famifarm-api-client.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
   
   <profiles>
@@ -566,10 +583,7 @@
                     <command>xa-data-source add --name=ci --driver-name=h2 --jndi-name=${it.jdbc.jndi} --user-name=${it.jdbc.username} --password=${it.jdbc.password} --xa-datasource-properties=${it.jdbc.properties}</command>
                     <command>/subsystem=undertow/server=default-server/host=famifarm-api:add(alias=["${it.host}"],default-web-module="famifarm-api.war")</command>
                     <command>/system-property=it-test:add(value="true")</command>
-                    <command>/system-property=famifarm-api.config-path:add(value="${project.basedir}/test-config")</command>
-                    <command>/subsystem=infinispan/cache-container=famifarm:add()</command>
-                    <command>/subsystem=infinispan/cache-container=famifarm/local-cache=file-meta:add()</command>
-                    <command>/subsystem=infinispan/cache-container=famifarm/local-cache=file-data:add()</command>
+                    <command>/subsystem=keycloak/secure-deployment=famifarm-api.war:add(realm="test", auth-server-url="http://localhost:8280/auth",bearer-only=true,ssl-required="EXTERNAL",resource="api")</command>
                   </commands>
                 </configuration>
               </execution>
