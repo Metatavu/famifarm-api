@@ -5,6 +5,6 @@
   version="6.0">
    
   <context-root></context-root>
-  <virtual-host>farmifarm-api</virtual-host>
-  
+  <virtual-host>famifarm-api</virtual-host>
+  <security-domain>keycloak</security-domain> 
 </jboss-web>

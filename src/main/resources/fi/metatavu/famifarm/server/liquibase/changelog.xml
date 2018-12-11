@@ -1,4 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
+  <changeSet id="localizedvalues" author="antti.leppa">
+    <createTable tableName="localizedentry">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+    </createTable>
+    
+    <createTable tableName="localizedvalue">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="entry_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_LOCALIZED_VALUE_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
+      </column>
+      <column name="locale" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="value" type="longtext">
+        <constraints nullable="false"/>
+      </column>    
+    </createTable>
+  </changeSet>
+  
+  <changeSet id="seed" author="antti.leppa">
+    <createTable tableName="seed">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="name_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_SEED_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
+      </column>
+      <column name="creatorId" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastModifierId" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdAt" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedAt" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
 </databaseChangeLog>
