@@ -40,6 +40,15 @@ public class SeedTestsIT {
       builder.anonymous().seeds().assertFindFailStatus(401, seed.getId());
     }
   }
+
+  @Test
+  public void testCreateSeedPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      builder.worker1().seeds().assertCreateFailStatus(403, builder.createLocalizedEntry("Rocket", "Rucola"));
+      builder.anonymous().seeds().assertCreateFailStatus(401, builder.createLocalizedEntry("Rocket", "Rucola"));
+      builder.invalid().seeds().assertCreateFailStatus(401, builder.createLocalizedEntry("Rocket", "Rucola"));
+    }
+  }
   
   @Test
   public void testListSeeds() throws Exception {

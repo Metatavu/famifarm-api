@@ -96,6 +96,22 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
     }
   }
 
+    /**
+   * Asserts create status fails with given status code
+   * 
+   * @param expectedStatus expected status code
+   */
+  public void assertCreateFailStatus(int expectedStatus, LocalizedEntry name) {
+    try {
+      Seed seed = new Seed();
+      seed.setName(name);
+      getApi().createSeed(seed);
+      fail(String.format("Expected find to fail with status %d", expectedStatus));
+    } catch (FeignException e) {
+      assertEquals(expectedStatus, e.status());
+    }
+  }
+
   /**
    * Asserts list status fails with given status code
    * 
