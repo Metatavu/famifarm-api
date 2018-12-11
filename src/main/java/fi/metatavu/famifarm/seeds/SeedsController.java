@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.dao.SeedDAO;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.Seed;
@@ -17,6 +18,9 @@ import fi.metatavu.famifarm.persistence.model.Seed;
  */
 @ApplicationScoped
 public class SeedsController {
+
+  @Inject
+  private LocalizedValueController localizedValueController;
   
   @Inject
   private SeedDAO seedDAO;
@@ -71,7 +75,9 @@ public class SeedsController {
    * @param seed seed to be deleted
    */
   public void deleteSeed(Seed seed) {
+    LocalizedEntry name = seed.getName();
     seedDAO.delete(seed);
+    localizedValueController.deleteEntry(name);
   }
   
 }

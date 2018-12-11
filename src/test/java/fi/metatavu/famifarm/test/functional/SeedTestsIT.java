@@ -23,8 +23,6 @@ public class SeedTestsIT {
       Seed createdSeed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       Seed foundSeed = builder.admin().seeds().findSeed(createdSeed.getId());
       assertEquals(createdSeed.getId(), foundSeed.getId());
-      builder.admin().seeds().delete(createdSeed);
-      builder.admin().seeds().assertFindFailStatus(404, createdSeed.getId());       
     }
   }
   
@@ -36,6 +34,17 @@ public class SeedTestsIT {
       builder.admin().seeds().assertCount(1);
       builder.admin().seeds().create(builder.createLocalizedEntry("lettuce", "Lehtisalaatti"));
       builder.admin().seeds().assertCount(2);
+    }
+  }
+  
+  @Test
+  public void testDeleteSeeds() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Seed createdSeed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+      Seed foundSeed = builder.admin().seeds().findSeed(createdSeed.getId());
+      assertEquals(createdSeed.getId(), foundSeed.getId());
+      builder.admin().seeds().delete(createdSeed);
+      builder.admin().seeds().assertFindFailStatus(404, createdSeed.getId());     
     }
   }
   
