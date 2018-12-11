@@ -51,6 +51,8 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
     for (int i = closables.size() - 1; i >= 0; i--) {
       clean(closables.get(i));
     }
+    
+    closables.clear();
   }
 
   /**

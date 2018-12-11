@@ -15,6 +15,7 @@ import fi.metatavu.famifarm.test.functional.builder.impl.SeedTestBuilderResource
  */
 public abstract class AbstractTestBuilderAuthentication implements AutoCloseable {
   
+  private SeedTestBuilderResource seeds;
   private List<AutoCloseable> closables = new ArrayList<>();
   
   /**
@@ -24,7 +25,11 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
    * @throws IOException thrown when authentication fails
    */
   public SeedTestBuilderResource seeds() throws IOException {
-    return this.addClosable(new SeedTestBuilderResource(createClient()));
+    if (seeds != null) {
+      return seeds;
+    }
+    
+    return seeds = this.addClosable(new SeedTestBuilderResource(createClient()));
   }
   
   /**
@@ -51,6 +56,8 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     for (int i = closables.size() - 1; i >= 0; i--) {
       closables.get(i).close();
     }
+    
+    seeds = null;
   }
 
 }

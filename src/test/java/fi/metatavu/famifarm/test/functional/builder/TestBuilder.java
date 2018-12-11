@@ -20,6 +20,7 @@ public class TestBuilder implements AutoCloseable {
   private static final String ADMIN_USER = "admin@example.com";
   private static final String ADMIN_PASSWORD = "test";
   
+  private TestBuilderAuthentication admin;
   private List<AutoCloseable> closables = new ArrayList<>();
   
   /**
@@ -28,7 +29,11 @@ public class TestBuilder implements AutoCloseable {
    * @return admin authenticated authentication resource
    */
   public TestBuilderAuthentication admin() {
-    return this.addClosable(new TestBuilderAuthentication(new DefaultAccessTokenProvider(REALM, CLIENT_ID, ADMIN_USER, ADMIN_PASSWORD, null)));
+    if (admin != null) {
+      return admin;
+    }
+    
+    return admin = this.addClosable(new TestBuilderAuthentication(new DefaultAccessTokenProvider(REALM, CLIENT_ID, ADMIN_USER, ADMIN_PASSWORD, null)));
   }
   
   /**
@@ -80,6 +85,8 @@ public class TestBuilder implements AutoCloseable {
     for (int i = closables.size() - 1; i >= 0; i--) {
       closables.get(i).close();
     }
+    
+    admin = null;
   }
 
   /**

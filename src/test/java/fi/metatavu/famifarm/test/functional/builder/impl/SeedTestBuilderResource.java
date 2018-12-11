@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.Collections;
+import java.util.UUID;
 
 import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
@@ -39,6 +40,16 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
     seed.setName(name);
     return addClosable(getApi().createSeed(seed));
   }
+
+  /**
+   * Finds a seed
+   * 
+   * @param seedId seed id
+   * @return found seed
+   */
+  public Seed findSeed(UUID seedId) {
+    return getApi().findSeed(seedId);
+  }
   
   /**
    * Deletes a seed from the API
@@ -47,7 +58,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    */
   public void delete(Seed seed) {
     getApi().deleteSeed(seed.getId());  
-    removeClosable(closable -> closable.getId().equals(seed.getId()));
+    removeClosable(closable -> !closable.getId().equals(seed.getId()));
   }
   
   /**
@@ -57,6 +68,20 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    */
   public void assertCount(int expected) {
     assertEquals(expected, getApi().listSeeds(Collections.emptyMap()).size());
+  }
+  
+  /**
+   * Asserts find status fails with given status code
+   * 
+   * @param expectedStatus expected status code
+   */
+  public void assertFindFailStatus(int expectedStatus, UUID seedId) {
+    try {
+      getApi().findSeed(seedId);
+      fail(String.format("Expected find to fail with status %d", expectedStatus));
+    } catch (FeignException e) {
+      assertEquals(expectedStatus, e.status());
+    }
   }
 
   /**
