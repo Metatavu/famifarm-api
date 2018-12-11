@@ -58,7 +58,7 @@
     
     <!-- Wildfly -->
     
-    <wildfly-spec-api.version>14.0.1.Final</wildfly-spec-api.version>
+    <wildfly-spec-api.version>15.0.0.Final</wildfly-spec-api.version>
     
     <!-- TODO: Selvitä commonslog versio -->
     <commons-logging.version>1.2</commons-logging.version>
@@ -71,8 +71,8 @@
     
     <!-- Keycloak admin client -->
     
-    <keycloak-admin-client.version>4.6.0.Final</keycloak-admin-client.version>
-    <keycloak-adapter.version>4.6.0.Final</keycloak-adapter.version>
+    <keycloak-admin-client.version>4.7.0.Final</keycloak-admin-client.version>
+    <keycloak-adapter.version>4.7.0.Final</keycloak-adapter.version>
     
     <!-- Mailgun -->
     
@@ -157,6 +157,12 @@
     <dependency>
       <groupId>org.wildfly</groupId>
       <artifactId>wildfly-clustering-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-ejb3</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -531,10 +537,10 @@
                 <log>${project.basedir}/target/cargo.log</log>
                 <output>${project.basedir}/target/wildfly.log</output>
                 <zipUrlInstaller>
-                  <url>https://www.dropbox.com/s/kaz3fgojlmwc6yk/wildfly-14.0.1.Final%2Bkeycloak.zip?dl=1</url>
+                  <url>http://127.0.0.1:1234/wildfly-15.0.0.Final.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
-                </zipUrlInstaller>         
+                </zipUrlInstaller>
               </container>
               <configuration>
                 <properties>
@@ -584,6 +590,8 @@
                     <command>/subsystem=undertow/server=default-server/host=famifarm-api:add(alias=["${it.host}"],default-web-module="famifarm-api.war")</command>
                     <command>/system-property=it-test:add(value="true")</command>
                     <command>/subsystem=keycloak/secure-deployment=famifarm-api.war:add(realm="test", auth-server-url="http://localhost:8280/auth",bearer-only=true,ssl-required="EXTERNAL",resource="api")</command>
+                    <command>/subsystem=security/security-domain=keycloak/:add</command>
+                    <command>/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ "code" => "org.keycloak.adapters.jboss.KeycloakLoginModule","flag" => "required"}])</command>
                   </commands>
                 </configuration>
               </execution>
