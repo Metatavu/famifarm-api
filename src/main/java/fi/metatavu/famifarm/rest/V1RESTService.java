@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.ejb3.annotation.SecurityDomain;
 
+import fi.metatavu.famifarm.authentication.Roles;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.Batch;
@@ -40,7 +41,6 @@ import fi.metatavu.famifarm.seeds.SeedsController;
 @Consumes({ "application/json" })
 @Produces({ "application/json" })
 @SecurityDomain("keycloak")
-@RolesAllowed("user")
 public class V1RESTService extends AbstractApi implements V1Api {
   
   @Inject
@@ -50,6 +50,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   private SeedsTranslator seedsTranslator;
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createSeed(Seed body) {
     LocalizedEntry name = createLocalizedEntry(body.getName());
     UUID loggerUserId = getLoggerUserId();
@@ -58,6 +59,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deleteSeed(UUID seedId) {
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
     if (seed == null) {
@@ -70,6 +72,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER, Roles.WORKER})
   public Response findSeed(UUID seedId) {
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
     if (seed == null) {
@@ -80,6 +83,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER, Roles.WORKER})
   public Response listSeeds(Integer firstResult, Integer maxResults) {
     List<Seed> result = seedsController.listSeeds(firstResult, maxResults).stream()
       .map(seedsTranslator::translateSeed)
@@ -89,6 +93,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updateSeed(Seed body, UUID seedId) {
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
     if (seed == null) {
