@@ -566,14 +566,14 @@
             </configuration>
             <executions>
               <execution>
-                <id>start-cargo</id>
+                <id>install-wildfly</id>
                 <phase>pre-integration-test</phase>
                 <goals>
-                  <goal>start</goal>
+                  <goal>install</goal>
                 </goals>
               </execution>
               <execution>
-                <id>stop-cargo</id>
+                <id>stop-wildfly</id>
                 <phase>post-integration-test</phase>
                 <goals>
                   <goal>stop</goal>
@@ -618,7 +618,10 @@
                 </goals>
                 <configuration>
                   <batch>false</batch>
+                  <offline>true</offline>
+                  <jbossHome>${project.build.directory}/../.cargo/extracts/wildfly-${wildfly.version}/wildfly-${wildfly.version}</jbossHome>
                   <commands>
+                    <command>embed-server --server-config=standalone.xml</command>
                     <command>/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)</command>
                     <command>/subsystem=keycloak:add</command>
                     <command>/subsystem=elytron/custom-realm=KeycloakOIDCRealm:add(class-name=org.keycloak.adapters.elytron.KeycloakSecurityRealm, module=org.keycloak.keycloak-wildfly-elytron-oidc-adapter)</command>
@@ -634,12 +637,22 @@
                     <command>/subsystem=keycloak/secure-deployment=famifarm-api.war:add(realm="test", auth-server-url="http://localhost:8280/auth",bearer-only=true,ssl-required="EXTERNAL",resource="api")</command>
                     <command>/subsystem=security/security-domain=keycloak/:add</command>
                     <command>/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ "code" => "org.keycloak.adapters.jboss.KeycloakLoginModule","flag" => "required"}])</command>
-                    <command>:reload</command>
                   </commands>
                 </configuration>
               </execution>
               <execution>
-                <id>deploy</id>
+                <id>wildfly-start</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+                <configuration>
+                  <javaOpts>-Djboss.http.port=${it.port.http} ${jacoco.agent.itArgLine},output=tcpserver,port=6300 -Xmx2G -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true -Drunmode=TEST</javaOpts>
+                  <jbossHome>${project.build.directory}/../.cargo/extracts/wildfly-${wildfly.version}/wildfly-${wildfly.version}</jbossHome>
+                </configuration>
+              </execution>
+              <execution>
+                <id>wildfly-deploy</id>
                 <phase>pre-integration-test</phase>
                 <goals>
                   <goal>deploy</goal>
