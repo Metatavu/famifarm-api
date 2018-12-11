@@ -572,16 +572,6 @@
                   <goal>install</goal>
                 </goals>
               </execution>
-              <execution>
-                <id>stop-wildfly</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
-                <configuration>
-                  <skip>${it.skipserverstop}</skip>
-                </configuration>
-              </execution>
             </executions>
           </plugin>
           
