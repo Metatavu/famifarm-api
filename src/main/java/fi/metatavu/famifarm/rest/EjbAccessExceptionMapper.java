@@ -17,6 +17,6 @@ public class EjbAccessExceptionMapper implements ExceptionMapper<EJBAccessExcept
   @Override
   public Response toResponse(EJBAccessException exception) {
     return Response.status(HttpServletResponse.SC_FORBIDDEN).build();
-	}
+  }
 
 }
