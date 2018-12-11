@@ -85,8 +85,15 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   public Response updateSeed(Seed body, UUID seedId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
+    if (seed == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    LocalizedEntry name = createLocalizedEntry(body.getName());
+    UUID loggerUserId = getLoggerUserId();
+    
+    return createOk(seedsTranslator.translateSeed(seedsController.updateSeed(seed, name, loggerUserId)));
   }
 
   @Override

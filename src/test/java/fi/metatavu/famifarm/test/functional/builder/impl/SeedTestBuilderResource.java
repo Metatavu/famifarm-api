@@ -3,8 +3,11 @@ package fi.metatavu.famifarm.test.functional.builder.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.UUID;
+
+import org.json.JSONException;
 
 import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
@@ -49,6 +52,15 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    */
   public Seed findSeed(UUID seedId) {
     return getApi().findSeed(seedId);
+  }
+
+  /**
+   * Updates a seed into the API
+   * 
+   * @param body body payload
+   */
+  public Seed updateSeed(Seed body) {
+    return getApi().updateSeed(body, body.getId());
   }
   
   /**
@@ -96,6 +108,17 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
     }
+  }
+
+  /**
+   * Asserts that actual seed equals expected seed when both are serialized into JSON
+   * 
+   * @param expectedStatus expected status code
+   * @throws JSONException thrown when JSON serialization error occurs
+   * @throws IOException thrown when IO Exception occurs
+   */
+  public void assertSeedsEqual(Seed expected, Seed actual) throws IOException, JSONException {
+    assertJsonsEqual(expected, actual);
   }
 
   @Override
