@@ -1,6 +1,7 @@
 package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.UUID;
 
@@ -24,6 +25,19 @@ public class SeedTestsIT {
       Seed foundSeed = builder.admin().seeds().findSeed(createdSeed.getId());
       assertEquals(createdSeed.getId(), foundSeed.getId());
       builder.admin().seeds().assertSeedsEqual(createdSeed, foundSeed);
+    }
+  }
+  
+  @Test
+  public void testFindSeedPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+      
+      assertNotNull(builder.admin().seeds().findSeed(seed.getId()));
+      assertNotNull(builder.worker1().seeds().findSeed(seed.getId()));
+      
+      builder.invalid().seeds().assertFindFailStatus(401, seed.getId());
+      builder.anonymous().seeds().assertFindFailStatus(401, seed.getId());
     }
   }
   
