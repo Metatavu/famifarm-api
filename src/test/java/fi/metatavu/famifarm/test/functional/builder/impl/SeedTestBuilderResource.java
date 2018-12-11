@@ -113,7 +113,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
   }
 
   /**
-   * Asserts create status fails with given status code
+   * Asserts update status fails with given status code
    * 
    * @param expectedStatus expected status code
    */
@@ -121,6 +121,20 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
     try {
       getApi().updateSeed(seed, seed.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
+    } catch (FeignException e) {
+      assertEquals(expectedStatus, e.status());
+    }
+  }
+  
+  /**
+   * Asserts delete status fails with given status code
+   * 
+   * @param expectedStatus expected status code
+   */
+  public void assertDeleteFailStatus(int expectedStatus, Seed seed) {
+    try {
+      getApi().deleteSeed(seed.getId());
+      fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
     }

@@ -114,6 +114,15 @@ public class SeedTestsIT {
       builder.admin().seeds().assertFindFailStatus(404, createdSeed.getId());     
     }
   }
-  
 
+  @Test
+  public void testDeleteSeedPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+      builder.worker1().seeds().assertDeleteFailStatus(403, seed);
+      builder.anonymous().seeds().assertDeleteFailStatus(401, seed);
+      builder.invalid().seeds().assertDeleteFailStatus(401, seed);
+    }
+  }
+  
 }
