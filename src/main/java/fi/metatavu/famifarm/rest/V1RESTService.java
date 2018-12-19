@@ -28,7 +28,9 @@ import fi.metatavu.famifarm.rest.model.SeedBatch;
 import fi.metatavu.famifarm.rest.model.Team;
 import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
+import fi.metatavu.famifarm.rest.translate.TeamsTranslator;
 import fi.metatavu.famifarm.seeds.SeedsController;
+import teams.TeamsController;
 
 /**
  * V1 REST Services
@@ -48,6 +50,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Inject
   private SeedsTranslator seedsTranslator;
+  
+  @Inject
+  private TeamsController teamsController;
+
+  @Inject
+  private TeamsTranslator teamsTranslator;
 
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
@@ -149,9 +157,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createTeam(Team body) {
-    // TODO Auto-generated method stub
-    return null;
+    LocalizedEntry name = createLocalizedEntry(body.getName());
+    UUID loggerUserId = getLoggerUserId();
+    
+    return createOk(teamsTranslator.translateTeam(teamsController.createTeam(name, loggerUserId)));
   }
 
   @Override
@@ -203,9 +214,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deleteTeam(UUID teamId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Team team = teamsController.findTeam(teamId);
+    if (team == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    teamsController.deleteTeam(team);
+    
+    return createNoContent();
   }
 
   @Override
@@ -257,9 +275,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER, Roles.WORKER})
   public Response findTeam(UUID teamId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Team team = teamsController.findTeam(teamId);
+    if (team == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(teamsTranslator.translateTeam(team));
   }
 
   @Override
@@ -311,9 +334,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER, Roles.WORKER})
   public Response listTeams(Integer firstResult, Integer maxResults) {
-    // TODO Auto-generated method stub
-    return null;
+    List<Team> result = teamsController.listTeams(firstResult, maxResults).stream()
+        .map(teamsTranslator::translateTeam)
+        .collect(Collectors.toList());
+      
+      return createOk(result);
   }
 
   @Override
@@ -365,9 +392,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updateTeam(Team body, UUID teamId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Team team = teamsController.findTeam(teamId);
+    if (team == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    LocalizedEntry name = createLocalizedEntry(body.getName());
+    UUID loggerUserId = getLoggerUserId();
+    
+    return createOk(teamsTranslator.translateTeam(teamsController.updateTeam(team, name, loggerUserId)));
   }
 
   @Override
