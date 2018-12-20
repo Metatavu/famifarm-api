@@ -29,8 +29,10 @@ import fi.metatavu.famifarm.rest.model.Team;
 import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
 import fi.metatavu.famifarm.rest.translate.TeamsTranslator;
+import fi.metatavu.famifarm.rest.translate.WastageReasonsTranslator;
 import fi.metatavu.famifarm.seeds.SeedsController;
 import fi.metatavu.famifarm.teams.TeamsController;
+import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
 
 /**
  * V1 REST Services
@@ -56,6 +58,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Inject
   private TeamsTranslator teamsTranslator;
+  
+  @Inject
+  private WastageReasonsController wastageReasonsController;
+
+  @Inject
+  private WastageReasonsTranslator wastageReasonsTranslator;
 
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
@@ -166,9 +174,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createWastageReason(WastageReason body) {
-    // TODO Auto-generated method stub
-    return null;
+    LocalizedEntry reason = createLocalizedEntry(body.getReason());
+    UUID loggerUserId = getLoggerUserId();
+    
+    return createOk(wastageReasonsTranslator.translateWastageReason(wastageReasonsController.createWastageReason(reason, loggerUserId)));
   }
 
   @Override
@@ -227,9 +238,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deleteWastageReason(UUID wastageReasonId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(wastageReasonId);
+    if (wastageReason == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    wastageReasonsController.deleteWastageReason(wastageReason);
+    
+    return createNoContent();
   }
 
   @Override
@@ -286,9 +304,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER, Roles.WORKER})
   public Response findWastageReason(UUID wastageReasonId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(wastageReasonId);
+    if (wastageReason == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(wastageReasonsTranslator.translateWastageReason(wastageReason));
   }
 
   @Override
@@ -344,9 +367,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER, Roles.WORKER})
   public Response listWastageReasons(Integer firstResult, Integer maxResults) {
-    // TODO Auto-generated method stub
-    return null;
+    List<WastageReason> result = wastageReasonsController.listWastageReasons(firstResult, maxResults).stream()
+        .map(wastageReasonsTranslator::translateWastageReason)
+        .collect(Collectors.toList());
+      
+      return createOk(result);
   }
 
   @Override
@@ -406,9 +433,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updateWastageReason(WastageReason body, UUID wastageReasonId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(wastageReasonId);
+    if (wastageReason == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    LocalizedEntry reason = createLocalizedEntry(body.getReason());
+    UUID loggerUserId = getLoggerUserId();
+    
+    return createOk(wastageReasonsTranslator.translateWastageReason(wastageReasonsController.updateWastageReason(wastageReason, reason, loggerUserId)));
   }
   
 }
