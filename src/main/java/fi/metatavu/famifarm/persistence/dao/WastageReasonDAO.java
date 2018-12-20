@@ -36,7 +36,7 @@ public class WastageReasonDAO extends AbstractDAO<WastageReason> {
    * @param lastModifier modifier
    * @return updated wastage reason
    */
-  public WastageReason updateName(WastageReason wastageReason, LocalizedEntry reason, UUID lastModifierId) {
+  public WastageReason updateReason(WastageReason wastageReason, LocalizedEntry reason, UUID lastModifierId) {
     wastageReason.setLastModifierId(lastModifierId);
     wastageReason.setReason(reason);
     return persist(wastageReason);

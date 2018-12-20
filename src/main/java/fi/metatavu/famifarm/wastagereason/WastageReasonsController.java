@@ -65,7 +65,7 @@ public class WastageReasonsController {
    * @return updated wastage reason
    */
   public WastageReason updateWastageReason(WastageReason wastageReason, LocalizedEntry reason, UUID lastModifierId) {
-    wastageReasonDAO.updateName(wastageReason, reason, lastModifierId);
+    wastageReasonDAO.updateReason(wastageReason, reason, lastModifierId);
     return wastageReason;
   }
 
