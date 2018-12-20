@@ -70,4 +70,27 @@
     </createTable>
   </changeSet>
   
+  <changeSet id="wastagereason" author="ville.koivukangas">
+    <createTable tableName="wastagereason">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="reason_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_WASTAGEREASON_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
+      </column>
+      <column name="creatorId" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastModifierId" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdAt" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedAt" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
 </databaseChangeLog>
