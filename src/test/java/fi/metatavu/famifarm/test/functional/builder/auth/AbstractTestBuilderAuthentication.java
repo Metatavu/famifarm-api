@@ -7,6 +7,7 @@ import java.util.List;
 
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.test.functional.builder.impl.SeedTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.TeamTestBuilderResource;
 
 /**
  * Abstract base class for all test builder authentication providers
@@ -16,6 +17,7 @@ import fi.metatavu.famifarm.test.functional.builder.impl.SeedTestBuilderResource
 public abstract class AbstractTestBuilderAuthentication implements AutoCloseable {
   
   private SeedTestBuilderResource seeds;
+  private TeamTestBuilderResource teams;
   private List<AutoCloseable> closables = new ArrayList<>();
   
   /**
@@ -30,6 +32,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
     
     return seeds = this.addClosable(new SeedTestBuilderResource(createClient()));
+  }
+  
+  /**
+   * Returns test builder resource for teams
+   * 
+   * @return test builder resource for teams
+   * @throws IOException thrown when authentication fails
+   */
+  public TeamTestBuilderResource teams() throws IOException {
+    if (teams != null) {
+      return teams;
+    }
+    
+    return teams = this.addClosable(new TeamTestBuilderResource(createClient()));
   }
   
   /**
