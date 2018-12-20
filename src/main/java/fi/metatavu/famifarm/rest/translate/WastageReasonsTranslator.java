@@ -15,7 +15,7 @@ public class WastageReasonsTranslator extends AbstractTranslator {
   /**
    * Translates JPA wastage reason object into REST wastage reason object
    * 
-   * @param wastageReason JPA team object
+   * @param wastageReason JPA wastage reason object
    * @return REST WastageReason
    */
   public WastageReason translateWastageReason(fi.metatavu.famifarm.persistence.model.WastageReason wastageReason) {
