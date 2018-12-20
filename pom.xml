@@ -621,6 +621,7 @@
                     <command>/subsystem=keycloak/secure-deployment=famifarm-api.war:add(realm="test", auth-server-url="http://localhost:8280/auth",bearer-only=true,ssl-required="EXTERNAL",resource="api")</command>
                     <command>/subsystem=security/security-domain=keycloak/:add</command>
                     <command>/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ "code" => "org.keycloak.adapters.jboss.KeycloakLoginModule","flag" => "required"}])</command>
+                    <command>/subsystem=logging/logger=org.keycloak.adapters.BearerTokenRequestAuthenticator:add(level=FATAL)</command>
                   </commands>
                 </configuration>
               </execution>

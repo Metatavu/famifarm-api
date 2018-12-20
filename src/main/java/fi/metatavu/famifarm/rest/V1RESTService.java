@@ -30,7 +30,7 @@ import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
 import fi.metatavu.famifarm.rest.translate.TeamsTranslator;
 import fi.metatavu.famifarm.seeds.SeedsController;
-import teams.TeamsController;
+import fi.metatavu.famifarm.teams.TeamsController;
 
 /**
  * V1 REST Services

@@ -1,4 +1,4 @@
-package teams;
+package fi.metatavu.famifarm.teams;
 
 import java.util.List;
 import java.util.UUID;
