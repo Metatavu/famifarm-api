@@ -29,32 +29,32 @@ public class SeedBatch {
   @Column(nullable = false)
   @NotNull
   private UUID id;
-  
+
   @Column(nullable = false)
   @NotNull
   private String code;
-  
-  @ManyToOne (optional = false)
+
+  @ManyToOne(optional = false)
   private Seed seed;
-  
+
   @Column(nullable = false)
   @NotNull
   private OffsetDateTime time;
-  
+
   @Column(nullable = false)
   @NotNull
   private UUID creatorId;
-  
+
   @Column(nullable = false)
   @NotNull
   private UUID lastModifierId;
 
-  @Column (nullable = false)
+  @Column(nullable = false)
   private OffsetDateTime createdAt;
 
-  @Column (nullable = false)
+  @Column(nullable = false)
   private OffsetDateTime modifiedAt;
-  
+
   public UUID getId() {
     return id;
   }
@@ -62,32 +62,32 @@ public class SeedBatch {
   public void setId(UUID id) {
     this.id = id;
   }
-  
+
   public String getCode() {
-		return code;
-	}
+    return code;
+  }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+  public void setCode(String code) {
+    this.code = code;
+  }
 
-	public Seed getSeed() {
-		return seed;
-	}
+  public Seed getSeed() {
+    return seed;
+  }
 
-	public void setSeed(Seed seed) {
-		this.seed = seed;
-	}
+  public void setSeed(Seed seed) {
+    this.seed = seed;
+  }
 
-	public OffsetDateTime getTime() {
-		return time;
-	}
+  public OffsetDateTime getTime() {
+    return time;
+  }
 
-	public void setTime(OffsetDateTime time) {
-		this.time = time;
-	}
+  public void setTime(OffsetDateTime time) {
+    this.time = time;
+  }
 
-	public UUID getCreatorId() {
+  public UUID getCreatorId() {
     return creatorId;
   }
 
@@ -124,7 +124,7 @@ public class SeedBatch {
     setCreatedAt(OffsetDateTime.now());
     setModifiedAt(OffsetDateTime.now());
   }
-  
+
   @PreUpdate
   public void onUpdate() {
     setModifiedAt(OffsetDateTime.now());

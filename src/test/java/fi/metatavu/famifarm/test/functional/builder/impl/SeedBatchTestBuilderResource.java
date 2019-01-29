@@ -143,19 +143,19 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
   }
 
   /**
-   * Asserts that actual seed equals expected seed when both are serialized into JSON
+   * Asserts that actual seed batch equals expected seed when both are serialized into JSON
    * 
    * @param expectedStatus expected status code
    * @throws JSONException thrown when JSON serialization error occurs
    * @throws IOException thrown when IO Exception occurs
    */
-  public void assertSeedsEqual(SeedBatch expected, SeedBatch actual) throws IOException, JSONException {
+  public void assertSeedBatchesEqual(SeedBatch expected, SeedBatch actual) throws IOException, JSONException {
     assertJsonsEqual(expected, actual);
   }
 
   @Override
-  public void clean(SeedBatch seedbatch) {
-    getApi().deleteSeedBatch(seedbatch.getId());  
+  public void clean(SeedBatch seedBatch) {
+    getApi().deleteSeedBatch(seedBatch.getId());  
   }
 
 }
