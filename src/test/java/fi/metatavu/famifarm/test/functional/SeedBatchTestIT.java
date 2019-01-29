@@ -17,7 +17,8 @@ public class SeedBatchTestIT {
   public void testCreateSeedBatch() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
     	Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      assertNotNull(builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now()));
+    	SeedBatch seedBatch = builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
+      assertNotNull(seedBatch);
     }
   }
 	
@@ -29,7 +30,8 @@ public class SeedBatchTestIT {
       SeedBatch createdSeedBatch = builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
       SeedBatch foundSeedBatch = builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId());
       assertEquals(createdSeedBatch.getId(), foundSeedBatch.getId());
-      builder.admin().seedBatches().assertSeedsEqual(createdSeedBatch, foundSeedBatch);
+      builder.admin().seedBatches().assertSeedBatchesEqual(createdSeedBatch, foundSeedBatch);
+      builder.admin().seedBatches().delete(foundSeedBatch);
     }
   }
 	
@@ -39,7 +41,7 @@ public class SeedBatchTestIT {
     	
     	Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
     	
-      builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
+    	builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
       builder.admin().seedBatches().assertCount(1);
       builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
       builder.admin().seedBatches().assertCount(2);
@@ -51,14 +53,16 @@ public class SeedBatchTestIT {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       SeedBatch createdSeedBatch = builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
-      builder.admin().seedBatches().assertSeedsEqual(createdSeedBatch, builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId()));
+      builder.admin().seedBatches().assertSeedBatchesEqual(createdSeedBatch, builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId()));
       
       SeedBatch updatedSeedBatch = new SeedBatch(); 
       updatedSeedBatch.setId(createdSeedBatch.getId());
       updatedSeedBatch.setCode("code 2");
+      updatedSeedBatch.setSeedId(createdSeedBatch.getSeedId());
+      updatedSeedBatch.setTime(createdSeedBatch.getTime());
      
       builder.admin().seedBatches().updateSeedBatch(updatedSeedBatch);
-      builder.admin().seedBatches().assertSeedsEqual(updatedSeedBatch, builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId()));
+      builder.admin().seedBatches().assertSeedBatchesEqual(updatedSeedBatch, builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId()));
     }
   }
 }

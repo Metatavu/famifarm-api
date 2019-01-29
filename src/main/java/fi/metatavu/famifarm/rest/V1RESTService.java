@@ -314,9 +314,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response findSeedBatch(UUID seedBatchId) {
-    // TODO Auto-generated method stub
-    return null;
+  	fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
+  	if(seedBatch == null) {
+  		return createNotFound("Seed batch not found");
+  	}
+  	
+    return createOk(seedBatchesTranslator.translateSeedBatch(seedBatchController.findSeedBatch(seedBatchId)));
   }
 
   @Override
