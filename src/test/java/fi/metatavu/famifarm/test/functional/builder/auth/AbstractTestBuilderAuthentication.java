@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fi.metatavu.famifarm.ApiClient;
+import fi.metatavu.famifarm.test.functional.builder.impl.SeedBatchTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.SeedTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.TeamTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.WastageReasonTestBuilderResource;
@@ -19,6 +20,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   
   private SeedTestBuilderResource seeds;
   private TeamTestBuilderResource teams;
+  private SeedBatchTestBuilderResource seedBatches;
   private WastageReasonTestBuilderResource wastageReasons;
   private List<AutoCloseable> closables = new ArrayList<>();
   
@@ -62,6 +64,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
     
     return wastageReasons = this.addClosable(new WastageReasonTestBuilderResource(createClient()));
+  }
+  
+  /**
+   * Returns test builder resource for seed batches
+   * 
+   * @return test builder resource for seed batches
+   * @throws IOException thrown when authentication fails
+   */
+  public SeedBatchTestBuilderResource seedBatches() throws IOException {
+    if (seedBatches != null) {
+      return seedBatches;
+    }
+    
+    return seedBatches = this.addClosable(new SeedBatchTestBuilderResource(createClient()));
   }
   
   /**

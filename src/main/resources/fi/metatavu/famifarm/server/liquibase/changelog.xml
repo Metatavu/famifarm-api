@@ -93,4 +93,33 @@
     </createTable>
   </changeSet>
   
+  <changeSet id="seedbatch" author="ville.koivukangas">
+    <createTable tableName="seedbatch">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="code" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="seed_id" type="varchar(191)">
+        <constraints nullable="false" foreignKeyName="FK_SEEDBATCH_SEED_ID" referencedColumnNames="id" referencedTableName="seed"/>
+      </column>
+      <column name="time" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="creatorId" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastModifierId" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdAt" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedAt" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
 </databaseChangeLog>

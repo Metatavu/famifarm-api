@@ -1,5 +1,8 @@
 package fi.metatavu.famifarm.rest;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,9 +30,11 @@ import fi.metatavu.famifarm.rest.model.Seed;
 import fi.metatavu.famifarm.rest.model.SeedBatch;
 import fi.metatavu.famifarm.rest.model.Team;
 import fi.metatavu.famifarm.rest.model.WastageReason;
+import fi.metatavu.famifarm.rest.translate.SeedBatchTranslator;
 import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
 import fi.metatavu.famifarm.rest.translate.TeamsTranslator;
 import fi.metatavu.famifarm.rest.translate.WastageReasonsTranslator;
+import fi.metatavu.famifarm.seedbatches.SeedBatchesController;
 import fi.metatavu.famifarm.seeds.SeedsController;
 import fi.metatavu.famifarm.teams.TeamsController;
 import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
@@ -64,6 +69,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Inject
   private WastageReasonsTranslator wastageReasonsTranslator;
+  
+  @Inject
+  private SeedBatchesController seedBatchController;
+  
+  @Inject 
+  private SeedBatchTranslator seedBatchesTranslator;
 
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
@@ -159,9 +170,18 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createSeedBatch(SeedBatch body) {
-    // TODO Auto-generated method stub
-    return null;
+  	String code = body.getCode();
+  	UUID seedId = body.getSeedId();
+  	OffsetDateTime time = body.getTime();
+  	
+  	fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
+  	if (seed == null) {
+  		return createNotFound("Seed not found");
+  	}
+  	
+    return createOk(seedBatchesTranslator.translateSeedBatch(seedBatchController.createSeedBatch(code, seed, time, getLoggerUserId())));
   }
 
   @Override
@@ -219,9 +239,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deleteSeedBatch(UUID seedBatchId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
+    if (seedBatch == null) {
+    	createNotFound("Seed batch not found");
+    }
+    
+    seedBatchController.deleteSeedBatch(seedBatch);
+    
+    return createNoContent();
   }
 
   @Override
@@ -351,9 +378,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER, Roles.WORKER})
   public Response listSeedBatches(Integer firstResult, Integer maxResults) {
-    // TODO Auto-generated method stub
-    return null;
+  	List<SeedBatch> result = seedBatchController.listSeedBatches(firstResult, maxResults).stream()
+        .map(seedBatchesTranslator::translateSeedBatch)
+        .collect(Collectors.toList());
+      
+      return createOk(result);
   }
 
   @Override
@@ -413,9 +444,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updateSeedBatch(SeedBatch body, UUID seedBatchId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
+    if (seedBatch == null) {
+    	createNotFound("Seed batch not found");
+    }
+    
+    String code = body.getCode();
+    OffsetDateTime time = body.getTime();
+    UUID seedId = body.getSeedId();
+    fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
+    
+    return createOk(seedBatchController.updateSeedBatch(seedBatch, code, seed, time, getLoggerUserId()));
   }
 
   @Override
