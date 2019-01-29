@@ -25,45 +25,45 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class SeedBatch {
 
-  @Id
-  @Column(nullable = false)
-  @NotNull
-  private UUID id;
-  
-  @Column(nullable = false)
-  @NotNull
-  private String code;
-  
-  @ManyToOne (optional = false)
-  private Seed seed;
-  
-  @Column(nullable = false)
-  @NotNull
-  private OffsetDateTime time;
-  
-  @Column(nullable = false)
-  @NotNull
-  private UUID creatorId;
-  
-  @Column(nullable = false)
-  @NotNull
-  private UUID lastModifierId;
+	@Id
+	@Column(nullable = false)
+	@NotNull
+	private UUID id;
 
-  @Column (nullable = false)
-  private OffsetDateTime createdAt;
+	@Column(nullable = false)
+	@NotNull
+	private String code;
 
-  @Column (nullable = false)
-  private OffsetDateTime modifiedAt;
-  
-  public UUID getId() {
-    return id;
-  }
+	@ManyToOne(optional = false)
+	private Seed seed;
 
-  public void setId(UUID id) {
-    this.id = id;
-  }
+	@Column(nullable = false)
+	@NotNull
+	private OffsetDateTime time;
 
-  public String getCode() {
+	@Column(nullable = false)
+	@NotNull
+	private UUID creatorId;
+
+	@Column(nullable = false)
+	@NotNull
+	private UUID lastModifierId;
+
+	@Column(nullable = false)
+	private OffsetDateTime createdAt;
+
+	@Column(nullable = false)
+	private OffsetDateTime modifiedAt;
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public String getCode() {
 		return code;
 	}
 
@@ -96,37 +96,37 @@ public class SeedBatch {
 	}
 
 	public UUID getLastModifierId() {
-    return lastModifierId;
-  }
+		return lastModifierId;
+	}
 
-  public void setLastModifierId(UUID lastModifierId) {
-    this.lastModifierId = lastModifierId;
-  }
+	public void setLastModifierId(UUID lastModifierId) {
+		this.lastModifierId = lastModifierId;
+	}
 
-  public OffsetDateTime getCreatedAt() {
-    return createdAt;
-  }
+	public OffsetDateTime getCreatedAt() {
+		return createdAt;
+	}
 
-  public void setCreatedAt(OffsetDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
+	public void setCreatedAt(OffsetDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
 
-  public OffsetDateTime getModifiedAt() {
-    return modifiedAt;
-  }
+	public OffsetDateTime getModifiedAt() {
+		return modifiedAt;
+	}
 
-  public void setModifiedAt(OffsetDateTime modifiedAt) {
-    this.modifiedAt = modifiedAt;
-  }
+	public void setModifiedAt(OffsetDateTime modifiedAt) {
+		this.modifiedAt = modifiedAt;
+	}
 
-  @PrePersist
-  public void onCreate() {
-    setCreatedAt(OffsetDateTime.now());
-    setModifiedAt(OffsetDateTime.now());
-  }
-  
-  @PreUpdate
-  public void onUpdate() {
-    setModifiedAt(OffsetDateTime.now());
-  }
+	@PrePersist
+	public void onCreate() {
+		setCreatedAt(OffsetDateTime.now());
+		setModifiedAt(OffsetDateTime.now());
+	}
+
+	@PreUpdate
+	public void onUpdate() {
+		setModifiedAt(OffsetDateTime.now());
+	}
 }
