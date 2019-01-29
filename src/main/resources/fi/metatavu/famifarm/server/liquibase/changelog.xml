@@ -171,4 +171,27 @@
     </createTable>
   </changeSet>
   
+  <changeSet id="batch" author="ville.koivukangas">
+    <createTable tableName="batch">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="product_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_BATCH_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
+      </column>
+      <column name="creatorId" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastModifierId" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdAt" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedAt" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
 </databaseChangeLog>
