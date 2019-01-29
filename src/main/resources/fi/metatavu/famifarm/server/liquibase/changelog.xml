@@ -130,16 +130,16 @@
       <column name="name" type="varchar(191)">
         <constraints nullable="false"/>
       </column>
-      <column name="creatorId" type="binary(16)">
+      <column name="creatorid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="lastModifierId" type="binary(16)">
+      <column name="lastmodifierid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="createdAt" type="timestamp">
+      <column name="createdat" type="timestamp">
         <constraints nullable="false"/>
       </column>
-      <column name="modifiedAt" type="timestamp">
+      <column name="modifiedat" type="timestamp">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -153,19 +153,19 @@
       <column name="name_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_PRODUCT_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
       </column>
-      <column name="defaultPackageSize_id" type="varchar(191)">
+      <column name="defaultpackagesize_id" type="varchar(191)">
         <constraints nullable="false" foreignKeyName="FK_PRODUCT_PACKAGESIZE_ID" referencedColumnNames="id" referencedTableName="packagesize"/>
       </column>
-      <column name="creatorId" type="binary(16)">
+      <column name="creatorid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="lastModifierId" type="binary(16)">
+      <column name="lastmodifierid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="createdAt" type="timestamp">
+      <column name="createdat" type="timestamp">
         <constraints nullable="false"/>
       </column>
-      <column name="modifiedAt" type="timestamp">
+      <column name="modifiedat" type="timestamp">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -179,16 +179,16 @@
       <column name="product_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_BATCH_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
       </column>
-      <column name="creatorId" type="binary(16)">
+      <column name="creatorid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="lastModifierId" type="binary(16)">
+      <column name="lastmodifierid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="createdAt" type="timestamp">
+      <column name="createdat" type="timestamp">
         <constraints nullable="false"/>
       </column>
-      <column name="modifiedAt" type="timestamp">
+      <column name="modifiedat" type="timestamp">
         <constraints nullable="false"/>
       </column>
     </createTable>
