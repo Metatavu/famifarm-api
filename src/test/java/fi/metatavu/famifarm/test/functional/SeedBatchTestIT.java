@@ -13,16 +13,16 @@ import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 public class SeedBatchTestIT {
-	@Test
+  @Test
   public void testCreateSeedBatch() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-    	Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-    	SeedBatch seedBatch = builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+      SeedBatch seedBatch = builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
       assertNotNull(seedBatch);
     }
   }
-	
-	@Test
+
+  @Test
   public void testFindSeedBatch() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().seedBatches().assertFindFailStatus(404, UUID.randomUUID());
@@ -34,33 +34,33 @@ public class SeedBatchTestIT {
       builder.admin().seedBatches().delete(foundSeedBatch);
     }
   }
-	
-	@Test
+
+  @Test
   public void testListSeedBatches() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-    	
-    	Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-    	
-    	builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
+
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+
+      builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
       builder.admin().seedBatches().assertCount(1);
       builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
       builder.admin().seedBatches().assertCount(2);
     }
   }
-	
-	@Test
+
+  @Test
   public void testUpdateSeedBatch() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       SeedBatch createdSeedBatch = builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
       builder.admin().seedBatches().assertSeedBatchesEqual(createdSeedBatch, builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId()));
-      
-      SeedBatch updatedSeedBatch = new SeedBatch(); 
+
+      SeedBatch updatedSeedBatch = new SeedBatch();
       updatedSeedBatch.setId(createdSeedBatch.getId());
       updatedSeedBatch.setCode("code 2");
       updatedSeedBatch.setSeedId(createdSeedBatch.getSeedId());
       updatedSeedBatch.setTime(createdSeedBatch.getTime());
-     
+
       builder.admin().seedBatches().updateSeedBatch(updatedSeedBatch);
       builder.admin().seedBatches().assertSeedBatchesEqual(updatedSeedBatch, builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId()));
     }
