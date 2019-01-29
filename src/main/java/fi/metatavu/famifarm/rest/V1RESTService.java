@@ -312,7 +312,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response findSeedBatch(UUID seedBatchId) {
   	fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
   	if(seedBatch == null) {
