@@ -7,7 +7,7 @@ import fi.metatavu.famifarm.persistence.model.Seed;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
 
 /**
- * DAO class for seeds
+ * DAO class for seed batches
  * 
  * @author Ville Koivukangas
  */
@@ -20,8 +20,8 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
    * @param code code
    * @param seed seed
    * @param time time
-   * @return created seed
    * @param lastModifier modifier
+   * @return created seed
    */
   public SeedBatch create(UUID id, String code, Seed seed, OffsetDateTime time, UUID creatorId, UUID lastModifierId) {
   	SeedBatch seedBatch = new SeedBatch();
@@ -39,7 +39,7 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
    *
    * @param code code
    * @param lastModifier modifier
-   * @return updated seed
+   * @return updated seed batch
    */
   public SeedBatch updateCode(SeedBatch seedBatch, String code, UUID lastModifierId) {
   	seedBatch.setLastModifierId(lastModifierId);
@@ -52,7 +52,7 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
    *
    * @param seed seed
    * @param lastModifier modifier
-   * @return updated seed
+   * @return updated seed batch
    */
   public SeedBatch updateSeed(SeedBatch seedBatch, Seed seed, UUID lastModifierId) {
   	seedBatch.setLastModifierId(lastModifierId);
@@ -65,7 +65,7 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
    *
    * @param time time
    * @param lastModifier modifier
-   * @return updated seed
+   * @return updated seed batch
    */
   public SeedBatch updateTime(SeedBatch seedBatch, OffsetDateTime time, UUID lastModifierId) {
   	seedBatch.setLastModifierId(lastModifierId);

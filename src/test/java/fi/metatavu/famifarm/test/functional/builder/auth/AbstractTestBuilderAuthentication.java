@@ -1,7 +1,6 @@
 package fi.metatavu.famifarm.test.functional.builder.auth;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 

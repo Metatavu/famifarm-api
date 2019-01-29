@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.dao.SeedBatchDAO;
 import fi.metatavu.famifarm.persistence.model.Seed;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
@@ -29,7 +28,7 @@ public class SeedBatchesController {
    * @param seed seed
    * @param time time
    * @param userId userId
-   * @return created seed
+   * @return created seed batch
    */
   public SeedBatch createSeedBatch(String code, Seed seed, OffsetDateTime time, UUID userId) {
     return seedBatchDAO.create(UUID.randomUUID(), code, seed, time, userId, userId);
@@ -50,7 +49,7 @@ public class SeedBatchesController {
    * 
    * @param firstResult first result
    * @param maxResults max results
-   * @return list of seeds
+   * @return list of seed batches
    */
   public List<SeedBatch> listSeedBatches(Integer firstResult, Integer maxResults) {
     return seedBatchDAO.listAll(firstResult, maxResults);
@@ -64,7 +63,7 @@ public class SeedBatchesController {
    * @param seed seed
    * @param time time
    * @param lastModifierId lastModifierId
-   * @return created seed
+   * @return created seed batch
    */
   public SeedBatch updateSeedBatch(SeedBatch seedBatch, String code, Seed seed, OffsetDateTime time, UUID lastModifierId) {
     seedBatchDAO.updateCode(seedBatch, code, lastModifierId);

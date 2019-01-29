@@ -1,8 +1,6 @@
 package fi.metatavu.famifarm.rest;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;

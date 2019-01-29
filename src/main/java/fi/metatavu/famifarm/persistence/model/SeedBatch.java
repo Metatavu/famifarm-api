@@ -62,7 +62,7 @@ public class SeedBatch {
   public void setId(UUID id) {
     this.id = id;
   }
-  
+
   public String getCode() {
 		return code;
 	}
@@ -88,14 +88,14 @@ public class SeedBatch {
 	}
 
 	public UUID getCreatorId() {
-    return creatorId;
-  }
+		return creatorId;
+	}
 
-  public void setCreatorId(UUID creatorId) {
-    this.creatorId = creatorId;
-  }
+	public void setCreatorId(UUID creatorId) {
+		this.creatorId = creatorId;
+	}
 
-  public UUID getLastModifierId() {
+	public UUID getLastModifierId() {
     return lastModifierId;
   }
 
