@@ -8,7 +8,7 @@ import javax.ws.rs.core.Application;
  * 
  * @author Antti Leppä
  */
-@ApplicationPath("/v1")
+@ApplicationPath("/")
 public class JaxRsActivator extends Application {
   
 }
