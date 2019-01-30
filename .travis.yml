@@ -12,10 +12,15 @@ addons:
   sonarcloud:
     organization: "metatavu-oy"
   mariadb: '10.3'
-  
+
 install: true
     
 before_script:
+  - echo "[mysqld]" > $HOME/.my.cnf
+  - echo "lower-case-table-names = 1" >> $HOME/.my.cnf
+  - sudo service mysql restart
+  - mysql -u root -e "show variables like 'lower%'"
+  - mysql -u root < scripts/setup-db.sql
   - scripts/start-keycloak.sh
 
 script:
