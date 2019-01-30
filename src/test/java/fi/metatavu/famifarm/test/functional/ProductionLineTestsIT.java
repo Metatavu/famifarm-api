@@ -3,12 +3,10 @@ package fi.metatavu.famifarm.test.functional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.junit.Test;
 
-import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
