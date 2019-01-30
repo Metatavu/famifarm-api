@@ -57,4 +57,15 @@ public class ProductionLineTestsIT {
       builder.admin().productionLines().assertProductionLinesEqual(updatedProductionLine, builder.admin().productionLines().findProductionLine(createdProductionLine.getId()));
     }
   }
+  
+  @Test
+  public void testDeleteProductionLines() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      ProductionLine createdProductionLine = builder.admin().productionLines().create(1);
+      ProductionLine foundProductionLine = builder.admin().productionLines().findProductionLine(createdProductionLine.getId());
+      assertEquals(createdProductionLine.getId(), foundProductionLine.getId());
+      builder.admin().productionLines().delete(createdProductionLine);
+      builder.admin().productionLines().assertFindFailStatus(404, createdProductionLine.getId());     
+    }
+  }
 }

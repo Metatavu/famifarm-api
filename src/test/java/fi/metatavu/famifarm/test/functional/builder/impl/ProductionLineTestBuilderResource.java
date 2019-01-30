@@ -16,7 +16,7 @@ import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 /**
- * Test builder resource for production linees
+ * Test builder resource for production lines
  * 
  * @author Ville Koivukangas
  */

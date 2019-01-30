@@ -18,7 +18,7 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
    * @param lineNumber lineNumber
    * @param creatorId creatorId
    * @param lastModifierId lastModifierId
-   * @return created seed
+   * @return created production line
    */
   public ProductionLine create(UUID id, int lineNumber, UUID creatorId, UUID lastModifierId) {
     ProductionLine productionLine = new ProductionLine();
@@ -35,7 +35,7 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
    * @param productionLine productionLine
    * @param lineNumber lineNumber
    * @param lastModifier modifier
-   * @return updated seed batch
+   * @return updated production line
    */
   public ProductionLine updateLineNumber(ProductionLine productionLine, int lineNumber, UUID lastModifierId) {
     productionLine.setLastModifierId(lastModifierId);
