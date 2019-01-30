@@ -16,8 +16,7 @@ addons:
 install: true
     
 before_script:
-  - echo "[mysqld]" > $HOME/.my.cnf
-  - echo "lower-case-table-names = 1" >> $HOME/.my.cnf
+  - echo -e "[mysqld]\nlower-case-table-names = 1" | sudo tee -a /etc/mysql/my.cnf
   - sudo service mysql restart
   - mysql -u root -e "show variables like 'lower%'"
   - mysql -u root < scripts/setup-db.sql
