@@ -8,6 +8,7 @@ import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.test.functional.builder.impl.BatchTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PackageSizeTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.ProductionLineTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.SeedBatchTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.SeedTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.TeamTestBuilderResource;
@@ -27,6 +28,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private ProductTestBuilderResource products;
   private PackageSizeTestBuilderResource packageSizes;
   private BatchTestBuilderResource batches;
+  private ProductionLineTestBuilderResource productionLines;
   private List<AutoCloseable> closables = new ArrayList<>();
   
   /**
@@ -125,6 +127,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
     
     return batches = this.addClosable(new BatchTestBuilderResource(createClient()));
+  }
+  
+  /**
+   * Returns test builder resource for production lines
+   * 
+   * @return test builder resource for products
+   * @throws IOException thrown when authentication fails
+   */
+  public ProductionLineTestBuilderResource productionLines() throws IOException {
+    if (productionLines != null) {
+      return productionLines;
+    }
+    
+    return productionLines = this.addClosable(new ProductionLineTestBuilderResource(createClient()));
   }
   
   /**
