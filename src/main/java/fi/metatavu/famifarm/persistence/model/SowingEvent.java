@@ -1,6 +1,7 @@
 package fi.metatavu.famifarm.persistence.model;
 
 import javax.persistence.Cacheable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,6 +33,7 @@ public class SowingEvent extends Event {
   @Enumerated (EnumType.STRING)
   private CellType cellType;
   
+  @Column (nullable = false)
   private Double amount;
 
   public ProductionLine getProductionLine() {

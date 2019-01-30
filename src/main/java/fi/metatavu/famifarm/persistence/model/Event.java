@@ -39,7 +39,7 @@ public class Event {
   @Column(nullable = false)
   private OffsetDateTime startTime;
 
-  @Column(nullable = false)
+  @Column
   private OffsetDateTime endTime;
 
   @Column(nullable = false)
