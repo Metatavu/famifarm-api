@@ -49,7 +49,7 @@
     
     <!-- Famifarm -->
     
-    <famifarm-api-spec.version>1.0.1</famifarm-api-spec.version>
+    <famifarm-api-spec.version>1.0.2</famifarm-api-spec.version>
     
     <!-- Maven -->
 
@@ -83,7 +83,7 @@
     <rest-assured.version>3.2.0</rest-assured.version>
     <wiremock.version>2.19.0</wiremock.version>
     <jsonassert.version>1.5.0</jsonassert.version>
-    <famifarm-api-client.version>1.0.1</famifarm-api-client.version>
+    <famifarm-api-client.version>1.0.2</famifarm-api-client.version>
   </properties>
 
   <dependencyManagement>
@@ -606,6 +606,7 @@
                   <jbossHome>${project.build.directory}/../.cargo/extracts/wildfly-${wildfly.version}/wildfly-${wildfly.version}</jbossHome>
                   <commands>
                     <command>embed-server --server-config=standalone.xml</command>
+                    <command>if (outcome != success) of /extension=org.keycloak.keycloak-adapter-subsystem:read-resource</command>
                     <command>/extension=org.keycloak.keycloak-adapter-subsystem/:add(module=org.keycloak.keycloak-adapter-subsystem)</command>
                     <command>/subsystem=keycloak:add</command>
                     <command>/subsystem=elytron/custom-realm=KeycloakOIDCRealm:add(class-name=org.keycloak.adapters.elytron.KeycloakSecurityRealm, module=org.keycloak.keycloak-wildfly-elytron-oidc-adapter)</command>
@@ -615,14 +616,27 @@
                     <command>/subsystem=elytron/aggregate-http-server-mechanism-factory=keycloak-http-server-mechanism-factory:add(http-server-mechanism-factories=[keycloak-oidc-http-server-mechanism-factory, global])</command>
                     <command>/subsystem=elytron/http-authentication-factory=keycloak-http-authentication:add(security-domain=KeycloakDomain,http-server-mechanism-factory=keycloak-http-server-mechanism-factory,mechanism-configurations=[{mechanism-name=KEYCLOAK,mechanism-realm-configurations=[{realm-name=KeycloakOIDCRealm,realm-mapper=keycloak-oidc-realm-mapper}]}])</command>
                     <command>/subsystem=undertow/application-security-domain=other:add(http-authentication-factory=keycloak-http-authentication)</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /subsystem=datasources/xa-data-source=ci:read-resource</command>
                     <command>xa-data-source add --name=ci --driver-name=h2 --jndi-name=${it.jdbc.jndi} --user-name=${it.jdbc.username} --password=${it.jdbc.password} --xa-datasource-properties=${it.jdbc.properties}</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /subsystem=undertow/server=default-server/host=famifarm-api:read-resource</command>
                     <command>/subsystem=undertow/server=default-server/host=famifarm-api:add(alias=["${it.host}"],default-web-module="famifarm-api.war")</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /system-property=it-test:read-resource</command>
                     <command>/system-property=it-test:add(value="true")</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /subsystem=keycloak/secure-deployment=famifarm-api.war:read-resource</command>
                     <command>/subsystem=keycloak/secure-deployment=famifarm-api.war:add(realm="test", auth-server-url="http://localhost:8280/auth",bearer-only=true,ssl-required="EXTERNAL",resource="api")</command>
                     <command>/subsystem=security/security-domain=keycloak/:add</command>
                     <command>/subsystem=security/security-domain=keycloak/authentication=classic/:add(login-modules=[{ "code" => "org.keycloak.adapters.jboss.KeycloakLoginModule","flag" => "required"}])</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /subsystem=logging/logger=org.keycloak.adapters.BearerTokenRequestAuthenticator:read-resource</command>
                     <command>/subsystem=logging/logger=org.keycloak.adapters.BearerTokenRequestAuthenticator:add(level=FATAL)</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /subsystem=logging/logger=org.jboss.as.ejb3.invocation:read-resource</command>
                     <command>/subsystem=logging/logger=org.jboss.as.ejb3.invocation:add(level=FATAL)</command>
+                    <command>end-if</command>
                   </commands>
                 </configuration>
               </execution>
@@ -646,6 +660,13 @@
                 <configuration>
                   <filename>${project.build.finalName}.${project.packaging}</filename>
                 </configuration>
+              </execution>
+              <execution>
+                <id>wildfly-shutdown</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>shutdown</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>

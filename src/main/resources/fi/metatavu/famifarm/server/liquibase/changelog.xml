@@ -32,16 +32,16 @@
       <column name="name_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_SEED_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
       </column>
-      <column name="creatorId" type="binary(16)">
+      <column name="creatorid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="lastModifierId" type="binary(16)">
+      <column name="lastmodifierid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="createdAt" type="timestamp">
+      <column name="createdat" type="timestamp">
         <constraints nullable="false"/>
       </column>
-      <column name="modifiedAt" type="timestamp">
+      <column name="modifiedat" type="timestamp">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -55,16 +55,16 @@
       <column name="name_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_TEAM_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
       </column>
-      <column name="creatorId" type="binary(16)">
+      <column name="creatorid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="lastModifierId" type="binary(16)">
+      <column name="lastmodifierid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="createdAt" type="timestamp">
+      <column name="createdat" type="timestamp">
         <constraints nullable="false"/>
       </column>
-      <column name="modifiedAt" type="timestamp">
+      <column name="modifiedat" type="timestamp">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -78,16 +78,45 @@
       <column name="reason_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_WASTAGEREASON_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
       </column>
-      <column name="creatorId" type="binary(16)">
+      <column name="creatorid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="lastModifierId" type="binary(16)">
+      <column name="lastmodifierid" type="binary(16)">
         <constraints nullable="false"/>
       </column>
-      <column name="createdAt" type="timestamp">
+      <column name="createdat" type="timestamp">
         <constraints nullable="false"/>
       </column>
-      <column name="modifiedAt" type="timestamp">
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
+  <changeSet id="seedbatch" author="ville.koivukangas">
+    <createTable tableName="seedbatch">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="code" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="seed_id" type="varchar(191)">
+        <constraints nullable="false" foreignKeyName="FK_SEEDBATCH_SEED_ID" referencedColumnNames="id" referencedTableName="seed"/>
+      </column>
+      <column name="time" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
         <constraints nullable="false"/>
       </column>
     </createTable>
