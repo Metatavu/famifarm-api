@@ -20,7 +20,7 @@ public class ProductionLineController {
    * @param userId userId
    * @return created production line
    */
-  public ProductionLine createProductionLine(int lineNumber, UUID userId) {
+  public ProductionLine createProductionLine(Integer lineNumber, UUID userId) {
     return productionLineDAO.create(UUID.randomUUID(), lineNumber, userId, userId);
   }
 
@@ -53,7 +53,7 @@ public class ProductionLineController {
    * @param lastModifierId lastModifierId
    * @return updated production line
    */
-  public ProductionLine updateProductionLine(ProductionLine productionLine, int lineNumber, UUID lastModifierId) {
+  public ProductionLine updateProductionLine(ProductionLine productionLine, Integer lineNumber, UUID lastModifierId) {
     productionLineDAO.updateLineNumber(productionLine, lineNumber, lastModifierId);
     return productionLine;
   }

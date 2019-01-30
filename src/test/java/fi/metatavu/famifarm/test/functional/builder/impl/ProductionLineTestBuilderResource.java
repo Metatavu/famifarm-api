@@ -37,7 +37,7 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * @param name name
    * @return created production line
    */
-  public ProductionLine create(int lineNumber) {
+  public ProductionLine create(Integer lineNumber) {
     ProductionLine productionLine = new ProductionLine();
     productionLine.setLineNumber(lineNumber);
     return addClosable(getApi().createProductionLine(productionLine));

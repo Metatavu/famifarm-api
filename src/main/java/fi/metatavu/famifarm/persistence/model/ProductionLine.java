@@ -31,7 +31,7 @@ public class ProductionLine {
   
   @Column(nullable = false)
   @NotNull
-  private int lineNumber;
+  private Integer lineNumber;
   
   @Column(nullable = false)
   @NotNull
@@ -55,7 +55,7 @@ public class ProductionLine {
     this.id = id;
   }
 
-  public int getLineNumber() {
+  public Integer getLineNumber() {
     return lineNumber;
   }
 

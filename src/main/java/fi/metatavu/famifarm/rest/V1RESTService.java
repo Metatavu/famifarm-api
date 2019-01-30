@@ -209,7 +209,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createProductionLine(ProductionLine body) {
-    int lineNumber = body.getLineNumber();
+    Integer lineNumber = body.getLineNumber();
     
     return createOk(productionLineTranslator.translateProductionLine(productionLineController.createProductionLine(lineNumber, getLoggerUserId())));
   }
@@ -587,7 +587,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
     
-    int lineNumber = body.getLineNumber();
+    Integer lineNumber = body.getLineNumber();
     
     return createOk(productionLineTranslator.translateProductionLine(productionLineController.updateProductionLine(productionLine, lineNumber, getLoggerUserId())));
   }
