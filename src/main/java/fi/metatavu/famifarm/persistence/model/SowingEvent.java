@@ -2,10 +2,14 @@ package fi.metatavu.famifarm.persistence.model;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import fi.metatavu.famifarm.rest.model.CellType;
 
 /**
  * JPA entity for sowing event
@@ -25,6 +29,7 @@ public class SowingEvent extends Event {
   @ManyToOne
   private SeedBatch seedBatch;
   
+  @Enumerated (EnumType.STRING)
   private CellType cellType;
   
   private Double amount;

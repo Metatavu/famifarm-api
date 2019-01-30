@@ -6,10 +6,10 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
-import fi.metatavu.famifarm.persistence.model.CellType;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
+import fi.metatavu.famifarm.rest.model.CellType;
 
 /**
  * DAO class for SowingEvents
