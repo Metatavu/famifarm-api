@@ -11,7 +11,8 @@ addons:
     - api-itest.famifarm.fi
   sonarcloud:
     organization: "metatavu-oy"
-          
+  mariadb: '10.3'
+  
 install: true
     
 before_script:
