@@ -84,6 +84,7 @@
     <wiremock.version>2.19.0</wiremock.version>
     <jsonassert.version>1.5.0</jsonassert.version>
     <famifarm-api-client.version>1.0.3</famifarm-api-client.version>
+    <mariadb-java-client.version>2.3.0</mariadb-java-client.version>
   </properties>
 
   <dependencyManagement>
@@ -362,6 +363,13 @@
     
     
     <!-- Test -->
+    
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+      <version>${mariadb-java-client.version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -438,25 +446,21 @@
       </activation>
       
       <properties>
-        <h2.version>1.4.193</h2.version>
         <it.port.http>58080</it.port.http>
         <it.host>api-itest.famifarm.fi</it.host>
-        <it.jdbc.driver>org.h2.jdbcx.JdbcDataSource</it.jdbc.driver>
-        <it.jdbc.url>jdbc:h2:file:${project.build.directory}/h2;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE</it.jdbc.url>
-        <it.jdbc.properties>URL=jdbc:h2:file:${project.build.directory}/h2\;AUTO_SERVER=TRUE\;DB_CLOSE_ON_EXIT=FALSE</it.jdbc.properties>
-        <it.jdbc.jndi>java:/jboss/datasources/famifarm-api</it.jdbc.jndi>
+        <it.jdbc.driver>org.mariadb.jdbc.MySQLDataSource</it.jdbc.driver>
+        <it.jdbc.module>com.mariadb.jdbc</it.jdbc.module>
+        <it.jdbc.dbname>fftest</it.jdbc.dbname>
+        <it.jdbc.url>jdbc:mysql://localhost:3306/${it.jdbc.dbname}</it.jdbc.url>
+        <it.jdbc.jndi>java:jboss/datasources/famifarm-api</it.jdbc.jndi>
         <it.jdbc.username>sa</it.jdbc.username>
         <it.jdbc.password>sa</it.jdbc.password>
-        <it.jdbc.type>javax.sql.XADataSource</it.jdbc.type>
-        <it.jdbc.transactionsupport>XA_TRANSACTION</it.jdbc.transactionsupport>
         <it.skipdatabasedrop>true</it.skipdatabasedrop>
-        <it.hibernate.dialect>org.hibernate.dialect.H2Dialect</it.hibernate.dialect>
         <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
       </properties>
       
       <build>
         <plugins>
-          
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
@@ -588,7 +592,26 @@
               </execution>
             </executions>
           </plugin>
-          
+          <plugin>
+				    <groupId>org.apache.maven.plugins</groupId>
+				    <artifactId>maven-antrun-plugin</artifactId>
+				    <version>1.8</version>
+				    <executions>
+              <execution>
+                <id>unpack-mariadb-module</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <get src="https://static.metatavu.io/wildfly/mariadb-module-2.3.0.zip" dest="${project.build.directory}/mariadb-module.zip" verbose="true" usetimestamp="true"/>
+                    <unzip src="${project.build.directory}/mariadb-module.zip" dest="${project.build.directory}/../.cargo/extracts/wildfly-${wildfly.version}/wildfly-${wildfly.version}"/>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+				  </plugin>
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
@@ -617,8 +640,9 @@
                     <command>/subsystem=elytron/http-authentication-factory=keycloak-http-authentication:add(security-domain=KeycloakDomain,http-server-mechanism-factory=keycloak-http-server-mechanism-factory,mechanism-configurations=[{mechanism-name=KEYCLOAK,mechanism-realm-configurations=[{realm-name=KeycloakOIDCRealm,realm-mapper=keycloak-oidc-realm-mapper}]}])</command>
                     <command>/subsystem=undertow/application-security-domain=other:add(http-authentication-factory=keycloak-http-authentication)</command>
                     <command>end-if</command>
-                    <command>if (outcome != success) of /subsystem=datasources/xa-data-source=ci:read-resource</command>
-                    <command>xa-data-source add --name=ci --driver-name=h2 --jndi-name=${it.jdbc.jndi} --user-name=${it.jdbc.username} --password=${it.jdbc.password} --xa-datasource-properties=${it.jdbc.properties}</command>
+                    <command>if (outcome != success) of /subsystem=datasources/data-source=famifarm-api:read-resource</command>
+                    <command>/subsystem=datasources/jdbc-driver=it:add(driver-name="it", driver-module-name=${it.jdbc.module},driver-xa-datasource-class-name=${it.jdbc.driver})</command>
+                    <command>data-source add --name=famifarm-api --use-ccm=true --jta=true --enabled=true --driver-name=it --jndi-name=${it.jdbc.jndi} --user-name=${it.jdbc.username} --password=${it.jdbc.password} --connection-url=${it.jdbc.url}</command>
                     <command>end-if</command>
                     <command>if (outcome != success) of /subsystem=undertow/server=default-server/host=famifarm-api:read-resource</command>
                     <command>/subsystem=undertow/server=default-server/host=famifarm-api:add(alias=["${it.host}"],default-web-module="famifarm-api.war")</command>
@@ -650,7 +674,8 @@
                   <javaOpts>-Djboss.http.port=${it.port.http} ${jacoco.agent.itArgLine},output=tcpserver,port=6300 -Xmx2G -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true -Drunmode=TEST</javaOpts>
                   <jbossHome>${project.build.directory}/../.cargo/extracts/wildfly-${wildfly.version}/wildfly-${wildfly.version}</jbossHome>
                 </configuration>
-              </execution>
+              </execution>   
+              
               <execution>
                 <id>wildfly-deploy</id>
                 <phase>pre-integration-test</phase>
