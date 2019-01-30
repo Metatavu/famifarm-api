@@ -22,13 +22,14 @@ public class ProductDAO extends AbstractDAO<Product> {
    * @return created seed
    * @param lastModifier modifier
    */
-  public Product create(UUID id, LocalizedEntry name, PackageSize defaultPackageSize, UUID creatorId, UUID lastModifierId) {
-  	Product product = new Product();
-  	product.setId(id);
-  	product.setName(name);
-  	product.setDefaultPackageSize(defaultPackageSize);
-  	product.setCreatorId(creatorId);
-  	product.setLastModifierId(lastModifierId);
+  public Product create(UUID id, LocalizedEntry name, PackageSize defaultPackageSize, UUID creatorId,
+      UUID lastModifierId) {
+    Product product = new Product();
+    product.setId(id);
+    product.setName(name);
+    product.setDefaultPackageSize(defaultPackageSize);
+    product.setCreatorId(creatorId);
+    product.setLastModifierId(lastModifierId);
     return persist(product);
   }
 
@@ -41,11 +42,11 @@ public class ProductDAO extends AbstractDAO<Product> {
    * @return updated product
    */
   public Product updateName(Product product, LocalizedEntry name, UUID lastModifierId) {
-  	product.setLastModifierId(lastModifierId);
-  	product.setName(name);
+    product.setLastModifierId(lastModifierId);
+    product.setName(name);
     return persist(product);
   }
-  
+
   /**
    * Updates default package size
    *
@@ -55,8 +56,8 @@ public class ProductDAO extends AbstractDAO<Product> {
    * @return updated product
    */
   public Product updateDefaultPackageSize(Product product, PackageSize packageSize, UUID lastModifierId) {
-  	product.setLastModifierId(lastModifierId);
-  	product.setDefaultPackageSize(packageSize);
+    product.setLastModifierId(lastModifierId);
+    product.setDefaultPackageSize(packageSize);
     return persist(product);
   }
 

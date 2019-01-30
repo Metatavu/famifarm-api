@@ -29,27 +29,27 @@ public class Product {
   @Column(nullable = false)
   @NotNull
   private UUID id;
-  
-  @ManyToOne (optional = false)
+
+  @ManyToOne(optional = false)
   private LocalizedEntry name;
-  
-  @ManyToOne (optional = false)
+
+  @ManyToOne(optional = false)
   private PackageSize defaultPackageSize;
-  
+
   @Column(nullable = false)
   @NotNull
   private UUID creatorId;
-  
+
   @Column(nullable = false)
   @NotNull
   private UUID lastModifierId;
 
-  @Column (nullable = false)
+  @Column(nullable = false)
   private OffsetDateTime createdAt;
 
-  @Column (nullable = false)
+  @Column(nullable = false)
   private OffsetDateTime modifiedAt;
-  
+
   public UUID getId() {
     return id;
   }
@@ -63,22 +63,22 @@ public class Product {
   }
 
   public LocalizedEntry getName() {
-		return name;
-	}
+    return name;
+  }
 
-	public void setName(LocalizedEntry name) {
-		this.name = name;
-	}
+  public void setName(LocalizedEntry name) {
+    this.name = name;
+  }
 
-	public PackageSize getDefaultPackageSize() {
-		return defaultPackageSize;
-	}
+  public PackageSize getDefaultPackageSize() {
+    return defaultPackageSize;
+  }
 
-	public void setDefaultPackageSize(PackageSize defaultPackageSize) {
-		this.defaultPackageSize = defaultPackageSize;
-	}
+  public void setDefaultPackageSize(PackageSize defaultPackageSize) {
+    this.defaultPackageSize = defaultPackageSize;
+  }
 
-	public void setCreatorId(UUID creatorId) {
+  public void setCreatorId(UUID creatorId) {
     this.creatorId = creatorId;
   }
 
@@ -111,7 +111,7 @@ public class Product {
     setCreatedAt(OffsetDateTime.now());
     setModifiedAt(OffsetDateTime.now());
   }
-  
+
   @PreUpdate
   public void onUpdate() {
     setModifiedAt(OffsetDateTime.now());

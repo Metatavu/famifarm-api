@@ -28,25 +28,25 @@ public class PackageSize {
   @Column(nullable = false)
   @NotNull
   private UUID id;
-  
+
   @Column(nullable = false)
   @NotNull
   private String name;
-  
+
   @Column(nullable = false)
   @NotNull
   private UUID creatorId;
-  
+
   @Column(nullable = false)
   @NotNull
   private UUID lastModifierId;
 
-  @Column (nullable = false)
+  @Column(nullable = false)
   private OffsetDateTime createdAt;
 
-  @Column (nullable = false)
+  @Column(nullable = false)
   private OffsetDateTime modifiedAt;
-  
+
   public UUID getId() {
     return id;
   }
@@ -56,14 +56,14 @@ public class PackageSize {
   }
 
   public String getName() {
-		return name;
-	}
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public UUID getCreatorId() {
+  public UUID getCreatorId() {
     return creatorId;
   }
 
@@ -100,7 +100,7 @@ public class PackageSize {
     setCreatedAt(OffsetDateTime.now());
     setModifiedAt(OffsetDateTime.now());
   }
-  
+
   @PreUpdate
   public void onUpdate() {
     setModifiedAt(OffsetDateTime.now());

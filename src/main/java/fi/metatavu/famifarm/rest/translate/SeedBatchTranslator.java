@@ -26,7 +26,11 @@ public class SeedBatchTranslator extends AbstractTranslator {
     SeedBatch result = new SeedBatch();
     result.setId(seedBatch.getId());
     result.setCode(seedBatch.getCode());
-    result.setSeedId(seedBatch.getSeed().getId());
+    
+    if (seedBatch.getSeed() != null) {
+      result.setSeedId(seedBatch.getSeed().getId());
+    }
+    
     result.setTime(seedBatch.getTime());
 
     return result;

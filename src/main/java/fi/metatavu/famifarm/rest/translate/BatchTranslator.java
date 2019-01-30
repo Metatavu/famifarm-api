@@ -25,7 +25,10 @@ public class BatchTranslator extends AbstractTranslator {
     
     Batch result = new Batch();
     result.setId(batch.getId());
-    result.setProductId(batch.getProduct().getId());
+    
+    if (batch.getProduct() != null) {
+      result.setProductId(batch.getProduct().getId());
+    }
 
     return result;
   }
