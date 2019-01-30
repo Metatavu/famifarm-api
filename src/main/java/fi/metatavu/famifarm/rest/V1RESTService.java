@@ -207,15 +207,15 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createSeedBatch(SeedBatch body) {
-  	String code = body.getCode();
-  	UUID seedId = body.getSeedId();
-  	OffsetDateTime time = body.getTime();
-  	
-  	fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
-  	if (seed == null) {
-  		return createNotFound("Seed not found");
-  	}
-  	
+    String code = body.getCode();
+    UUID seedId = body.getSeedId();
+    OffsetDateTime time = body.getTime();
+
+    fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
+    if (seed == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
     return createOk(seedBatchesTranslator.translateSeedBatch(seedBatchController.createSeedBatch(code, seed, time, getLoggerUserId())));
   }
 
@@ -299,11 +299,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deleteSeedBatch(UUID seedBatchId) {
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
     if (seedBatch == null) {
-    	createNotFound("Seed batch not found");
+      createNotFound("Seed batch not found");
     }
-    
+
     seedBatchController.deleteSeedBatch(seedBatch);
-    
+
     return createNoContent();
   }
 
@@ -387,11 +387,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response findSeedBatch(UUID seedBatchId) {
-  	fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
-  	if(seedBatch == null) {
-  		return createNotFound("Seed batch not found");
-  	}
-  	
+    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
+    if (seedBatch == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
     return createOk(seedBatchesTranslator.translateSeedBatch(seedBatchController.findSeedBatch(seedBatchId)));
   }
 
@@ -468,11 +468,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER, Roles.WORKER})
   public Response listSeedBatches(Integer firstResult, Integer maxResults) {
-  	List<SeedBatch> result = seedBatchController.listSeedBatches(firstResult, maxResults).stream()
-        .map(seedBatchesTranslator::translateSeedBatch)
-        .collect(Collectors.toList());
-      
-      return createOk(result);
+    List<SeedBatch> result = seedBatchController.listSeedBatches(firstResult, maxResults).stream()
+        .map(seedBatchesTranslator::translateSeedBatch).collect(Collectors.toList());
+
+    return createOk(result);
   }
 
   @Override
@@ -565,14 +564,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response updateSeedBatch(SeedBatch body, UUID seedBatchId) {
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
     if (seedBatch == null) {
-    	createNotFound("Seed batch not found");
+      createNotFound(NOT_FOUND_MESSAGE);
     }
-    
+
     String code = body.getCode();
     OffsetDateTime time = body.getTime();
     UUID seedId = body.getSeedId();
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
-    
+
     return createOk(seedBatchController.updateSeedBatch(seedBatch, code, seed, time, getLoggerUserId()));
   }
 
