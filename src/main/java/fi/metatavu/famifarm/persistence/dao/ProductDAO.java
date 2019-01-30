@@ -22,8 +22,7 @@ public class ProductDAO extends AbstractDAO<Product> {
    * @return created seed
    * @param lastModifier modifier
    */
-  public Product create(UUID id, LocalizedEntry name, PackageSize defaultPackageSize, UUID creatorId,
-      UUID lastModifierId) {
+  public Product create(UUID id, LocalizedEntry name, PackageSize defaultPackageSize, UUID creatorId, UUID lastModifierId) {
     Product product = new Product();
     product.setId(id);
     product.setName(name);
