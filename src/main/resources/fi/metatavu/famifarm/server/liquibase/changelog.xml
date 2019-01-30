@@ -194,4 +194,27 @@
     </createTable>
   </changeSet>
   
+  <changeSet id="productionline" author="ville.koivukangas">
+    <createTable tableName="productionline">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="linenumber" type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
 </databaseChangeLog>

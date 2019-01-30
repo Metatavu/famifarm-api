@@ -12,9 +12,7 @@ import org.json.JSONException;
 import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.client.PackageSizesApi;
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.PackageSize;
-import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource<PackageSize, PackageSizesApi> {
