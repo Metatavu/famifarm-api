@@ -7,10 +7,10 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+import fi.metatavu.famifarm.client.model.Batch;
 import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.Product;
-import fi.metatavu.famifarm.client.model.Batch;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 /**

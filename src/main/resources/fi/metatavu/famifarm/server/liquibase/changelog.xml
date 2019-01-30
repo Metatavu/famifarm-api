@@ -101,7 +101,7 @@
       <column name="code" type="varchar(191)">
         <constraints nullable="false"/>
       </column>
-      <column name="seed_id" type="varchar(191)">
+      <column name="seed_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_SEEDBATCH_SEED_ID" referencedColumnNames="id" referencedTableName="seed"/>
       </column>
       <column name="time" type="timestamp">
@@ -153,7 +153,7 @@
       <column name="name_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_PRODUCT_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
       </column>
-      <column name="defaultpackagesize_id" type="varchar(191)">
+      <column name="defaultpackagesize_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_PRODUCT_PACKAGESIZE_ID" referencedColumnNames="id" referencedTableName="packagesize"/>
       </column>
       <column name="creatorid" type="binary(16)">
@@ -178,6 +178,29 @@
       </column>
       <column name="product_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_BATCH_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
+  <changeSet id="productionline" author="ville.koivukangas">
+    <createTable tableName="productionline">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="linenumber" type="INT">
+        <constraints nullable="false"/>
       </column>
       <column name="creatorid" type="binary(16)">
         <constraints nullable="false"/>

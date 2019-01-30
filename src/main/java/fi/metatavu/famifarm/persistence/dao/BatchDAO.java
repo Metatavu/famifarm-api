@@ -2,8 +2,8 @@ package fi.metatavu.famifarm.persistence.dao;
 
 import java.util.UUID;
 
-import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 
 /**
  * DAO class for batches

@@ -3,7 +3,6 @@ package fi.metatavu.famifarm.rest.translate;
 import javax.enterprise.context.ApplicationScoped;
 
 import fi.metatavu.famifarm.rest.model.Product;
-import fi.metatavu.famifarm.rest.model.WastageReason;
 
 /**
  * Translator for products

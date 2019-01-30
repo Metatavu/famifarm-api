@@ -11,10 +11,14 @@ addons:
     - api-itest.famifarm.fi
   sonarcloud:
     organization: "metatavu-oy"
-          
+  mariadb: '10.3'
+
 install: true
     
 before_script:
+  - echo -e "[mysqld]\nlower-case-table-names = 1" | sudo tee -a /etc/mysql/my.cnf
+  - sudo service mysql restart
+  - mysql -u root < scripts/setup-db.sql
   - scripts/start-keycloak.sh
 
 script:

@@ -12,8 +12,8 @@ import org.json.JSONException;
 import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.client.BatchesApi;
-import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.client.model.Batch;
+import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 /**
