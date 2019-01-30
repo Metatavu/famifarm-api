@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.rest;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -15,7 +16,11 @@ import javax.ws.rs.core.Response;
 import org.jboss.ejb3.annotation.SecurityDomain;
 
 import fi.metatavu.famifarm.authentication.Roles;
+import fi.metatavu.famifarm.batches.BatchController;
+import fi.metatavu.famifarm.packagesizes.PackageSizeController;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
+import fi.metatavu.famifarm.productionlines.ProductionLineController;
+import fi.metatavu.famifarm.products.ProductController;
 import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.Batch;
 import fi.metatavu.famifarm.rest.model.Event;
@@ -27,9 +32,15 @@ import fi.metatavu.famifarm.rest.model.Seed;
 import fi.metatavu.famifarm.rest.model.SeedBatch;
 import fi.metatavu.famifarm.rest.model.Team;
 import fi.metatavu.famifarm.rest.model.WastageReason;
+import fi.metatavu.famifarm.rest.translate.BatchTranslator;
+import fi.metatavu.famifarm.rest.translate.PackageSizeTranslator;
+import fi.metatavu.famifarm.rest.translate.ProductionLineTranslator;
+import fi.metatavu.famifarm.rest.translate.ProductsTranslator;
+import fi.metatavu.famifarm.rest.translate.SeedBatchTranslator;
 import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
 import fi.metatavu.famifarm.rest.translate.TeamsTranslator;
 import fi.metatavu.famifarm.rest.translate.WastageReasonsTranslator;
+import fi.metatavu.famifarm.seedbatches.SeedBatchesController;
 import fi.metatavu.famifarm.seeds.SeedsController;
 import fi.metatavu.famifarm.teams.TeamsController;
 import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
@@ -64,6 +75,36 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Inject
   private WastageReasonsTranslator wastageReasonsTranslator;
+  
+  @Inject
+  private SeedBatchesController seedBatchController;
+  
+  @Inject 
+  private SeedBatchTranslator seedBatchesTranslator;
+  
+  @Inject 
+  private PackageSizeTranslator packageSizeTranslator;
+  
+  @Inject 
+  private PackageSizeController packageSizeController;
+  
+  @Inject 
+  private ProductController productController;
+  
+  @Inject 
+  private ProductsTranslator productsTranslator;
+  
+  @Inject 
+  private BatchTranslator batchTranslator;
+  
+  @Inject 
+  private BatchController batchController;
+  
+  @Inject 
+  private ProductionLineController productionLineController;
+  
+  @Inject 
+  private ProductionLineTranslator productionLineTranslator;
 
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
@@ -123,9 +164,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createBatch(Batch body) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
+    if (product == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(batchTranslator.translateBatch(batchController.createBatch(product, getLoggerUserId())));
   }
 
   @Override
@@ -135,9 +181,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createPackageSize(PackageSize body) {
-    // TODO Auto-generated method stub
-    return null;
+    String name = body.getName();
+    return createOk(packageSizeTranslator.translatePackageSize(packageSizeController.createPackageSize(name, getLoggerUserId())));
   }
 
   @Override
@@ -147,21 +194,39 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createProduct(Product body) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getDefaultPackageSize());
+    if (packageSize == null) {
+      createNotFound("Package size not found");
+    }
+    
+    LocalizedEntry name = createLocalizedEntry(body.getName());
+    
+    return createOk(productsTranslator.translateProduct(productController.createProduct(name, packageSize, getLoggerUserId())));
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createProductionLine(ProductionLine body) {
-    // TODO Auto-generated method stub
-    return null;
+    Integer lineNumber = body.getLineNumber();
+    
+    return createOk(productionLineTranslator.translateProductionLine(productionLineController.createProductionLine(lineNumber, getLoggerUserId())));
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createSeedBatch(SeedBatch body) {
-    // TODO Auto-generated method stub
-    return null;
+    String code = body.getCode();
+    UUID seedId = body.getSeedId();
+    OffsetDateTime time = body.getTime();
+
+    fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
+    if (seed == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    return createOk(seedBatchesTranslator.translateSeedBatch(seedBatchController.createSeedBatch(code, seed, time, getLoggerUserId())));
   }
 
   @Override
@@ -183,9 +248,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deleteBatch(UUID batchId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(batchId);
+    if (batch == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    batchController.deleteBatch(batch);
+    
+    return createNoContent();
   }
 
   @Override
@@ -195,9 +267,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deletePackageSize(UUID packageSizeId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(packageSizeId);
+    if (packageSize == null) {
+      createNotFound("Package size not found");
+    }
+    
+    packageSizeController.deletePackageSize(packageSize);
+    
+    return createNoContent();
   }
 
   @Override
@@ -207,21 +286,42 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deleteProduct(UUID productId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(productId);
+    if (product == null) {
+      return createNotFound("Product not found");
+    }
+    
+    productController.deleteProduct(product);
+    
+    return createNoContent();
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deleteProductionLine(UUID productionLineId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(productionLineId);
+    if (productionLine == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    productionLineController.deleteProductionLine(productionLine);
+    
+    return createNoContent();
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deleteSeedBatch(UUID seedBatchId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
+    if (seedBatch == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    seedBatchController.deleteSeedBatch(seedBatch);
+
+    return createNoContent();
   }
 
   @Override
@@ -251,9 +351,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response findBatch(UUID batchId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(batchId);
+    if (batch == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(batchTranslator.translateBatch(batch));
   }
 
   @Override
@@ -263,9 +368,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response findPackageSize(UUID packageSizeId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(packageSizeId);
+    if (packageSize == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(packageSizeTranslator.translatePackageSize(packageSize));
   }
 
   @Override
@@ -275,21 +385,36 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response findProduct(UUID productId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(productId);
+    if (product == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(productsTranslator.translateProduct(product));
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response findProductionLine(UUID productionLineId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(productionLineId);
+    if (productionLine == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(productionLineTranslator.translateProductionLine(productionLine));
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response findSeedBatch(UUID seedBatchId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
+    if (seedBatch == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    return createOk(seedBatchesTranslator.translateSeedBatch(seedBatchController.findSeedBatch(seedBatchId)));
   }
 
   @Override
@@ -315,9 +440,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  public Response listBatches(Integer maxResult) {
-    // TODO Auto-generated method stub
-    return null;
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
+  public Response listBatches(Integer firstResult, Integer maxResult) {
+    List<Batch> result = batchController.listBatches(firstResult, maxResult).stream()
+        .map(batchTranslator::translateBatch)
+        .collect(Collectors.toList());
+      
+    return createOk(result);
   }
 
   @Override
@@ -327,9 +456,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response listPackageSizes(Integer firstResult, Integer maxResults) {
-    // TODO Auto-generated method stub
-    return null;
+    List<PackageSize> result = packageSizeController.listPackageSizes(firstResult, maxResults).stream()
+        .map(packageSizeTranslator::translatePackageSize)
+        .collect(Collectors.toList());
+      
+    return createOk(result);
   }
 
   @Override
@@ -339,21 +472,32 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response listProductionLines(Integer firstResult, Integer maxResults) {
-    // TODO Auto-generated method stub
-    return null;
+    List<ProductionLine> result = productionLineController.listProductionLines(firstResult, maxResults).stream()
+        .map(productionLineTranslator::translateProductionLine)
+        .collect(Collectors.toList());
+      
+    return createOk(result);
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response listProducts(Integer firstResult, Integer maxResults) {
-    // TODO Auto-generated method stub
-    return null;
+    List<Product> result = productController.listProducts(firstResult, maxResults).stream()
+        .map(productsTranslator::translateProduct)
+        .collect(Collectors.toList());
+      
+    return createOk(result);
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER, Roles.WORKER})
   public Response listSeedBatches(Integer firstResult, Integer maxResults) {
-    // TODO Auto-generated method stub
-    return null;
+    List<SeedBatch> result = seedBatchController.listSeedBatches(firstResult, maxResults).stream()
+        .map(seedBatchesTranslator::translateSeedBatch).collect(Collectors.toList());
+
+    return createOk(result);
   }
 
   @Override
@@ -377,9 +521,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updateBatch(Batch body, UUID batchId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(batchId);
+    if (batch == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
+    if (product == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(batchController.updateBatch(batch, product, getLoggerUserId()));
   }
 
   @Override
@@ -389,9 +543,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updatePackageSize(PackageSize body, UUID packageSizeId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(packageSizeId);
+    if (packageSize == null) {
+      return createNotFound("Package size not found");
+    }
+    
+    String name = body.getName();
+    
+    return createOk(packageSizeTranslator.translatePackageSize(packageSizeController.updatePackageSize(packageSize, name, getLoggerUserId())));
   }
 
   @Override
@@ -401,21 +562,50 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updateProduct(Product body, UUID productId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(productId);
+    if (product == null) {
+      return createNotFound("Product not found");
+    }
+    
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getDefaultPackageSize());
+    if (packageSize == null) {
+      createNotFound("Package size not found");
+    }
+    
+    LocalizedEntry name = createLocalizedEntry(body.getName());
+    
+    return createOk(productsTranslator.translateProduct(productController.updateProduct(product, name, packageSize, getLoggerUserId())));
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updateProductionLine(ProductionLine body, UUID productionLineId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(productionLineId);
+    if (productionLine == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    Integer lineNumber = body.getLineNumber();
+    
+    return createOk(productionLineTranslator.translateProductionLine(productionLineController.updateProductionLine(productionLine, lineNumber, getLoggerUserId())));
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updateSeedBatch(SeedBatch body, UUID seedBatchId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
+    if (seedBatch == null) {
+      createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    String code = body.getCode();
+    OffsetDateTime time = body.getTime();
+    UUID seedId = body.getSeedId();
+    fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
+
+    return createOk(seedBatchController.updateSeedBatch(seedBatch, code, seed, time, getLoggerUserId()));
   }
 
   @Override
