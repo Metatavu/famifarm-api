@@ -36,31 +36,9 @@ public class EventTestsIT {
       assertNotNull(createSowingEvent(builder));
     }
   }
-
-  @Test
-  public void testCreateSowingEventPermissions() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
-      LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
-      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      
-      Batch batch = builder.admin().batches().create(product);
-      OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
-      OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-      Double amount = 12d;
-      CellType cellType = CellType.LARGE;
-      Integer gutterNumber = 2;
-      ProductionLine productionLine = builder.admin().productionLines().create(4);
-      SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
-      
-      builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
-      builder.invalid().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
-    }
-  }
   
   @Test
-  public void testFindEvent() throws Exception {
+  public void testFindSowingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createSowingEvent(builder);
       builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
@@ -71,38 +49,12 @@ public class EventTestsIT {
   }
   
   @Test
-  public void testFindEventPermissions() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      Event event = createSowingEvent(builder);
-      
-      assertNotNull(builder.admin().events().findEvent(event.getId()));
-      assertNotNull(builder.manager().events().findEvent(event.getId()));
-      assertNotNull(builder.worker1().events().findEvent(event.getId()));
-      builder.invalid().seeds().assertFindFailStatus(401, event.getId());
-      builder.anonymous().seeds().assertFindFailStatus(401, event.getId());
-    }
-  }
-  
-  @Test
   public void testListEvents() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       createSowingEvent(builder);
       builder.admin().events().assertCount(1);
       createSowingEvent(builder);
       builder.admin().events().assertCount(2);
-    }
-  }
-  
-  @Test
-  public void testListSeedPermissions() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      createSowingEvent(builder);
-      
-      builder.worker1().events().assertCount(1);
-      builder.manager().events().assertCount(1);
-      builder.admin().events().assertCount(1);
-      builder.invalid().events().assertListFailStatus(401);
-      builder.anonymous().events().assertListFailStatus(401);
     }
   }
   
@@ -148,15 +100,6 @@ public class EventTestsIT {
   }
   
   @Test
-  public void testUpdateEventPermissions() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      Event event = createSowingEvent(builder);
-      builder.anonymous().events().assertUpdateFailStatus(401, event);
-      builder.invalid().events().assertUpdateFailStatus(401, event);
-    }
-  }
-  
-  @Test
   public void testDeleteSowingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createSowingEvent(builder);
@@ -173,6 +116,63 @@ public class EventTestsIT {
       Event createdEvent = createSowingEvent(builder);
       builder.anonymous().events().assertDeleteFailStatus(401, createdEvent);
       builder.invalid().events().assertDeleteFailStatus(401, createdEvent);
+    }
+  }
+  
+  @Test
+  public void testUpdateEventPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event event = createSowingEvent(builder);
+      builder.anonymous().events().assertUpdateFailStatus(401, event);
+      builder.invalid().events().assertUpdateFailStatus(401, event);
+    }
+  }
+  
+  @Test
+  public void testListSeedPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      createSowingEvent(builder);
+      
+      builder.worker1().events().assertCount(1);
+      builder.manager().events().assertCount(1);
+      builder.admin().events().assertCount(1);
+      builder.invalid().events().assertListFailStatus(401);
+      builder.anonymous().events().assertListFailStatus(401);
+    }
+  }
+  
+  @Test
+  public void testFindEventPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event event = createSowingEvent(builder);
+      
+      assertNotNull(builder.admin().events().findEvent(event.getId()));
+      assertNotNull(builder.manager().events().findEvent(event.getId()));
+      assertNotNull(builder.worker1().events().findEvent(event.getId()));
+      builder.invalid().seeds().assertFindFailStatus(401, event.getId());
+      builder.anonymous().seeds().assertFindFailStatus(401, event.getId());
+    }
+  }
+
+  @Test
+  public void testCreateEventPermissions() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+      Product product = builder.admin().products().create(name, createdPackageSize);
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+      
+      Batch batch = builder.admin().batches().create(product);
+      OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+      Double amount = 12d;
+      CellType cellType = CellType.LARGE;
+      Integer gutterNumber = 2;
+      ProductionLine productionLine = builder.admin().productionLines().create(4);
+      SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
+      
+      builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
+      builder.invalid().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
     }
   }
 
