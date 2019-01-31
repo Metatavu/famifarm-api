@@ -55,8 +55,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setEndTime(endTime);
     event.setStartTime(startTime);
     event.setType(TypeEnum.SOWING);
-    event.setUserId(UUID.randomUUID());
-
+    
     return addClosable(getApi().createEvent(event));
   }
   
@@ -121,7 +120,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
       event.setEndTime(endTime);
       event.setStartTime(startTime);
       event.setType(TypeEnum.SOWING);
-      event.setUserId(UUID.randomUUID());
+      
+      getApi().createEvent(event);
       
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {

@@ -494,9 +494,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response listEvents(Integer firstResult, Integer maxResults) {
-    // TODO Auto-generated method stub
-    return null;
+    List<Event> result = eventController.listEvents(firstResult, maxResults).stream()
+      .map(this::translateEvent)
+      .collect(Collectors.toList());
+    
+    return createOk(result);
   }
 
   @Override
@@ -581,6 +585,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response updateEvent(Event body, UUID eventId) {
     fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
     if (event == null) {

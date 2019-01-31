@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.events;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -27,6 +28,17 @@ public class EventController {
    */
   public Event findEventById(UUID id) {
     return eventDAO.findById(id);
+  }
+  
+  /**
+   * Lists events
+   * 
+   * @param firstResult first result
+   * @param maxResults max results
+   * @return list events
+   */
+  public List<Event> listEvents(Integer firstResult, Integer maxResults) {
+    return eventDAO.listAll(firstResult, maxResults);
   }
 
   /**
