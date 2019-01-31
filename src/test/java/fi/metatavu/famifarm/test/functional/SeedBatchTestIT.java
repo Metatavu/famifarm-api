@@ -17,7 +17,7 @@ public class SeedBatchTestIT {
   public void testCreateSeedBatch() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      SeedBatch seedBatch = builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
+      SeedBatch seedBatch = builder.admin().seedBatches().create("code", seed, OffsetDateTime.now());
       assertNotNull(seedBatch);
     }
   }
@@ -27,7 +27,7 @@ public class SeedBatchTestIT {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().seedBatches().assertFindFailStatus(404, UUID.randomUUID());
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      SeedBatch createdSeedBatch = builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
+      SeedBatch createdSeedBatch = builder.admin().seedBatches().create("code", seed, OffsetDateTime.now());
       SeedBatch foundSeedBatch = builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId());
       assertEquals(createdSeedBatch.getId(), foundSeedBatch.getId());
       builder.admin().seedBatches().assertSeedBatchesEqual(createdSeedBatch, foundSeedBatch);
@@ -41,9 +41,9 @@ public class SeedBatchTestIT {
 
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
 
-      builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
+      builder.admin().seedBatches().create("code", seed, OffsetDateTime.now());
       builder.admin().seedBatches().assertCount(1);
-      builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
+      builder.admin().seedBatches().create("code", seed, OffsetDateTime.now());
       builder.admin().seedBatches().assertCount(2);
     }
   }
@@ -52,7 +52,7 @@ public class SeedBatchTestIT {
   public void testUpdateSeedBatch() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      SeedBatch createdSeedBatch = builder.admin().seedBatches().create("code", seed.getId(), OffsetDateTime.now());
+      SeedBatch createdSeedBatch = builder.admin().seedBatches().create("code", seed, OffsetDateTime.now());
       builder.admin().seedBatches().assertSeedBatchesEqual(createdSeedBatch, builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId()));
 
       SeedBatch updatedSeedBatch = new SeedBatch();
