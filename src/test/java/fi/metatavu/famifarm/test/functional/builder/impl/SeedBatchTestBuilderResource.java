@@ -13,6 +13,7 @@ import org.json.JSONException;
 import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.client.SeedBatchesApi;
+import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -36,12 +37,13 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    * Creates new seed batch
    * 
    * @param name name
+   * @param seed seed
    * @return created seed
    */
-  public SeedBatch create(String code, UUID seedId, OffsetDateTime time) {
+  public SeedBatch create(String code, Seed seed, OffsetDateTime time) {
     SeedBatch seedBatch = new SeedBatch();
     seedBatch.setCode(code);
-    seedBatch.setSeedId(seedId);
+    seedBatch.setSeedId(seed != null ? seed.getId() : null);
     seedBatch.setTime(time);
     return addClosable(getApi().createSeedBatch(seedBatch));
   }

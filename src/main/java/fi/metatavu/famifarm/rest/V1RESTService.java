@@ -12,17 +12,22 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.jboss.ejb3.annotation.SecurityDomain;
 
 import fi.metatavu.famifarm.authentication.Roles;
 import fi.metatavu.famifarm.batches.BatchController;
+import fi.metatavu.famifarm.events.EventController;
+import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.packagesizes.PackageSizeController;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
+import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.productionlines.ProductionLineController;
 import fi.metatavu.famifarm.products.ProductController;
 import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.Batch;
+import fi.metatavu.famifarm.rest.model.CellType;
 import fi.metatavu.famifarm.rest.model.Event;
 import fi.metatavu.famifarm.rest.model.PackageSize;
 import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
@@ -30,6 +35,7 @@ import fi.metatavu.famifarm.rest.model.Product;
 import fi.metatavu.famifarm.rest.model.ProductionLine;
 import fi.metatavu.famifarm.rest.model.Seed;
 import fi.metatavu.famifarm.rest.model.SeedBatch;
+import fi.metatavu.famifarm.rest.model.SowingEventData;
 import fi.metatavu.famifarm.rest.model.Team;
 import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.BatchTranslator;
@@ -38,6 +44,7 @@ import fi.metatavu.famifarm.rest.translate.ProductionLineTranslator;
 import fi.metatavu.famifarm.rest.translate.ProductsTranslator;
 import fi.metatavu.famifarm.rest.translate.SeedBatchTranslator;
 import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
+import fi.metatavu.famifarm.rest.translate.SowingEventTranslator;
 import fi.metatavu.famifarm.rest.translate.TeamsTranslator;
 import fi.metatavu.famifarm.rest.translate.WastageReasonsTranslator;
 import fi.metatavu.famifarm.seedbatches.SeedBatchesController;
@@ -105,6 +112,15 @@ public class V1RESTService extends AbstractApi implements V1Api {
   
   @Inject 
   private ProductionLineTranslator productionLineTranslator;
+
+  @Inject 
+  private SowingEventTranslator sowingEventTranslator;
+
+  @Inject 
+  private SowingEventController sowingEventController;
+  
+  @Inject 
+  private EventController eventController;
 
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
@@ -176,10 +192,22 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   public Response createEvent(Event body) {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(body.getBatchId());
+    if (batch == null) {
+      return createBadRequest("Could not find specified batch");
+    }
 
+    OffsetDateTime startTime = body.getStartTime();
+    OffsetDateTime endTime = body.getEndTime();
+    
+    switch (body.getType()) {
+      case SOWING:
+        return createSowingEvent(batch, startTime, endTime, (SowingEventData) body.getData());
+      default:
+        return Response.status(Status.NOT_IMPLEMENTED).build();
+    }
+  }
+  
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createPackageSize(PackageSize body) {
@@ -262,8 +290,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   public Response deleteEvent(UUID eventId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
+    if (event != null) {
+      return createNotFound(String.format("Could not find event %s", eventId));
+    }
+    
+    eventController.deleteEvent(event);
+    
+    return createNoContent();
   }
 
   @Override
@@ -363,8 +397,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   public Response findEvent(UUID eventId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
+    if (event != null) {
+      return createNotFound(String.format("Could not find event %s", eventId));
+    }
+    
+    return createOk(translateEvent(event));
   }
 
   @Override
@@ -438,7 +476,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     
     return createOk(wastageReasonsTranslator.translateWastageReason(wastageReason));
   }
-
+  
   @Override
   @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response listBatches(Integer firstResult, Integer maxResult) {
@@ -634,6 +672,36 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID loggerUserId = getLoggerUserId();
     
     return createOk(wastageReasonsTranslator.translateWastageReason(wastageReasonsController.updateWastageReason(wastageReason, reason, loggerUserId)));
+  }
+  
+  private Event translateEvent(fi.metatavu.famifarm.persistence.model.Event event) {
+    switch (event.getType()) {
+      case SOWING:
+        return sowingEventTranslator.translateEvent((SowingEvent) event);
+      default:
+      break;
+    }
+  
+    return null;
+  }
+
+  /**
+   * Creates new sowing event
+   * 
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventData event data
+   * @return response
+   */
+  private Response createSowingEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, SowingEventData eventData) {
+    UUID creatorId = getLoggerUserId();
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
+    Integer gutterNumber = eventData.getGutterNumber();
+    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(eventData.getSeedBatchId());
+    CellType cellType = eventData.getCellType();
+    Double amount = eventData.getAmount();    
+    return createOk(sowingEventTranslator.translateEvent(sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId)));
   }
   
 }

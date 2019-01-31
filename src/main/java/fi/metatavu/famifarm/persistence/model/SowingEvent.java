@@ -1,5 +1,7 @@
 package fi.metatavu.famifarm.persistence.model;
 
+import java.beans.Transient;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import fi.metatavu.famifarm.rest.model.CellType;
+import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
 
 /**
  * JPA entity for sowing event
@@ -75,5 +78,11 @@ public class SowingEvent extends Event {
   public void setAmount(Double amount) {
     this.amount = amount;
   }  
-  
+
+  @Transient
+  @Override
+  public TypeEnum getType() {
+    return TypeEnum.SOWING;
+  }
+
 }

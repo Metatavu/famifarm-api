@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.persistence.model;
 
+import java.beans.Transient;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -16,6 +17,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
 
 /**
  * JPA base class for all event entities
@@ -118,6 +121,11 @@ public class Event {
 
   public void setModifiedAt(OffsetDateTime modifiedAt) {
     this.modifiedAt = modifiedAt;
+  }
+  
+  @Transient
+  public TypeEnum getType() {
+    return null;
   }
 
   @PrePersist
