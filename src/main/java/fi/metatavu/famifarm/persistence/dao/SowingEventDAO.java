@@ -52,6 +52,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
   /**
    * Updates productionLine
    *
+   * @param sowingEvent event to be updated
    * @param productionLine productionLine
    * @param lastModifier modifier
    * @return updated sowingEvent
@@ -65,6 +66,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
   /**
    * Updates gutterNumber
    *
+   * @param sowingEvent event to be updated
    * @param gutterNumber gutterNumber
    * @param lastModifier modifier
    * @return updated sowingEvent
@@ -91,6 +93,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
   /**
    * Updates cellType
    *
+   * @param sowingEvent event to be updated
    * @param cellType cellType
    * @param lastModifier modifier
    * @return updated sowingEvent
@@ -104,6 +107,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
   /**
    * Updates amount
    *
+   * @param sowingEvent event to be updated
    * @param amount amount
    * @param lastModifier modifier
    * @return updated sowingEvent

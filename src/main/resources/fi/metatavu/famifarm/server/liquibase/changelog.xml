@@ -259,7 +259,9 @@
       <column name="celltype" type="varchar(191)">
         <constraints nullable="false"/>
       </column>
-      <column name="amount" type="double"/>
+      <column name="amount" type="double">
+        <constraints nullable="false"/>
+      </column>
     </createTable>
   </changeSet>
 

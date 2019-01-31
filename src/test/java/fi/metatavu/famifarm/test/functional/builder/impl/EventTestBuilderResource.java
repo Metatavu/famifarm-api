@@ -109,8 +109,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param productionLine production line
    * @param seedBatch seed batch
    */
-  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double amount, CellType cellType, Integer gutterNumber, ProductionLine productionLine, SeedBatch seedBatch) 
-  {
+  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double amount, CellType cellType, Integer gutterNumber, ProductionLine productionLine, SeedBatch seedBatch) {
     try {
       SowingEventData data = createSowingEventData(amount, cellType, gutterNumber, productionLine, seedBatch);
       
@@ -133,6 +132,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Asserts find status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param eventId event id
    */
   public void assertFindFailStatus(int expectedStatus, UUID eventId) {
     try {
@@ -147,6 +147,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Asserts update status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param event event
    */
   public void assertUpdateFailStatus(int expectedStatus, Event event) {
     try {
@@ -161,6 +162,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Asserts delete status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param event event
    */
   public void assertDeleteFailStatus(int expectedStatus, Event event) {
     try {
