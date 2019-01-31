@@ -239,5 +239,53 @@
       </column>
     </createTable>
   </changeSet>
-  
+      
+  <changeSet id="event" author="antti.leppa">
+    <createTable tableName="event">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="batch_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_EVENT_BATCH_ID" referencedColumnNames="id" referencedTableName="batch"/>
+      </column>
+      <column name="starttime" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="endtime" type="timestamp"/>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+      
+  <changeSet id="sowingevent" author="antti.leppa">
+    <createTable tableName="sowingevent">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_SOWINGEVENT_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="seedbatch_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_SOWINGEVENT_SEEDBATCH_ID" referencedColumnNames="id" referencedTableName="seedbatch"/>
+      </column>
+      <column name="productionline_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_SOWINGEVENT_PRODUCTIONLINE_ID" referencedColumnNames="id" referencedTableName="productionline"/>
+      </column>
+      <column name="gutternumber" type="integer"/>
+      <column name="celltype" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="amount" type="double">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+      
 </databaseChangeLog>

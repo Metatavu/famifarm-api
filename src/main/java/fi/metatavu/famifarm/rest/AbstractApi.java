@@ -63,6 +63,37 @@ public abstract class AbstractApi {
   }
   
   /**
+   * Constructs bad request response
+   * 
+   * @param message message
+   * @return response
+   */
+  protected Response createBadRequest(String message) {
+    ErrorResponse entity = new ErrorResponse();
+    entity.setMessage(message);
+    return Response
+      .status(Response.Status.BAD_REQUEST)
+      .entity(entity)
+      .build();
+  }
+  
+  /**
+   * Constructs internal server error response
+   * 
+   * @param message message
+   * @return response
+   */
+  protected Response createInternalServerError(String message) {
+    ErrorResponse entity = new ErrorResponse();
+    entity.setMessage(message);
+    return Response
+      .status(Response.Status.INTERNAL_SERVER_ERROR)
+      .entity(entity)
+      .build();
+  }
+  
+  
+  /**
    * Constructs ok response
    * 
    * @param entity payload
