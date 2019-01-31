@@ -55,7 +55,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setEndTime(endTime);
     event.setStartTime(startTime);
     event.setType(TypeEnum.SOWING);
-    
+    event.setUserId(UUID.randomUUID());
+
     return addClosable(getApi().createEvent(event));
   }
   
@@ -120,6 +121,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
       event.setEndTime(endTime);
       event.setStartTime(startTime);
       event.setType(TypeEnum.SOWING);
+      event.setUserId(UUID.randomUUID());
       
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
@@ -191,7 +193,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @throws JSONException thrown when JSON serialization error occurs
    * @throws IOException thrown when IO Exception occurs
    */
-  public void assertEventEqual(Event expected, Event actual) throws IOException, JSONException {
+  public void assertEventsEqual(Event expected, Event actual) throws IOException, JSONException {
     assertJsonsEqual(expected, actual);
   }
 

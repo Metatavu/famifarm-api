@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.rest;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.ejb3.annotation.SecurityDomain;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.metatavu.famifarm.authentication.Roles;
 import fi.metatavu.famifarm.batches.BatchController;
@@ -191,6 +194,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response createEvent(Event body) {
     fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(body.getBatchId());
     if (batch == null) {
@@ -202,7 +206,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     
     switch (body.getType()) {
       case SOWING:
-        return createSowingEvent(batch, startTime, endTime, (SowingEventData) body.getData());
+        return createSowingEvent(batch, startTime, endTime, body.getData());
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -289,9 +293,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deleteEvent(UUID eventId) {
     fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
-    if (event != null) {
+    if (event == null) {
       return createNotFound(String.format("Could not find event %s", eventId));
     }
     
@@ -396,9 +401,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response findEvent(UUID eventId) {
     fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
-    if (event != null) {
+    if (event == null) {
       return createNotFound(String.format("Could not find event %s", eventId));
     }
     
@@ -576,8 +582,25 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   public Response updateEvent(Event body, UUID eventId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
+    if (event == null) {
+      return createNotFound(String.format("Could not find event %s", eventId));
+    }
+    
+    fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(body.getBatchId());
+    if (batch == null) {
+      return createBadRequest("Could not find specified batch");
+    }
+
+    OffsetDateTime startTime = body.getStartTime();
+    OffsetDateTime endTime = body.getEndTime();
+    
+    switch (body.getType()) {
+      case SOWING:
+        return updateSowingEvent(event, batch, startTime, endTime, body.getData());
+      default:
+        return Response.status(Status.NOT_IMPLEMENTED).build();
+    }
   }
 
   @Override
@@ -694,7 +717,15 @@ public class V1RESTService extends AbstractApi implements V1Api {
    * @param eventData event data
    * @return response
    */
-  private Response createSowingEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, SowingEventData eventData) {
+  private Response createSowingEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    SowingEventData eventData;
+    
+    try {
+      eventData = readEventData(SowingEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
     Integer gutterNumber = eventData.getGutterNumber();
@@ -702,6 +733,33 @@ public class V1RESTService extends AbstractApi implements V1Api {
     CellType cellType = eventData.getCellType();
     Double amount = eventData.getAmount();    
     return createOk(sowingEventTranslator.translateEvent(sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId)));
+  }
+  
+  private Response updateSowingEvent(fi.metatavu.famifarm.persistence.model.Event event, fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    SowingEventData eventData;
+    
+    try {
+      eventData = readEventData(SowingEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    UUID creatorId = getLoggerUserId();
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
+    Integer gutterNumber = eventData.getGutterNumber();
+    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(eventData.getSeedBatchId());
+    CellType cellType = eventData.getCellType();
+    Double amount = eventData.getAmount();    
+    return createOk(sowingEventTranslator.translateEvent(sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId)));
+  }
+  
+  private <D> D readEventData(Class<D> targetClass, Object object) throws IOException {
+    if (object == null) {
+      return null;
+    }
+    
+    ObjectMapper objectMapper = new ObjectMapper();
+    return objectMapper.readValue(objectMapper.writeValueAsBytes(object), targetClass);
   }
   
 }

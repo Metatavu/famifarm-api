@@ -1,14 +1,18 @@
 package fi.metatavu.famifarm.test.functional;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 import org.junit.Test;
 
 import fi.metatavu.famifarm.client.model.Batch;
 import fi.metatavu.famifarm.client.model.CellType;
+import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.Product;
@@ -27,21 +31,7 @@ public class EventTestsIT {
   @Test
   public void testCreateSowingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
-      LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
-      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      
-      Batch batch = builder.admin().batches().create(product);
-      OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 7, ZoneOffset.UTC);
-      OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 7, ZoneOffset.UTC);
-      Double amount = 12d;
-      CellType cellType = CellType.LARGE;
-      Integer gutterNumber = 2;
-      ProductionLine productionLine = builder.admin().productionLines().create(4);
-      SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
-      
-      assertNotNull(builder.admin().events().createSowing(batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch));
+      assertNotNull(createSowingEvent(builder));
     }
   }
 //
@@ -53,17 +43,17 @@ public class EventTestsIT {
 //      builder.invalid().seeds().assertCreateFailStatus(401, builder.createLocalizedEntry("Rocket", "Rucola"));
 //    }
 //  }
-//  
-//  @Test
-//  public void testFindSeed() throws Exception {
-//    try (TestBuilder builder = new TestBuilder()) {
-//      builder.admin().seeds().assertFindFailStatus(404, UUID.randomUUID());
-//      Seed createdSeed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-//      Seed foundSeed = builder.admin().seeds().findSeed(createdSeed.getId());
-//      assertEquals(createdSeed.getId(), foundSeed.getId());
-//      builder.admin().seeds().assertSeedsEqual(createdSeed, foundSeed);
-//    }
-//  }
+  
+  @Test
+  public void testFindSowingEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      Event createdEvent = createSowingEvent(builder);
+      Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
+      assertEquals(createdEvent.getId(), foundEvent.getId());
+      builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
+    }
+  }
 //  
 //  @Test
 //  public void testFindSeedPermissions() throws Exception {
@@ -145,5 +135,23 @@ public class EventTestsIT {
 //      builder.invalid().seeds().assertDeleteFailStatus(401, seed);
 //    }
 //  }
+
+  private Event createSowingEvent(TestBuilder builder) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+    LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+    Product product = builder.admin().products().create(name, createdPackageSize);
+    Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+    
+    Batch batch = builder.admin().batches().create(product);
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+    Double amount = 12d;
+    CellType cellType = CellType.LARGE;
+    Integer gutterNumber = 2;
+    ProductionLine productionLine = builder.admin().productionLines().create(4);
+    SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
+    
+    return builder.admin().events().createSowing(batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
+  }
   
 }
