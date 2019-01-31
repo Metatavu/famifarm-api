@@ -217,4 +217,27 @@
     </createTable>
   </changeSet>
   
+  <changeSet id="performedcultivationaction" author="ville.koivukangas">
+    <createTable tableName="performedcultivationaction">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="name_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_PERFORMEDCULTIVATIONACTION_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
 </databaseChangeLog>
