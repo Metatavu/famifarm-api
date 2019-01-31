@@ -161,7 +161,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     return performedCultivationActions = this.addClosable(new PerformedCultivationActionTestBuilderResource(createClient()));
   }
   
-  /
+  /*
    * Returns test builder resource for events
    * 
    * @return test builder resource for events
