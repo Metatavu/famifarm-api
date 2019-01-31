@@ -8,6 +8,7 @@ import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.test.functional.builder.impl.BatchTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.EventTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PackageSizeTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.PerformedCultivationActionTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductionLineTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.SeedBatchTestBuilderResource;
@@ -30,6 +31,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private PackageSizeTestBuilderResource packageSizes;
   private BatchTestBuilderResource batches;
   private ProductionLineTestBuilderResource productionLines;
+  private PerformedCultivationActionTestBuilderResource performedCultivationActions;
   private EventTestBuilderResource events;
   private List<AutoCloseable> closables = new ArrayList<>();
   
@@ -146,6 +148,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   }
   
   /**
+   * Returns test builder resource for performed cultivation actions
+   * 
+   * @return test builder resource for products
+   * @throws IOException thrown when authentication fails
+   */
+  public PerformedCultivationActionTestBuilderResource performedCultivationActions() throws IOException {
+    if (performedCultivationActions != null) {
+      return performedCultivationActions;
+    }
+
+    return performedCultivationActions = this.addClosable(new PerformedCultivationActionTestBuilderResource(createClient()));
+  }
+  
+  /*
    * Returns test builder resource for events
    * 
    * @return test builder resource for events

@@ -24,6 +24,7 @@ import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.packagesizes.PackageSizeController;
+import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.productionlines.ProductionLineController;
@@ -43,6 +44,7 @@ import fi.metatavu.famifarm.rest.model.Team;
 import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.BatchTranslator;
 import fi.metatavu.famifarm.rest.translate.PackageSizeTranslator;
+import fi.metatavu.famifarm.rest.translate.PerformedCultivationActionTranslator;
 import fi.metatavu.famifarm.rest.translate.ProductionLineTranslator;
 import fi.metatavu.famifarm.rest.translate.ProductsTranslator;
 import fi.metatavu.famifarm.rest.translate.SeedBatchTranslator;
@@ -112,6 +114,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   
   @Inject 
   private ProductionLineController productionLineController;
+  
+  @Inject 
+  private PerformedCultivationActionTranslator performedCultivationActionTranslator;
+  
+  @Inject 
+  private PerformedCultivationActionsController performedCultivationActionsController;
   
   @Inject 
   private ProductionLineTranslator productionLineTranslator;
@@ -220,9 +228,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createPerformedCultivationAction(PerformedCultivationAction body) {
-    // TODO Auto-generated method stub
-    return null;
+    LocalizedEntry name = createLocalizedEntry(body.getName());
+    UUID loggerUserId = getLoggerUserId();
+    
+    return createOk(performedCultivationActionTranslator.translatePerformedCultivationAction(performedCultivationActionsController.createPerformedCultivationAction(name, loggerUserId)));
   }
 
   @Override
@@ -319,9 +330,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response deletePerformedCultivationAction(UUID performedCultivationActionId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.PerformedCultivationAction performedCultivationAction = performedCultivationActionsController.findPerformedCultivationAction(performedCultivationActionId);
+    if (performedCultivationAction == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    performedCultivationActionsController.deletePerformedCultivationAction(performedCultivationAction);
+    
+    return createNoContent();
   }
 
   @Override
@@ -423,9 +441,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response findPerformedCultivationAction(UUID performedCultivationActionId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.PerformedCultivationAction performedCultivationAction = performedCultivationActionsController.findPerformedCultivationAction(performedCultivationActionId);
+    if (performedCultivationAction == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(performedCultivationActionTranslator.translatePerformedCultivationAction(performedCultivationAction));
   }
 
   @Override
@@ -514,9 +537,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response listPerformedCultivationActions(Integer firstResult, Integer maxResults) {
-    // TODO Auto-generated method stub
-    return null;
+    List<PerformedCultivationAction> result = performedCultivationActionsController.listPerformedCultivationActions(firstResult, maxResults).stream()
+        .map(performedCultivationActionTranslator::translatePerformedCultivationAction)
+        .collect(Collectors.toList());
+      
+      return createOk(result);
   }
 
   @Override
@@ -622,9 +649,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response updatePerformedCultivationAction(PerformedCultivationAction body, UUID performedCultivationActionId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.PerformedCultivationAction performedCultivationAction = performedCultivationActionsController.findPerformedCultivationAction(performedCultivationActionId);
+    if (performedCultivationAction == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    LocalizedEntry name = createLocalizedEntry(body.getName());
+    UUID loggerUserId = getLoggerUserId();
+    
+    return createOk(performedCultivationActionTranslator.translatePerformedCultivationAction(performedCultivationActionsController.updatePerformedCultivationAction(performedCultivationAction, name, loggerUserId)));
   }
 
   @Override
