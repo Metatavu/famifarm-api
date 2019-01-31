@@ -74,8 +74,8 @@ public class PerformedCultivationActionTestsIT {
       builder.worker1().performedCultivationActions().assertCount(1);
       builder.manager().performedCultivationActions().assertCount(1);
       builder.admin().performedCultivationActions().assertCount(1);
-      builder.invalid().performedCultivationActions().assertFindFailStatus(401, performedCultivationAction.getId());
-      builder.anonymous().performedCultivationActions().assertFindFailStatus(401, performedCultivationAction.getId());
+      builder.invalid().performedCultivationActions().assertListFailStatus(401);
+      builder.anonymous().performedCultivationActions().assertListFailStatus(401);
     }
   }
   
@@ -105,7 +105,7 @@ public class PerformedCultivationActionTestsIT {
   }
   
   @Test
-  public void testDeleteperformedCultivationActions() throws Exception {
+  public void testDeletePerformedCultivationActions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PerformedCultivationAction createdPerformedCultivationAction = builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"));
       PerformedCultivationAction foundPerformedCultivationAction = builder.admin().performedCultivationActions().findPerformedCultivationAction(createdPerformedCultivationAction.getId());
