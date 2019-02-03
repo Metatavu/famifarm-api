@@ -755,6 +755,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
     switch (event.getType()) {
       case SOWING:
         return sowingEventTranslator.translateEvent((SowingEvent) event);
+      case TABLE_SPREAD:
+        return tableSpreadEventTranslator.translateEvent((TableSpreadEvent) event);
       default:
       break;
     }

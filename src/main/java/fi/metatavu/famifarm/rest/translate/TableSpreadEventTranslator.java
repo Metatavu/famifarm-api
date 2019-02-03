@@ -16,7 +16,7 @@ public class TableSpreadEventTranslator extends AbstractEventTranslator<TableSpr
 
   @Override
   protected TypeEnum getType() {
-    return TypeEnum.SOWING;
+    return TypeEnum.TABLE_SPREAD;
   }
 
   @Override

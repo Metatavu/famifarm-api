@@ -20,6 +20,7 @@ import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.client.model.SowingEventData;
+import fi.metatavu.famifarm.client.model.TableSpreadEventData;
 import fi.metatavu.famifarm.client.model.Event.TypeEnum;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
@@ -34,13 +35,6 @@ public class EventTestsIT {
   public void testCreateSowingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       assertNotNull(createSowingEvent(builder));
-    }
-  }
-
-  @Test
-  public void testCreateTableSpreadEvent() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      assertNotNull(createTableSpreadEvent(builder));
     }
   }
   
@@ -108,11 +102,74 @@ public class EventTestsIT {
   }
 
   @Test
+  public void testCreateTableSpreadEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      assertNotNull(createTableSpreadEvent(builder));
+    }
+  }
+  
+  @Test
+  public void testFindTableSpreadEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createTableSpreadEvent(builder);
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
+      assertEquals(createdEvent.getId(), foundEvent.getId());
+      builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
+    }
+  }
+  
+  @Test
+  public void testUpdateTableSpreadEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createTableSpreadEvent(builder);
+      
+      builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
+      
+      PackageSize updatePackageSize = builder.admin().packageSizes().create("New Test PackageSize");
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+     
+      Batch updateBatch = builder.admin().batches().create(updateProduct);
+      OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+      String updateLocation = "updated location";
+      Integer updateTableCount = 82;
+      
+      TableSpreadEventData updateData = new TableSpreadEventData();
+      updateData.setLocation(updateLocation);
+      updateData.setTableCount(updateTableCount);
+
+      Event updateEvent = new Event(); 
+      updateEvent.setId(createdEvent.getId());
+      updateEvent.setBatchId(updateBatch.getId());
+      updateEvent.setData(updateData);
+      updateEvent.setEndTime(updateStartTime);
+      updateEvent.setStartTime(updateEndTime);
+      updateEvent.setType(createdEvent.getType());
+      updateEvent.setUserId(createdEvent.getUserId());
+      
+      builder.admin().events().updateEvent(updateEvent);
+      builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
+    }
+  }
+  
+  @Test
+  public void testDeleteTableSpreadEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event created = createTableSpreadEvent(builder);
+      Event found = builder.admin().events().findEvent(created.getId());
+      assertEquals(created.getId(), found.getId());
+      builder.admin().events().delete(created);
+      builder.admin().events().assertFindFailStatus(404, created.getId());     
+    }
+  }
+
+  @Test
   public void testListEvents() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       createSowingEvent(builder);
       builder.admin().events().assertCount(1);
-      createSowingEvent(builder);
+      createTableSpreadEvent(builder);
       builder.admin().events().assertCount(2);
     }
   }
