@@ -287,5 +287,19 @@
       </column>
     </createTable>
   </changeSet>
+  
+  <changeSet id="tablespreadevent" author="antti.leppa">
+    <createTable tableName="tablespreadevent">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_TABLESPREADEVENT_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="location" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="tablecount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
       
 </databaseChangeLog>
