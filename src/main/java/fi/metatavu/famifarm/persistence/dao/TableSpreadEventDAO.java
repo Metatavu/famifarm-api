@@ -25,6 +25,7 @@ public class TableSpreadEventDAO extends AbstractEventDAO<TableSpreadEvent> {
    * @return created tableSpreadEvent
    * @param lastModifier modifier
    */
+  @SuppressWarnings ("squid:S00107")
   public TableSpreadEvent create(UUID id, Integer tableCount, String location, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, UUID creatorId, UUID lastModifierId) {
     TableSpreadEvent tableSpreadEvent = new TableSpreadEvent();
     tableSpreadEvent.setTableCount(tableCount);

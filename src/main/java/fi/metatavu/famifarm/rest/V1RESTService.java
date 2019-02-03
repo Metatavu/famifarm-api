@@ -782,6 +782,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createInternalServerError(e.getMessage());
     }
 
+    if (eventData == null) {
+      return createInternalServerError("Failed to read event data");
+    }
+
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
     Integer gutterNumber = eventData.getGutterNumber();
@@ -798,6 +802,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       eventData = readEventData(SowingEventData.class, eventDataObject);
     } catch (IOException e) {
       return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError("Failed to read event data");
     }
 
     UUID creatorId = getLoggerUserId();
@@ -826,6 +834,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     } catch (IOException e) {
       return createInternalServerError(e.getMessage());
     }
+    
+    if (eventData == null) {
+      return createInternalServerError("Failed to read event data");
+    }
 
     UUID creatorId = getLoggerUserId();
     String location = eventData.getLocation();
@@ -841,6 +853,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       eventData = readEventData(TableSpreadEventData.class, eventDataObject);
     } catch (IOException e) {
       return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError("Failed to read event data");
     }
 
     UUID creatorId = getLoggerUserId();
