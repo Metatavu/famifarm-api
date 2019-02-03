@@ -74,6 +74,8 @@ import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
 @SecurityDomain("keycloak")
 public class V1RESTService extends AbstractApi implements V1Api {
   
+  private static final String FAILED_TO_READ_EVENT_DATA = "Failed to read event data";
+
   @Inject
   private SeedsController seedsController;
 
@@ -783,7 +785,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     if (eventData == null) {
-      return createInternalServerError("Failed to read event data");
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
     }
 
     UUID creatorId = getLoggerUserId();
@@ -805,7 +807,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     if (eventData == null) {
-      return createInternalServerError("Failed to read event data");
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
     }
 
     UUID creatorId = getLoggerUserId();
@@ -836,7 +838,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     if (eventData == null) {
-      return createInternalServerError("Failed to read event data");
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
     }
 
     UUID creatorId = getLoggerUserId();
@@ -856,7 +858,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     if (eventData == null) {
-      return createInternalServerError("Failed to read event data");
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
     }
 
     UUID creatorId = getLoggerUserId();
