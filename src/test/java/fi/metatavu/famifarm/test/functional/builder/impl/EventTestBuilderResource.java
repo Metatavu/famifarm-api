@@ -20,6 +20,7 @@ import fi.metatavu.famifarm.client.model.Event.TypeEnum;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.client.model.SowingEventData;
+import fi.metatavu.famifarm.client.model.TableSpreadEventData;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event, EventsApi> {
@@ -55,6 +56,29 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setEndTime(endTime);
     event.setStartTime(startTime);
     event.setType(TypeEnum.SOWING);
+    
+    return addClosable(getApi().createEvent(event));
+  }
+  
+  /**
+   * Creates new event
+   * 
+   * @param batch batch
+   * @param startTime event start time
+   * @param endTime event end time
+   * @param location 
+   * @param tableCount 
+   * @return created event
+   */
+  public Event createTableSpread(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, String location, Integer tableCount) {
+    TableSpreadEventData data = createTableSpreadEventData(location, tableCount);
+    
+    Event event = new Event();
+    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setData(data);
+    event.setEndTime(endTime);
+    event.setStartTime(startTime);
+    event.setType(TypeEnum.TABLE_SPREAD);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -205,7 +229,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   }
 
   /**
-   * Creates sowing event data object
+   * Creates table spread event data object
    * 
    * @param amount amount
    * @param cellType cell type
@@ -221,6 +245,19 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     data.setGutterNumber(gutterNumber);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setSeedBatchId(seedBatch != null ? seedBatch.getId() : null);
+    return data;
+  }
+
+  /**
+   * Creates table spread event data object
+   * @param location location
+   * @param tableCount table count
+   * @return
+   */
+  private TableSpreadEventData createTableSpreadEventData(String location, Integer tableCount) {
+    TableSpreadEventData data = new TableSpreadEventData();
+    data.setLocation(location);
+    data.setTableCount(tableCount);
     return data;
   }
 
