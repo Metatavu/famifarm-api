@@ -23,10 +23,12 @@ import fi.metatavu.famifarm.authentication.Roles;
 import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.SowingEventController;
+import fi.metatavu.famifarm.events.TableSpreadEventController;
 import fi.metatavu.famifarm.packagesizes.PackageSizeController;
 import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
+import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
 import fi.metatavu.famifarm.productionlines.ProductionLineController;
 import fi.metatavu.famifarm.products.ProductController;
 import fi.metatavu.famifarm.rest.api.V1Api;
@@ -40,6 +42,7 @@ import fi.metatavu.famifarm.rest.model.ProductionLine;
 import fi.metatavu.famifarm.rest.model.Seed;
 import fi.metatavu.famifarm.rest.model.SeedBatch;
 import fi.metatavu.famifarm.rest.model.SowingEventData;
+import fi.metatavu.famifarm.rest.model.TableSpreadEventData;
 import fi.metatavu.famifarm.rest.model.Team;
 import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.BatchTranslator;
@@ -50,6 +53,7 @@ import fi.metatavu.famifarm.rest.translate.ProductsTranslator;
 import fi.metatavu.famifarm.rest.translate.SeedBatchTranslator;
 import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
 import fi.metatavu.famifarm.rest.translate.SowingEventTranslator;
+import fi.metatavu.famifarm.rest.translate.TableSpreadEventTranslator;
 import fi.metatavu.famifarm.rest.translate.TeamsTranslator;
 import fi.metatavu.famifarm.rest.translate.WastageReasonsTranslator;
 import fi.metatavu.famifarm.seedbatches.SeedBatchesController;
@@ -70,6 +74,8 @@ import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
 @SecurityDomain("keycloak")
 public class V1RESTService extends AbstractApi implements V1Api {
   
+  private static final String FAILED_TO_READ_EVENT_DATA = "Failed to read event data";
+
   @Inject
   private SeedsController seedsController;
 
@@ -129,6 +135,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Inject 
   private SowingEventController sowingEventController;
+
+  @Inject
+  private TableSpreadEventController tableSpreadEventController;
+
+  @Inject
+  private TableSpreadEventTranslator tableSpreadEventTranslator;
   
   @Inject 
   private EventController eventController;
@@ -215,6 +227,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
     switch (body.getType()) {
       case SOWING:
         return createSowingEvent(batch, startTime, endTime, body.getData());
+      case TABLE_SPREAD:
+        return createTableSpreadEvent(batch, startTime, endTime, body.getData());
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -630,6 +644,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
     switch (body.getType()) {
       case SOWING:
         return updateSowingEvent(event, batch, startTime, endTime, body.getData());
+      case TABLE_SPREAD:
+        return updateTableSpreadEvent(event, batch, startTime, endTime, body.getData());
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -741,6 +757,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
     switch (event.getType()) {
       case SOWING:
         return sowingEventTranslator.translateEvent((SowingEvent) event);
+      case TABLE_SPREAD:
+        return tableSpreadEventTranslator.translateEvent((TableSpreadEvent) event);
       default:
       break;
     }
@@ -766,6 +784,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createInternalServerError(e.getMessage());
     }
 
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
     Integer gutterNumber = eventData.getGutterNumber();
@@ -784,6 +806,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createInternalServerError(e.getMessage());
     }
 
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
     Integer gutterNumber = eventData.getGutterNumber();
@@ -791,6 +817,55 @@ public class V1RESTService extends AbstractApi implements V1Api {
     CellType cellType = eventData.getCellType();
     Double amount = eventData.getAmount();    
     return createOk(sowingEventTranslator.translateEvent(sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId)));
+  }
+
+  /**
+   * Creates new tableSpread event
+   * 
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventData event data
+   * @return response
+   */
+  private Response createTableSpreadEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    TableSpreadEventData eventData;
+    
+    try {
+      eventData = readEventData(TableSpreadEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+    
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID creatorId = getLoggerUserId();
+    String location = eventData.getLocation();
+    Integer tableCount = eventData.getTableCount();
+    
+    return createOk(tableSpreadEventTranslator.translateEvent(tableSpreadEventController.createTableSpreadEvent(batch, startTime, endTime, tableCount, location, creatorId)));
+  }
+  
+  private Response updateTableSpreadEvent(fi.metatavu.famifarm.persistence.model.Event event, fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    TableSpreadEventData eventData;
+    
+    try {
+      eventData = readEventData(TableSpreadEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID creatorId = getLoggerUserId();
+    String location = eventData.getLocation();
+    Integer tableCount = eventData.getTableCount();
+
+    return createOk(tableSpreadEventTranslator.translateEvent(tableSpreadEventController.updateTableSpreadEvent((TableSpreadEvent) event, batch, startTime, endTime, tableCount, location, creatorId)));
   }
   
   private <D> D readEventData(Class<D> targetClass, Object object) throws IOException {
