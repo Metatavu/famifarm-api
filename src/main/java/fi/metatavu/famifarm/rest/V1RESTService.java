@@ -2,6 +2,7 @@ package fi.metatavu.famifarm.rest;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,11 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.metatavu.famifarm.authentication.Roles;
 import fi.metatavu.famifarm.batches.BatchController;
+import fi.metatavu.famifarm.events.CultivationObservationEventController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.events.TableSpreadEventController;
 import fi.metatavu.famifarm.packagesizes.PackageSizeController;
 import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
+import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
@@ -34,6 +37,7 @@ import fi.metatavu.famifarm.products.ProductController;
 import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.Batch;
 import fi.metatavu.famifarm.rest.model.CellType;
+import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.rest.model.Event;
 import fi.metatavu.famifarm.rest.model.PackageSize;
 import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
@@ -46,6 +50,7 @@ import fi.metatavu.famifarm.rest.model.TableSpreadEventData;
 import fi.metatavu.famifarm.rest.model.Team;
 import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.BatchTranslator;
+import fi.metatavu.famifarm.rest.translate.CultivationObservationEventTranslator;
 import fi.metatavu.famifarm.rest.translate.PackageSizeTranslator;
 import fi.metatavu.famifarm.rest.translate.PerformedCultivationActionTranslator;
 import fi.metatavu.famifarm.rest.translate.ProductionLineTranslator;
@@ -145,6 +150,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Inject 
   private EventController eventController;
 
+  @Inject
+  private CultivationObservationEventController cultivationObservationEventController;
+  
+  @Inject 
+  private CultivationObservationEventTranslator cultivationObservationEventTranslator;
+
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createSeed(Seed body) {
@@ -229,6 +240,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createSowingEvent(batch, startTime, endTime, body.getData());
       case TABLE_SPREAD:
         return createTableSpreadEvent(batch, startTime, endTime, body.getData());
+      case CULTIVATION_OBSERVATION:
+        return createCultivationObservationEvent(batch, startTime, endTime, body.getData());
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -325,7 +338,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(String.format("Could not find event %s", eventId));
     }
     
-    eventController.deleteEvent(event);
+    switch (event.getType()) {
+      case CULTIVATION_OBSERVATION:
+        cultivationObservationEventController.deleteCultivationActionEvent((CultivationObservationEvent) event);
+      break;
+      case SOWING:
+        sowingEventController.deleteSowingEvent((SowingEvent) event);
+      break;
+      case TABLE_SPREAD:
+        tableSpreadEventController.deleteTableSpreadEvent((TableSpreadEvent) event);
+      break;
+      default:
+        return Response.status(Status.NOT_IMPLEMENTED).build();
+    }
     
     return createNoContent();
   }
@@ -646,6 +671,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return updateSowingEvent(event, batch, startTime, endTime, body.getData());
       case TABLE_SPREAD:
         return updateTableSpreadEvent(event, batch, startTime, endTime, body.getData());
+      case CULTIVATION_OBSERVATION:
+        return updateCultivationObservationEvent(event, batch, startTime, endTime, body.getData());
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -759,6 +786,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return sowingEventTranslator.translateEvent((SowingEvent) event);
       case TABLE_SPREAD:
         return tableSpreadEventTranslator.translateEvent((TableSpreadEvent) event);
+      case CULTIVATION_OBSERVATION:
+        return cultivationObservationEventTranslator.translateEvent((CultivationObservationEvent) event);
       default:
       break;
     }
@@ -797,6 +826,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
     return createOk(sowingEventTranslator.translateEvent(sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId)));
   }
   
+  /**
+   * Updates sowing event
+   * 
+   * @param event event
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventDataObject event data object
+   * @return response
+   */
   private Response updateSowingEvent(fi.metatavu.famifarm.persistence.model.Event event, fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
     SowingEventData eventData;
     
@@ -848,6 +887,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
     return createOk(tableSpreadEventTranslator.translateEvent(tableSpreadEventController.createTableSpreadEvent(batch, startTime, endTime, tableCount, location, creatorId)));
   }
   
+  /**
+   * Updates table spread event
+   * 
+   * @param event event
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventDataObject event data object
+   * @return response
+   */
   private Response updateTableSpreadEvent(fi.metatavu.famifarm.persistence.model.Event event, fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
     TableSpreadEventData eventData;
     
@@ -866,6 +915,96 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer tableCount = eventData.getTableCount();
 
     return createOk(tableSpreadEventTranslator.translateEvent(tableSpreadEventController.updateTableSpreadEvent((TableSpreadEvent) event, batch, startTime, endTime, tableCount, location, creatorId)));
+  }
+
+  /**
+   * Creates new cultivation observation event
+   * 
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventData event data
+   * @return response
+   */
+  private Response createCultivationObservationEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    CultivationObservationEventData eventData;
+    
+    try {
+      eventData = readEventData(CultivationObservationEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+    
+    UUID creatorId = getLoggerUserId();
+    Double weight = eventData.getWeight();
+    Double luminance = eventData.getLuminance();
+    String pests = eventData.getPests();
+    
+    List<fi.metatavu.famifarm.persistence.model.PerformedCultivationAction> actions = new ArrayList<>();
+    Response translateResponse = translatePerformedCultivationActions(eventData.getPerformedActionIds(), actions);
+    if (translateResponse != null) {
+      return translateResponse;
+    }
+    
+    return createOk(cultivationObservationEventTranslator.translateEvent(cultivationObservationEventController.createCultivationActionEvent(batch, startTime, endTime, weight, luminance, pests, actions, creatorId)));
+  }
+  
+  /**
+   * Updates cultivationObservation event
+   * 
+   * @param event event
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventDataObject event data object
+   * @return response
+   */
+  private Response updateCultivationObservationEvent(fi.metatavu.famifarm.persistence.model.Event event, fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    CultivationObservationEventData eventData;
+    
+    try {
+      eventData = readEventData(CultivationObservationEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID creatorId = getLoggerUserId();
+    Double weight = eventData.getWeight();
+    Double luminance = eventData.getLuminance();
+    String pests = eventData.getPests();
+    
+    List<fi.metatavu.famifarm.persistence.model.PerformedCultivationAction> actions = new ArrayList<>();
+    Response translateResponse = translatePerformedCultivationActions(eventData.getPerformedActionIds(), actions);
+    if (translateResponse != null) {
+      return translateResponse;
+    }
+ 
+    return createOk(cultivationObservationEventTranslator.translateEvent(cultivationObservationEventController.updateCultivationActionEvent((CultivationObservationEvent) event, batch, startTime, endTime, weight, luminance, pests, actions, creatorId)));
+  }
+  
+  private Response translatePerformedCultivationActions(List<UUID> performedActionIds, List<fi.metatavu.famifarm.persistence.model.PerformedCultivationAction> result) {
+    if (performedActionIds == null) {
+      return null;
+    }
+    
+    for (UUID performedActionId : performedActionIds) {
+      fi.metatavu.famifarm.persistence.model.PerformedCultivationAction cultivationAction = performedCultivationActionsController.findPerformedCultivationAction(performedActionId);
+      if (cultivationAction == null) {
+        return Response.status(Status.BAD_REQUEST).entity(String.format("Invalid performted action id %s", performedActionId)).build();
+      }
+      
+      result.add(cultivationAction);
+    }
+    
+    return null;
   }
   
   private <D> D readEventData(Class<D> targetClass, Object object) throws IOException {

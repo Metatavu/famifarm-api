@@ -301,5 +301,30 @@
       </column>
     </createTable>
   </changeSet>
+  
+  <changeSet id="cultivationobservationevent" author="antti.leppa">
+    <createTable tableName="cultivationobservationevent">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_CULTIVATIONOBSERVATIONEVENT_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="pests" type="varchar(191)"/>
+      <column name="weight" type="double"/>
+      <column name="luminance" type="double"/>
+    </createTable>
+  </changeSet>
+  
+  <changeSet id="cultivationobservationeventaction" author="antti.leppa">
+    <createTable tableName="cultivationobservationeventaction">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>      
+      <column name="event_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true" foreignKeyName="FK_CULTIVATIONOBSERVATIONEVENTACTION_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="action_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true" foreignKeyName="FK_CULTIVATIONOBSERVATIONEVENTACTION_ACTION_ID" referencedColumnNames="id" referencedTableName="performedcultivationaction"/>
+      </column>
+    </createTable>
+  </changeSet>
       
 </databaseChangeLog>
