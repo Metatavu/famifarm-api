@@ -44,6 +44,7 @@ public class CultivationObservationEventController {
    * @param modifier modifier
    * @return created cultivationActionEvent
    */
+  @SuppressWarnings ("squid:S00107")
   public CultivationObservationEvent createCultivationActionEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, String pests, List<PerformedCultivationAction> actions, UUID creatorId) {
     CultivationObservationEvent event = cultivationObservationEventDAO.create(UUID.randomUUID(), weight, luminance, pests, batch, startTime, endTime, creatorId, creatorId);
     
@@ -88,6 +89,7 @@ public class CultivationObservationEventController {
    * @param modifier modifier
    * @return updated cultivationActionEvent
    */
+  @SuppressWarnings ("squid:S00107")
   public CultivationObservationEvent updateCultivationActionEvent(CultivationObservationEvent cultivationActionEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, String pests, List<PerformedCultivationAction> actions, UUID modifier) {
     cultivationObservationEventDAO.updateBatch(cultivationActionEvent, batch, modifier);
     cultivationObservationEventDAO.updateStartTime(cultivationActionEvent, startTime, modifier);
