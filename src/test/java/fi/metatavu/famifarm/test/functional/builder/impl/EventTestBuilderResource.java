@@ -6,7 +6,9 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 
@@ -17,10 +19,12 @@ import fi.metatavu.famifarm.client.model.Batch;
 import fi.metatavu.famifarm.client.model.CellType;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.Event.TypeEnum;
+import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.client.model.SowingEventData;
 import fi.metatavu.famifarm.client.model.TableSpreadEventData;
+import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event, EventsApi> {
@@ -79,6 +83,31 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setEndTime(endTime);
     event.setStartTime(startTime);
     event.setType(TypeEnum.TABLE_SPREAD);
+    
+    return addClosable(getApi().createEvent(event));
+  }
+
+  /**
+   * Creates new event
+   * 
+   * @param batch batch
+   * @param startTime event start time
+   * @param endTime event end time
+   * @param luminance luminance 
+   * @param pests pests 
+   * @param weight weight 
+   * @param performedActions performedActions 
+   * @return created event
+   */
+  public Event createCultivationObservation(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double luminance, String pests, Double weight, List<PerformedCultivationAction> performedActions) {
+    CultivationObservationEventData data = createCultivationObservationEventData(luminance, pests, weight, performedActions);
+
+    Event event = new Event();
+    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setData(data);
+    event.setEndTime(endTime);
+    event.setStartTime(startTime);
+    event.setType(TypeEnum.CULTIVATION_OBSERVATION);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -261,4 +290,21 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     return data;
   }
 
+  /**
+   * Creates cultivation observation event data object
+   * @param luminance 
+   * @param pests 
+   * @param weight 
+   * @param performedActions 
+   * 
+   * @return created event data
+   */
+  private CultivationObservationEventData createCultivationObservationEventData(Double luminance, String pests, Double weight, List<PerformedCultivationAction> performedActions) {
+    CultivationObservationEventData data = new CultivationObservationEventData();
+    data.setLuminance(luminance);
+    data.setPerformedActionIds(performedActions.stream().map(PerformedCultivationAction::getId).collect(Collectors.toList()));
+    data.setPests(pests);
+    data.setWeight(weight);
+    return data;
+  }
 }

@@ -6,15 +6,21 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Test;
 
 import fi.metatavu.famifarm.client.model.Batch;
 import fi.metatavu.famifarm.client.model.CellType;
+import fi.metatavu.famifarm.client.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.PackageSize;
+import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.Seed;
@@ -165,12 +171,90 @@ public class EventTestsIT {
   }
 
   @Test
+  public void testCreateCultivationObservationEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      assertNotNull(createCultivationObservationEvent(builder));
+    }
+  }
+  
+  @Test
+  public void testFindCultivationObservationEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createCultivationObservationEvent(builder);
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
+      assertEquals(createdEvent.getId(), foundEvent.getId());
+      builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
+    }
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testUpdateCultivationObservationEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createCultivationObservationEvent(builder);
+      Map<String, Object> createdData = (Map<String, Object>) createdEvent.getData();
+      
+      builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
+      
+      PackageSize updatePackageSize = builder.admin().packageSizes().create("New Test PackageSize");
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+     
+      Batch updateBatch = builder.admin().batches().create(updateProduct);
+      OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+      
+      List<UUID> updatePerformedActionIds = new ArrayList<>(); 
+      
+      updatePerformedActionIds.add(UUID.fromString(((List<String>) createdData.get("performedActionIds")).get(0)));
+      updatePerformedActionIds.add(builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 3", "Testi viljely 3")).getId());
+
+      Double updateLuminance = 123d;
+      String updatePests = "No no";
+      Double updateWeight = 8882d;
+      
+      CultivationObservationEventData updateData = new CultivationObservationEventData();
+      updateData.setLuminance(updateLuminance);
+      updateData.setPerformedActionIds(updatePerformedActionIds);
+      updateData.setPests(updatePests);
+      updateData.setWeight(updateWeight);
+      
+      Event updateEvent = new Event(); 
+      updateEvent.setId(createdEvent.getId());
+      updateEvent.setBatchId(updateBatch.getId());
+      updateEvent.setData(updateData);
+      updateEvent.setEndTime(updateStartTime);
+      updateEvent.setStartTime(updateEndTime);
+      updateEvent.setType(createdEvent.getType());
+      updateEvent.setUserId(createdEvent.getUserId());
+      
+      builder.admin().events().updateEvent(updateEvent);
+      builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
+    }
+  }
+  
+  @Test
+  public void testDeleteCultivationObservationEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event created = createCultivationObservationEvent(builder);
+      Event found = builder.admin().events().findEvent(created.getId());
+      assertEquals(created.getId(), found.getId());
+      builder.admin().events().delete(created);
+      builder.admin().events().assertFindFailStatus(404, created.getId());     
+    }
+  }
+  
+  @Test
   public void testListEvents() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
+      builder.admin().performedCultivationActions();
+      
       createSowingEvent(builder);
       builder.admin().events().assertCount(1);
       createTableSpreadEvent(builder);
       builder.admin().events().assertCount(2);
+      createCultivationObservationEvent(builder);
+      builder.admin().events().assertCount(3);
     }
   }
   
@@ -193,7 +277,7 @@ public class EventTestsIT {
   }
   
   @Test
-  public void testListSeedPermissions() throws Exception {
+  public void testListPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       createSowingEvent(builder);
       
@@ -270,6 +354,26 @@ public class EventTestsIT {
     Integer tableCount = 15;
     
     return builder.admin().events().createTableSpread(batch, startTime, endTime, location, tableCount);
+  }
+
+  private Event createCultivationObservationEvent(TestBuilder builder) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+    LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+    Product product = builder.admin().products().create(name, createdPackageSize);
+
+    Batch batch = builder.admin().batches().create(product);
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+
+    Double luminance = 44d;
+    String pests = "Pests";
+    Double weight = 22d;
+    List<PerformedCultivationAction> performedActions = Arrays.asList(
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely")),
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"))
+    );
+    
+    return builder.admin().events().createCultivationObservation(batch, startTime, endTime, luminance, pests, weight, performedActions);
   }
   
 }

@@ -41,13 +41,4 @@ public class EventController {
     return eventDAO.listAll(firstResult, maxResults);
   }
 
-  /**
-   * Deletes an event
-   * 
-   * @param event event
-   */
-  public void deleteEvent(Event event) {
-    eventDAO.delete(event);
-  }
-
 }
