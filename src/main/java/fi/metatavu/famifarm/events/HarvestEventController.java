@@ -74,6 +74,7 @@ public class HarvestEventController {
    * @param modifier modifier
    * @return updated harvestEvent
    */
+  @SuppressWarnings ("squid:S00107")
   public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, UUID modifier) {
     harvestEventDAO.updateBatch(harvestEvent, batch, modifier);
     harvestEventDAO.updateStartTime(harvestEvent, startTime, modifier);
