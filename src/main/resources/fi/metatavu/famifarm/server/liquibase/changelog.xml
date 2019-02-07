@@ -327,4 +327,21 @@
     </createTable>
   </changeSet>
       
+  <changeSet id="harvestevent" author="antti.leppa">
+    <createTable tableName="harvestevent">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_HARVESTEVENT_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="team_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_HARVESTEVENT_TEAM_ID" referencedColumnNames="id" referencedTableName="team"/>
+      </column>
+      <column name="productionline_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_HARVESTEVENT_PRODUCTIONLINE_ID" referencedColumnNames="id" referencedTableName="productionline"/>
+      </column>
+      <column name="harvestType" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+      
 </databaseChangeLog>

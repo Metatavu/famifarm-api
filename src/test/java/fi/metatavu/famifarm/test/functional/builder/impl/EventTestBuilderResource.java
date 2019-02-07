@@ -19,11 +19,13 @@ import fi.metatavu.famifarm.client.model.Batch;
 import fi.metatavu.famifarm.client.model.CellType;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.Event.TypeEnum;
+import fi.metatavu.famifarm.client.model.HarvestEventData;
 import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.client.model.SowingEventData;
 import fi.metatavu.famifarm.client.model.TableSpreadEventData;
+import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -108,6 +110,30 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setEndTime(endTime);
     event.setStartTime(startTime);
     event.setType(TypeEnum.CULTIVATION_OBSERVATION);
+    
+    return addClosable(getApi().createEvent(event));
+  }
+
+  /**
+   * Creates new event
+   * 
+   * @param batch batch
+   * @param startTime event start time
+   * @param endTime event end time
+   * @param productionLine production line
+   * @param team team
+   * @param type type
+   * @return created event
+   */
+  public Event createHarvest(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+    HarvestEventData data = createHarvestEventData(productionLine, team, type);
+
+    Event event = new Event();
+    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setData(data);
+    event.setEndTime(endTime);
+    event.setStartTime(startTime);
+    event.setType(TypeEnum.HARVEST);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -305,6 +331,21 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     data.setPerformedActionIds(performedActions.stream().map(PerformedCultivationAction::getId).collect(Collectors.toList()));
     data.setPests(pests);
     data.setWeight(weight);
+    return data;
+  }
+
+  /**
+   * Creates table spread event data object
+   * @param productionLine production line
+   * @param team team
+   * @param type 
+   * @return harvest event data
+   */
+  private HarvestEventData createHarvestEventData(ProductionLine productionLine, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+    HarvestEventData data = new HarvestEventData();
+    data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
+    data.setTeamId(team != null ? team.getId() : null);
+    data.setType(type);
     return data;
   }
 }
