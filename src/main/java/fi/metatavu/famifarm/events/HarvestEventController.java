@@ -38,6 +38,7 @@ public class HarvestEventController {
    * @return created harvestEvent
    * @param lastModifier modifiername
    */
+  @SuppressWarnings ("squid:S00107")
   public HarvestEvent createHarvestEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, UUID creatorId) {
     return harvestEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, team, harvestType, productionLine, creatorId, creatorId);
   }
