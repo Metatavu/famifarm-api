@@ -20,6 +20,7 @@ import fi.metatavu.famifarm.client.model.CellType;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.Event.TypeEnum;
 import fi.metatavu.famifarm.client.model.HarvestEventData;
+import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.client.model.PlantingEventData;
 import fi.metatavu.famifarm.client.model.ProductionLine;
@@ -28,6 +29,7 @@ import fi.metatavu.famifarm.client.model.SowingEventData;
 import fi.metatavu.famifarm.client.model.TableSpreadEventData;
 import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
+import fi.metatavu.famifarm.rest.model.PackingEventData;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event, EventsApi> {
@@ -161,6 +163,29 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setEndTime(endTime);
     event.setStartTime(startTime);
     event.setType(TypeEnum.PLANTING);
+    
+    return addClosable(getApi().createEvent(event));
+  }
+  
+  /**
+   * Creates new event
+   * 
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param packageSize package size
+   * @param packedAmount packed amount
+   * @return created event
+   */
+  public Event createPacking(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedAmount) {
+    PackingEventData data = createPackingEventData(packageSize, packedAmount);
+    
+    Event event = new Event();
+    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setData(data);
+    event.setEndTime(endTime);
+    event.setStartTime(startTime);
+    event.setType(TypeEnum.PACKING);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -393,6 +418,20 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setTrayCount(trayCount);
     data.setWorkerCount(workerCount);
+    return data;
+  }
+  
+  /**
+   * Creates event data object
+   *
+   * @param packageSize 
+   * @param packedAmount 
+   * @return event data
+   */
+  private PackingEventData createPackingEventData(PackageSize packageSize, Integer packedAmount) {
+    PackingEventData data = new PackingEventData();
+    data.setPackageSize(packageSize != null ? packageSize.getId() : null);
+    data.setPackedAmount(packedAmount);
     return data;
   }
 }
