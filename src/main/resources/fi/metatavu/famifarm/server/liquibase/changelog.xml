@@ -372,7 +372,7 @@
       <column name="id" type="binary(16)">
         <constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_WASTAGEEVENT_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
       </column>
-      <column name="wastegereason_id" type="binary(16)">
+      <column name="wastagereason_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_WASTAGEEVENT_WASTAGEREASON_ID" referencedColumnNames="id" referencedTableName="wastagereason"/>
       </column>
       <column name="amount" type="int(32)">
