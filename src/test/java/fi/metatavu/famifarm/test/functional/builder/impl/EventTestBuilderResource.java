@@ -189,7 +189,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
-    event.setType(TypeEnum.PLANTING);
+    event.setType(TypeEnum.WASTEAGE);
     
     return addClosable(getApi().createEvent(event));
   }
