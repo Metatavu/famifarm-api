@@ -24,12 +24,16 @@ import fi.metatavu.famifarm.authentication.Roles;
 import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.CultivationObservationEventController;
 import fi.metatavu.famifarm.events.EventController;
+import fi.metatavu.famifarm.events.HarvestEventController;
+import fi.metatavu.famifarm.events.PlantingEventController;
 import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.events.TableSpreadEventController;
 import fi.metatavu.famifarm.packagesizes.PackageSizeController;
 import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
+import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
+import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
 import fi.metatavu.famifarm.productionlines.ProductionLineController;
@@ -39,8 +43,11 @@ import fi.metatavu.famifarm.rest.model.Batch;
 import fi.metatavu.famifarm.rest.model.CellType;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.rest.model.Event;
+import fi.metatavu.famifarm.rest.model.HarvestEventData;
+import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
 import fi.metatavu.famifarm.rest.model.PackageSize;
 import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
+import fi.metatavu.famifarm.rest.model.PlantingEventData;
 import fi.metatavu.famifarm.rest.model.Product;
 import fi.metatavu.famifarm.rest.model.ProductionLine;
 import fi.metatavu.famifarm.rest.model.Seed;
@@ -51,8 +58,10 @@ import fi.metatavu.famifarm.rest.model.Team;
 import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.BatchTranslator;
 import fi.metatavu.famifarm.rest.translate.CultivationObservationEventTranslator;
+import fi.metatavu.famifarm.rest.translate.HarvestEventTranslator;
 import fi.metatavu.famifarm.rest.translate.PackageSizeTranslator;
 import fi.metatavu.famifarm.rest.translate.PerformedCultivationActionTranslator;
+import fi.metatavu.famifarm.rest.translate.PlantingEventTranslator;
 import fi.metatavu.famifarm.rest.translate.ProductionLineTranslator;
 import fi.metatavu.famifarm.rest.translate.ProductsTranslator;
 import fi.metatavu.famifarm.rest.translate.SeedBatchTranslator;
@@ -156,6 +165,18 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Inject 
   private CultivationObservationEventTranslator cultivationObservationEventTranslator;
 
+  @Inject 
+  private HarvestEventController harvestEventController;
+  
+  @Inject 
+  private HarvestEventTranslator harvestEventTranslator;
+
+  @Inject 
+  private PlantingEventController plantingEventController;
+  
+  @Inject 
+  private PlantingEventTranslator plantingEventTranslator;
+  
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createSeed(Seed body) {
@@ -242,6 +263,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createTableSpreadEvent(batch, startTime, endTime, body.getData());
       case CULTIVATION_OBSERVATION:
         return createCultivationObservationEvent(batch, startTime, endTime, body.getData());
+      case HARVEST:
+        return createHarvestEvent(batch, startTime, endTime, body.getData());
+      case PLANTING:
+        return createPlantingEvent(batch, startTime, endTime, body.getData());
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -347,6 +372,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
       break;
       case TABLE_SPREAD:
         tableSpreadEventController.deleteTableSpreadEvent((TableSpreadEvent) event);
+      break;
+      case HARVEST:
+        harvestEventController.deleteHarvestEvent((HarvestEvent) event);
+      break;
+      case PLANTING:
+        plantingEventController.deletePlantingEvent((PlantingEvent) event);
       break;
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
@@ -673,6 +704,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return updateTableSpreadEvent(event, batch, startTime, endTime, body.getData());
       case CULTIVATION_OBSERVATION:
         return updateCultivationObservationEvent(event, batch, startTime, endTime, body.getData());
+      case HARVEST:
+        return updateHarvestEvent(event, batch, startTime, endTime, body.getData());
+      case PLANTING:
+        return updatePlantingEvent(event, batch, startTime, endTime, body.getData());
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -788,6 +823,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return tableSpreadEventTranslator.translateEvent((TableSpreadEvent) event);
       case CULTIVATION_OBSERVATION:
         return cultivationObservationEventTranslator.translateEvent((CultivationObservationEvent) event);
+      case HARVEST:
+        return harvestEventTranslator.translateEvent((HarvestEvent) event);
+      case PLANTING:
+        return plantingEventTranslator.translateEvent((PlantingEvent) event);
       default:
       break;
     }
@@ -918,7 +957,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   /**
-   * Creates new cultivation observation event
+   * Creates new harvest event
    * 
    * @param batch batch
    * @param startTime start time
@@ -988,6 +1027,162 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
  
     return createOk(cultivationObservationEventTranslator.translateEvent(cultivationObservationEventController.updateCultivationActionEvent((CultivationObservationEvent) event, batch, startTime, endTime, weight, luminance, pests, actions, creatorId)));
+  }
+
+  /**
+   * Creates new harvest event
+   * 
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventData event data
+   * @return response
+   */
+  private Response createHarvestEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    HarvestEventData eventData;
+    
+    try {
+      eventData = readEventData(HarvestEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+    
+    UUID creatorId = getLoggerUserId();
+    
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = null;
+    if (eventData.getProductionLineId() != null) {
+      productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
+      if (productionLine == null) {
+        return createBadRequest("Invalid production line");
+      }
+    }
+    
+    fi.metatavu.famifarm.persistence.model.Team team = null;
+    if (eventData.getTeamId() != null) {
+      team = teamsController.findTeam(eventData.getTeamId());
+      if (team == null) {
+        return createBadRequest("Invalid team");        
+      }
+    }
+    
+    TypeEnum harvestType = eventData.getType();
+
+    return createOk(harvestEventTranslator.translateEvent(harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType, productionLine, creatorId)));
+  }
+  
+  /**
+   * Updates harvest event
+   * 
+   * @param event event
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventDataObject event data object
+   * @return response
+   */
+  private Response updateHarvestEvent(fi.metatavu.famifarm.persistence.model.Event event, fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    HarvestEventData eventData;
+    
+    try {
+      eventData = readEventData(HarvestEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID creatorId = getLoggerUserId();
+    
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = null;
+    if (eventData.getProductionLineId() != null) {
+      productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
+      if (productionLine == null) {
+        return createBadRequest("Invalid production line");
+      }
+    }
+    
+    fi.metatavu.famifarm.persistence.model.Team team = null;
+    if (eventData.getTeamId() != null) {
+      team = teamsController.findTeam(eventData.getTeamId());
+      if (team == null) {
+        return createBadRequest("Invalid team");        
+      }
+    }
+    
+    TypeEnum harvestType = eventData.getType();
+   
+    return createOk(harvestEventTranslator.translateEvent(harvestEventController.updateHarvestEvent((HarvestEvent) event, batch, startTime, endTime, team, harvestType, productionLine, creatorId)));
+  }
+
+  /**
+   * Creates new planting event
+   * 
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventData event data
+   * @return response
+   */
+  private Response createPlantingEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    PlantingEventData eventData;
+    
+    try {
+      eventData = readEventData(PlantingEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID creatorId = getLoggerUserId();
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
+    Integer gutterNumber = eventData.getGutterNumber();
+    Integer gutterCount = eventData.getGutterCount();
+    Integer trayCount = eventData.getTrayCount();
+    Integer workerCount = eventData.getWorkerCount();
+    
+    return createOk(plantingEventTranslator.translateEvent(plantingEventController.createPlantingEvent(batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId)));
+  }
+  
+  /**
+   * Updates planting event
+   * 
+   * @param event event
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventDataObject event data object
+   * @return response
+   */
+  private Response updatePlantingEvent(fi.metatavu.famifarm.persistence.model.Event event, fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    PlantingEventData eventData;
+    
+    try {
+      eventData = readEventData(PlantingEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID creatorId = getLoggerUserId();
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
+    Integer gutterNumber = eventData.getGutterNumber();
+    Integer gutterCount = eventData.getGutterCount();
+    Integer trayCount = eventData.getTrayCount();
+    Integer workerCount = eventData.getWorkerCount();
+    
+    return createOk(plantingEventTranslator.translateEvent(plantingEventController.updatePlantingEvent((PlantingEvent) event, batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId)));
   }
   
   private Response translatePerformedCultivationActions(List<UUID> performedActionIds, List<fi.metatavu.famifarm.persistence.model.PerformedCultivationAction> result) {

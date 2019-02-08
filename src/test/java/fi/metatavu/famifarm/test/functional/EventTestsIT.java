@@ -21,13 +21,16 @@ import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
+import fi.metatavu.famifarm.client.model.PlantingEventData;
 import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.client.model.SowingEventData;
 import fi.metatavu.famifarm.client.model.TableSpreadEventData;
+import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.client.model.Event.TypeEnum;
+import fi.metatavu.famifarm.client.model.HarvestEventData;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 /**
@@ -243,11 +246,147 @@ public class EventTestsIT {
       builder.admin().events().assertFindFailStatus(404, created.getId());     
     }
   }
+
+  @Test
+  public void testCreateHarvestEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      assertNotNull(createHarvestEvent(builder));
+    }
+  }
+  
+  @Test
+  public void testFindHarvestEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createHarvestEvent(builder);
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
+      assertEquals(createdEvent.getId(), foundEvent.getId());
+      builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
+    }
+  }
+  
+  @Test
+  public void testUpdateHarvestEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createHarvestEvent(builder);
+      
+      builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
+      
+      PackageSize updatePackageSize = builder.admin().packageSizes().create("New Test PackageSize");
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+     
+      Batch updateBatch = builder.admin().batches().create(updateProduct);
+      OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+      ProductionLine updateProductionLine = builder.admin().productionLines().create(7);
+      Team updateTeam = builder.admin().teams().create(builder.createLocalizedEntry("Updated team", "Päivitetty tiimi"));
+      
+      HarvestEventData updateData = new HarvestEventData();
+      updateData.setProductionLineId(updateProductionLine.getId());
+      updateData.setTeamId(updateTeam.getId());
+      updateData.setType(fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.CUTTING);
+
+      Event updateEvent = new Event(); 
+      updateEvent.setId(createdEvent.getId());
+      updateEvent.setBatchId(updateBatch.getId());
+      updateEvent.setData(updateData);
+      updateEvent.setEndTime(updateStartTime);
+      updateEvent.setStartTime(updateEndTime);
+      updateEvent.setType(createdEvent.getType());
+      updateEvent.setUserId(createdEvent.getUserId());
+      
+      builder.admin().events().updateEvent(updateEvent);
+      builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
+    }
+  }
+  
+  @Test
+  public void testDeleteHarvestEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createHarvestEvent(builder);
+      Event foundSeed = builder.admin().events().findEvent(createdEvent.getId());
+      assertEquals(createdEvent.getId(), foundSeed.getId());
+      builder.admin().events().delete(createdEvent);
+      builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
+    }
+  }
+
+  
+  
+  
+  
+
+  @Test
+  public void testCreatePlantingEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      assertNotNull(createPlantingEvent(builder));
+    }
+  }
+  
+  @Test
+  public void testFindPlantingEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createPlantingEvent(builder);
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
+      assertEquals(createdEvent.getId(), foundEvent.getId());
+      builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
+    }
+  }
+  
+  @Test
+  public void testUpdatePlantingEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createPlantingEvent(builder);
+      
+      builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
+      
+      PackageSize updatePackageSize = builder.admin().packageSizes().create("New Test PackageSize");
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+     
+      Batch updateBatch = builder.admin().batches().create(updateProduct);
+      OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+      Integer updateGutterNumber = 3;
+      ProductionLine updateProductionLine = builder.admin().productionLines().create(7);
+      
+      PlantingEventData updateData = new PlantingEventData();
+      updateData.setGutterCount(6);
+      updateData.setGutterNumber(updateGutterNumber);
+      updateData.setProductionLineId(updateProductionLine.getId());
+      updateData.setTrayCount(7);
+      updateData.setWorkerCount(8);
+      
+      Event updateEvent = new Event(); 
+      updateEvent.setId(createdEvent.getId());
+      updateEvent.setBatchId(updateBatch.getId());
+      updateEvent.setData(updateData);
+      updateEvent.setEndTime(updateStartTime);
+      updateEvent.setStartTime(updateEndTime);
+      updateEvent.setType(createdEvent.getType());
+      updateEvent.setUserId(createdEvent.getUserId());
+      
+      builder.admin().events().updateEvent(updateEvent);
+      builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
+    }
+  }
+  
+  @Test
+  public void testDeletePlantingEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createPlantingEvent(builder);
+      Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
+      assertEquals(createdEvent.getId(), foundEvent.getId());
+      builder.admin().events().delete(createdEvent);
+      builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
+    }
+  }
   
   @Test
   public void testListEvents() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().performedCultivationActions();
+      builder.admin().teams();
       
       createSowingEvent(builder);
       builder.admin().events().assertCount(1);
@@ -255,6 +394,10 @@ public class EventTestsIT {
       builder.admin().events().assertCount(2);
       createCultivationObservationEvent(builder);
       builder.admin().events().assertCount(3);
+      createHarvestEvent(builder);
+      builder.admin().events().assertCount(4);
+      createPlantingEvent(builder);
+      builder.admin().events().assertCount(5);
     }
   }
   
@@ -374,6 +517,39 @@ public class EventTestsIT {
     );
     
     return builder.admin().events().createCultivationObservation(batch, startTime, endTime, luminance, pests, weight, performedActions);
+  }
+
+  private Event createHarvestEvent(TestBuilder builder) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize);
+
+    Batch batch = builder.admin().batches().create(product);
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+    ProductionLine productionLine = builder.admin().productionLines().create(4);
+    
+    Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team name", "Tiimin nimi"));
+    fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType = fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BAGGING;
+
+    return builder.admin().events().createHarvest(batch, startTime, endTime, productionLine, team, harvestType);
+  }
+
+  private Event createPlantingEvent(TestBuilder builder) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+    LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+    Product product = builder.admin().products().create(name, createdPackageSize);
+    
+    Batch batch = builder.admin().batches().create(product);
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+    Integer gutterNumber = 2;
+    ProductionLine productionLine = builder.admin().productionLines().create(4);
+    
+    Integer gutterCount = 2;
+    Integer trayCount = 50;
+    Integer workerCount = 2;
+    
+    return builder.admin().events().createPlanting(batch, startTime, endTime, gutterCount, gutterNumber, productionLine, trayCount, workerCount);
   }
   
 }
