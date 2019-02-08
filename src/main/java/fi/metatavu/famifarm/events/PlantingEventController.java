@@ -37,6 +37,7 @@ public class PlantingEventController {
    * @return created plantingEvent
    * @param lastModifier modifier
    */
+  @SuppressWarnings ("squid:S00107")
   public PlantingEvent createPlantingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, Integer gutterCount, Integer trayCount, Integer workerCount, UUID creatorId) {
     return plantingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId, creatorId);
   }
@@ -78,6 +79,7 @@ public class PlantingEventController {
    * @param modifier modifier
    * @return updated plantingEvent
    */
+  @SuppressWarnings ("squid:S00107")
   public PlantingEvent updatePlantingEvent(PlantingEvent plantingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, Integer gutterCount, Integer trayCount, Integer workerCount, UUID modifier) {
     plantingEventDAO.updateBatch(plantingEvent, batch, modifier);
     plantingEventDAO.updateStartTime(plantingEvent, startTime, modifier);
