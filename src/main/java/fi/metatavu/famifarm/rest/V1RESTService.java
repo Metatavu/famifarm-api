@@ -25,6 +25,7 @@ import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.CultivationObservationEventController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.HarvestEventController;
+import fi.metatavu.famifarm.events.PackingEventController;
 import fi.metatavu.famifarm.events.PlantingEventController;
 import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.events.TableSpreadEventController;
@@ -33,6 +34,7 @@ import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActi
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
+import fi.metatavu.famifarm.persistence.model.PackingEvent;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
@@ -46,6 +48,7 @@ import fi.metatavu.famifarm.rest.model.Event;
 import fi.metatavu.famifarm.rest.model.HarvestEventData;
 import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
 import fi.metatavu.famifarm.rest.model.PackageSize;
+import fi.metatavu.famifarm.rest.model.PackingEventData;
 import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.rest.model.PlantingEventData;
 import fi.metatavu.famifarm.rest.model.Product;
@@ -60,6 +63,7 @@ import fi.metatavu.famifarm.rest.translate.BatchTranslator;
 import fi.metatavu.famifarm.rest.translate.CultivationObservationEventTranslator;
 import fi.metatavu.famifarm.rest.translate.HarvestEventTranslator;
 import fi.metatavu.famifarm.rest.translate.PackageSizeTranslator;
+import fi.metatavu.famifarm.rest.translate.PackingEventTranslator;
 import fi.metatavu.famifarm.rest.translate.PerformedCultivationActionTranslator;
 import fi.metatavu.famifarm.rest.translate.PlantingEventTranslator;
 import fi.metatavu.famifarm.rest.translate.ProductionLineTranslator;
@@ -176,6 +180,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   
   @Inject 
   private PlantingEventTranslator plantingEventTranslator;
+
+  @Inject 
+  private PackingEventController packingEventController;
+
+  @Inject 
+  private PackingEventTranslator packingEventTranslator;
   
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
@@ -267,6 +277,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createHarvestEvent(batch, startTime, endTime, body.getData());
       case PLANTING:
         return createPlantingEvent(batch, startTime, endTime, body.getData());
+      case PACKING:
+        return createPackingEvent(batch, startTime, endTime, body.getData());
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -379,6 +391,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
       case PLANTING:
         plantingEventController.deletePlantingEvent((PlantingEvent) event);
       break;
+      case PACKING:
+        packingEventController.deletePackingEvent((PackingEvent) event);
+      break;      
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -708,6 +723,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return updateHarvestEvent(event, batch, startTime, endTime, body.getData());
       case PLANTING:
         return updatePlantingEvent(event, batch, startTime, endTime, body.getData());
+      case PACKING:
+        return updatePackingEvent(event, batch, startTime, endTime, body.getData());
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -827,6 +844,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return harvestEventTranslator.translateEvent((HarvestEvent) event);
       case PLANTING:
         return plantingEventTranslator.translateEvent((PlantingEvent) event);
+      case PACKING:
+        return packingEventTranslator.translateEvent((PackingEvent) event);
       default:
       break;
     }
@@ -1183,6 +1202,65 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer workerCount = eventData.getWorkerCount();
     
     return createOk(plantingEventTranslator.translateEvent(plantingEventController.updatePlantingEvent((PlantingEvent) event, batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId)));
+  }
+
+  /**
+   * Creates new packing event
+   * 
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventData event data
+   * @return response
+   */
+  private Response createPackingEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    PackingEventData eventData;
+    
+    try {
+      eventData = readEventData(PackingEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID creatorId = getLoggerUserId();
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = eventData.getPackageSize() != null ? packageSizeController.findPackageSize(eventData.getPackageSize()) : null;
+    Integer packedAmount = eventData.getPackedAmount();
+    
+    return createOk(packingEventTranslator.translateEvent(packingEventController.createPackingEvent(batch, startTime, endTime, packageSize, packedAmount, creatorId)));
+  }
+  
+  /**
+   * Updates packing event
+   * 
+   * @param event event
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventDataObject event data object
+   * @return response
+   */
+  private Response updatePackingEvent(fi.metatavu.famifarm.persistence.model.Event event, fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    PackingEventData eventData;
+    
+    try {
+      eventData = readEventData(PackingEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID creatorId = getLoggerUserId();
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = eventData.getPackageSize() != null ? packageSizeController.findPackageSize(eventData.getPackageSize()) : null;
+    Integer packedAmount = eventData.getPackedAmount();
+    
+    return createOk(packingEventTranslator.translateEvent(packingEventController.updatePackingEvent((PackingEvent) event, batch, startTime, endTime, packageSize, packedAmount, creatorId)));
   }
   
   private Response translatePerformedCultivationActions(List<UUID> performedActionIds, List<fi.metatavu.famifarm.persistence.model.PerformedCultivationAction> result) {

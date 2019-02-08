@@ -365,6 +365,20 @@
         <constraints nullable="false"/>
       </column>
     </createTable>
-  </changeSet>     
+  </changeSet>
+      
+  <changeSet id="packagingevent" author="antti.leppa">
+    <createTable tableName="packagingevent">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_PACKAGINGEVENT_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="packagesize_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_PACKAGINGEVENT_PACKAGESIZE_ID" referencedColumnNames="id" referencedTableName="packagesize"/>
+      </column>
+      <column name="packedamount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>  
       
 </databaseChangeLog>
