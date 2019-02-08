@@ -344,4 +344,27 @@
     </createTable>
   </changeSet>
       
+  <changeSet id="plantingevent" author="antti.leppa">
+    <createTable tableName="plantingevent">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_PLANTINGEVENT_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="productionline_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_PLANTINGEVENT_PRODUCTIONLINE_ID" referencedColumnNames="id" referencedTableName="productionline"/>
+      </column>
+      <column name="gutternumber" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="guttercount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="traycount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="workerCount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>     
+      
 </databaseChangeLog>
