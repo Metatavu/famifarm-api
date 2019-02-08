@@ -365,6 +365,21 @@
         <constraints nullable="false"/>
       </column>
     </createTable>
-  </changeSet>     
-      
+  </changeSet>
+
+  <changeSet id="wastageevent" author="Heikki Kurhinen">
+    <createTable tableName="wastageevent">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_WASTAGEEVENT_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="wastegereason_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_WASTAGEEVENT_WASTAGEREASON_ID" referencedColumnNames="id" referencedTableName="wastagereason"/>
+      </column>
+      <column name="amount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="longtext"></column>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

@@ -27,6 +27,8 @@ import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.client.model.SowingEventData;
 import fi.metatavu.famifarm.client.model.TableSpreadEventData;
 import fi.metatavu.famifarm.client.model.Team;
+import fi.metatavu.famifarm.client.model.WastageEventData;
+import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -164,7 +166,32 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     
     return addClosable(getApi().createEvent(event));
   }
-  
+
+  /**
+   * Creates new event
+   * 
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param amount amount
+   * @param wastageReason wastege reason
+   * @param description description
+   * @return created event
+   */
+  public Event createWastage(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String description) {
+    
+    WastageEventData data = createWastageEventData(amount, wastageReason, description);
+    
+    Event event = new Event();
+    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setData(data);
+    event.setEndTime(endTime);
+    event.setStartTime(startTime);
+    event.setType(TypeEnum.PLANTING);
+    
+    return addClosable(getApi().createEvent(event));
+  }
+
   /**
    * Finds an Event
    * 
@@ -393,6 +420,22 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setTrayCount(trayCount);
     data.setWorkerCount(workerCount);
+    return data;
+  }
+
+  /**
+   * Creates wastage event data object
+   * 
+   * @param amount amount
+   * @param wastageReason wastage reason
+   * @param description description
+   * @return created wastage event data object
+   */
+  private WastageEventData createWastageEventData(Integer amount, WastageReason wastageReason, String description) {
+    WastageEventData data = new WastageEventData();
+    data.setAmount(amount);
+    data.setDescription(description);
+    data.setReasonId(wastageReason.getId());
     return data;
   }
 }
