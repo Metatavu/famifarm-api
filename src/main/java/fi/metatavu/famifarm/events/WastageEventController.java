@@ -52,6 +52,7 @@ public class WastageEventController {
    * @param lastModifierId last modiefier id
    * @return updated wastage event
    */
+  @SuppressWarnings ("squid:S00107")
   public WastageEvent updateWastageEvent(WastageEvent wastageEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String description, UUID lastModifierId) {
     wastageEventDAO.updateAmount(wastageEvent, amount, lastModifierId);
     wastageEventDAO.updateBatch(wastageEvent, batch, lastModifierId);

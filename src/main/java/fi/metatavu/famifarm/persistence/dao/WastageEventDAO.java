@@ -28,6 +28,7 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    * @param lastModifierId last modfier id
    * @return created wastage event
    */
+  @SuppressWarnings ("squid:S00107")
   public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, String description, OffsetDateTime startTime, OffsetDateTime endTime, UUID creatorId, UUID lastModifierId) {
     WastageEvent wastageEvent = new WastageEvent();
     wastageEvent.setAmount(amount);
