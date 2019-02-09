@@ -30,6 +30,8 @@ import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.client.model.SowingEventData;
 import fi.metatavu.famifarm.client.model.TableSpreadEventData;
 import fi.metatavu.famifarm.client.model.Team;
+import fi.metatavu.famifarm.client.model.WastageEventData;
+import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.client.model.Event.TypeEnum;
 import fi.metatavu.famifarm.client.model.HarvestEventData;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
@@ -368,6 +370,72 @@ public class EventTestsIT {
   }
   
   @Test
+  public void testDeleteWastageEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createWastageEvent(builder);
+      Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
+      assertEquals(createdEvent.getId(), foundEvent.getId());
+      builder.admin().events().delete(createdEvent);
+      builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
+    }
+  }
+  
+
+  @Test
+  public void testCreateWastageEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      assertNotNull(createWastageEvent(builder));
+    }
+  }
+  
+  @Test
+  public void testFindWastageEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createWastageEvent(builder);
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
+      assertEquals(createdEvent.getId(), foundEvent.getId());
+      builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
+    }
+  }
+  
+  @Test
+  public void testUpdateWastageEvent() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event createdEvent = createWastageEvent(builder);
+
+      builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
+
+      PackageSize updatePackageSize = builder.admin().packageSizes().create("New Test PackageSize");
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+
+      Batch updateBatch = builder.admin().batches().create(updateProduct);
+      OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+      WastageReason updateWastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("New reason", "Uusi syy"));
+      Integer updateAmount = 222;
+      String updateDescription = "New description";
+
+      WastageEventData updateData = new WastageEventData();
+      updateData.setAmount(updateAmount);
+      updateData.setReasonId(updateWastageReason.getId());
+      updateData.setDescription(updateDescription);
+
+      Event updateEvent = new Event(); 
+      updateEvent.setId(createdEvent.getId());
+      updateEvent.setBatchId(updateBatch.getId());
+      updateEvent.setData(updateData);
+      updateEvent.setEndTime(updateStartTime);
+      updateEvent.setStartTime(updateEndTime);
+      updateEvent.setType(createdEvent.getType());
+      updateEvent.setUserId(createdEvent.getUserId());
+
+      builder.admin().events().updateEvent(updateEvent);
+      builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
+    }
+  }
+  
+  @Test
   public void testDeletePlantingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createPlantingEvent(builder);
@@ -377,7 +445,7 @@ public class EventTestsIT {
       builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
     }
   }
-  
+
   @Test
   public void testCreatePackingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
@@ -625,4 +693,20 @@ public class EventTestsIT {
     return builder.admin().events().createPacking(batch, startTime, endTime, createdPackageSize, packedAmount);
   }
   
+  private Event createWastageEvent(TestBuilder builder) throws IOException {
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
+    PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+    LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+    Product product = builder.admin().products().create(name, createdPackageSize);
+
+    Batch batch = builder.admin().batches().create(product);
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+
+    Integer amount = 150;
+    String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";
+
+    return builder.admin().events().createWastage(batch, startTime, endTime, amount, wastageReason, description);
+  }
+
 }
