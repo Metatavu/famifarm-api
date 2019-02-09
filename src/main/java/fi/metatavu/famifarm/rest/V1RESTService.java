@@ -863,6 +863,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return plantingEventTranslator.translateEvent((PlantingEvent) event);
       case PACKING:
         return packingEventTranslator.translateEvent((PackingEvent) event);
+      case WASTEAGE:
+        return wastageEventTranslator.translateEvent((WastageEvent) event);
       default:
       break;
     }
