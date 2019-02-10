@@ -29,6 +29,7 @@ import fi.metatavu.famifarm.events.PackingEventController;
 import fi.metatavu.famifarm.events.PlantingEventController;
 import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.events.TableSpreadEventController;
+import fi.metatavu.famifarm.events.WastageEventController;
 import fi.metatavu.famifarm.packagesizes.PackageSizeController;
 import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
@@ -38,6 +39,7 @@ import fi.metatavu.famifarm.persistence.model.PackingEvent;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
+import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.productionlines.ProductionLineController;
 import fi.metatavu.famifarm.products.ProductController;
 import fi.metatavu.famifarm.rest.api.V1Api;
@@ -58,6 +60,7 @@ import fi.metatavu.famifarm.rest.model.SeedBatch;
 import fi.metatavu.famifarm.rest.model.SowingEventData;
 import fi.metatavu.famifarm.rest.model.TableSpreadEventData;
 import fi.metatavu.famifarm.rest.model.Team;
+import fi.metatavu.famifarm.rest.model.WastageEventData;
 import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.BatchTranslator;
 import fi.metatavu.famifarm.rest.translate.CultivationObservationEventTranslator;
@@ -73,6 +76,7 @@ import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
 import fi.metatavu.famifarm.rest.translate.SowingEventTranslator;
 import fi.metatavu.famifarm.rest.translate.TableSpreadEventTranslator;
 import fi.metatavu.famifarm.rest.translate.TeamsTranslator;
+import fi.metatavu.famifarm.rest.translate.WastageEventTranslator;
 import fi.metatavu.famifarm.rest.translate.WastageReasonsTranslator;
 import fi.metatavu.famifarm.seedbatches.SeedBatchesController;
 import fi.metatavu.famifarm.seeds.SeedsController;
@@ -187,6 +191,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Inject 
   private PackingEventTranslator packingEventTranslator;
   
+  @Inject
+  private WastageEventController wastageEventController;
+
+  @Inject
+  private WastageEventTranslator wastageEventTranslator;
+
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createSeed(Seed body) {
@@ -277,6 +287,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createHarvestEvent(batch, startTime, endTime, body.getData());
       case PLANTING:
         return createPlantingEvent(batch, startTime, endTime, body.getData());
+      case WASTEAGE:
+        return createWastageEvent(batch, startTime, endTime, body.getData());
       case PACKING:
         return createPackingEvent(batch, startTime, endTime, body.getData());
       default:
@@ -391,9 +403,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
       case PLANTING:
         plantingEventController.deletePlantingEvent((PlantingEvent) event);
       break;
+      case WASTEAGE:
+        wastageEventController.deleteWastageEvent((WastageEvent) event);
+      break;
       case PACKING:
         packingEventController.deletePackingEvent((PackingEvent) event);
-      break;      
+      break;
       default:
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -723,6 +738,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return updateHarvestEvent(event, batch, startTime, endTime, body.getData());
       case PLANTING:
         return updatePlantingEvent(event, batch, startTime, endTime, body.getData());
+      case WASTEAGE:
+        return updateWastageEvent(event, batch, startTime, endTime, body.getData());
       case PACKING:
         return updatePackingEvent(event, batch, startTime, endTime, body.getData());
       default:
@@ -846,6 +863,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return plantingEventTranslator.translateEvent((PlantingEvent) event);
       case PACKING:
         return packingEventTranslator.translateEvent((PackingEvent) event);
+      case WASTEAGE:
+        return wastageEventTranslator.translateEvent((WastageEvent) event);
       default:
       break;
     }
@@ -1278,6 +1297,67 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     return null;
+  }
+
+  /**
+   * Creates new wastage event
+   * 
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventData event data
+   * @return response
+   */
+  private Response createWastageEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    WastageEventData eventData;
+
+    try {
+      eventData = readEventData(WastageEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID creatorId = getLoggerUserId();
+    Integer amount = eventData.getAmount();
+    String description = eventData.getDescription();
+    fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(eventData.getReasonId());
+
+    return createOk(wastageEventTranslator.translateEvent(wastageEventController.createWastageEvent(batch, startTime, endTime, amount, wastageReason, description, creatorId)));
+  }
+
+    /**
+   * Updates wastage event
+   * 
+   * @param event event
+   * @param batch batch
+   * @param startTime start time
+   * @param endTime end time
+   * @param eventDataObject event data object
+   * @return response
+   */
+  private Response updateWastageEvent(fi.metatavu.famifarm.persistence.model.Event event, fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Object eventDataObject) {
+    WastageEventData eventData;
+
+    try {
+      eventData = readEventData(WastageEventData.class, eventDataObject);
+    } catch (IOException e) {
+      return createInternalServerError(e.getMessage());
+    }
+
+    if (eventData == null) {
+      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
+    }
+
+    UUID lastModifierId = getLoggerUserId();
+    Integer amount = eventData.getAmount();
+    fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(eventData.getReasonId());
+    String description = eventData.getDescription();
+
+    return createOk(wastageEventTranslator.translateEvent(wastageEventController.updateWastageEvent((WastageEvent) event, batch, startTime, endTime, amount, wastageReason, description, lastModifierId)));
   }
   
   private <D> D readEventData(Class<D> targetClass, Object object) throws IOException {
