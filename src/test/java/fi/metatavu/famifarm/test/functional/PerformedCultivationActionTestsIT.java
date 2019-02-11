@@ -15,7 +15,7 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
  * 
  * @author Ville Koivukangas
  */
-public class PerformedCultivationActionTestsIT {
+public class PerformedCultivationActionTestsIT extends AbstractFunctionalTest {
 
   @Test
   public void testCreatePerformedCultivationAction() throws Exception {
@@ -70,7 +70,7 @@ public class PerformedCultivationActionTestsIT {
   @Test
   public void testListPerformedCultivationActionPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PerformedCultivationAction performedCultivationAction = builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"));
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"));
       builder.worker1().performedCultivationActions().assertCount(1);
       builder.manager().performedCultivationActions().assertCount(1);
       builder.admin().performedCultivationActions().assertCount(1);

@@ -1,8 +1,10 @@
 package fi.metatavu.famifarm.rest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.jboss.ejb3.annotation.SecurityDomain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +45,9 @@ import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.productionlines.ProductionLineController;
 import fi.metatavu.famifarm.products.ProductController;
+import fi.metatavu.famifarm.reporting.Report;
+import fi.metatavu.famifarm.reporting.ReportController;
+import fi.metatavu.famifarm.reporting.ReportType;
 import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.Batch;
 import fi.metatavu.famifarm.rest.model.CellType;
@@ -197,6 +203,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Inject
   private WastageEventTranslator wastageEventTranslator;
 
+  @Inject
+  private ReportController reportController;
+  
   @Override
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createSeed(Seed body) {
@@ -847,6 +856,29 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID loggerUserId = getLoggerUserId();
     
     return createOk(wastageReasonsTranslator.translateWastageReason(wastageReasonsController.updateWastageReason(wastageReason, reason, loggerUserId)));
+  }
+
+  @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
+  public Response getReport(String typeParam) {
+    ReportType reportType = EnumUtils.getEnum(ReportType.class, typeParam);
+    if (reportType == null) {
+      return createBadRequest(String.format("Invalid report type %s", typeParam));
+    }
+    
+    Report report = reportController.getReport(reportType);
+    if (report == null) {
+      return createInternalServerError("Failed construct report");
+    }
+    
+    try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+      report.createReport(output, getLocale(), Collections.emptyMap());
+      return streamResponse(output.toByteArray(), report.getContentType());
+    } catch (IOException e) {
+      return createInternalServerError("Failed to stream report");
+    } catch (Exception e) {
+      return createInternalServerError("Failed to create report");
+    }
   }
   
   private Event translateEvent(fi.metatavu.famifarm.persistence.model.Event event) {

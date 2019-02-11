@@ -11,6 +11,7 @@ import fi.metatavu.famifarm.test.functional.builder.impl.PackageSizeTestBuilderR
 import fi.metatavu.famifarm.test.functional.builder.impl.PerformedCultivationActionTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductionLineTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.ReportTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.SeedBatchTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.SeedTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.TeamTestBuilderResource;
@@ -22,7 +23,8 @@ import fi.metatavu.famifarm.test.functional.builder.impl.WastageReasonTestBuilde
  * @author Antti Leppä
  */
 public abstract class AbstractTestBuilderAuthentication implements AutoCloseable {
-  
+
+  private ReportTestBuilderResource reports;
   private SeedTestBuilderResource seeds;
   private TeamTestBuilderResource teams;
   private SeedBatchTestBuilderResource seedBatches;
@@ -34,6 +36,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private PerformedCultivationActionTestBuilderResource performedCultivationActions;
   private EventTestBuilderResource events;
   private List<AutoCloseable> closables = new ArrayList<>();
+  
+  /**
+   * Returns test builder resource for reports
+   * 
+   * @return test builder resource for reports
+   * @throws IOException thrown when authentication fails
+   */
+  public ReportTestBuilderResource reports() throws IOException {
+    if (reports != null) {
+      return reports;
+    }
+    
+    return reports = this.addClosable(new ReportTestBuilderResource(createClient()));
+  }
   
   /**
    * Returns test builder resource for seeds

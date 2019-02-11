@@ -49,7 +49,7 @@
     
     <!-- Famifarm -->
     
-    <famifarm-api-spec.version>1.0.7</famifarm-api-spec.version>
+    <famifarm-api-spec.version>1.0.9</famifarm-api-spec.version>
     
     <!-- Maven -->
 
@@ -71,11 +71,15 @@
     
     <!-- Keycloak admin client -->
     
-    <keycloak.version>4.7.0.Final</keycloak.version>
+    <keycloak.version>4.8.3.Final</keycloak.version>
     
     <!-- Mailgun -->
     
     <mailgun.version>1.9.0</mailgun.version>
+    
+    <!-- POI -->
+    
+    <poi.version>4.0.1</poi.version>
     
     <!-- Test -->
     
@@ -83,7 +87,7 @@
     <rest-assured.version>3.2.0</rest-assured.version>
     <wiremock.version>2.19.0</wiremock.version>
     <jsonassert.version>1.5.0</jsonassert.version>
-    <famifarm-api-client.version>1.0.7</famifarm-api-client.version>
+    <famifarm-api-client.version>1.0.8</famifarm-api-client.version>
     <mariadb-java-client.version>2.3.0</mariadb-java-client.version>
   </properties>
 
@@ -325,6 +329,13 @@
   
     <dependency>
       <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-core</artifactId>
+      <version>${keycloak.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.keycloak</groupId>
       <artifactId>keycloak-adapter-spi</artifactId>
       <version>${keycloak.version}</version>
       <scope>provided</scope>
@@ -349,6 +360,10 @@
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
+        </exclusion> 
+        <exclusion>
+          <groupId>org.keycloak</groupId>
+          <artifactId>keycloak-core</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -361,6 +376,19 @@
       <version>${mailgun.version}</version>
     </dependency>
     
+    <!-- POI -->
+    
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>${poi.version}</version>
+    </dependency>
+      
+    <dependency>  
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>${poi.version}</version>
+    </dependency>
     
     <!-- Test -->
     
@@ -650,6 +678,24 @@
                     <command>if (outcome != success) of /system-property=it-test:read-resource</command>
                     <command>/system-property=it-test:add(value="true")</command>
                     <command>end-if</command>
+                    <command>if (outcome != success) of /system-property=keycloak-admin-client-id:read-resource</command>
+                    <command>/system-property=keycloak-admin-client-id:add(value="admin-cli")</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /system-property=keycloak-admin-client-secret:read-resource</command>
+                    <command>/system-property=keycloak-admin-client-secret:add(value="041e7b11-70a1-4beb-a59a-c1de3fde1cf8")</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /system-property=keycloak-admin-password:read-resource</command>
+                    <command>/system-property=keycloak-admin-password:add(value="api-admin")</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /system-property=keycloak-admin-user:read-resource</command>
+                    <command>/system-property=keycloak-admin-user:add(value="api-admin")</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /system-property=keycloak-admin-realm:read-resource</command>
+                    <command>/system-property=keycloak-admin-realm:add(value="test")</command>
+                    <command>end-if</command>
+                    <command>if (outcome != success) of /system-property=keycloak-admin-server-url:read-resource</command>
+                    <command>/system-property=keycloak-admin-server-url:add(value="http://localhost:8280/auth")</command>
+                    <command>end-if</command>                    
                     <command>if (outcome != success) of /subsystem=keycloak/secure-deployment=famifarm-api.war:read-resource</command>
                     <command>/subsystem=keycloak/secure-deployment=famifarm-api.war:add(realm="test", auth-server-url="http://localhost:8280/auth",bearer-only=true,ssl-required="EXTERNAL",resource="api")</command>
                     <command>/subsystem=security/security-domain=keycloak/:add</command>

@@ -18,7 +18,7 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
  * 
  * @author Ville Koivukangas
  */
-public class BatchTestsIT {
+public class BatchTestsIT extends AbstractFunctionalTest {
 
   @Test
   public void testCreateBatch() throws Exception {

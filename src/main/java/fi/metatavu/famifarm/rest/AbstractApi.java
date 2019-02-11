@@ -1,5 +1,8 @@
 package fi.metatavu.famifarm.rest;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -120,6 +123,36 @@ public abstract class AbstractApi {
   }
   
   /**
+   * Creates streamed response from byte array
+   * 
+   * @param data data
+   * @param type content type
+   * @return Response
+   */
+  protected Response streamResponse(byte[] data, String type) {
+    try (InputStream byteStream = new ByteArrayInputStream(data)) {
+      return streamResponse(type, byteStream, data.length);
+    } catch (IOException e) {
+      logger.error("Failed to stream data to client", e);
+      return createInternalServerError("Failed to stream data to client");
+    }
+  }
+  
+  /**
+   * Creates streamed response from input stream
+   * 
+   * @param inputStream data
+   * @param type content type
+   * @param contentLength content length
+   * @return Response
+   */
+  protected Response streamResponse(String type, InputStream inputStream, int contentLength) {
+    return Response.ok(new StreamingOutputImpl(inputStream), type)
+      .header("Content-Length", contentLength)
+      .build();
+  }
+  
+  /**
    * Returns logged user id
    * 
    * @return logged user id
@@ -132,6 +165,15 @@ public abstract class AbstractApi {
     }
     
     return UUID.fromString(remoteUser);
+  }
+  
+  /**
+   * Returns request locale
+   * 
+   * @return request locale
+   */
+  protected Locale getLocale() {
+    return getHttpServletRequest().getLocale();
   }
   
   /**

@@ -15,7 +15,7 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
  * 
  * @author Ville Koivukangas
  */
-public class PackageSizeTestsIT {
+public class PackageSizeTestsIT extends AbstractFunctionalTest {
 
   @Test
   public void testCreatePackageSize() throws Exception {

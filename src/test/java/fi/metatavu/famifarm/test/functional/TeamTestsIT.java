@@ -15,7 +15,7 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
  * 
  * @author Ville Koivukangas
  */
-public class TeamTestsIT {
+public class TeamTestsIT extends AbstractFunctionalTest {
 
   @Test
   public void testCreateTeam() throws Exception {
