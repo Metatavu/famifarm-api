@@ -17,8 +17,9 @@ public interface Report {
    * @param parameters report parameters
    * @param locale locale
    * @param output output stream
+   * @throws ReportException when report creation fails
    */
-  public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws Exception;
+  public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException;
   
   /**
    * Returns report's content type

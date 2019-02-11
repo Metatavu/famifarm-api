@@ -71,7 +71,10 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, String value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    cell.setCellValue(value);
+    if (cell != null) {
+      cell.setCellValue(value);
+    }
+    
     return cell;
   }
 
@@ -99,8 +102,11 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Date value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    cell.setCellValue(value);
-    cell.setCellStyle(this.dateTimeCellStyle);
+    if (cell != null) {
+      cell.setCellValue(value);
+      cell.setCellStyle(this.dateTimeCellStyle);
+    }
+
     return cell;
   }
 
@@ -115,7 +121,10 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Boolean value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    cell.setCellValue(value);
+    if (cell != null) {
+      cell.setCellValue(value);
+    }
+    
     return cell;
   }
 
@@ -130,7 +139,10 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Double value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    cell.setCellValue(value);
+    if (cell != null) {
+      cell.setCellValue(value);
+    }
+
     return cell;
   }
 

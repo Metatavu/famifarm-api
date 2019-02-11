@@ -22,6 +22,7 @@ public class ReportController {
    * @param reportType report to
    * @return report instance
    */
+  @SuppressWarnings ("squid:S1301")
   public Report getReport(ReportType reportType) {
     switch (reportType) {
       case XLS_EXAMPLE:
