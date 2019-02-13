@@ -50,7 +50,7 @@ public class XlsxExampleReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Event> events = eventController.listEvents(0, 100);
+      List<Event> events = eventController.listEvents(null, 0, 100);
       for (int i = 0; i < events.size(); i++) {
         int rowIndex = i + 1;
         Event event = events.get(i);
