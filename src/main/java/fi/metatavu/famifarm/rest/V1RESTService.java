@@ -627,8 +627,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
-  public Response listEvents(Integer firstResult, Integer maxResults) {
-    List<Event> result = eventController.listEvents(firstResult, maxResults).stream()
+  public Response listEvents(Integer firstResult, Integer maxResults, UUID batchId) {
+    fi.metatavu.famifarm.persistence.model.Batch batch = batchId != null ? batchController.findBatch(batchId) : null;
+    List<Event> result = eventController.listEvents(batch, firstResult, maxResults).stream()
       .map(this::translateEvent)
       .collect(Collectors.toList());
     

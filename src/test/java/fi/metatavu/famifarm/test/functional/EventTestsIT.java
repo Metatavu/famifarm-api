@@ -525,6 +525,29 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertCount(6);
     }
   }
+
+  @Test
+  public void testEventListFilters() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      builder.admin().performedCultivationActions();
+      builder.admin().teams();
+      
+      createSowingEvent(builder);
+      builder.admin().events().assertCount(1);
+      createTableSpreadEvent(builder);
+      builder.admin().events().assertCount(2);
+
+      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+      Product product = builder.admin().products().create(name, createdPackageSize);
+      Batch batch = builder.admin().batches().create(product);
+      createSowingEvent(builder, batch);
+      createTableSpreadEvent(builder, batch);
+
+      builder.admin().events().assertCount(4);
+      builder.admin().events().assertCount(batch.getId(), 2);
+    }
+  }
   
   @Test
   public void testDeleteSeedPermissions() throws Exception {

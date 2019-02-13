@@ -2,6 +2,9 @@ package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
@@ -33,7 +36,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
         builder.admin().reports().assertCellValue("Batch", workbook, 0, 0, 0);
-        builder.admin().reports().assertCellValue("2019-02-11 - Product name", workbook, 0, 1, 0);
+        builder.admin().reports().assertCellValue(String.format("%s - Product name", new SimpleDateFormat("yyyy-MM-dd").format(new Date())), workbook, 0, 1, 0);
         builder.admin().reports().assertCellValue(tableSpreadEvent.getStartTime(), workbook, 0, 1, 1);
         builder.admin().reports().assertCellValue(cultivationObservationEvent.getEndTime(), workbook, 0, 2, 2);
         builder.admin().reports().assertCellValue("User, Admin", workbook, 0, 3, 3);
