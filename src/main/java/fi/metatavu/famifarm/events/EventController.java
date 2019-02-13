@@ -7,12 +7,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.EventDAO;
+import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
 
 /**
  * Controller for events
  * 
  * @author Antti Leppä
+ * @author Heikki Kurhinen
  */
 @ApplicationScoped
 public class EventController {
@@ -33,11 +35,16 @@ public class EventController {
   /**
    * Lists events
    * 
+   * @param batch filter results by batch (optional)
    * @param firstResult first result
    * @param maxResults max results
    * @return list events
    */
-  public List<Event> listEvents(Integer firstResult, Integer maxResults) {
+  public List<Event> listEvents(Batch batch, Integer firstResult, Integer maxResults) {
+    if (batch != null) {
+      return eventDAO.listByBatch(batch, firstResult, maxResults);
+    }
+
     return eventDAO.listAll(firstResult, maxResults);
   }
 

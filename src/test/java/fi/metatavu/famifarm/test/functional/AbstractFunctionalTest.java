@@ -37,9 +37,21 @@ public abstract class AbstractFunctionalTest {
   protected Event createSowingEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
     Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize);
-    Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-    
     Batch batch = builder.admin().batches().create(product);
+    return createSowingEvent(builder, batch);
+
+  }
+
+    /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch to attach the event to
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createSowingEvent(TestBuilder builder, Batch batch) throws IOException {
+    Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     Double amount = 12d;
@@ -64,6 +76,18 @@ public abstract class AbstractFunctionalTest {
     Product product = builder.admin().products().create(name, createdPackageSize);
 
     Batch batch = builder.admin().batches().create(product);
+    return createTableSpreadEvent(builder, batch);
+  }
+
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch to attach the event to
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createTableSpreadEvent(TestBuilder builder, Batch batch) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     String location = "Location";

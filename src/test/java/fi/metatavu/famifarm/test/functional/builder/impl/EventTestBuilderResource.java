@@ -254,6 +254,16 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   public void assertCount(int expected) {
     assertEquals(expected, getApi().listEvents(Collections.emptyMap()).size());
   }
+
+  /**
+   * Asserts Event count within the system
+   *
+   * @param batchId batch id to filter list with
+   * @param expected expected count
+   */
+  public void assertCount(UUID batchId, int expected) {
+    assertEquals(expected, getApi().listEvents(null, null, batchId).size());
+  }
   
   /**
    * Asserts create status fails with given status code
