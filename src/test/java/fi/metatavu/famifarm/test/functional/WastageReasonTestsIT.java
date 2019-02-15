@@ -15,7 +15,7 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
  * 
  * @author Ville Koivukangas
  */
-public class WastageReasonTestsIT {
+public class WastageReasonTestsIT extends AbstractFunctionalTest {
 
   @Test
   public void testCreateWastageReason() throws Exception {

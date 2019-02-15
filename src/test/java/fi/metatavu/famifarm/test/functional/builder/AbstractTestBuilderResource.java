@@ -3,12 +3,16 @@ package fi.metatavu.famifarm.test.functional.builder;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.ParameterizedType;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -22,6 +26,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.ApiClient.Api;
+import fi.metatavu.famifarm.auth.ApiKeyAuth;
 
 /**
  * Abstract base class for test builder resources
@@ -49,6 +54,15 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
   public T addClosable(T t) {
     closables.add(t);
     return t;
+  }
+  
+  /**
+   * Returns API client
+   * 
+   * @return API client
+   */
+  protected ApiClient getApiClient() {
+    return apiClient;
   }
   
   /**
@@ -113,6 +127,38 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
     CustomComparator customComparator = new CustomComparator(JSONCompareMode.LENIENT);
     return JSONCompare.compareJSON(toJSONString(expected), toJSONString(actual), customComparator);
   }  
+  
+  /**
+   * Download binary data using API client authorization
+   * 
+   * @param apiClient API client
+   * @param url URL
+   * @return downloaded data
+   * @throws IOException thrown when downloading fails
+   */
+  protected byte[] getBinaryData(ApiClient apiClient, URL url) throws IOException {
+    ApiKeyAuth bearerAuth = (ApiKeyAuth) apiClient.getAuthorization("BearerAuth");
+    String authorization = bearerAuth.getApiKey();
+    return getBinaryData(authorization, url);
+  }  
+  
+  /**
+   * Downloads binary data
+   * 
+   * @param authorization authorization header value 
+   * @param url URL
+   * @return downloaded data
+   * @throws IOException thrown when downloading fails
+   */
+  protected byte[] getBinaryData(String authorization, URL url) throws IOException {
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestProperty("Authorization", authorization);
+    connection.setDoOutput(true);
+    
+    try (InputStream inputStream = connection.getInputStream()) {
+      return IOUtils.toByteArray(inputStream);      
+    }
+  }
   
   /**
    * Serializes an object into JSON

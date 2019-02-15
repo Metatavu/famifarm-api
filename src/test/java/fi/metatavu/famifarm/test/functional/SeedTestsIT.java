@@ -15,7 +15,7 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
  * 
  * @author Antti Leppä
  */
-public class SeedTestsIT {
+public class SeedTestsIT extends AbstractFunctionalTest {
 
   @Test
   public void testCreateSeed() throws Exception {

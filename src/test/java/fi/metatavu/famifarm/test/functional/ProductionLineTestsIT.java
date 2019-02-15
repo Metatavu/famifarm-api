@@ -10,7 +10,7 @@ import org.junit.Test;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
-public class ProductionLineTestsIT {
+public class ProductionLineTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateProductionLine() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {

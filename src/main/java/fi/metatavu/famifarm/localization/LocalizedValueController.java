@@ -69,7 +69,7 @@ public class LocalizedValueController {
       return null;
     }
     
-    LocalizedValue localizedValue = localizedValueDAO.findByEntryAndLocale(entry, locale);
+    LocalizedValue localizedValue = localizedValueDAO.findByEntryAndLocale(entry, new Locale(locale.getLanguage()));
     return localizedValue != null ? localizedValue.getValue() : null;
   }
   

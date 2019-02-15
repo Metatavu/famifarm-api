@@ -17,7 +17,7 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
  * 
  * @author Ville Koivukangas
  */
-public class ProductTestsIT {
+public class ProductTestsIT extends AbstractFunctionalTest {
 
   @Test
   public void testCreateProduct() throws Exception {

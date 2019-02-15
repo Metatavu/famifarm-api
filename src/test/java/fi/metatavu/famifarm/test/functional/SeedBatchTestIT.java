@@ -12,7 +12,7 @@ import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
-public class SeedBatchTestIT {
+public class SeedBatchTestIT extends AbstractFunctionalTest {
   @Test
   public void testCreateSeedBatch() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
