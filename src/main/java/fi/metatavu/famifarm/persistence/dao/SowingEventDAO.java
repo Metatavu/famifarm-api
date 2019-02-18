@@ -40,6 +40,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @return created sowingEvent
    * @param lastModifier modifier
    */
+  @SuppressWarnings ("squid:S00107")
   public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, SeedBatch seedBatch, CellType cellType, Double amount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
     SowingEvent sowingEvent = new SowingEvent();
     sowingEvent.setBatch(batch);
