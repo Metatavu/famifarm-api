@@ -28,13 +28,15 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
    * @param gutterCount gutterCount
    * @param trayCount trayCount
    * @param workerCount workerCount
+   * @param remainingUnits remaining units
    * @return created plantingEvent
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, Integer gutterCount, Integer trayCount, Integer workerCount, UUID creatorId, UUID lastModifierId) {
+  public PlantingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, Integer gutterCount, Integer trayCount, Integer workerCount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
     PlantingEvent plantingEvent = new PlantingEvent();
     plantingEvent.setBatch(batch);
+    plantingEvent.setRemainingUnits(remainingUnits);
     plantingEvent.setStartTime(startTime);
     plantingEvent.setEndTime(endTime);
     plantingEvent.setProductionLine(productionLine);

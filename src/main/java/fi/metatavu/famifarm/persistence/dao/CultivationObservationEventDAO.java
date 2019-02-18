@@ -26,14 +26,16 @@ public class CultivationObservationEventDAO extends AbstractEventDAO<Cultivation
    * @param batch batch
    * @param startTime start time
    * @param endTime end time
+   * @param remainingUnits remaining units
    * @param creatorId creator id
    * @param lastModifierId last modifier id
    * @return
    */
   @SuppressWarnings ("squid:S00107")
-  public CultivationObservationEvent create(UUID id, Double weight, Double luminance, String pests, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, UUID creatorId, UUID lastModifierId) {
+  public CultivationObservationEvent create(UUID id, Double weight, Double luminance, String pests, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime,  Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
     CultivationObservationEvent cultivationActionEvent = new CultivationObservationEvent();
     cultivationActionEvent.setId(id);
+    cultivationActionEvent.setRemainingUnits(remainingUnits);
     cultivationActionEvent.setWeight(weight);
     cultivationActionEvent.setLuminance(luminance);
     cultivationActionEvent.setPests(pests);

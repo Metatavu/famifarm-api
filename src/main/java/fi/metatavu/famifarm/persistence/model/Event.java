@@ -40,6 +40,10 @@ public class Event {
   private Batch batch;
 
   @Column(nullable = false)
+  @NotNull  
+  private Integer remainingUnits; 
+
+  @Column(nullable = false)
   private OffsetDateTime startTime;
 
   @Column
@@ -65,6 +69,14 @@ public class Event {
 
   public void setId(UUID id) {
     this.id = id;
+  }
+  
+  public Integer getRemainingUnits() {
+    return remainingUnits;
+  }
+  
+  public void setRemainingUnits(Integer remainingUnits) {
+    this.remainingUnits = remainingUnits;
   }
 
   public Batch getBatch() {

@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.PlantingEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
@@ -19,6 +20,9 @@ import fi.metatavu.famifarm.persistence.model.ProductionLine;
  */
 @ApplicationScoped
 public class PlantingEventController {
+
+  @Inject
+  private BatchDAO batchDAO;
   
   @Inject
   private PlantingEventDAO plantingEventDAO;  
@@ -39,7 +43,7 @@ public class PlantingEventController {
    */
   @SuppressWarnings ("squid:S00107")
   public PlantingEvent createPlantingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, Integer gutterCount, Integer trayCount, Integer workerCount, UUID creatorId) {
-    return plantingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId, creatorId);
+    return plantingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, 0, creatorId, creatorId);
   }
   
   /**
@@ -98,6 +102,7 @@ public class PlantingEventController {
    * @param plantingEvent planting event to be deleted
    */
   public void deletePlantingEvent(PlantingEvent plantingEvent) {
+    batchDAO.listByActiveBatch(plantingEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     plantingEventDAO.delete(plantingEvent);
   }
 

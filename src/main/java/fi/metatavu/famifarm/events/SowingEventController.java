@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.SowingEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
@@ -21,6 +22,9 @@ import fi.metatavu.famifarm.rest.model.CellType;
  */
 @ApplicationScoped
 public class SowingEventController {
+
+  @Inject
+  private BatchDAO batchDAO;
   
   @Inject
   private SowingEventDAO sowingEventDAO;  
@@ -40,7 +44,7 @@ public class SowingEventController {
    * @return updated sowingEvent
    */
   public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, SeedBatch seedBatch, CellType cellType, Double amount, UUID creatorId) {
-    return sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId, creatorId);
+    return sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, 0, creatorId, creatorId);
   }
   
   /**
@@ -97,6 +101,7 @@ public class SowingEventController {
    * @param sowingEvent sowing event to be deleted
    */
   public void deleteSowingEvent(SowingEvent sowingEvent) {
+    batchDAO.listByActiveBatch(sowingEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     sowingEventDAO.delete(sowingEvent);
   }
 

@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.TableSpreadEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
@@ -18,6 +19,9 @@ import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
  */
 @ApplicationScoped
 public class TableSpreadEventController {
+
+  @Inject
+  private BatchDAO batchDAO;
   
   @Inject
   private TableSpreadEventDAO tableSpreadEventDAO;  
@@ -34,7 +38,7 @@ public class TableSpreadEventController {
    * @return updated tableSpreadEvent
    */
   public TableSpreadEvent createTableSpreadEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer tableCount, String location, UUID creatorId) {
-    return tableSpreadEventDAO.create(UUID.randomUUID(), tableCount, location, batch, startTime, endTime, creatorId, creatorId);
+    return tableSpreadEventDAO.create(UUID.randomUUID(), tableCount, location, batch, startTime, endTime, 0, creatorId, creatorId);
   }
   
   /**
@@ -85,6 +89,7 @@ public class TableSpreadEventController {
    * @param tableSpreadEvent sowing event to be deleted
    */
   public void deleteTableSpreadEvent(TableSpreadEvent tableSpreadEvent) {
+    batchDAO.listByActiveBatch(tableSpreadEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     tableSpreadEventDAO.delete(tableSpreadEvent);
   }
 
