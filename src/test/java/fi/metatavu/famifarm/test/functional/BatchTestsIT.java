@@ -3,6 +3,9 @@ package fi.metatavu.famifarm.test.functional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.time.OffsetDateTime;
+import java.time.Period;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -84,6 +87,21 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       builder.admin().batches().assertCount(1);
       builder.admin().batches().create(product);
       builder.admin().batches().assertCount(2);
+      
+      List<Batch> batches = builder.admin().batches().listBatches(null, null, OffsetDateTime.now().plus(Period.ofDays(1)), null);
+      builder.admin().batches().assertCount(2, batches);
+      
+      batches = builder.admin().batches().listBatches(null, null, OffsetDateTime.now().minus(Period.ofDays(1)), null);
+      builder.admin().batches().assertCount(0, batches);
+      
+      batches = builder.admin().batches().listBatches(null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)));
+      builder.admin().batches().assertCount(0, batches);
+      
+      batches = builder.admin().batches().listBatches(null, null, null, OffsetDateTime.now().minus(Period.ofDays(1)));
+      builder.admin().batches().assertCount(2, batches);
+      
+      batches = builder.admin().batches().listBatches(null, null, OffsetDateTime.now().plus(Period.ofDays(1)), OffsetDateTime.now().minus(Period.ofDays(1)));
+      builder.admin().batches().assertCount(2, batches);
     }
   }
   

@@ -1,8 +1,17 @@
 package fi.metatavu.famifarm.persistence.dao;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Batch_;
 import fi.metatavu.famifarm.persistence.model.Product;
 
 /**
@@ -42,6 +51,94 @@ public class BatchDAO extends AbstractDAO<Batch> {
     batch.setLastModifierId(lastModifierId);
     batch.setProduct(product);
     return persist(batch);
+  }
+  
+  /**
+   * List batches between created times
+   * 
+   * @param firstResult firstResult
+   * @param maxResults maxResults
+   * @param createdBefore createdBefore
+   * @param createdAfter createdAfter
+   * @return list of batches
+   */
+  public List<Batch> listByCreatedBetween(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
+    Root<Batch> root = criteria.from(Batch.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.between(root.get(Batch_.CREATED_AT), createdAfter, createdBefore));
+    TypedQuery<Batch> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
+  
+  /**
+   * List batches created before given time
+   * 
+   * @param firstResult firstResult
+   * @param maxResults maxResults
+   * @param createdBefore createdBefore
+   * @return list of batches
+   */
+  public List<Batch> listByCreatedBefore(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
+    Root<Batch> root = criteria.from(Batch.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.CREATED_AT), createdBefore));
+    TypedQuery<Batch> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
+  
+  /**
+   * List batches created after given time
+   * 
+   * @param firstResult firstResult
+   * @param maxResults maxResults
+   * @param createdAfter createdAfter
+   * @return list of batches
+   */
+  public List<Batch> listByCreatedAfter(Integer firstResult, Integer maxResults, OffsetDateTime createdAfter) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
+    Root<Batch> root = criteria.from(Batch.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.CREATED_AT), createdAfter));
+    TypedQuery<Batch> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
   }
   
 }

@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.batches;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,13 +43,27 @@ public class BatchController {
   }
 
   /**
-   * Lists batchs
+   * Lists batches
    * 
    * @param firstResult first result
    * @param maxResults max results
+   * @param createdBefore created before
+   * @param createdAfter created after
    * @return list of batches
    */
-  public List<Batch> listBatches(Integer firstResult, Integer maxResults) {
+  public List<Batch> listBatches(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    if (createdBefore != null && createdAfter != null) {
+      return batchDAO.listByCreatedBetween(firstResult, maxResults, createdBefore, createdAfter);
+    }
+    
+    if (createdBefore != null) {
+      return batchDAO.listByCreatedBefore(firstResult, maxResults, createdBefore);
+    }
+    
+    if (createdAfter != null) {
+      return batchDAO.listByCreatedAfter(firstResult, maxResults, createdAfter);
+    }
+    
     return batchDAO.listAll(firstResult, maxResults);
   }
 

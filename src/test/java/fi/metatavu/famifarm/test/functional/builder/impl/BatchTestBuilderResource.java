@@ -4,9 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 
 import feign.FeignException;
@@ -80,6 +83,40 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
    */
   public void assertCount(int expected) {
     assertEquals(expected, getApi().listBatches(Collections.emptyMap()).size());
+  }
+  
+  /**
+   * Asserts given list of batches count
+   * 
+   * @param expected expected count
+   * @param batches batches
+   */
+  public void assertCount(int expected, List<Batch> batches) {
+    assertEquals(expected, batches.size());
+  }
+  
+  /**
+   * List batches
+   * 
+   * @param firstResult firstResult
+   * @param maxResults maxResults
+   * @param createdBefore createdBefore
+   * @param createdAfter createdAfter
+   * @return list of batches
+   */
+  public List<Batch> listBatches(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    String after = null;
+    String before = null;
+    
+    if (createdBefore != null) {
+      before = createdBefore.toString();
+    }
+    
+    if (createdAfter != null) {
+      after = createdAfter.toString();
+    }
+    
+    return getApi().listBatches(firstResult, maxResults, before, after);
   }
   
   /**

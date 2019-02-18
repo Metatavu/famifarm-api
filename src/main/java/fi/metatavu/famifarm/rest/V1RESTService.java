@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.ejb3.annotation.SecurityDomain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -617,8 +618,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
   
   @Override
   @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
-  public Response listBatches(Integer firstResult, Integer maxResult) {
-    List<Batch> result = batchController.listBatches(firstResult, maxResult).stream()
+  public Response listBatches(Integer firstResult, Integer maxResult, String createdBefore, String createdAfter) {
+    List<Batch> result = batchController.listBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter)).stream()
         .map(batchTranslator::translateBatch)
         .collect(Collectors.toList());
       
@@ -880,6 +881,20 @@ public class V1RESTService extends AbstractApi implements V1Api {
     } catch (Exception e) {
       return createInternalServerError("Failed to create report");
     }
+  }
+  
+  /**
+   * Parse time
+   * 
+   * @param timeString
+   * @return time
+   */
+  private OffsetDateTime parseTime(String timeString) {
+    if (StringUtils.isEmpty(timeString)) {
+      return null;
+    }
+    
+    return OffsetDateTime.parse(timeString);
   }
   
   private Event translateEvent(fi.metatavu.famifarm.persistence.model.Event event) {
