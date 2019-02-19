@@ -371,6 +371,22 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   public void clean(Event event) {
     getApi().deleteEvent(event.getId());  
   }
+  
+  /**
+   * Creates wastage event data object
+   * 
+   * @param amount amount
+   * @param wastageReason wastage reason
+   * @param description description
+   * @return created wastage event data object
+   */
+  public WastageEventData createWastageEventData(Integer amount, WastageReason wastageReason, String description) {
+    WastageEventData data = new WastageEventData();
+    data.setAmount(amount);
+    data.setDescription(description);
+    data.setReasonId(wastageReason.getId());
+    return data;
+  }
 
   /**
    * Creates event data object
@@ -472,19 +488,4 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     return data;
   }
 
-  /**
-   * Creates wastage event data object
-   * 
-   * @param amount amount
-   * @param wastageReason wastage reason
-   * @param description description
-   * @return created wastage event data object
-   */
-  private WastageEventData createWastageEventData(Integer amount, WastageReason wastageReason, String description) {
-    WastageEventData data = new WastageEventData();
-    data.setAmount(amount);
-    data.setDescription(description);
-    data.setReasonId(wastageReason.getId());
-    return data;
-  }
 }
