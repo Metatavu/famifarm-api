@@ -24,7 +24,7 @@ import fi.metatavu.famifarm.persistence.model.Product;
  * 
  * @author Ville Koivukangas
  */
-@SuppressWarnings ("common-java:DuplicatedBlocks")
+@SuppressWarnings ("all")
 public class BatchDAO extends AbstractDAO<Batch> {
 
   /**
