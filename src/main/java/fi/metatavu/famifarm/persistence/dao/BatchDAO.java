@@ -24,6 +24,7 @@ import fi.metatavu.famifarm.persistence.model.Product;
  * 
  * @author Ville Koivukangas
  */
+@SuppressWarnings("Duplicates")
 public class BatchDAO extends AbstractDAO<Batch> {
 
   /**
@@ -35,7 +36,6 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param lastModifierId lastModifierId
    * @return created seed
    */
-  @SuppressWarnings ("squid:S00107")
   public Batch create(UUID id, Product product, UUID creatorId, UUID lastModifierId) {
     Batch batch = new Batch();
     batch.setId(id);
