@@ -29,7 +29,7 @@ public class PlantingEventTranslator extends AbstractEventTranslator<PlantingEve
     result.setGutterCount(event.getGutterCount());
     result.setGutterSize(event.getGutterSize());
     result.setProductionLineId(event.getProductionLine() != null ? event.getProductionLine().getId() : null);
-    result.setTrayCount(event.getTrayCount());
+    result.setCellCount(event.getCellCount());
     result.setWorkerCount(event.getWorkerCount());
 
     return result;

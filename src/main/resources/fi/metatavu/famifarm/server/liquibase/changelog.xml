@@ -428,4 +428,8 @@
     <renameColumn tableName="plantingevent" oldColumnName="gutternumber" newColumnName="guttersize" columnDataType="integer"/>
   </changeSet>
       
+  <changeSet id="plantingeventcellcount" author="antti.leppa">
+    <renameColumn tableName="plantingevent" oldColumnName="traycount" newColumnName="cellcount" columnDataType="int(32)"/>
+  </changeSet>
+      
 </databaseChangeLog>
