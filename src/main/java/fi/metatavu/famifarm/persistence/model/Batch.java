@@ -33,6 +33,9 @@ public class Batch {
   @ManyToOne(optional = false)
   private Product product;
 
+  @ManyToOne
+  private Event activeEvent;
+
   @Column(nullable = false)
   @NotNull
   private UUID creatorId;
@@ -93,6 +96,14 @@ public class Batch {
 
   public void setModifiedAt(OffsetDateTime modifiedAt) {
     this.modifiedAt = modifiedAt;
+  }
+  
+  public Event getActiveEvent() {
+    return activeEvent;
+  }
+  
+  public void setActiveEvent(Event activeEvent) {
+    this.activeEvent = activeEvent;
   }
 
   @PrePersist

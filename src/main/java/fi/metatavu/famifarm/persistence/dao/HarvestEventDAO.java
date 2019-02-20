@@ -29,13 +29,15 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @param seedBatch seedBatch
    * @param cellType cellType
    * @param amount amount
+   * @param remainingUnits remaining units
    * @return created harvestEvent
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, UUID creatorId, UUID lastModifierId) {
+  public HarvestEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
     HarvestEvent harvestEvent = new HarvestEvent();
     harvestEvent.setBatch(batch);
+    harvestEvent.setRemainingUnits(remainingUnits);
     harvestEvent.setStartTime(startTime);
     harvestEvent.setEndTime(endTime);
     harvestEvent.setTeam(team);

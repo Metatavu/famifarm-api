@@ -1,9 +1,16 @@
 package fi.metatavu.famifarm.persistence.dao;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.PackingEvent_;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.persistence.model.WastageReason;
 
@@ -24,13 +31,15 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    * @param description description
    * @param startTime start time
    * @param endTime end time
+   * @param remainingUnits remaining units
    * @param creatorId creator id
    * @param lastModifierId last modfier id
    * @return created wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, String description, OffsetDateTime startTime, OffsetDateTime endTime, UUID creatorId, UUID lastModifierId) {
+  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, String description, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
     WastageEvent wastageEvent = new WastageEvent();
+    wastageEvent.setRemainingUnits(remainingUnits);
     wastageEvent.setAmount(amount);
     wastageEvent.setBatch(batch);
     wastageEvent.setWastageReason(wastageReason);
@@ -42,6 +51,25 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
     wastageEvent.setLastModifierId(lastModifierId);
 
     return persist(wastageEvent);
+  }
+  
+  /**
+   * Lists events by batch
+   * 
+   * @param batch batch
+   * @return List of events
+   */
+  public List<WastageEvent> listByBatch(Batch batch) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<WastageEvent> criteria = criteriaBuilder.createQuery(WastageEvent.class);
+    Root<WastageEvent> root = criteria.from(WastageEvent.class);
+    
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(PackingEvent_.batch), batch));
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   /**

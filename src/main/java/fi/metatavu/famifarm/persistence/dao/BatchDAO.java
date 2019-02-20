@@ -8,10 +8,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Batch_;
+import fi.metatavu.famifarm.persistence.model.Event;
+import fi.metatavu.famifarm.persistence.model.Event_;
 import fi.metatavu.famifarm.persistence.model.Product;
 
 /**
@@ -38,7 +41,121 @@ public class BatchDAO extends AbstractDAO<Batch> {
     batch.setLastModifierId(lastModifierId);
     return persist(batch);
   }
+  
+  /**
+   * Lists batches where active event's remaining units is less than given value
+   * 
+   * @param remainingUnits remaining units
+   * @param firstResult first result (optional)
+   * @param maxResults max results (optional)
+   * @return List of batches
+   */
+  public List<Batch> listByRemainingUnitsLessThan(int remainingUnits, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
+    Root<Batch> root = criteria.from(Batch.class);
+    Join<Batch, Event> activeEventJoin = root.join(Batch_.activeEvent);
+    
+    criteria.select(root);
+    criteria.where(criteriaBuilder.lessThan(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
+    
+    TypedQuery<Batch> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
 
+    return query.getResultList();
+  }
+  
+  /**
+   * Lists batches where active event's remaining units is greater than given value
+   * 
+   * @param remainingUnits remaining units
+   * @param firstResult first result (optional)
+   * @param maxResults max results (optional)
+   * @return List of batches
+   */
+  public List<Batch> listByRemainingUnitsGreaterThan(int remainingUnits, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
+    Root<Batch> root = criteria.from(Batch.class);
+    Join<Batch, Event> activeEventJoin = root.join(Batch_.activeEvent);
+    
+    criteria.select(root);
+    criteria.where(criteriaBuilder.greaterThan(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
+    
+    TypedQuery<Batch> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
+  
+  /**
+   * Lists batches where active event's remaining units equal given value
+   * 
+   * @param remainingUnits remaining units
+   * @param firstResult first result (optional)
+   * @param maxResults max results (optional)
+   * @return List of batches
+   */
+  public List<Batch> listByRemainingUnitsEquals(int remainingUnits, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
+    Root<Batch> root = criteria.from(Batch.class);
+    Join<Batch, Event> activeEventJoin = root.join(Batch_.activeEvent);
+    
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
+    
+    TypedQuery<Batch> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
+
+  /**
+   * Lists batches by active event
+   * 
+   * @param event event
+   * @return list of batches
+   */
+  public List<Batch> listByActiveBatch(Event event) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
+    Root<Batch> root = criteria.from(Batch.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(Batch_.activeEvent), event));
+    
+    return entityManager.createQuery(criteria).getResultList();
+  }
+  
   /**
    * Updates product
    *
@@ -140,5 +257,17 @@ public class BatchDAO extends AbstractDAO<Batch> {
 
     return query.getResultList();
   }
-  
+
+  /**
+   * Updates batches active event 
+   * 
+   * @param batch batch
+   * @param activeEvent active event
+   * @return updated batch
+   */
+  public Batch updateActiveEvent(Batch batch, Event activeEvent) {
+    batch.setActiveEvent(activeEvent);
+    return persist(batch);
+  }
+
 }

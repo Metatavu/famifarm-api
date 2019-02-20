@@ -396,5 +396,32 @@
       </column>
     </createTable>
   </changeSet>  
+
+      
+  <changeSet id="batchstatus" author="antti.leppa">
+    <delete tableName="packingevent"/>
+    <delete tableName="wastageevent"/>
+    <delete tableName="plantingevent"/>
+    <delete tableName="packingevent"/>
+    <delete tableName="harvestevent"/>
+    <delete tableName="cultivationobservationeventaction"/>
+    <delete tableName="cultivationobservationevent"/>
+    <delete tableName="tablespreadevent"/>
+    <delete tableName="sowingevent"/>
+    <delete tableName="event"/>
+    <delete tableName="batch"/>
+  
+    <addColumn tableName="event">
+      <column name="remainingunits" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    
+    <addColumn tableName="batch">
+      <column name="activeevent_id" type="binary(16)">
+        <constraints nullable="true" foreignKeyName="FK_BATCH_ACTIVE_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+    </addColumn>
+  </changeSet>  
       
 </databaseChangeLog>

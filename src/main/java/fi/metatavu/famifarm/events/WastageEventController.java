@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.WastageEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
@@ -20,6 +21,9 @@ import fi.metatavu.famifarm.persistence.model.WastageReason;
 @ApplicationScoped
 public class WastageEventController {
 
+  @Inject
+  private BatchDAO batchDAO;
+  
   @Inject
   private WastageEventDAO wastageEventDAO;
 
@@ -36,7 +40,7 @@ public class WastageEventController {
    * @return created wastage event
    */
   public WastageEvent createWastageEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String description, UUID creatorId) {
-    return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, description, startTime, endTime, creatorId, creatorId);
+    return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, description, startTime, endTime, 0, creatorId, creatorId);
   }
 
   /**
@@ -90,6 +94,7 @@ public class WastageEventController {
    * @param wastageEvent wastage event to delete
    */
   public void deleteWastageEvent(WastageEvent wastageEvent) {
+    batchDAO.listByActiveBatch(wastageEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     wastageEventDAO.delete(wastageEvent);
   }
 

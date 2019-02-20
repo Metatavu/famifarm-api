@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.CultivationObservationEventActionDAO;
 import fi.metatavu.famifarm.persistence.dao.CultivationObservationEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
@@ -25,6 +26,9 @@ import fi.metatavu.famifarm.persistence.model.PerformedCultivationAction;
  */
 @ApplicationScoped
 public class CultivationObservationEventController {
+
+  @Inject
+  private BatchDAO batchDAO;
   
   @Inject
   private CultivationObservationEventDAO cultivationObservationEventDAO;  
@@ -46,7 +50,7 @@ public class CultivationObservationEventController {
    */
   @SuppressWarnings ("squid:S00107")
   public CultivationObservationEvent createCultivationActionEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, String pests, List<PerformedCultivationAction> actions, UUID creatorId) {
-    CultivationObservationEvent event = cultivationObservationEventDAO.create(UUID.randomUUID(), weight, luminance, pests, batch, startTime, endTime, creatorId, creatorId);
+    CultivationObservationEvent event = cultivationObservationEventDAO.create(UUID.randomUUID(), weight, luminance, pests, batch, startTime, endTime, 0, creatorId, creatorId);
     
     if (actions != null) {
       actions.stream().forEach(action -> cultivationObservationEventActionDAO.create(UUID.randomUUID(), event, action));
@@ -54,7 +58,7 @@ public class CultivationObservationEventController {
     
     return event;
   }
-  
+
   /**
    * Returns event by id
    * 
@@ -126,6 +130,8 @@ public class CultivationObservationEventController {
    * @param cultivationActionEvent event to be deleted
    */
   public void deleteCultivationActionEvent(CultivationObservationEvent cultivationActionEvent) {
+    batchDAO.listByActiveBatch(cultivationActionEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
+    
     cultivationObservationEventActionDAO.listByEvent(cultivationActionEvent).stream()
       .forEach(cultivationObservationEventActionDAO::delete);    
 

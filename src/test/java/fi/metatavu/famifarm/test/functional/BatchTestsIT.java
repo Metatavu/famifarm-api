@@ -6,14 +6,21 @@ import static org.junit.Assert.assertNotNull;
 import java.time.OffsetDateTime;
 import java.time.Period;
 import java.util.List;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import org.junit.Test;
 
 import fi.metatavu.famifarm.client.model.Batch;
+import fi.metatavu.famifarm.client.model.CellType;
+import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.Product;
+import fi.metatavu.famifarm.client.model.ProductionLine;
+import fi.metatavu.famifarm.client.model.Seed;
+import fi.metatavu.famifarm.client.model.SeedBatch;
+import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 /**
@@ -102,6 +109,71 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       
       batches = builder.admin().batches().listBatches(null, null, OffsetDateTime.now().plus(Period.ofDays(1)), OffsetDateTime.now().minus(Period.ofDays(1)));
       builder.admin().batches().assertCount(2, batches);
+    }
+  }
+  
+  @Test
+  public void testListBatchesByStatus() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      builder.admin().packageSizes();
+      builder.admin().products();
+      builder.admin().productionLines();
+      builder.admin().seeds();
+      builder.admin().seedBatches();
+      builder.admin().wastageReasons();
+      
+      builder.admin().batches().assertCount(0);
+      builder.admin().batches().assertCountByStatus(0, "OPEN");
+      builder.admin().batches().assertCountByStatus(0, "CLOSED");
+      builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
+      
+      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+      ProductionLine productionLine = builder.admin().productionLines().create(4);
+      SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC));
+      WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test WastageReason", "Testi Syy"));
+      
+      
+      Batch openBatch1 = builder.admin().batches().create(product);
+      builder.admin().events().createSowing(openBatch1, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200d, CellType.LARGE, 2, productionLine, seedBatch);
+
+      builder.admin().batches().assertCount(1);
+      builder.admin().batches().assertCountByStatus(1, "OPEN");
+      builder.admin().batches().assertCountByStatus(0, "CLOSED");
+      builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
+
+      Batch openBatch2 = builder.admin().batches().create(product);
+      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 10d, CellType.LARGE, 2, productionLine, seedBatch);
+      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 30d, CellType.LARGE, 2, productionLine, seedBatch);
+      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 35, wastageReason, null);
+
+      builder.admin().batches().assertCount(2);
+      builder.admin().batches().assertCountByStatus(2, "OPEN");
+      builder.admin().batches().assertCountByStatus(0, "CLOSED");
+      builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
+      
+      Event updateWasteage = builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 5, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 5, wastageReason, null);
+
+      builder.admin().batches().assertCount(2);
+      builder.admin().batches().assertCountByStatus(1, "OPEN");
+      builder.admin().batches().assertCountByStatus(1, "CLOSED");
+      builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
+
+      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 6, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 3, wastageReason, null);
+
+      builder.admin().batches().assertCount(2);
+      builder.admin().batches().assertCountByStatus(1, "OPEN");
+      builder.admin().batches().assertCountByStatus(0, "CLOSED");
+      builder.admin().batches().assertCountByStatus(1, "NEGATIVE");
+      
+      updateWasteage.setData(builder.admin().events().createWastageEventData(2, wastageReason, null));
+      builder.admin().events().updateEvent(updateWasteage);
+      
+      builder.admin().batches().assertCount(2);
+      builder.admin().batches().assertCountByStatus(1, "OPEN");
+      builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
+      builder.admin().batches().assertCountByStatus(1, "CLOSED");
     }
   }
   

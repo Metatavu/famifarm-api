@@ -53,5 +53,17 @@ public abstract class AbstractEventDAO <T extends Event> extends AbstractDAO<T> 
     event.setEndTime(endTime);
     return persist(event);
   }
+
+  /**
+   * Updates remaining units count
+   * 
+   * @param event event
+   * @param remainingUnits remaining units
+   * @return updated event
+   */
+  public T updateRemainingUnits(T event, Integer remainingUnits) {
+    event.setRemainingUnits(remainingUnits);
+    return persist(event);
+  }
   
 }

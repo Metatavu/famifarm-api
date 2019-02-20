@@ -119,6 +119,16 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
     return getApi().listBatches(firstResult, maxResults, before, after);
   }
   
+  /** 
+   * Asserts batch count within the system by status
+   * 
+   * @param status used status filter
+   * @param expected expected count
+   */
+  public void assertCountByStatus(int expected, String status) {
+    assertEquals(expected, getApi().listBatches(status, null, null).size());
+  }
+  
   /**
    * Asserts find status fails with given status code
    * 

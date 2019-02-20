@@ -1,11 +1,17 @@
 package fi.metatavu.famifarm.persistence.dao;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.PackingEvent_;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
@@ -30,12 +36,15 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @param seedBatch seedBatch
    * @param cellType cellType
    * @param amount amount
+   * @param remainingUnits remaining units
    * @return created sowingEvent
    * @param lastModifier modifier
    */
-  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, SeedBatch seedBatch, CellType cellType, Double amount, UUID creatorId, UUID lastModifierId) {
+  @SuppressWarnings ("squid:S00107")
+  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, SeedBatch seedBatch, CellType cellType, Double amount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
     SowingEvent sowingEvent = new SowingEvent();
     sowingEvent.setBatch(batch);
+    sowingEvent.setRemainingUnits(remainingUnits);
     sowingEvent.setStartTime(startTime);
     sowingEvent.setEndTime(endTime);
     sowingEvent.setProductionLine(productionLine);
@@ -47,6 +56,25 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
     sowingEvent.setCreatorId(creatorId);
     sowingEvent.setLastModifierId(lastModifierId);
     return persist(sowingEvent);
+  }
+  
+  /**
+   * Lists events by batch
+   * 
+   * @param batch batch
+   * @return List of events
+   */
+  public List<SowingEvent> listByBatch(Batch batch) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<SowingEvent> criteria = criteriaBuilder.createQuery(SowingEvent.class);
+    Root<SowingEvent> root = criteria.from(SowingEvent.class);
+    
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(PackingEvent_.batch), batch));
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   /**

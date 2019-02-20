@@ -618,8 +618,40 @@ public class V1RESTService extends AbstractApi implements V1Api {
   
   @Override
   @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
-  public Response listBatches(Integer firstResult, Integer maxResult, String createdBefore, String createdAfter) {
+  public Response listBatches(String statusParam, Integer firstResult, Integer maxResult, String createdBefore, String createdAfter) {
     List<Batch> result = batchController.listBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter)).stream()
+    BatchListStatus status = null;
+    
+    if (StringUtils.isNotEmpty(statusParam)) {
+      status = EnumUtils.getEnum(BatchListStatus.class, statusParam);
+      if (status == null) {
+        return createBadRequest(String.format("Unsupported status %s", statusParam));
+      }
+    }
+    
+    List<fi.metatavu.famifarm.persistence.model.Batch> batches = null;
+    
+    if (status == null) {
+      batches = batchController.listBatches(firstResult, maxResult);  
+    } else {
+      switch (status) {
+        case CLOSED:
+          batches = batchController.listClosedBatches(firstResult, maxResult);  
+        break;
+        case NEGATIVE:
+          batches = batchController.listNegativeBatches(firstResult, maxResult);  
+        break;
+        case OPEN:
+          batches = batchController.listOpenBatches(firstResult, maxResult);  
+        break;
+      }
+    }
+    
+    if (batches == null) {
+      return createInternalServerError("Batches list was null");
+    }
+    
+    List<Batch> result = batches.stream()
         .map(batchTranslator::translateBatch)
         .collect(Collectors.toList());
       
@@ -947,10 +979,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer gutterNumber = eventData.getGutterNumber();
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(eventData.getSeedBatchId());
     CellType cellType = eventData.getCellType();
-    Double amount = eventData.getAmount();    
-    return createOk(sowingEventTranslator.translateEvent(sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId)));
+    Double amount = eventData.getAmount();
+    
+    SowingEvent event = sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId);
+    batchController.updateRemainingUnits(batch);
+    
+    return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
   }
-  
+
   /**
    * Updates sowing event
    * 
@@ -980,7 +1016,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(eventData.getSeedBatchId());
     CellType cellType = eventData.getCellType();
     Double amount = eventData.getAmount();    
-    return createOk(sowingEventTranslator.translateEvent(sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId)));
+    SowingEvent updatedEvent = sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId);
+    batchController.updateRemainingUnits(batch);
+    
+    return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
   }
 
   /**
@@ -1008,8 +1047,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID creatorId = getLoggerUserId();
     String location = eventData.getLocation();
     Integer tableCount = eventData.getTableCount();
-    
-    return createOk(tableSpreadEventTranslator.translateEvent(tableSpreadEventController.createTableSpreadEvent(batch, startTime, endTime, tableCount, location, creatorId)));
+    TableSpreadEvent event = tableSpreadEventController.createTableSpreadEvent(batch, startTime, endTime, tableCount, location, creatorId);
+    batchController.updateRemainingUnits(batch);
+
+    return createOk(tableSpreadEventTranslator.translateEvent(updateBatchActiveEvent(event)));
   }
   
   /**
@@ -1038,8 +1079,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID creatorId = getLoggerUserId();
     String location = eventData.getLocation();
     Integer tableCount = eventData.getTableCount();
+    
+    TableSpreadEvent updatedEvent = tableSpreadEventController.updateTableSpreadEvent((TableSpreadEvent) event, batch, startTime, endTime, tableCount, location, creatorId);
+    batchController.updateRemainingUnits(batch);
 
-    return createOk(tableSpreadEventTranslator.translateEvent(tableSpreadEventController.updateTableSpreadEvent((TableSpreadEvent) event, batch, startTime, endTime, tableCount, location, creatorId)));
+    return createOk(tableSpreadEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
   }
 
   /**
@@ -1075,7 +1119,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return translateResponse;
     }
     
-    return createOk(cultivationObservationEventTranslator.translateEvent(cultivationObservationEventController.createCultivationActionEvent(batch, startTime, endTime, weight, luminance, pests, actions, creatorId)));
+    CultivationObservationEvent event = cultivationObservationEventController.createCultivationActionEvent(batch, startTime, endTime, weight, luminance, pests, actions, creatorId);
+    batchController.updateRemainingUnits(batch);
+ 
+    return createOk(cultivationObservationEventTranslator.translateEvent(updateBatchActiveEvent(event)));
   }
   
   /**
@@ -1112,7 +1159,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return translateResponse;
     }
  
-    return createOk(cultivationObservationEventTranslator.translateEvent(cultivationObservationEventController.updateCultivationActionEvent((CultivationObservationEvent) event, batch, startTime, endTime, weight, luminance, pests, actions, creatorId)));
+    CultivationObservationEvent updatedEvent = cultivationObservationEventController.updateCultivationActionEvent((CultivationObservationEvent) event, batch, startTime, endTime, weight, luminance, pests, actions, creatorId);
+    batchController.updateRemainingUnits(batch);
+
+    return createOk(cultivationObservationEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
   }
 
   /**
@@ -1156,8 +1206,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     TypeEnum harvestType = eventData.getType();
+    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType, productionLine, creatorId);
+    batchController.updateRemainingUnits(batch);
 
-    return createOk(harvestEventTranslator.translateEvent(harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType, productionLine, creatorId)));
+    return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(event)));
   }
   
   /**
@@ -1202,8 +1254,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     TypeEnum harvestType = eventData.getType();
-   
-    return createOk(harvestEventTranslator.translateEvent(harvestEventController.updateHarvestEvent((HarvestEvent) event, batch, startTime, endTime, team, harvestType, productionLine, creatorId)));
+    HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, batch, startTime, endTime, team, harvestType, productionLine, creatorId);
+    batchController.updateRemainingUnits(batch);
+
+    return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
   }
 
   /**
@@ -1235,7 +1289,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer trayCount = eventData.getTrayCount();
     Integer workerCount = eventData.getWorkerCount();
     
-    return createOk(plantingEventTranslator.translateEvent(plantingEventController.createPlantingEvent(batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId)));
+    PlantingEvent event = plantingEventController.createPlantingEvent(batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId);
+    batchController.updateRemainingUnits(batch);
+    
+    return createOk(plantingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
   }
   
   /**
@@ -1268,7 +1325,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer trayCount = eventData.getTrayCount();
     Integer workerCount = eventData.getWorkerCount();
     
-    return createOk(plantingEventTranslator.translateEvent(plantingEventController.updatePlantingEvent((PlantingEvent) event, batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId)));
+    PlantingEvent updatedEvent = plantingEventController.updatePlantingEvent((PlantingEvent) event, batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId);
+    batchController.updateRemainingUnits(batch);
+
+    return createOk(plantingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
   }
 
   /**
@@ -1296,8 +1356,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = eventData.getPackageSize() != null ? packageSizeController.findPackageSize(eventData.getPackageSize()) : null;
     Integer packedAmount = eventData.getPackedAmount();
+
+    PackingEvent event = packingEventController.createPackingEvent(batch, startTime, endTime, packageSize, packedAmount, creatorId);
+    batchController.updateRemainingUnits(batch);
     
-    return createOk(packingEventTranslator.translateEvent(packingEventController.createPackingEvent(batch, startTime, endTime, packageSize, packedAmount, creatorId)));
+    return createOk(packingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
   }
   
   /**
@@ -1327,7 +1390,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = eventData.getPackageSize() != null ? packageSizeController.findPackageSize(eventData.getPackageSize()) : null;
     Integer packedAmount = eventData.getPackedAmount();
     
-    return createOk(packingEventTranslator.translateEvent(packingEventController.updatePackingEvent((PackingEvent) event, batch, startTime, endTime, packageSize, packedAmount, creatorId)));
+    PackingEvent updatedEvent = packingEventController.updatePackingEvent((PackingEvent) event, batch, startTime, endTime, packageSize, packedAmount, creatorId);
+    batchController.updateRemainingUnits(batch);
+
+    return createOk(packingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
   }
   
   private Response translatePerformedCultivationActions(List<UUID> performedActionIds, List<fi.metatavu.famifarm.persistence.model.PerformedCultivationAction> result) {
@@ -1374,7 +1440,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     String description = eventData.getDescription();
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(eventData.getReasonId());
 
-    return createOk(wastageEventTranslator.translateEvent(wastageEventController.createWastageEvent(batch, startTime, endTime, amount, wastageReason, description, creatorId)));
+    WastageEvent event = wastageEventController.createWastageEvent(batch, startTime, endTime, amount, wastageReason, description, creatorId);
+    batchController.updateRemainingUnits(batch);
+    
+    return createOk(wastageEventTranslator.translateEvent(updateBatchActiveEvent(event)));
   }
 
     /**
@@ -1405,7 +1474,22 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(eventData.getReasonId());
     String description = eventData.getDescription();
 
-    return createOk(wastageEventTranslator.translateEvent(wastageEventController.updateWastageEvent((WastageEvent) event, batch, startTime, endTime, amount, wastageReason, description, lastModifierId)));
+    WastageEvent updatedEvent = wastageEventController.updateWastageEvent((WastageEvent) event, batch, startTime, endTime, amount, wastageReason, description, lastModifierId);
+    batchController.updateRemainingUnits(batch);
+
+    return createOk(wastageEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
+  }
+  
+  /**
+   * Updates batche's active event
+   * 
+   * @param event event that triggered the change
+   * @return same event
+   */
+  private <E extends fi.metatavu.famifarm.persistence.model.Event> E updateBatchActiveEvent(E event) {
+    fi.metatavu.famifarm.persistence.model.Event activeEvent = eventController.findLastEventByBatch(event.getBatch());
+    batchController.updateBatchActiveEvent(event.getBatch(), activeEvent);
+    return event;
   }
   
   private <D> D readEventData(Class<D> targetClass, Object object) throws IOException {
