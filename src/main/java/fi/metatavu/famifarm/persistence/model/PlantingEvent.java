@@ -36,7 +36,7 @@ public class PlantingEvent extends Event {
 
   @NotNull
   @Column (nullable = false)
-  private Integer trayCount;
+  private Integer cellCount;
 
   @NotNull
   @Column (nullable = false)
@@ -66,12 +66,12 @@ public class PlantingEvent extends Event {
     this.gutterCount = gutterCount;
   }
 
-  public Integer getTrayCount() {
-    return trayCount;
+  public Integer getCellCount() {
+    return cellCount;
   }
 
-  public void setTrayCount(Integer trayCount) {
-    this.trayCount = trayCount;
+  public void setCellCount(Integer cellCount) {
+    this.cellCount = cellCount;
   }
 
   public Integer getWorkerCount() {

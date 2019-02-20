@@ -152,12 +152,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param gutterCount gutter count
    * @param gutterNumber gutter number
    * @param productionLine production line
-   * @param trayCount tray count
+   * @param cellCount cell count
    * @param workerCount worker count
    * @return created event
    */
-  public Event createPlanting(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, Integer trayCount, Integer workerCount) {
-    PlantingEventData data = createPlantingEventData(gutterCount, gutterNumber, productionLine, trayCount, workerCount);
+  public Event createPlanting(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, Integer cellCount, Integer workerCount) {
+    PlantingEventData data = createPlantingEventData(gutterCount, gutterNumber, productionLine, cellCount, workerCount);
     
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -460,16 +460,16 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param gutterCount gutter count
    * @param gutterSize gutter size
    * @param productionLine production line
-   * @param trayCount tray count
+   * @param cellCount cell count
    * @param workerCount worker count
    * @return
    */
-  private PlantingEventData createPlantingEventData(Integer gutterCount, Integer gutterSize, ProductionLine productionLine, Integer trayCount, Integer workerCount) {
+  private PlantingEventData createPlantingEventData(Integer gutterCount, Integer gutterSize, ProductionLine productionLine, Integer cellCount, Integer workerCount) {
     PlantingEventData data = new PlantingEventData();
     data.setGutterCount(gutterCount);
     data.setGutterSize(gutterSize);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
-    data.setTrayCount(trayCount);
+    data.setCellCount(cellCount);
     data.setWorkerCount(workerCount);
     return data;
   }

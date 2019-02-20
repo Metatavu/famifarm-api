@@ -1285,10 +1285,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
     Integer gutterSize = eventData.getGutterSize();
     Integer gutterCount = eventData.getGutterCount();
-    Integer trayCount = eventData.getTrayCount();
+    Integer cellCount = eventData.getCellCount();
     Integer workerCount = eventData.getWorkerCount();
     
-    PlantingEvent event = plantingEventController.createPlantingEvent(batch, startTime, endTime, productionLine, gutterSize, gutterCount, trayCount, workerCount, creatorId);
+    PlantingEvent event = plantingEventController.createPlantingEvent(batch, startTime, endTime, productionLine, gutterSize, gutterCount, cellCount, workerCount, creatorId);
     batchController.updateRemainingUnits(batch);
     
     return createOk(plantingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1321,10 +1321,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
     Integer gutterSize = eventData.getGutterSize();
     Integer gutterCount = eventData.getGutterCount();
-    Integer trayCount = eventData.getTrayCount();
+    Integer cellCount = eventData.getCellCount();
     Integer workerCount = eventData.getWorkerCount();
     
-    PlantingEvent updatedEvent = plantingEventController.updatePlantingEvent((PlantingEvent) event, batch, startTime, endTime, productionLine, gutterSize, gutterCount, trayCount, workerCount, creatorId);
+    PlantingEvent updatedEvent = plantingEventController.updatePlantingEvent((PlantingEvent) event, batch, startTime, endTime, productionLine, gutterSize, gutterCount, cellCount, workerCount, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(plantingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));

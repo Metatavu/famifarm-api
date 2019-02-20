@@ -26,14 +26,14 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
    * @param productionLine productionLine
    * @param gutterSize gutterSize
    * @param gutterCount gutterCount
-   * @param trayCount trayCount
+   * @param cellCount cellCount
    * @param workerCount workerCount
    * @param remainingUnits remaining units
    * @return created plantingEvent
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer trayCount, Integer workerCount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
+  public PlantingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
     PlantingEvent plantingEvent = new PlantingEvent();
     plantingEvent.setBatch(batch);
     plantingEvent.setRemainingUnits(remainingUnits);
@@ -42,7 +42,7 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
     plantingEvent.setProductionLine(productionLine);
     plantingEvent.setGutterSize(gutterSize);
     plantingEvent.setGutterCount(gutterCount);
-    plantingEvent.setTrayCount(trayCount);
+    plantingEvent.setCellCount(cellCount);
     plantingEvent.setWorkerCount(workerCount);
     plantingEvent.setId(id);
     plantingEvent.setCreatorId(creatorId);
@@ -90,15 +90,15 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
   }
 
   /**
-   * Updates trayCount
+   * Updates cellCount
    *
-   * @param trayCount trayCount
+   * @param cellCount cellCount
    * @param lastModifier modifier
    * @return updated plantingEvent
    */
-  public PlantingEvent updateTrayCount(PlantingEvent plantingEvent, Integer trayCount, UUID lastModifierId) {
+  public PlantingEvent updateCellCount(PlantingEvent plantingEvent, Integer cellCount, UUID lastModifierId) {
     plantingEvent.setLastModifierId(lastModifierId);
-    plantingEvent.setTrayCount(trayCount);
+    plantingEvent.setCellCount(cellCount);
     return persist(plantingEvent);
   }
 

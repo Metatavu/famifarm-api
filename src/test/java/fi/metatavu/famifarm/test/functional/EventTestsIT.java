@@ -349,7 +349,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateData.setGutterCount(6);
       updateData.setGutterSize(updateGutterSize);
       updateData.setProductionLineId(updateProductionLine.getId());
-      updateData.setTrayCount(7);
+      updateData.setCellCount(7);
       updateData.setWorkerCount(8);
       
       Event updateEvent = new Event(); 
