@@ -4,9 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 
 import feign.FeignException;
@@ -83,6 +86,30 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
   }
   
   /**
+   * Assert count with created times
+   * 
+   * @param expected expected amount of results
+   * @param firstResult firstResult
+   * @param maxResults maxResults
+   * @param createdBefore createdBefore
+   * @param createdAfter createdAfter
+   */
+  public void assertCountWithCreatedTimes(int expected, String status, Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    String after = null;
+    String before = null;
+    
+    if (createdBefore != null) {
+      before = createdBefore.toString();
+    }
+    
+    if (createdAfter != null) {
+      after = createdAfter.toString();
+    }
+    
+    assertEquals(expected, getApi().listBatches(status, firstResult, maxResults, before, after).size());
+  }
+  
+  /** 
    * Asserts batch count within the system by status
    * 
    * @param status used status filter
