@@ -95,20 +95,11 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       builder.admin().batches().create(product);
       builder.admin().batches().assertCount(2);
       
-      List<Batch> batches = builder.admin().batches().listBatches(null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)), null);
-      builder.admin().batches().assertCount(2, batches);
-      
-      batches = builder.admin().batches().listBatches(null, null, null, OffsetDateTime.now().minus(Period.ofDays(1)), null);
-      builder.admin().batches().assertCount(0, batches);
-      
-      batches = builder.admin().batches().listBatches(null, null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)));
-      builder.admin().batches().assertCount(0, batches);
-      
-      batches = builder.admin().batches().listBatches(null, null, null, null, OffsetDateTime.now().minus(Period.ofDays(1)));
-      builder.admin().batches().assertCount(2, batches);
-      
-      batches = builder.admin().batches().listBatches(null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)), OffsetDateTime.now().minus(Period.ofDays(1)));
-      builder.admin().batches().assertCount(2, batches);
+      builder.admin().batches().assertCountWithCreatedTimes(2, null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)), null);
+      builder.admin().batches().assertCountWithCreatedTimes(0, null, null, null, OffsetDateTime.now().minus(Period.ofDays(1)), null);
+      builder.admin().batches().assertCountWithCreatedTimes(0, null, null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)));
+      builder.admin().batches().assertCountWithCreatedTimes(2, null, null, null, null, OffsetDateTime.now().minus(Period.ofDays(1)));
+      builder.admin().batches().assertCountWithCreatedTimes(2, null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)), OffsetDateTime.now().minus(Period.ofDays(1)));
     }
   }
   
