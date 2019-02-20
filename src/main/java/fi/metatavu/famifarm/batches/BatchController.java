@@ -61,19 +61,7 @@ public class BatchController {
    * @return list of batches
    */
   public List<Batch> listBatches(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
-    if (createdBefore != null && createdAfter != null) {
-      return batchDAO.listByCreatedBetween(firstResult, maxResults, createdBefore, createdAfter);
-    }
-    
-    if (createdBefore != null) {
-      return batchDAO.listByCreatedBefore(firstResult, maxResults, createdBefore);
-    }
-    
-    if (createdAfter != null) {
-      return batchDAO.listByCreatedAfter(firstResult, maxResults, createdAfter);
-    }
-    
-    return batchDAO.listAll(firstResult, maxResults);
+    return batchDAO.listByCreatedTimes(firstResult, maxResults, createdBefore, createdAfter);
   }
 
   /**
@@ -81,10 +69,12 @@ public class BatchController {
    * 
    * @param firstResult first result
    * @param maxResults max results
+   * @param createdBefore created before
+   * @param createdAfter created after
    * @return list of batches
    */
-  public List<Batch> listClosedBatches(Integer firstResult, Integer maxResults) {
-    return batchDAO.listByRemainingUnitsEquals(0, firstResult, maxResults);
+  public List<Batch> listClosedBatches(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    return batchDAO.listByRemainingUnitsEquals(0, firstResult, maxResults, createdBefore, createdAfter);
   }
 
   /**
@@ -92,10 +82,12 @@ public class BatchController {
    * 
    * @param firstResult first result
    * @param maxResults max results
+   * @param createdBefore created before
+   * @param createdAfter created after
    * @return list of batches
    */
-  public List<Batch> listOpenBatches(Integer firstResult, Integer maxResults) {
-    return batchDAO.listByRemainingUnitsGreaterThan(0, firstResult, maxResults);
+  public List<Batch> listOpenBatches(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    return batchDAO.listByRemainingUnitsGreaterThan(0, firstResult, maxResults, createdBefore, createdAfter);
   }
 
   /**
@@ -103,10 +95,12 @@ public class BatchController {
    * 
    * @param firstResult first result
    * @param maxResults max results
+   * @param createdBefore created before
+   * @param createdAfter created after
    * @return list of batches
    */
-  public List<Batch> listNegativeBatches(Integer firstResult, Integer maxResults) {
-    return batchDAO.listByRemainingUnitsLessThan(0, firstResult, maxResults);
+  public List<Batch> listNegativeBatches(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    return batchDAO.listByRemainingUnitsLessThan(0, firstResult, maxResults, createdBefore, createdAfter);
   }
   
   /**

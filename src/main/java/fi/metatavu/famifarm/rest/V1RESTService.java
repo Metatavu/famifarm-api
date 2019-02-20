@@ -619,7 +619,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
   public Response listBatches(String statusParam, Integer firstResult, Integer maxResult, String createdBefore, String createdAfter) {
-    List<Batch> result = batchController.listBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter)).stream()
     BatchListStatus status = null;
     
     if (StringUtils.isNotEmpty(statusParam)) {
@@ -632,17 +631,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
     List<fi.metatavu.famifarm.persistence.model.Batch> batches = null;
     
     if (status == null) {
-      batches = batchController.listBatches(firstResult, maxResult);  
+      batches = batchController.listBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
     } else {
       switch (status) {
         case CLOSED:
-          batches = batchController.listClosedBatches(firstResult, maxResult);  
+          batches = batchController.listClosedBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
         break;
         case NEGATIVE:
-          batches = batchController.listNegativeBatches(firstResult, maxResult);  
+          batches = batchController.listNegativeBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
         break;
         case OPEN:
-          batches = batchController.listOpenBatches(firstResult, maxResult);  
+          batches = batchController.listOpenBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
         break;
       }
     }

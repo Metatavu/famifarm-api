@@ -1,6 +1,7 @@
 package fi.metatavu.famifarm.persistence.dao;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
@@ -48,9 +50,11 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param remainingUnits remaining units
    * @param firstResult first result (optional)
    * @param maxResults max results (optional)
+   * @param createdBefore created before
+   * @param createdAfter created after
    * @return List of batches
    */
-  public List<Batch> listByRemainingUnitsLessThan(int remainingUnits, Integer firstResult, Integer maxResults) {
+  public List<Batch> listByRemainingUnitsLessThan(int remainingUnits, Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -59,7 +63,20 @@ public class BatchDAO extends AbstractDAO<Batch> {
     Join<Batch, Event> activeEventJoin = root.join(Batch_.activeEvent);
     
     criteria.select(root);
-    criteria.where(criteriaBuilder.lessThan(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
+    
+    List<Predicate> restrictions = new ArrayList<>();
+    
+    if (createdBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
+    }
+  
+    if (createdAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
+    }
+    
+    restrictions.add(criteriaBuilder.lessThan(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
+    
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
     
     TypedQuery<Batch> query = entityManager.createQuery(criteria);
     
@@ -80,9 +97,11 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param remainingUnits remaining units
    * @param firstResult first result (optional)
    * @param maxResults max results (optional)
+   * @param createdBefore created before
+   * @param createdAfter created after
    * @return List of batches
    */
-  public List<Batch> listByRemainingUnitsGreaterThan(int remainingUnits, Integer firstResult, Integer maxResults) {
+  public List<Batch> listByRemainingUnitsGreaterThan(int remainingUnits, Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -91,7 +110,20 @@ public class BatchDAO extends AbstractDAO<Batch> {
     Join<Batch, Event> activeEventJoin = root.join(Batch_.activeEvent);
     
     criteria.select(root);
-    criteria.where(criteriaBuilder.greaterThan(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
+    
+    List<Predicate> restrictions = new ArrayList<>();
+    
+    if (createdBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
+    }
+  
+    if (createdAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
+    }
+    
+    restrictions.add(criteriaBuilder.greaterThan(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
+    
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
     
     TypedQuery<Batch> query = entityManager.createQuery(criteria);
     
@@ -112,9 +144,11 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param remainingUnits remaining units
    * @param firstResult first result (optional)
    * @param maxResults max results (optional)
+   * @param createdBefore created before
+   * @param createdAfter created after
    * @return List of batches
    */
-  public List<Batch> listByRemainingUnitsEquals(int remainingUnits, Integer firstResult, Integer maxResults) {
+  public List<Batch> listByRemainingUnitsEquals(int remainingUnits, Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -122,9 +156,20 @@ public class BatchDAO extends AbstractDAO<Batch> {
     Root<Batch> root = criteria.from(Batch.class);
     Join<Batch, Event> activeEventJoin = root.join(Batch_.activeEvent);
     
-    criteria.select(root);
-    criteria.where(criteriaBuilder.equal(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
+    List<Predicate> restrictions = new ArrayList<>();
     
+    if (createdBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
+    }
+  
+    if (createdAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
+    }
+    
+    restrictions.add(criteriaBuilder.equal(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
+    
+    criteria.select(root);
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
     TypedQuery<Batch> query = entityManager.createQuery(criteria);
     
     if (firstResult != null) {
@@ -179,14 +224,25 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param createdAfter createdAfter
    * @return list of batches
    */
-  public List<Batch> listByCreatedBetween(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+  public List<Batch> listByCreatedTimes(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
     Root<Batch> root = criteria.from(Batch.class);
     criteria.select(root);
-    criteria.where(criteriaBuilder.between(root.get(Batch_.CREATED_AT), createdAfter, createdBefore));
+    
+    List<Predicate> restrictions = new ArrayList<>();
+    
+    if (createdBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
+    }
+  
+    if (createdAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
+    }
+    
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
     TypedQuery<Batch> query = entityManager.createQuery(criteria);
     
     if (firstResult != null) {

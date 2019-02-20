@@ -104,7 +104,7 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
    * @param createdAfter createdAfter
    * @return list of batches
    */
-  public List<Batch> listBatches(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+  public List<Batch> listBatches(String status, Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     String after = null;
     String before = null;
     
@@ -116,7 +116,7 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
       after = createdAfter.toString();
     }
     
-    return getApi().listBatches(firstResult, maxResults, before, after);
+    return getApi().listBatches(status, firstResult, maxResults, before, after);
   }
   
   /** 
@@ -126,7 +126,7 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
    * @param expected expected count
    */
   public void assertCountByStatus(int expected, String status) {
-    assertEquals(expected, getApi().listBatches(status, null, null).size());
+    assertEquals(expected, getApi().listBatches(status, null, null, null, null).size());
   }
   
   /**
