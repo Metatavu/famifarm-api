@@ -24,6 +24,7 @@ import fi.metatavu.famifarm.persistence.model.Product;
  * 
  * @author Ville Koivukangas
  */
+@SuppressWarnings ("common-java:DuplicatedBlocks")
 public class BatchDAO extends AbstractDAO<Batch> {
 
   /**
@@ -54,7 +55,6 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param createdAfter created after
    * @return List of batches
    */
-  @SuppressWarnings ("common-java:DuplicatedBlocks")
   public List<Batch> listByRemainingUnitsLessThan(int remainingUnits, Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     EntityManager entityManager = getEntityManager();
     
@@ -102,7 +102,6 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param createdAfter created after
    * @return List of batches
    */
-  @SuppressWarnings ("common-java:DuplicatedBlocks")
   public List<Batch> listByRemainingUnitsGreaterThan(int remainingUnits, Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     EntityManager entityManager = getEntityManager();
     
@@ -150,7 +149,6 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param createdAfter created after
    * @return List of batches
    */
-  @SuppressWarnings ("common-java:DuplicatedBlocks")
   public List<Batch> listByRemainingUnitsEquals(int remainingUnits, Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     EntityManager entityManager = getEntityManager();
     
@@ -227,7 +225,6 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param createdAfter createdAfter
    * @return list of batches
    */
-  @SuppressWarnings ("common-java:DuplicatedBlocks")
   public List<Batch> listByCreatedTimes(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     EntityManager entityManager = getEntityManager();
     
