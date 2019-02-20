@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.time.OffsetDateTime;
+import java.time.Period;
+import java.util.List;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
@@ -92,6 +94,12 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       builder.admin().batches().assertCount(1);
       builder.admin().batches().create(product);
       builder.admin().batches().assertCount(2);
+      
+      builder.admin().batches().assertCountWithCreatedTimes(2, null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)), null);
+      builder.admin().batches().assertCountWithCreatedTimes(0, null, null, null, OffsetDateTime.now().minus(Period.ofDays(1)), null);
+      builder.admin().batches().assertCountWithCreatedTimes(0, null, null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)));
+      builder.admin().batches().assertCountWithCreatedTimes(2, null, null, null, null, OffsetDateTime.now().minus(Period.ofDays(1)));
+      builder.admin().batches().assertCountWithCreatedTimes(2, null, null, null, OffsetDateTime.now().plus(Period.ofDays(1)), OffsetDateTime.now().minus(Period.ofDays(1)));
     }
   }
   
