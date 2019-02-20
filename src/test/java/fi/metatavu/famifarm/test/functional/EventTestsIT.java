@@ -342,12 +342,12 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-      Integer updateGutterNumber = 3;
+      Integer updateGutterSize = 24;
       ProductionLine updateProductionLine = builder.admin().productionLines().create(7);
       
       PlantingEventData updateData = new PlantingEventData();
       updateData.setGutterCount(6);
-      updateData.setGutterNumber(updateGutterNumber);
+      updateData.setGutterSize(updateGutterSize);
       updateData.setProductionLineId(updateProductionLine.getId());
       updateData.setTrayCount(7);
       updateData.setWorkerCount(8);

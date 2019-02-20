@@ -424,4 +424,8 @@
     </addColumn>
   </changeSet>  
       
+  <changeSet id="plantingeventguttersize" author="antti.leppa">
+    <renameColumn tableName="plantingevent" oldColumnName="gutternumber" newColumnName="guttersize" columnDataType="integer"/>
+  </changeSet>
+      
 </databaseChangeLog>
