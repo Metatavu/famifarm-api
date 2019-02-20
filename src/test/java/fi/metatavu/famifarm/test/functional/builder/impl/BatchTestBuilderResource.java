@@ -86,7 +86,7 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
   }
   
   /**
-   * List batches
+   * Assert count with created times
    * 
    * @param expected expected amount of results
    * @param firstResult firstResult
