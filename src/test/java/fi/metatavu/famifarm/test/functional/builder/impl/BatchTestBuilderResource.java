@@ -89,7 +89,7 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
    * @param expected expected count
    */
   public void assertCountByStatus(int expected, String status) {
-    assertEquals(expected, getApi().listBatches(status, null, null).size());
+    assertEquals(expected, getApi().listBatches(status, null, null, null, null).size());
   }
   
   /**

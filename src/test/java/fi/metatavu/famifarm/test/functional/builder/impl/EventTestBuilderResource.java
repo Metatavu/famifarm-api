@@ -458,16 +458,16 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Creates event data object
    * 
    * @param gutterCount gutter count
-   * @param gutterNumber gutter number
+   * @param gutterSize gutter size
    * @param productionLine production line
    * @param trayCount tray count
    * @param workerCount worker count
    * @return
    */
-  private PlantingEventData createPlantingEventData(Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, Integer trayCount, Integer workerCount) {
+  private PlantingEventData createPlantingEventData(Integer gutterCount, Integer gutterSize, ProductionLine productionLine, Integer trayCount, Integer workerCount) {
     PlantingEventData data = new PlantingEventData();
     data.setGutterCount(gutterCount);
-    data.setGutterNumber(gutterNumber);
+    data.setGutterSize(gutterSize);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setTrayCount(trayCount);
     data.setWorkerCount(workerCount);
