@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.time.OffsetDateTime;
 import java.time.Period;
-import java.util.List;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
@@ -127,7 +126,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       
       
       Batch openBatch1 = builder.admin().batches().create(product);
-      builder.admin().events().createSowing(openBatch1, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200d, CellType.LARGE, 2, productionLine, seedBatch);
+      builder.admin().events().createSowing(openBatch1, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200d, CellType.LARGE, productionLine, seedBatch);
 
       builder.admin().batches().assertCount(1);
       builder.admin().batches().assertCountByStatus(1, "OPEN");
@@ -135,8 +134,8 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
 
       Batch openBatch2 = builder.admin().batches().create(product);
-      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 10d, CellType.LARGE, 2, productionLine, seedBatch);
-      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 30d, CellType.LARGE, 2, productionLine, seedBatch);
+      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 10d, CellType.LARGE, productionLine, seedBatch);
+      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 30d, CellType.LARGE, productionLine, seedBatch);
       builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 35, wastageReason, null);
 
       builder.admin().batches().assertCount(2);

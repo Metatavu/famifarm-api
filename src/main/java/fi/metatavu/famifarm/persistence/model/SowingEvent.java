@@ -28,8 +28,6 @@ public class SowingEvent extends Event {
   @ManyToOne
   private ProductionLine productionLine;
   
-  private Integer gutterNumber;
-  
   @ManyToOne
   private SeedBatch seedBatch;
   
@@ -45,14 +43,6 @@ public class SowingEvent extends Event {
 
   public void setProductionLine(ProductionLine productionLine) {
     this.productionLine = productionLine;
-  }
-
-  public Integer getGutterNumber() {
-    return gutterNumber;
-  }
-
-  public void setGutterNumber(Integer gutterNumber) {
-    this.gutterNumber = gutterNumber;
   }
 
   public SeedBatch getSeedBatch() {

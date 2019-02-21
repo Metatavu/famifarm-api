@@ -74,14 +74,12 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Double updateAmount = 14d;
       CellType updateCellType = CellType.SMALL;
-      Integer updateGutterNumber = 3;
       ProductionLine updateProductionLine = builder.admin().productionLines().create(7);
       SeedBatch updateSeedBatch = builder.admin().seedBatches().create("123", seed, updateStartTime);
       
       SowingEventData updateData = new SowingEventData();
       updateData.setAmount(updateAmount);
       updateData.setCellType(updateCellType);
-      updateData.setGutterNumber(updateGutterNumber);
       updateData.setProductionLineId(updateProductionLine.getId());
       updateData.setSeedBatchId(updateSeedBatch.getId());
       
@@ -342,14 +340,14 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-      Integer updateGutterNumber = 3;
+      Integer updateGutterSize = 24;
       ProductionLine updateProductionLine = builder.admin().productionLines().create(7);
       
       PlantingEventData updateData = new PlantingEventData();
       updateData.setGutterCount(6);
-      updateData.setGutterNumber(updateGutterNumber);
+      updateData.setGutterSize(updateGutterSize);
       updateData.setProductionLineId(updateProductionLine.getId());
-      updateData.setTrayCount(7);
+      updateData.setCellCount(7);
       updateData.setWorkerCount(8);
       
       Event updateEvent = new Event(); 
@@ -606,12 +604,11 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Double amount = 12d;
       CellType cellType = CellType.LARGE;
-      Integer gutterNumber = 2;
       ProductionLine productionLine = builder.admin().productionLines().create(4);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
       
-      builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
-      builder.invalid().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
+      builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, productionLine, seedBatch);
+      builder.invalid().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, productionLine, seedBatch);
     }
   }
 

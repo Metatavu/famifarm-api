@@ -53,13 +53,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param endTime event end time
    * @param amount amount
    * @param cellType cell type
-   * @param gutterNumber gutter number
    * @param productionLine production line id
    * @param seedBatch seed batch
    * @return created event
    */
-  public Event createSowing(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double amount, CellType cellType, Integer gutterNumber, ProductionLine productionLine, SeedBatch seedBatch) {
-    SowingEventData data = createSowingEventData(amount, cellType, gutterNumber, productionLine, seedBatch);
+  public Event createSowing(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
+    SowingEventData data = createSowingEventData(amount, cellType, productionLine, seedBatch);
     
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -152,12 +151,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param gutterCount gutter count
    * @param gutterNumber gutter number
    * @param productionLine production line
-   * @param trayCount tray count
+   * @param cellCount cell count
    * @param workerCount worker count
    * @return created event
    */
-  public Event createPlanting(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, Integer trayCount, Integer workerCount) {
-    PlantingEventData data = createPlantingEventData(gutterCount, gutterNumber, productionLine, trayCount, workerCount);
+  public Event createPlanting(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, Integer cellCount, Integer workerCount) {
+    PlantingEventData data = createPlantingEventData(gutterCount, gutterNumber, productionLine, cellCount, workerCount);
     
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -273,13 +272,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param endTime event end time
    * @param amount amount
    * @param cellType cell type
-   * @param gutterNumber gutter number
    * @param productionLine production line
    * @param seedBatch seed batch
    */
-  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double amount, CellType cellType, Integer gutterNumber, ProductionLine productionLine, SeedBatch seedBatch) {
+  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
     try {
-      SowingEventData data = createSowingEventData(amount, cellType, gutterNumber, productionLine, seedBatch);
+      SowingEventData data = createSowingEventData(amount, cellType, productionLine, seedBatch);
       
       Event event = new Event();
       event.setBatchId(batch != null ? batch.getId() : null);
@@ -398,11 +396,10 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param seedBatch seed batch
    * @return
    */
-  private SowingEventData createSowingEventData(Double amount, CellType cellType, Integer gutterNumber, ProductionLine productionLine, SeedBatch seedBatch) {
+  private SowingEventData createSowingEventData(Double amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
     SowingEventData data = new SowingEventData();
     data.setAmount(amount);
     data.setCellType(cellType);
-    data.setGutterNumber(gutterNumber);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setSeedBatchId(seedBatch != null ? seedBatch.getId() : null);
     return data;
@@ -458,18 +455,18 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Creates event data object
    * 
    * @param gutterCount gutter count
-   * @param gutterNumber gutter number
+   * @param gutterSize gutter size
    * @param productionLine production line
-   * @param trayCount tray count
+   * @param cellCount cell count
    * @param workerCount worker count
    * @return
    */
-  private PlantingEventData createPlantingEventData(Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, Integer trayCount, Integer workerCount) {
+  private PlantingEventData createPlantingEventData(Integer gutterCount, Integer gutterSize, ProductionLine productionLine, Integer cellCount, Integer workerCount) {
     PlantingEventData data = new PlantingEventData();
     data.setGutterCount(gutterCount);
-    data.setGutterNumber(gutterNumber);
+    data.setGutterSize(gutterSize);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
-    data.setTrayCount(trayCount);
+    data.setCellCount(cellCount);
     data.setWorkerCount(workerCount);
     return data;
   }

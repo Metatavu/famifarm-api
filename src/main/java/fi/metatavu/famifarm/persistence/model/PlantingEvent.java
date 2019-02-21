@@ -28,7 +28,7 @@ public class PlantingEvent extends Event {
 
   @NotNull
   @Column (nullable = false)
-  private Integer gutterNumber;
+  private Integer gutterSize;
 
   @NotNull
   @Column (nullable = false)
@@ -36,7 +36,7 @@ public class PlantingEvent extends Event {
 
   @NotNull
   @Column (nullable = false)
-  private Integer trayCount;
+  private Integer cellCount;
 
   @NotNull
   @Column (nullable = false)
@@ -49,13 +49,13 @@ public class PlantingEvent extends Event {
   public void setProductionLine(ProductionLine productionLine) {
     this.productionLine = productionLine;
   }
-
-  public Integer getGutterNumber() {
-    return gutterNumber;
+  
+  public Integer getGutterSize() {
+    return gutterSize;
   }
-
-  public void setGutterNumber(Integer gutterNumber) {
-    this.gutterNumber = gutterNumber;
+  
+  public void setGutterSize(Integer gutterSize) {
+    this.gutterSize = gutterSize;
   }
 
   public Integer getGutterCount() {
@@ -66,12 +66,12 @@ public class PlantingEvent extends Event {
     this.gutterCount = gutterCount;
   }
 
-  public Integer getTrayCount() {
-    return trayCount;
+  public Integer getCellCount() {
+    return cellCount;
   }
 
-  public void setTrayCount(Integer trayCount) {
-    this.trayCount = trayCount;
+  public void setCellCount(Integer cellCount) {
+    this.cellCount = cellCount;
   }
 
   public Integer getWorkerCount() {
