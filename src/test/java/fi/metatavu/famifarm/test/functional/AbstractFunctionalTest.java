@@ -56,11 +56,10 @@ public abstract class AbstractFunctionalTest {
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     Double amount = 12d;
     CellType cellType = CellType.LARGE;
-    Integer gutterNumber = 2;
     ProductionLine productionLine = builder.admin().productionLines().create(4);
     SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
     
-    return builder.admin().events().createSowing(batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
+    return builder.admin().events().createSowing(batch, startTime, endTime, amount, cellType, productionLine, seedBatch);
   }
 
   /**

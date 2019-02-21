@@ -28,7 +28,6 @@ public class SowingEventTranslator extends AbstractEventTranslator<SowingEventDa
     SowingEventData result = new SowingEventData();
     result.setAmount(event.getAmount());
     result.setCellType(event.getCellType());
-    result.setGutterNumber(event.getGutterNumber());
     result.setProductionLineId(event.getProductionLine() != null ? event.getProductionLine().getId() : null);
     result.setSeedBatchId(event.getSeedBatch() != null ? event.getSeedBatch().getId() : null);
     return result;
