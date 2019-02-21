@@ -5,7 +5,7 @@ import javax.enterprise.context.ApplicationScoped;
 import fi.metatavu.famifarm.rest.model.Batch;
 
 /**
- * Translator for package size
+ * Translator for batches
  * 
  * @author Ville Koivukangas
  */
