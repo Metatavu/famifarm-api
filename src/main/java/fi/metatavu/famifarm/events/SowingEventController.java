@@ -42,6 +42,7 @@ public class SowingEventController {
    * @param modifier modifier
    * @return updated sowingEvent
    */
+  @SuppressWarnings ("squid:S00107")
   public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Double amount, UUID creatorId) {
     return sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, seedBatch, cellType, amount, 0, creatorId, creatorId);
   }
@@ -81,6 +82,7 @@ public class SowingEventController {
    * @param modifier modifier
    * @return updated sowingEvent
    */
+  @SuppressWarnings ("squid:S00107")
   public SowingEvent updateSowingEvent(SowingEvent sowingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Double amount, UUID modifier) {
     sowingEventDAO.updateBatch(sowingEvent, batch, modifier);
     sowingEventDAO.updateStartTime(sowingEvent, startTime, modifier);
