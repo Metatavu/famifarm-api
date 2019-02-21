@@ -24,7 +24,6 @@ import fi.metatavu.famifarm.persistence.model.Product;
  * 
  * @author Ville Koivukangas
  */
-@SuppressWarnings ("all")
 public class BatchDAO extends AbstractDAO<Batch> {
 
   /**
@@ -66,15 +65,7 @@ public class BatchDAO extends AbstractDAO<Batch> {
     criteria.select(root);
     
     List<Predicate> restrictions = new ArrayList<>();
-    
-    if (createdBefore != null) {
-      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
-    }
-  
-    if (createdAfter != null) {
-      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
-    }
-    
+    createTimeRestrictions(criteriaBuilder, root, createdBefore, createdAfter, restrictions);
     restrictions.add(criteriaBuilder.lessThan(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
     
     criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
@@ -113,15 +104,7 @@ public class BatchDAO extends AbstractDAO<Batch> {
     criteria.select(root);
     
     List<Predicate> restrictions = new ArrayList<>();
-    
-    if (createdBefore != null) {
-      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
-    }
-  
-    if (createdAfter != null) {
-      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
-    }
-    
+    createTimeRestrictions(criteriaBuilder, root, createdBefore, createdAfter, restrictions);
     restrictions.add(criteriaBuilder.greaterThan(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
     
     criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
@@ -158,15 +141,7 @@ public class BatchDAO extends AbstractDAO<Batch> {
     Join<Batch, Event> activeEventJoin = root.join(Batch_.activeEvent);
     
     List<Predicate> restrictions = new ArrayList<>();
-    
-    if (createdBefore != null) {
-      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
-    }
-  
-    if (createdAfter != null) {
-      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
-    }
-    
+    createTimeRestrictions(criteriaBuilder, root, createdBefore, createdAfter, restrictions);
     restrictions.add(criteriaBuilder.equal(activeEventJoin.get(Event_.remainingUnits), remainingUnits));
     
     criteria.select(root);
@@ -234,15 +209,7 @@ public class BatchDAO extends AbstractDAO<Batch> {
     criteria.select(root);
     
     List<Predicate> restrictions = new ArrayList<>();
-    
-    if (createdBefore != null) {
-      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
-    }
-  
-    if (createdAfter != null) {
-      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
-    }
-    
+    createTimeRestrictions(criteriaBuilder, root, createdBefore, createdAfter, restrictions);
     criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
     TypedQuery<Batch> query = entityManager.createQuery(criteria);
     
@@ -325,6 +292,25 @@ public class BatchDAO extends AbstractDAO<Batch> {
   public Batch updateActiveEvent(Batch batch, Event activeEvent) {
     batch.setActiveEvent(activeEvent);
     return persist(batch);
+  }
+
+  /**
+   * Applies time restrictions into restriction list
+   * 
+   * @param criteriaBuilder criteria builder
+   * @param root root
+   * @param createdBefore created before restriction
+   * @param createdAfter created after restriction
+   * @param restrictions restrictions list
+   */
+  private void createTimeRestrictions(CriteriaBuilder criteriaBuilder, Root<Batch> root, OffsetDateTime createdBefore, OffsetDateTime createdAfter, List<Predicate> restrictions) {
+    if (createdBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
+    }
+  
+    if (createdAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
+    }
   }
 
 }

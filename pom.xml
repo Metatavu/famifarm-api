@@ -49,7 +49,7 @@
     
     <!-- Famifarm -->
     
-    <famifarm-api-spec.version>1.0.17</famifarm-api-spec.version>
+    <famifarm-api-spec.version>1.0.18</famifarm-api-spec.version>
     
     <!-- Maven -->
 
@@ -87,7 +87,7 @@
     <rest-assured.version>3.2.0</rest-assured.version>
     <wiremock.version>2.19.0</wiremock.version>
     <jsonassert.version>1.5.0</jsonassert.version>
-    <famifarm-api-client.version>1.0.16</famifarm-api-client.version>
+    <famifarm-api-client.version>1.0.17</famifarm-api-client.version>
     <mariadb-java-client.version>2.3.0</mariadb-java-client.version>
   </properties>
 

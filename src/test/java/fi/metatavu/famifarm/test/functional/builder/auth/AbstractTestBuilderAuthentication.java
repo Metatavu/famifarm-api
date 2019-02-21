@@ -6,6 +6,7 @@ import java.util.List;
 
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.test.functional.builder.impl.BatchTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.DraftTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.EventTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PackageSizeTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PerformedCultivationActionTestBuilderResource;
@@ -35,6 +36,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private ProductionLineTestBuilderResource productionLines;
   private PerformedCultivationActionTestBuilderResource performedCultivationActions;
   private EventTestBuilderResource events;
+  private DraftTestBuilderResource drafts;
   private List<AutoCloseable> closables = new ArrayList<>();
   
   /**
@@ -177,7 +179,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     return performedCultivationActions = this.addClosable(new PerformedCultivationActionTestBuilderResource(createClient()));
   }
   
-  /*
+  /**
    * Returns test builder resource for events
    * 
    * @return test builder resource for events
@@ -189,6 +191,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
     
     return events = this.addClosable(new EventTestBuilderResource(createClient()));
+  }
+  
+  /**
+   * Returns test builder resource for drafts
+   * 
+   * @return test builder resource for drafts
+   * @throws IOException thrown when authentication fails
+   */
+  public DraftTestBuilderResource drafts() throws IOException {
+    if (drafts != null) {
+      return drafts;
+    }
+    
+    return drafts = this.addClosable(new DraftTestBuilderResource(createClient()));
   }
   
   /**
