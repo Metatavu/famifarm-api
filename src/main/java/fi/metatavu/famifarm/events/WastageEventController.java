@@ -41,6 +41,7 @@ public class WastageEventController {
    * @param creatorId creator id
    * @return created wastage event
    */
+  @SuppressWarnings ("squid:S00107")
   public WastageEvent createWastageEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, UUID creatorId) {
     return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, startTime, endTime, 0, phase, additionalInformation, creatorId, creatorId);
   }

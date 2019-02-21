@@ -77,6 +77,7 @@ public class TableSpreadEventController {
    * @param modifier modifier
    * @return updated tableSpreadEvent
    */
+  @SuppressWarnings ("squid:S00107")
   public TableSpreadEvent updateTableSpreadEvent(TableSpreadEvent tableSpreadEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer tableCount, String location, String additionalInformation, UUID modifier) {
     tableSpreadEventDAO.updateBatch(tableSpreadEvent, batch, modifier);
     tableSpreadEventDAO.updateStartTime(tableSpreadEvent, startTime, modifier);
