@@ -58,6 +58,7 @@ import fi.metatavu.famifarm.rest.model.CellType;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.rest.model.Draft;
 import fi.metatavu.famifarm.rest.model.Event;
+import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.HarvestEventData;
 import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
 import fi.metatavu.famifarm.rest.model.PackageSize;
@@ -1603,9 +1604,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     Integer amount = eventData.getAmount();
+    EventType phase = eventData.getPhase();
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(eventData.getReasonId());
 
-    WastageEvent event = wastageEventController.createWastageEvent(batch, startTime, endTime, amount, wastageReason, additionalInformation, creatorId);
+    WastageEvent event = wastageEventController.createWastageEvent(batch, startTime, endTime, amount, wastageReason, phase, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
     
     return createOk(wastageEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1636,9 +1638,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID lastModifierId = getLoggerUserId();
     Integer amount = eventData.getAmount();
+    EventType phase = eventData.getPhase();
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(eventData.getReasonId());
 
-    WastageEvent updatedEvent = wastageEventController.updateWastageEvent((WastageEvent) event, batch, startTime, endTime, amount, wastageReason, additionalInformation, lastModifierId);
+    WastageEvent updatedEvent = wastageEventController.updateWastageEvent((WastageEvent) event, batch, startTime, endTime, amount, wastageReason, phase, additionalInformation, lastModifierId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(wastageEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));

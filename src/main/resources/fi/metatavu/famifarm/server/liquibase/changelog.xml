@@ -498,7 +498,6 @@
         <constraints nullable="false" foreignKeyName="FK_PACKAGESIZE_NAME_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
       </column>
     </addColumn>
-    
   </changeSet>
   
   <changeSet id="pest" author="antti.leppa">
@@ -537,6 +536,12 @@
         <constraints nullable="false" primaryKey="true" foreignKeyName="FK_CULTIVATIONOBSERVATIONEVENTPEST_PEST_ID" referencedColumnNames="id" referencedTableName="pest"/>
       </column>
     </createTable>
+  </changeSet>
+  
+  <changeSet id="wastageeventphase" author="antti.leppa">
+    <addColumn tableName="wastageevent">
+      <column name="phase" type="varchar(191)"/>
+    </addColumn>
   </changeSet>
       
 </databaseChangeLog>

@@ -13,6 +13,7 @@ import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.PackingEvent_;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.persistence.model.WastageReason;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * DAO for wastage events
@@ -37,7 +38,7 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    * @return created wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, EventType phase, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     WastageEvent wastageEvent = new WastageEvent();
     wastageEvent.setRemainingUnits(remainingUnits);
     wastageEvent.setAmount(amount);
@@ -49,6 +50,7 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
     wastageEvent.setCreatorId(creatorId);
     wastageEvent.setLastModifierId(lastModifierId);
     wastageEvent.setAdditionalInformation(additionalInformation);
+    wastageEvent.setPhase(phase);
     return persist(wastageEvent);
   }
   
@@ -81,6 +83,20 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    */
   public WastageEvent updateAmount(WastageEvent wastageEvent, Integer amount, UUID lastModifierId) {
     wastageEvent.setAmount(amount);
+    wastageEvent.setLastModifierId(lastModifierId);
+    return persist(wastageEvent);
+  }
+
+  /**
+   * Updates phase
+   * 
+   * @param wastageEvent wastage event to update
+   * @param phase new phase
+   * @param lastModifierId last modifier id
+   * @return updated wastage event
+   */
+  public WastageEvent updatePhase(WastageEvent wastageEvent, EventType phase, UUID lastModifierId) {
+    wastageEvent.setPhase(phase);
     wastageEvent.setLastModifierId(lastModifierId);
     return persist(wastageEvent);
   }

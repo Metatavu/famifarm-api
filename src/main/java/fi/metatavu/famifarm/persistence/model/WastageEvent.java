@@ -29,6 +29,8 @@ public class WastageEvent extends Event {
   @NotNull
   @Column (nullable = false)
   private Integer amount;
+  
+  private EventType phase;
 
   public WastageReason getWastageReason() {
     return wastageReason;
@@ -44,6 +46,14 @@ public class WastageEvent extends Event {
 
   public void setAmount(Integer amount) {
     this.amount = amount;
+  }
+  
+  public EventType getPhase() {
+    return phase;
+  }
+  
+  public void setPhase(EventType phase) {
+    this.phase = phase;
   }
 
   @Transient

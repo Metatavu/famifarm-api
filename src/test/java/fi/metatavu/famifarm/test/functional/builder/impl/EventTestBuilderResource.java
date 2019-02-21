@@ -178,11 +178,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param amount amount
    * @param wastageReason wastege reason
    * @param additionalInformation additional information
+   * @param phase phase
    * @return created event
    */
-  public Event createWastage(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation) {
+  public Event createWastage(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, EventType phase) {
     
-    WastageEventData data = createWastageEventData(amount, wastageReason);
+    WastageEventData data = createWastageEventData(amount, wastageReason, phase);
     
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -377,12 +378,15 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * 
    * @param amount amount
    * @param wastageReason wastage reason
+   * @param phase phase
    * @return created wastage event data object
    */
-  public WastageEventData createWastageEventData(Integer amount, WastageReason wastageReason) {
+  public WastageEventData createWastageEventData(Integer amount, WastageReason wastageReason, EventType phase) {
     WastageEventData data = new WastageEventData();
     data.setAmount(amount);
     data.setReasonId(wastageReason.getId());
+    data.setPhase(phase);
+    
     return data;
   }
 

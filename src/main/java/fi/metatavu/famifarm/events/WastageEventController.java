@@ -12,6 +12,7 @@ import fi.metatavu.famifarm.persistence.dao.WastageEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.persistence.model.WastageReason;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * Controller for wastage events
@@ -40,8 +41,8 @@ public class WastageEventController {
    * @param creatorId creator id
    * @return created wastage event
    */
-  public WastageEvent createWastageEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, UUID creatorId) {
-    return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
+  public WastageEvent createWastageEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, UUID creatorId) {
+    return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, startTime, endTime, 0, phase, additionalInformation, creatorId, creatorId);
   }
 
   /**
@@ -55,17 +56,18 @@ public class WastageEventController {
    * @param wastageReason wastage reason
    * @param additionalInformation additional information
    * @param lastModifierId last modifier id
+   * @param phase phase
    * @return updated wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent updateWastageEvent(WastageEvent wastageEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, UUID lastModifierId) {
+  public WastageEvent updateWastageEvent(WastageEvent wastageEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, UUID lastModifierId) {
     wastageEventDAO.updateAmount(wastageEvent, amount, lastModifierId);
     wastageEventDAO.updateBatch(wastageEvent, batch, lastModifierId);
     wastageEventDAO.updateEndTime(wastageEvent, endTime, lastModifierId);
     wastageEventDAO.updateStartTime(wastageEvent, startTime, lastModifierId);
     wastageEventDAO.updateWastageReason(wastageEvent, wastageReason, lastModifierId);
     wastageEventDAO.updateAdditionalInformation(wastageEvent, additionalInformation, lastModifierId);
-    
+    wastageEventDAO.updatePhase(wastageEvent, phase, lastModifierId);
     return wastageEvent;
   }
 
