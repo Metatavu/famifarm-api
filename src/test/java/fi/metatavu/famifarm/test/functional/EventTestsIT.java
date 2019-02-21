@@ -74,14 +74,12 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Double updateAmount = 14d;
       CellType updateCellType = CellType.SMALL;
-      Integer updateGutterNumber = 3;
       ProductionLine updateProductionLine = builder.admin().productionLines().create(7);
       SeedBatch updateSeedBatch = builder.admin().seedBatches().create("123", seed, updateStartTime);
       
       SowingEventData updateData = new SowingEventData();
       updateData.setAmount(updateAmount);
       updateData.setCellType(updateCellType);
-      updateData.setGutterNumber(updateGutterNumber);
       updateData.setProductionLineId(updateProductionLine.getId());
       updateData.setSeedBatchId(updateSeedBatch.getId());
       
@@ -606,12 +604,11 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Double amount = 12d;
       CellType cellType = CellType.LARGE;
-      Integer gutterNumber = 2;
       ProductionLine productionLine = builder.admin().productionLines().create(4);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
       
-      builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
-      builder.invalid().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, gutterNumber, productionLine, seedBatch);
+      builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, productionLine, seedBatch);
+      builder.invalid().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, productionLine, seedBatch);
     }
   }
 

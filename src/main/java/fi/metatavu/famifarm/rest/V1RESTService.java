@@ -53,6 +53,7 @@ import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.Batch;
 import fi.metatavu.famifarm.rest.model.CellType;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
+import fi.metatavu.famifarm.rest.model.Draft;
 import fi.metatavu.famifarm.rest.model.Event;
 import fi.metatavu.famifarm.rest.model.HarvestEventData;
 import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
@@ -975,12 +976,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
-    Integer gutterNumber = eventData.getGutterNumber();
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(eventData.getSeedBatchId());
     CellType cellType = eventData.getCellType();
     Double amount = eventData.getAmount();
     
-    SowingEvent event = sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId);
+    SowingEvent event = sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, seedBatch, cellType, amount, creatorId);
     batchController.updateRemainingUnits(batch);
     
     return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1011,11 +1011,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
-    Integer gutterNumber = eventData.getGutterNumber();
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(eventData.getSeedBatchId());
     CellType cellType = eventData.getCellType();
     Double amount = eventData.getAmount();    
-    SowingEvent updatedEvent = sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, creatorId);
+    SowingEvent updatedEvent = sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime, productionLine, seedBatch, cellType, amount, creatorId);
     batchController.updateRemainingUnits(batch);
     
     return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));

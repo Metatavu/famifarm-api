@@ -36,15 +36,14 @@ public class SowingEventController {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param gutterNumber gutterNumber
    * @param seedBatch seedBatch
    * @param cellType cellType
    * @param amount amount
    * @param modifier modifier
    * @return updated sowingEvent
    */
-  public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, SeedBatch seedBatch, CellType cellType, Double amount, UUID creatorId) {
-    return sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterNumber, seedBatch, cellType, amount, 0, creatorId, creatorId);
+  public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Double amount, UUID creatorId) {
+    return sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, seedBatch, cellType, amount, 0, creatorId, creatorId);
   }
   
   /**
@@ -76,19 +75,17 @@ public class SowingEventController {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param gutterNumber gutterNumber
    * @param seedBatch seedBatch
    * @param cellType cellType
    * @param amount amount
    * @param modifier modifier
    * @return updated sowingEvent
    */
-  public SowingEvent updateSowingEvent(SowingEvent sowingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, SeedBatch seedBatch, CellType cellType, Double amount, UUID modifier) {
+  public SowingEvent updateSowingEvent(SowingEvent sowingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Double amount, UUID modifier) {
     sowingEventDAO.updateBatch(sowingEvent, batch, modifier);
     sowingEventDAO.updateStartTime(sowingEvent, startTime, modifier);
     sowingEventDAO.updateEndTime(sowingEvent, endTime, modifier);
     sowingEventDAO.updateProductionLine(sowingEvent, productionLine, modifier);
-    sowingEventDAO.updateGutterNumber(sowingEvent, gutterNumber, modifier);
     sowingEventDAO.updateSeedBatch(sowingEvent, seedBatch, modifier);
     sowingEventDAO.updateCellType(sowingEvent, cellType, modifier);
     sowingEventDAO.updateAmount(sowingEvent, amount, modifier);

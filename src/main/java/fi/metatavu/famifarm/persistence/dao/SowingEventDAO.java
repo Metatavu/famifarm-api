@@ -32,7 +32,6 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param gutterNumber gutterNumber
    * @param seedBatch seedBatch
    * @param cellType cellType
    * @param amount amount
@@ -41,14 +40,13 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, SeedBatch seedBatch, CellType cellType, Double amount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
+  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Double amount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
     SowingEvent sowingEvent = new SowingEvent();
     sowingEvent.setBatch(batch);
     sowingEvent.setRemainingUnits(remainingUnits);
     sowingEvent.setStartTime(startTime);
     sowingEvent.setEndTime(endTime);
     sowingEvent.setProductionLine(productionLine);
-    sowingEvent.setGutterNumber(gutterNumber);
     sowingEvent.setSeedBatch(seedBatch);
     sowingEvent.setCellType(cellType);
     sowingEvent.setAmount(amount);
@@ -88,20 +86,6 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
   public SowingEvent updateProductionLine(SowingEvent sowingEvent, ProductionLine productionLine, UUID lastModifierId) {
     sowingEvent.setLastModifierId(lastModifierId);
     sowingEvent.setProductionLine(productionLine);
-    return persist(sowingEvent);
-  }
-
-  /**
-   * Updates gutterNumber
-   *
-   * @param sowingEvent event to be updated
-   * @param gutterNumber gutterNumber
-   * @param lastModifier modifier
-   * @return updated sowingEvent
-   */
-  public SowingEvent updateGutterNumber(SowingEvent sowingEvent, Integer gutterNumber, UUID lastModifierId) {
-    sowingEvent.setLastModifierId(lastModifierId);
-    sowingEvent.setGutterNumber(gutterNumber);
     return persist(sowingEvent);
   }
 
