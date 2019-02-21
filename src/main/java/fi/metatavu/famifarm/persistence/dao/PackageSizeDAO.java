@@ -2,6 +2,7 @@ package fi.metatavu.famifarm.persistence.dao;
 
 import java.util.UUID;
 
+import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 
 /**
@@ -19,7 +20,7 @@ public class PackageSizeDAO extends AbstractDAO<PackageSize> {
    * @return created seed
    * @param lastModifier modifier
    */
-  public PackageSize create(UUID id, String name, UUID creatorId, UUID lastModifierId) {
+  public PackageSize create(UUID id, LocalizedEntry name, UUID creatorId, UUID lastModifierId) {
     PackageSize packageSize = new PackageSize();
     packageSize.setId(id);
     packageSize.setName(name);
@@ -36,7 +37,7 @@ public class PackageSizeDAO extends AbstractDAO<PackageSize> {
    * @param lastModifier modifier
    * @return updated packageSize
    */
-  public PackageSize updateName(PackageSize packageSize, String name, UUID lastModifierId) {
+  public PackageSize updateName(PackageSize packageSize, LocalizedEntry name, UUID lastModifierId) {
     packageSize.setLastModifierId(lastModifierId);
     packageSize.setName(name);
     return persist(packageSize);

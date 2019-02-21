@@ -37,19 +37,18 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    * @return created wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, String description, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
+  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     WastageEvent wastageEvent = new WastageEvent();
     wastageEvent.setRemainingUnits(remainingUnits);
     wastageEvent.setAmount(amount);
     wastageEvent.setBatch(batch);
     wastageEvent.setWastageReason(wastageReason);
-    wastageEvent.setDescription(description);
     wastageEvent.setId(id);
     wastageEvent.setStartTime(startTime);
     wastageEvent.setEndTime(endTime);
     wastageEvent.setCreatorId(creatorId);
     wastageEvent.setLastModifierId(lastModifierId);
-
+    wastageEvent.setAdditionalInformation(additionalInformation);
     return persist(wastageEvent);
   }
   
@@ -96,20 +95,6 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    */
   public WastageEvent updateWastageReason(WastageEvent wastageEvent, WastageReason wastageReason, UUID lastModifierId) {
     wastageEvent.setWastageReason(wastageReason);
-    wastageEvent.setLastModifierId(lastModifierId);
-    return persist(wastageEvent);
-  }
-
-  /**
-   * Updates description
-   * 
-   * @param wastageEvent wastage event to update
-   * @param description new description
-   * @param lastModifierId last modifier id
-   * @return updated wastage event
-   */
-  public WastageEvent updateDescription(WastageEvent wastageEvent, String description, UUID lastModifierId) {
-    wastageEvent.setDescription(description);
     wastageEvent.setLastModifierId(lastModifierId);
     return persist(wastageEvent);
   }

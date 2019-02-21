@@ -36,11 +36,12 @@ public class WastageEventController {
    * @param amount amount
    * @param wastageReason reason of wastage
    * @param description description
+   * @param additionalInformation additional information
    * @param creatorId creator id
    * @return created wastage event
    */
-  public WastageEvent createWastageEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String description, UUID creatorId) {
-    return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, description, startTime, endTime, 0, creatorId, creatorId);
+  public WastageEvent createWastageEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, UUID creatorId) {
+    return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
   }
 
   /**
@@ -52,18 +53,19 @@ public class WastageEventController {
    * @param endTime end time
    * @param amount amount
    * @param wastageReason wastage reason
-   * @param description description
-   * @param lastModifierId last modiefier id
+   * @param additionalInformation additional information
+   * @param lastModifierId last modifier id
    * @return updated wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent updateWastageEvent(WastageEvent wastageEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String description, UUID lastModifierId) {
+  public WastageEvent updateWastageEvent(WastageEvent wastageEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, UUID lastModifierId) {
     wastageEventDAO.updateAmount(wastageEvent, amount, lastModifierId);
     wastageEventDAO.updateBatch(wastageEvent, batch, lastModifierId);
-    wastageEventDAO.updateDescription(wastageEvent, description, lastModifierId);
     wastageEventDAO.updateEndTime(wastageEvent, endTime, lastModifierId);
     wastageEventDAO.updateStartTime(wastageEvent, startTime, lastModifierId);
     wastageEventDAO.updateWastageReason(wastageEvent, wastageReason, lastModifierId);
+    wastageEventDAO.updateAdditionalInformation(wastageEvent, additionalInformation, lastModifierId);
+    
     return wastageEvent;
   }
 

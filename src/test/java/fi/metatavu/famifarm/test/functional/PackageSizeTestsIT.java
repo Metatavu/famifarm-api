@@ -20,16 +20,16 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreatePackageSize() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      assertNotNull(builder.admin().packageSizes().create("Test PackageSize"));
+      assertNotNull(builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize")));
     }
   }
 
   @Test
   public void testCreatePackageSizePermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      builder.worker1().packageSizes().assertCreateFailStatus(403, "Test PackageSize");
-      builder.anonymous().packageSizes().assertCreateFailStatus(401, "Test PackageSize");
-      builder.invalid().packageSizes().assertCreateFailStatus(401, "Test PackageSize");
+      builder.worker1().packageSizes().assertCreateFailStatus(403, builder.createLocalizedEntry("Test PackageSize"));
+      builder.anonymous().packageSizes().assertCreateFailStatus(401, builder.createLocalizedEntry("Test PackageSize"));
+      builder.invalid().packageSizes().assertCreateFailStatus(401, builder.createLocalizedEntry("Test PackageSize"));
     }
   }
   
@@ -37,7 +37,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   public void testFindPackageSize() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().packageSizes().assertFindFailStatus(404, UUID.randomUUID());
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       PackageSize foundPackageSize = builder.admin().packageSizes().findPackageSize(createdPackageSize.getId());
       assertEquals(createdPackageSize.getId(), foundPackageSize.getId());
       builder.admin().packageSizes().assertPackageSizeEqual(createdPackageSize, foundPackageSize);
@@ -47,7 +47,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   @Test
   public void testFindPackageSizePermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize packageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       assertNotNull(builder.admin().packageSizes().findPackageSize(packageSize.getId()));
       assertNotNull(builder.manager().packageSizes().findPackageSize(packageSize.getId()));
       assertNotNull(builder.worker1().packageSizes().findPackageSize(packageSize.getId()));
@@ -60,9 +60,9 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   public void testListpackageSizes() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       
-      builder.admin().packageSizes().create("Test PackageSize");
+      builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       builder.admin().packageSizes().assertCount(1);
-      builder.admin().packageSizes().create("Test PackageSize 2");
+      builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize 2"));
       builder.admin().packageSizes().assertCount(2);
     }
   }
@@ -70,7 +70,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   @Test
   public void testListPackageSizePermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize packageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       builder.worker1().packageSizes().assertCount(1);
       builder.manager().packageSizes().assertCount(1);
       builder.admin().packageSizes().assertCount(1);
@@ -82,12 +82,12 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   @Test
   public void testUpdatePackageSize() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       builder.admin().packageSizes().assertPackageSizeEqual(createdPackageSize, builder.admin().packageSizes().findPackageSize(createdPackageSize.getId()));
       
       PackageSize updatePackageSize = new PackageSize(); 
       updatePackageSize.setId(createdPackageSize.getId());
-      updatePackageSize.setName("Updated PackageSize");
+      updatePackageSize.setName(builder.createLocalizedEntry("Updated PackageSize"));
      
       builder.admin().packageSizes().updatePackageSize(updatePackageSize);
       builder.admin().packageSizes().assertPackageSizeEqual(updatePackageSize, builder.admin().packageSizes().findPackageSize(createdPackageSize.getId()));
@@ -97,7 +97,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   @Test
   public void testUpdatePackageSizePermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize packageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       builder.worker1().packageSizes().assertUpdateFailStatus(403, packageSize);
       builder.anonymous().packageSizes().assertUpdateFailStatus(401, packageSize);
       builder.invalid().packageSizes().assertUpdateFailStatus(401, packageSize);
@@ -107,7 +107,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   @Test
   public void testDeletepackageSizes() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       PackageSize foundPackageSize = builder.admin().packageSizes().findPackageSize(createdPackageSize.getId());
       assertEquals(createdPackageSize.getId(), foundPackageSize.getId());
       builder.admin().packageSizes().delete(createdPackageSize);
@@ -118,7 +118,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   @Test
   public void testDeletePackageSizePermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize packageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       builder.worker1().packageSizes().assertDeleteFailStatus(403, packageSize);
       builder.anonymous().packageSizes().assertDeleteFailStatus(401, packageSize);
       builder.invalid().packageSizes().assertDeleteFailStatus(401, packageSize);

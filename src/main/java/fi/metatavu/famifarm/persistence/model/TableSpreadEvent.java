@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * JPA entity for table spread event
@@ -45,8 +45,8 @@ public class TableSpreadEvent extends Event {
 
   @Transient
   @Override
-  public TypeEnum getType() {
-    return TypeEnum.TABLE_SPREAD;
+  public EventType getType() {
+    return EventType.TABLE_SPREAD;
   }
 
 }

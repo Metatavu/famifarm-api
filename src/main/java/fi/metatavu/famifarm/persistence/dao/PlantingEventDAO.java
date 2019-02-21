@@ -33,7 +33,7 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
+  public PlantingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     PlantingEvent plantingEvent = new PlantingEvent();
     plantingEvent.setBatch(batch);
     plantingEvent.setRemainingUnits(remainingUnits);
@@ -47,6 +47,7 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
     plantingEvent.setId(id);
     plantingEvent.setCreatorId(creatorId);
     plantingEvent.setLastModifierId(lastModifierId);
+    plantingEvent.setAdditionalInformation(additionalInformation);
     return persist(plantingEvent);
   }
 

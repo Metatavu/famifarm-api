@@ -3,7 +3,7 @@ package fi.metatavu.famifarm.rest.translate;
 import javax.enterprise.context.ApplicationScoped;
 
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.WastageEventData;
 
 /**
@@ -15,8 +15,8 @@ import fi.metatavu.famifarm.rest.model.WastageEventData;
 public class WastageEventTranslator extends AbstractEventTranslator<WastageEventData, WastageEvent> {
 
   @Override
-  protected TypeEnum getType() {
-    return TypeEnum.WASTEAGE;
+  protected EventType getType() {
+    return EventType.WASTEAGE;
   }
 
   @Override
@@ -27,7 +27,6 @@ public class WastageEventTranslator extends AbstractEventTranslator<WastageEvent
     
     WastageEventData result = new WastageEventData();
     result.setAmount(event.getAmount());
-    result.setDescription(event.getDescription());
     result.setReasonId(event.getWastageReason().getId());
 
     return result;

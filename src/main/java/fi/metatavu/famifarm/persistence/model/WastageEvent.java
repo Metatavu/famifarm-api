@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * JPA entity for wastage event
@@ -30,8 +30,6 @@ public class WastageEvent extends Event {
   @Column (nullable = false)
   private Integer amount;
 
-  private String description;
-
   public WastageReason getWastageReason() {
     return wastageReason;
   }
@@ -48,18 +46,10 @@ public class WastageEvent extends Event {
     this.amount = amount;
   }
 
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
   @Transient
   @Override
-  public TypeEnum getType() {
-    return TypeEnum.WASTEAGE;
+  public EventType getType() {
+    return EventType.WASTEAGE;
   }
 
 }

@@ -172,7 +172,7 @@ public class BatchController {
     Integer count = 0;
     
     for (SowingEvent event : sowingEvents) {
-      count += (int) Math.round(event.getAmount());
+      count += event.getAmount();
     }
     
     for (WastageEvent event : wasteageEvents) {

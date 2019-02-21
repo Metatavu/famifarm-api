@@ -22,7 +22,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateProduct() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       assertNotNull(builder.admin().products().create(name, createdPackageSize));
     }
@@ -31,7 +31,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       builder.worker1().products().assertCreateFailStatus(403, name, createdPackageSize);
@@ -43,7 +43,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testFindProduct() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       builder.admin().products().assertFindFailStatus(404, UUID.randomUUID());
@@ -56,7 +56,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testFindProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, createdPackageSize);
@@ -71,7 +71,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testListproducts() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       builder.admin().products().create(name, createdPackageSize);
@@ -84,7 +84,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testListProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, createdPackageSize);
@@ -99,7 +99,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testUpdateProduct() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product createdProduct = builder.admin().products().create(name, createdPackageSize);
@@ -109,7 +109,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       
       name = builder.createLocalizedEntry("Updated name", "Tuotteen nimi");
       updateProduct.setName(name);
-      updateProduct.setDefaultPackageSize(createdPackageSize.getId());
+      updateProduct.setDefaultPackageSizeId(createdPackageSize.getId());
      
       builder.admin().products().updateProduct(updateProduct);
       assertEquals(updateProduct.getId(), builder.admin().products().findProduct(createdProduct.getId()).getId());
@@ -119,7 +119,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testUpdateProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, createdPackageSize);
@@ -132,7 +132,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testDeleteproducts() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product createdProduct = builder.admin().products().create(name, createdPackageSize);
@@ -146,7 +146,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testDeleteProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create("Test PackageSize");
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, createdPackageSize);

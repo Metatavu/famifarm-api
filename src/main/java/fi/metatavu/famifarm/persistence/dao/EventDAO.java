@@ -113,8 +113,6 @@ public class EventDAO extends AbstractEventDAO<Event> {
       query.setMaxResults(maxResults);
     }
     
-    
-
     return query.getResultList();
   }
 

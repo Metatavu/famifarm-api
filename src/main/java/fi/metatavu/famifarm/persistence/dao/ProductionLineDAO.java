@@ -22,7 +22,7 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
    * @param lastModifierId lastModifierId
    * @return created production line
    */
-  public ProductionLine create(UUID id, int lineNumber, Team defaultTeam, UUID creatorId, UUID lastModifierId) {
+  public ProductionLine create(UUID id, String lineNumber, Team defaultTeam, UUID creatorId, UUID lastModifierId) {
     ProductionLine productionLine = new ProductionLine();
     productionLine.setId(id);
     productionLine.setLineNumber(lineNumber);
@@ -40,7 +40,7 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
    * @param lastModifier modifier
    * @return updated production line
    */
-  public ProductionLine updateLineNumber(ProductionLine productionLine, int lineNumber, UUID lastModifierId) {
+  public ProductionLine updateLineNumber(ProductionLine productionLine, String lineNumber, UUID lastModifierId) {
     productionLine.setLastModifierId(lastModifierId);
     productionLine.setLineNumber(lineNumber);
     return persist(productionLine);

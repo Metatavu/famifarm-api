@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -18,7 +19,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * JPA base class for all event entities
@@ -43,12 +44,15 @@ public class Event {
   @NotNull  
   private Integer remainingUnits; 
 
+  @Lob
+  private String additionalInformation;
+
   @Column(nullable = false)
   private OffsetDateTime startTime;
 
   @Column
   private OffsetDateTime endTime;
-
+  
   @Column(nullable = false)
   @NotNull
   private UUID creatorId;
@@ -77,6 +81,14 @@ public class Event {
   
   public void setRemainingUnits(Integer remainingUnits) {
     this.remainingUnits = remainingUnits;
+  }
+  
+  public String getAdditionalInformation() {
+    return additionalInformation;
+  }
+  
+  public void setAdditionalInformation(String additionalInformation) {
+    this.additionalInformation = additionalInformation;
   }
 
   public Batch getBatch() {
@@ -136,7 +148,7 @@ public class Event {
   }
   
   @Transient
-  public TypeEnum getType() {
+  public EventType getType() {
     return null;
   }
 
