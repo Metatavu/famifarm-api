@@ -66,6 +66,21 @@ public abstract class AbstractApi {
   }
   
   /**
+   * Constructs forbidden response
+   * 
+   * @param message message
+   * @return response
+   */
+  protected Response createForbidden(String message) {
+    ErrorResponse entity = new ErrorResponse();
+    entity.setMessage(message);
+    return Response
+      .status(Response.Status.FORBIDDEN)
+      .entity(entity)
+      .build();
+  }
+  
+  /**
    * Constructs bad request response
    * 
    * @param message message
