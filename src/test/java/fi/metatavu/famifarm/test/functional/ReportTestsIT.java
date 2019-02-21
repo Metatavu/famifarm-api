@@ -43,5 +43,34 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       }
     }
   }
+  
+  @Test
+  public void testXlsxGrowthTimeReport() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      builder.admin().performedCultivationActions();
+      builder.admin().teams();
+      
+      createSowingEvent(builder);
+      Event tableSpreadEvent = createTableSpreadEvent(builder);
+      Event cultivationObservationEvent = createCultivationObservationEvent(builder);
+      createHarvestEvent(builder);
+      createPlantingEvent(builder);
+      createPackingEvent(builder);
+      
+      byte[] data = builder.admin().reports().createReport("GROWTH_TIME");
+      assertNotNull(data);
+      
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        builder.admin().reports().assertCellValue("Team", workbook, 0, 0, 0);
+        builder.admin().reports().assertCellValue("Line", workbook, 0, 0, 1);
+        builder.admin().reports().assertCellValue("Product", workbook, 0, 0, 2);
+        builder.admin().reports().assertCellValue("Packaging date", workbook, 0, 0, 3);
+        builder.admin().reports().assertCellValue("Sowing date", workbook, 0, 0, 4);
+        builder.admin().reports().assertCellValue("Average weight", workbook, 0, 0, 5);
+        builder.admin().reports().assertCellValue("Growth time", workbook, 0, 0, 6);
+        builder.admin().reports().assertCellValue("Days", workbook, 0, 0, 7);
+      }
+    }
+  }
 
 }

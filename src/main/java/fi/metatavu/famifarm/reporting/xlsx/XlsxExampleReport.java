@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import org.apache.commons.math3.analysis.function.Add;
+
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.persistence.model.Event;
@@ -54,7 +56,6 @@ public class XlsxExampleReport extends AbstractXlsxReport {
       for (int i = 0; i < events.size(); i++) {
         int rowIndex = i + 1;
         Event event = events.get(i);
-        
         xlsxBuilder.setCellValue(sheetId, rowIndex, batchIndex, getFormattedBatch(locale, event.getBatch()));
         xlsxBuilder.setCellValue(sheetId, rowIndex, startTimeIndex, event.getStartTime());
         xlsxBuilder.setCellValue(sheetId, rowIndex, endTimeIndex, event.getEndTime());

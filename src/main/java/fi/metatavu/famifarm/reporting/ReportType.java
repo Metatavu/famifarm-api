@@ -7,6 +7,7 @@ package fi.metatavu.famifarm.reporting;
  */
 public enum ReportType {
 
-  XLS_EXAMPLE
+  XLS_EXAMPLE,
+  GROWTH_TIME
   
 }
