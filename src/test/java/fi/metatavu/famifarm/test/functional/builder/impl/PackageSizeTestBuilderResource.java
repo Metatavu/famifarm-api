@@ -12,6 +12,7 @@ import org.json.JSONException;
 import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.client.PackageSizesApi;
+import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -32,7 +33,7 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * @param name name
    * @return created seed
    */
-  public PackageSize create(String name) {
+  public PackageSize create(LocalizedEntry name) {
     PackageSize packageSize = new PackageSize();
     packageSize.setName(name);
     return addClosable(getApi().createPackageSize(packageSize));
@@ -81,7 +82,7 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * 
    * @param expectedStatus expected status code
    */
-  public void assertCreateFailStatus(int expectedStatus, String name) {
+  public void assertCreateFailStatus(int expectedStatus, LocalizedEntry name) {
     try {
       PackageSize packageSize = new PackageSize();
       packageSize.setName(name);

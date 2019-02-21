@@ -20,59 +20,59 @@ import fi.metatavu.famifarm.persistence.model.Pest;
 import fi.metatavu.famifarm.persistence.model.Pest_;
 
 /**
- * DAO class for cultivation action event action
+ * DAO class for cultivation pest event pest
  * 
  * @author Antti Leppä
  */
-public class CultivationObservationEventActionDAO extends AbstractDAO<CultivationObservationEventAction> {
+public class CultivationObservationEventPestDAO extends AbstractDAO<CultivationObservationEventPest> {
 
   /**
-   * Creates new cultivationActionEventAction
+   * Creates new cultivationPestEventPest
    *
    * @param event event
-   * @param action action
-   * @return created cultivationActionEventAction
+   * @param pest pest
+   * @return created cultivationPestEventPest
    * @param lastModifier modifier
    */
-  public CultivationObservationEventAction create(UUID id, CultivationObservationEvent event, PerformedCultivationAction action) {
-    CultivationObservationEventAction cultivationActionEventAction = new CultivationObservationEventAction();
-    cultivationActionEventAction.setEvent(event);
-    cultivationActionEventAction.setAction(action);
-    cultivationActionEventAction.setId(id);
-    return persist(cultivationActionEventAction);
+  public CultivationObservationEventPest create(UUID id, CultivationObservationEvent event, Pest pest) {
+    CultivationObservationEventPest cultivationPestEventPest = new CultivationObservationEventPest();
+    cultivationPestEventPest.setEvent(event);
+    cultivationPestEventPest.setPest(pest);
+    cultivationPestEventPest.setId(id);
+    return persist(cultivationPestEventPest);
   }
 
   /**
-   * Lists actions by event
+   * Lists pests by event
    * 
    * @param event event
-   * @return actions
+   * @return pests
    */
-  public List<CultivationObservationEventAction> listByEvent(CultivationObservationEvent event) {
+  public List<CultivationObservationEventPest> listByEvent(CultivationObservationEvent event) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<CultivationObservationEventAction> criteria = criteriaBuilder.createQuery(CultivationObservationEventAction.class);
-    Root<CultivationObservationEventAction> root = criteria.from(CultivationObservationEventAction.class);
+    CriteriaQuery<CultivationObservationEventPest> criteria = criteriaBuilder.createQuery(CultivationObservationEventPest.class);
+    Root<CultivationObservationEventPest> root = criteria.from(CultivationObservationEventPest.class);
     criteria.select(root);
-    criteria.where(criteriaBuilder.equal(root.get(CultivationObservationEventAction_.event), event));
+    criteria.where(criteriaBuilder.equal(root.get(CultivationObservationEventPest_.event), event));
     
     return entityManager.createQuery(criteria).getResultList();
   }  
 
   /**
-   * Lists performed cultivation action ids by event
+   * Lists performed cultivation pest ids by event
    * 
    * @param event event
-   * @return performed cultivation action ids by event
+   * @return performed cultivation pest ids by event
    */
   public List<UUID> listPerformedActionIdsByEvent(CultivationObservationEvent event) {
     EntityManager entityManager = getEntityManager();
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<UUID> criteria = criteriaBuilder.createQuery(UUID.class);
     Root<CultivationObservationEventAction> root = criteria.from(CultivationObservationEventAction.class);
-    Join<CultivationObservationEventAction, PerformedCultivationAction> actionJoin = root.join(CultivationObservationEventAction_.action);
-    criteria.select(actionJoin.get(PerformedCultivationAction_.id));
+    Join<CultivationObservationEventAction, PerformedCultivationAction> pestJoin = root.join(CultivationObservationEventAction_.action);
+    criteria.select(pestJoin.get(PerformedCultivationAction_.id));
     criteria.where(criteriaBuilder.equal(root.get(CultivationObservationEventAction_.event), event));
     return entityManager.createQuery(criteria).getResultList();
   }
@@ -88,8 +88,8 @@ public class CultivationObservationEventActionDAO extends AbstractDAO<Cultivatio
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<UUID> criteria = criteriaBuilder.createQuery(UUID.class);
     Root<CultivationObservationEventPest> root = criteria.from(CultivationObservationEventPest.class);
-    Join<CultivationObservationEventPest, Pest> actionJoin = root.join(CultivationObservationEventPest_.pest);
-    criteria.select(actionJoin.get(Pest_.id));
+    Join<CultivationObservationEventPest, Pest> pestJoin = root.join(CultivationObservationEventPest_.pest);
+    criteria.select(pestJoin.get(Pest_.id));
     criteria.where(criteriaBuilder.equal(root.get(CultivationObservationEventPest_.event), event));
     return entityManager.createQuery(criteria).getResultList();
   }
@@ -98,22 +98,22 @@ public class CultivationObservationEventActionDAO extends AbstractDAO<Cultivatio
    * Updates event
    *
    * @param event event
-   * @return updated cultivationActionEventAction
+   * @return updated cultivationPestEventPest
    */
-  public CultivationObservationEventAction updateEvent(CultivationObservationEventAction cultivationActionEventAction, CultivationObservationEvent event) {
-    cultivationActionEventAction.setEvent(event);
-    return persist(cultivationActionEventAction);
+  public CultivationObservationEventPest updateEvent(CultivationObservationEventPest cultivationPestEventPest, CultivationObservationEvent event) {
+    cultivationPestEventPest.setEvent(event);
+    return persist(cultivationPestEventPest);
   }
 
   /**
-   * Updates action
+   * Updates pest
    *
-   * @param action action
-   * @return updated cultivationActionEventAction
+   * @param pest pest
+   * @return updated cultivationPestEventPest
    */
-  public CultivationObservationEventAction updateAction(CultivationObservationEventAction cultivationActionEventAction, PerformedCultivationAction action) {
-    cultivationActionEventAction.setAction(action);
-    return persist(cultivationActionEventAction);
+  public CultivationObservationEventPest updatePest(CultivationObservationEventPest cultivationPestEventPest, Pest pest) {
+    cultivationPestEventPest.setPest(pest);
+    return persist(cultivationPestEventPest);
   }
 
 }

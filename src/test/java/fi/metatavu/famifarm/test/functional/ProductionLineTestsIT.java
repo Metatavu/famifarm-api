@@ -15,7 +15,7 @@ public class ProductionLineTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateProductionLine() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      ProductionLine productionLine = builder.admin().productionLines().create(1, null);
+      ProductionLine productionLine = builder.admin().productionLines().create("1", null);
       assertNotNull(productionLine);
     }
   }
@@ -25,7 +25,7 @@ public class ProductionLineTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().productionLines().assertFindFailStatus(404, UUID.randomUUID());
       Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team", "Tiimi"));
-      ProductionLine createdProductionLine = builder.admin().productionLines().create(1, team);
+      ProductionLine createdProductionLine = builder.admin().productionLines().create("1", team);
       ProductionLine foundProductionLine = builder.admin().productionLines().findProductionLine(createdProductionLine.getId());
       assertEquals(createdProductionLine.getId(), foundProductionLine.getId());
       builder.admin().productionLines().assertProductionLinesEqual(createdProductionLine, foundProductionLine);
@@ -36,9 +36,9 @@ public class ProductionLineTestsIT extends AbstractFunctionalTest {
   @Test
   public void testListProductionLines() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      builder.admin().productionLines().create(1, null);
+      builder.admin().productionLines().create("1", null);
       builder.admin().productionLines().assertCount(1);
-      builder.admin().productionLines().create(2, null);
+      builder.admin().productionLines().create("2", null);
       builder.admin().productionLines().assertCount(2);
     }
   }
@@ -48,12 +48,12 @@ public class ProductionLineTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team", "Tiimi"));
 
-      ProductionLine createdProductionLine = builder.admin().productionLines().create(1, null);
+      ProductionLine createdProductionLine = builder.admin().productionLines().create("1", null);
       builder.admin().productionLines().assertProductionLinesEqual(createdProductionLine, builder.admin().productionLines().findProductionLine(createdProductionLine.getId()));
 
       ProductionLine updatedProductionLine = new ProductionLine();
       updatedProductionLine.setId(createdProductionLine.getId());
-      updatedProductionLine.setLineNumber(5);
+      updatedProductionLine.setLineNumber("5c");
       updatedProductionLine.setDefaultTeamId(team.getId());
 
       builder.admin().productionLines().updateProductionLine(updatedProductionLine);
@@ -66,7 +66,7 @@ public class ProductionLineTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team", "Tiimi"));
       
-      ProductionLine createdProductionLine = builder.admin().productionLines().create(1, team);
+      ProductionLine createdProductionLine = builder.admin().productionLines().create("1", team);
       ProductionLine foundProductionLine = builder.admin().productionLines().findProductionLine(createdProductionLine.getId());
       assertEquals(createdProductionLine.getId(), foundProductionLine.getId());
       builder.admin().productionLines().delete(createdProductionLine);

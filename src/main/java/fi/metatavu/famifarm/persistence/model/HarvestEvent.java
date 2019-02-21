@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * JPA entity for sowing event
@@ -58,8 +58,8 @@ public class HarvestEvent extends Event {
 
   @Transient
   @Override
-  public TypeEnum getType() {
-    return TypeEnum.HARVEST;
+  public EventType getType() {
+    return EventType.HARVEST;
   }
 
 }

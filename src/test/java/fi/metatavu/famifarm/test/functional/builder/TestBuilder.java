@@ -158,12 +158,15 @@ public class TestBuilder implements AutoCloseable {
    * @return localized value
    */
   private LocalizedValue createLocalizedValue(String language, String value) {
-    LocalizedValue result = new LocalizedValue();
-    result.setLanguage(language);
-    result.setValue(value);
-    return result;
+    if (value != null) {
+      LocalizedValue result = new LocalizedValue();
+      result.setLanguage(language);
+      result.setValue(value);
+      return result;
+    }
+    
+    return null;
   }
-
   
   
 }

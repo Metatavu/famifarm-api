@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * JPA entity for sowing event
@@ -84,8 +84,8 @@ public class PlantingEvent extends Event {
 
   @Transient
   @Override
-  public TypeEnum getType() {
-    return TypeEnum.PLANTING;
+  public EventType getType() {
+    return EventType.PLANTING;
   }
 
 }

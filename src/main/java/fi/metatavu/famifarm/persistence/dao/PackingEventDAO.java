@@ -36,7 +36,7 @@ public class PackingEventDAO extends AbstractEventDAO<PackingEvent> {
    * @return created packingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public PackingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedAmount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
+  public PackingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedAmount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     PackingEvent packingEvent = new PackingEvent();
     packingEvent.setBatch(batch);
     packingEvent.setRemainingUnits(remainingUnits);
@@ -47,6 +47,7 @@ public class PackingEventDAO extends AbstractEventDAO<PackingEvent> {
     packingEvent.setId(id);
     packingEvent.setCreatorId(creatorId);
     packingEvent.setLastModifierId(lastModifierId);
+    packingEvent.setAdditionalInformation(additionalInformation);
     return persist(packingEvent);
   }
 

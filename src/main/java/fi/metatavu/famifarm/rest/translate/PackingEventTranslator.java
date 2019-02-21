@@ -3,7 +3,7 @@ package fi.metatavu.famifarm.rest.translate;
 import javax.enterprise.context.ApplicationScoped;
 
 import fi.metatavu.famifarm.persistence.model.PackingEvent;
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.PackingEventData;
 
 /**
@@ -15,8 +15,8 @@ import fi.metatavu.famifarm.rest.model.PackingEventData;
 public class PackingEventTranslator extends AbstractEventTranslator<PackingEventData, PackingEvent> {
 
   @Override
-  protected TypeEnum getType() {
-    return TypeEnum.PACKING;
+  protected EventType getType() {
+    return EventType.PACKING;
   }
 
   @Override
@@ -26,7 +26,7 @@ public class PackingEventTranslator extends AbstractEventTranslator<PackingEvent
     }
     
     PackingEventData result = new PackingEventData();
-    result.setPackageSize(event.getPackageSize() != null ? event.getPackageSize().getId() : null);
+    result.setPackageSizeId(event.getPackageSize() != null ? event.getPackageSize().getId() : null);
     result.setPackedAmount(event.getPackedAmount());
     
     return result;

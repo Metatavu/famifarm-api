@@ -13,7 +13,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import fi.metatavu.famifarm.rest.model.CellType;
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * JPA entity for sowing event
@@ -35,7 +35,7 @@ public class SowingEvent extends Event {
   private CellType cellType;
   
   @Column (nullable = false)
-  private Double amount;
+  private Integer amount;
 
   public ProductionLine getProductionLine() {
     return productionLine;
@@ -61,18 +61,18 @@ public class SowingEvent extends Event {
     this.cellType = cellType;
   }
 
-  public Double getAmount() {
+  public Integer getAmount() {
     return amount;
   }
 
-  public void setAmount(Double amount) {
+  public void setAmount(Integer amount) {
     this.amount = amount;
   }  
 
   @Transient
   @Override
-  public TypeEnum getType() {
-    return TypeEnum.SOWING;
+  public EventType getType() {
+    return EventType.SOWING;
   }
 
 }

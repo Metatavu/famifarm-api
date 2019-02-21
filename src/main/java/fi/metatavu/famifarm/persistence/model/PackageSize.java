@@ -7,6 +7,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
@@ -29,9 +30,8 @@ public class PackageSize {
   @NotNull
   private UUID id;
 
-  @Column(nullable = false)
-  @NotNull
-  private String name;
+  @ManyToOne(optional = false)
+  private LocalizedEntry name;
 
   @Column(nullable = false)
   @NotNull
@@ -54,12 +54,12 @@ public class PackageSize {
   public void setId(UUID id) {
     this.id = id;
   }
-
-  public String getName() {
+  
+  public LocalizedEntry getName() {
     return name;
   }
-
-  public void setName(String name) {
+  
+  public void setName(LocalizedEntry name) {
     this.name = name;
   }
 

@@ -39,12 +39,13 @@ public class HarvestEventController {
    * @param seedBatch seedBatch
    * @param cellType cellType
    * @param amount amount
+   * @param additionalInformation additional information
    * @return created harvestEvent
    * @param lastModifier modifiername
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent createHarvestEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, UUID creatorId) {
-    return harvestEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, team, harvestType, productionLine, 0, creatorId, creatorId);
+  public HarvestEvent createHarvestEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, String additionalInformation, UUID creatorId) {
+    return harvestEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, team, harvestType, productionLine, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -77,17 +78,19 @@ public class HarvestEventController {
    * @param harvestType harvestType
    * @param productionLine productionLine
    * @param type type
+   * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated harvestEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, UUID modifier) {
+  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, String additionalInformation, UUID modifier) {
     harvestEventDAO.updateBatch(harvestEvent, batch, modifier);
     harvestEventDAO.updateStartTime(harvestEvent, startTime, modifier);
     harvestEventDAO.updateEndTime(harvestEvent, endTime, modifier);
     harvestEventDAO.updateTeam(harvestEvent, team, modifier);
     harvestEventDAO.updateHarvestType(harvestEvent, harvestType, modifier);
     harvestEventDAO.updateProductionLine(harvestEvent, productionLine, modifier);
+    harvestEventDAO.updateAdditionalInformation(harvestEvent, additionalInformation, modifier);
     return harvestEvent;
   }
   

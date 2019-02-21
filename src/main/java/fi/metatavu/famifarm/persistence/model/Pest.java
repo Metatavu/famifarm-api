@@ -16,27 +16,23 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * JPA entity for storing production lines
+ * JPA entity for pest
  * 
- * @author Ville Koivukangas
+ * @author Antti Leppä
  */
 @Entity
 @Cacheable(true)
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class ProductionLine {
+public class Pest {
 
   @Id
   @Column(nullable = false)
   @NotNull
   private UUID id;
   
-  @Column(nullable = false)
-  @NotNull
-  private String lineNumber;
-
-  @ManyToOne
-  private Team defaultTeam;
-
+  @ManyToOne (optional = false)
+  private LocalizedEntry name;
+  
   @Column(nullable = false)
   @NotNull
   private UUID creatorId;
@@ -44,7 +40,7 @@ public class ProductionLine {
   @Column(nullable = false)
   @NotNull
   private UUID lastModifierId;
-  
+
   @Column (nullable = false)
   private OffsetDateTime createdAt;
 
@@ -58,21 +54,13 @@ public class ProductionLine {
   public void setId(UUID id) {
     this.id = id;
   }
-  
-  public String getLineNumber() {
-    return lineNumber;
+
+  public LocalizedEntry getName() {
+    return name;
   }
-  
-  public void setLineNumber(String lineNumber) {
-    this.lineNumber = lineNumber;
-  }
-  
-  public Team getDefaultTeam() {
-    return defaultTeam;
-  }
-  
-  public void setDefaultTeam(Team defaultTeam) {
-    this.defaultTeam = defaultTeam;
+
+  public void setName(LocalizedEntry name) {
+    this.name = name;
   }
 
   public UUID getCreatorId() {

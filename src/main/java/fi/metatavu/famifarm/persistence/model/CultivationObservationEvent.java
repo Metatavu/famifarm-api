@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * JPA entity for cultivation observation event
@@ -27,13 +27,10 @@ public class CultivationObservationEvent extends Event {
   @Column
   private Double luminance;
 
-  @Column
-  private String pests;
-
   @Transient
   @Override
-  public TypeEnum getType() {
-    return TypeEnum.CULTIVATION_OBSERVATION;
+  public EventType getType() {
+    return EventType.CULTIVATION_OBSERVATION;
   }
 
   public Double getWeight() {
@@ -50,14 +47,6 @@ public class CultivationObservationEvent extends Event {
 
   public void setLuminance(Double luminance) {
     this.luminance = luminance;
-  }
-
-  public String getPests() {
-    return pests;
-  }
-
-  public void setPests(String pests) {
-    this.pests = pests;
   }
 
 }

@@ -18,10 +18,11 @@ import fi.metatavu.famifarm.client.EventsApi;
 import fi.metatavu.famifarm.client.model.Batch;
 import fi.metatavu.famifarm.client.model.CellType;
 import fi.metatavu.famifarm.client.model.Event;
-import fi.metatavu.famifarm.client.model.Event.TypeEnum;
+import fi.metatavu.famifarm.client.model.EventType;
 import fi.metatavu.famifarm.client.model.HarvestEventData;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
+import fi.metatavu.famifarm.client.model.Pest;
 import fi.metatavu.famifarm.client.model.PlantingEventData;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.SeedBatch;
@@ -57,7 +58,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param seedBatch seed batch
    * @return created event
    */
-  public Event createSowing(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
+  public Event createSowing(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
     SowingEventData data = createSowingEventData(amount, cellType, productionLine, seedBatch);
     
     Event event = new Event();
@@ -65,7 +66,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
-    event.setType(TypeEnum.SOWING);
+    event.setType(EventType.SOWING);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -88,7 +89,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
-    event.setType(TypeEnum.TABLE_SPREAD);
+    event.setType(EventType.TABLE_SPREAD);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -105,7 +106,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param performedActions performedActions 
    * @return created event
    */
-  public Event createCultivationObservation(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double luminance, String pests, Double weight, List<PerformedCultivationAction> performedActions) {
+  public Event createCultivationObservation(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double luminance, List<Pest> pests, Double weight, List<PerformedCultivationAction> performedActions) {
     CultivationObservationEventData data = createCultivationObservationEventData(luminance, pests, weight, performedActions);
 
     Event event = new Event();
@@ -113,7 +114,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
-    event.setType(TypeEnum.CULTIVATION_OBSERVATION);
+    event.setType(EventType.CULTIVATION_OBSERVATION);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -137,7 +138,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
-    event.setType(TypeEnum.HARVEST);
+    event.setType(EventType.HARVEST);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -163,7 +164,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
-    event.setType(TypeEnum.PLANTING);
+    event.setType(EventType.PLANTING);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -176,19 +177,21 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param endTime end time
    * @param amount amount
    * @param wastageReason wastege reason
-   * @param description description
+   * @param additionalInformation additional information
+   * @param phase phase
    * @return created event
    */
-  public Event createWastage(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String description) {
+  public Event createWastage(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, EventType phase) {
     
-    WastageEventData data = createWastageEventData(amount, wastageReason, description);
+    WastageEventData data = createWastageEventData(amount, wastageReason, phase);
     
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
-    event.setType(TypeEnum.WASTEAGE);
+    event.setType(EventType.WASTEAGE);
+    event.setAdditionalInformation(additionalInformation);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -211,7 +214,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
-    event.setType(TypeEnum.PACKING);
+    event.setType(EventType.PACKING);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -275,7 +278,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param productionLine production line
    * @param seedBatch seed batch
    */
-  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
+  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
     try {
       SowingEventData data = createSowingEventData(amount, cellType, productionLine, seedBatch);
       
@@ -284,7 +287,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
       event.setData(data);
       event.setEndTime(endTime);
       event.setStartTime(startTime);
-      event.setType(TypeEnum.SOWING);
+      event.setType(EventType.SOWING);
       
       getApi().createEvent(event);
       
@@ -375,14 +378,15 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * 
    * @param amount amount
    * @param wastageReason wastage reason
-   * @param description description
+   * @param phase phase
    * @return created wastage event data object
    */
-  public WastageEventData createWastageEventData(Integer amount, WastageReason wastageReason, String description) {
+  public WastageEventData createWastageEventData(Integer amount, WastageReason wastageReason, EventType phase) {
     WastageEventData data = new WastageEventData();
     data.setAmount(amount);
-    data.setDescription(description);
     data.setReasonId(wastageReason.getId());
+    data.setPhase(phase);
+    
     return data;
   }
 
@@ -396,7 +400,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param seedBatch seed batch
    * @return
    */
-  private SowingEventData createSowingEventData(Double amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
+  private SowingEventData createSowingEventData(Integer amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
     SowingEventData data = new SowingEventData();
     data.setAmount(amount);
     data.setCellType(cellType);
@@ -427,11 +431,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * 
    * @return created event data
    */
-  private CultivationObservationEventData createCultivationObservationEventData(Double luminance, String pests, Double weight, List<PerformedCultivationAction> performedActions) {
+  private CultivationObservationEventData createCultivationObservationEventData(Double luminance, List<Pest> pests, Double weight, List<PerformedCultivationAction> performedActions) {
     CultivationObservationEventData data = new CultivationObservationEventData();
     data.setLuminance(luminance);
     data.setPerformedActionIds(performedActions.stream().map(PerformedCultivationAction::getId).collect(Collectors.toList()));
-    data.setPests(pests);
+    data.setPestIds(pests.stream().map(Pest::getId).collect(Collectors.toList()));
     data.setWeight(weight);
     return data;
   }
@@ -480,7 +484,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    */
   private PackingEventData createPackingEventData(PackageSize packageSize, Integer packedAmount) {
     PackingEventData data = new PackingEventData();
-    data.setPackageSize(packageSize != null ? packageSize.getId() : null);
+    data.setPackageSizeId(packageSize != null ? packageSize.getId() : null);
     data.setPackedAmount(packedAmount);
     return data;
   }

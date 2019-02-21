@@ -38,7 +38,7 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * @param name name
    * @return created production line
    */
-  public ProductionLine create(Integer lineNumber, Team defaultTeam) {
+  public ProductionLine create(String lineNumber, Team defaultTeam) {
     ProductionLine productionLine = new ProductionLine();
     productionLine.setLineNumber(lineNumber);
     productionLine.setDefaultTeamId(defaultTeam != null ? defaultTeam.getId() : null);
