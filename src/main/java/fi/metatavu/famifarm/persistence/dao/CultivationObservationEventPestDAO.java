@@ -10,8 +10,12 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
+import fi.metatavu.famifarm.persistence.model.CultivationObservationEventAction;
+import fi.metatavu.famifarm.persistence.model.CultivationObservationEventAction_;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEventPest;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEventPest_;
+import fi.metatavu.famifarm.persistence.model.PerformedCultivationAction;
+import fi.metatavu.famifarm.persistence.model.PerformedCultivationAction_;
 import fi.metatavu.famifarm.persistence.model.Pest;
 import fi.metatavu.famifarm.persistence.model.Pest_;
 
@@ -62,14 +66,14 @@ public class CultivationObservationEventPestDAO extends AbstractDAO<CultivationO
    * @param event event
    * @return performed cultivation pest ids by event
    */
-  public List<UUID> listPerformedPestIdsByEvent(CultivationObservationEvent event) {
+  public List<UUID> listPerformedActionIdsByEvent(CultivationObservationEvent event) {
     EntityManager entityManager = getEntityManager();
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<UUID> criteria = criteriaBuilder.createQuery(UUID.class);
-    Root<CultivationObservationEventPest> root = criteria.from(CultivationObservationEventPest.class);
-    Join<CultivationObservationEventPest, Pest> pestJoin = root.join(CultivationObservationEventPest_.pest);
-    criteria.select(pestJoin.get(Pest_.id));
-    criteria.where(criteriaBuilder.equal(root.get(CultivationObservationEventPest_.event), event));
+    Root<CultivationObservationEventAction> root = criteria.from(CultivationObservationEventAction.class);
+    Join<CultivationObservationEventAction, PerformedCultivationAction> pestJoin = root.join(CultivationObservationEventAction_.action);
+    criteria.select(pestJoin.get(PerformedCultivationAction_.id));
+    criteria.where(criteriaBuilder.equal(root.get(CultivationObservationEventAction_.event), event));
     return entityManager.createQuery(criteria).getResultList();
   }
 

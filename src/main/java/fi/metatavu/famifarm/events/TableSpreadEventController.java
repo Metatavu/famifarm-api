@@ -38,6 +38,7 @@ public class TableSpreadEventController {
    * @param modifier modifier
    * @return updated tableSpreadEvent
    */
+  @SuppressWarnings ("squid:S00107")
   public TableSpreadEvent createTableSpreadEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer tableCount, String location, String additionalInformation, UUID creatorId) {
     return tableSpreadEventDAO.create(UUID.randomUUID(), tableCount, location, batch, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
   }
