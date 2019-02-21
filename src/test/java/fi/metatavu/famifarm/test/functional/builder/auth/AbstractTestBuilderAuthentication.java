@@ -6,9 +6,11 @@ import java.util.List;
 
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.test.functional.builder.impl.BatchTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.DraftTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.EventTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PackageSizeTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PerformedCultivationActionTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.PestTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductionLineTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ReportTestBuilderResource;
@@ -34,7 +36,9 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private BatchTestBuilderResource batches;
   private ProductionLineTestBuilderResource productionLines;
   private PerformedCultivationActionTestBuilderResource performedCultivationActions;
+  private PestTestBuilderResource pests;
   private EventTestBuilderResource events;
+  private DraftTestBuilderResource drafts;
   private List<AutoCloseable> closables = new ArrayList<>();
   
   /**
@@ -169,6 +173,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
    * @return test builder resource for products
    * @throws IOException thrown when authentication fails
    */
+  public PestTestBuilderResource pests() throws IOException {
+    if (pests != null) {
+      return pests;
+    }
+
+    return pests = this.addClosable(new PestTestBuilderResource(createClient()));
+  }
+  
+  /**
+   * Returns test builder resource for performed cultivation actions
+   * 
+   * @return test builder resource for products
+   * @throws IOException thrown when authentication fails
+   */
   public PerformedCultivationActionTestBuilderResource performedCultivationActions() throws IOException {
     if (performedCultivationActions != null) {
       return performedCultivationActions;
@@ -177,7 +195,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     return performedCultivationActions = this.addClosable(new PerformedCultivationActionTestBuilderResource(createClient()));
   }
   
-  /*
+  /**
    * Returns test builder resource for events
    * 
    * @return test builder resource for events
@@ -189,6 +207,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
     
     return events = this.addClosable(new EventTestBuilderResource(createClient()));
+  }
+  
+  /**
+   * Returns test builder resource for drafts
+   * 
+   * @return test builder resource for drafts
+   * @throws IOException thrown when authentication fails
+   */
+  public DraftTestBuilderResource drafts() throws IOException {
+    if (drafts != null) {
+      return drafts;
+    }
+    
+    return drafts = this.addClosable(new DraftTestBuilderResource(createClient()));
   }
   
   /**

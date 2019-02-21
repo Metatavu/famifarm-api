@@ -22,27 +22,28 @@ public class CultivationObservationEventDAO extends AbstractEventDAO<Cultivation
    * @param id id
    * @param weight weight
    * @param luminance luminance
-   * @param pests pests
    * @param batch batch
    * @param startTime start time
    * @param endTime end time
+   * @param remainingUnits remaining units
    * @param creatorId creator id
    * @param lastModifierId last modifier id
    * @return
    */
   @SuppressWarnings ("squid:S00107")
-  public CultivationObservationEvent create(UUID id, Double weight, Double luminance, String pests, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, UUID creatorId, UUID lastModifierId) {
+  public CultivationObservationEvent create(UUID id, Double weight, Double luminance, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime,  Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     CultivationObservationEvent cultivationActionEvent = new CultivationObservationEvent();
     cultivationActionEvent.setId(id);
+    cultivationActionEvent.setRemainingUnits(remainingUnits);
     cultivationActionEvent.setWeight(weight);
     cultivationActionEvent.setLuminance(luminance);
-    cultivationActionEvent.setPests(pests);
     cultivationActionEvent.setBatch(batch);
     cultivationActionEvent.setStartTime(startTime);
     cultivationActionEvent.setEndTime(endTime);
     cultivationActionEvent.setId(id);
     cultivationActionEvent.setCreatorId(creatorId);
     cultivationActionEvent.setLastModifierId(lastModifierId);
+    cultivationActionEvent.setAdditionalInformation(additionalInformation);
     return persist(cultivationActionEvent);
   }
 
@@ -69,19 +70,6 @@ public class CultivationObservationEventDAO extends AbstractEventDAO<Cultivation
   public CultivationObservationEvent updateLuminance(CultivationObservationEvent cultivationActionEvent, Double luminance, UUID lastModifierId) {
     cultivationActionEvent.setLastModifierId(lastModifierId);
     cultivationActionEvent.setLuminance(luminance);
-    return persist(cultivationActionEvent);
-  }
-
-  /**
-   * Updates pests
-   *
-   * @param pests pests
-   * @param lastModifier modifier
-   * @return updated cultivationActionEvent
-   */
-  public CultivationObservationEvent updatePests(CultivationObservationEvent cultivationActionEvent, String pests, UUID lastModifierId) {
-    cultivationActionEvent.setLastModifierId(lastModifierId);
-    cultivationActionEvent.setPests(pests);
     return persist(cultivationActionEvent);
   }
 

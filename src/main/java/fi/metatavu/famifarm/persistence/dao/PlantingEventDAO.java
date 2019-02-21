@@ -24,27 +24,30 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param gutterNumber gutterNumber
+   * @param gutterSize gutterSize
    * @param gutterCount gutterCount
-   * @param trayCount trayCount
+   * @param cellCount cellCount
    * @param workerCount workerCount
+   * @param remainingUnits remaining units
    * @return created plantingEvent
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, Integer gutterCount, Integer trayCount, Integer workerCount, UUID creatorId, UUID lastModifierId) {
+  public PlantingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     PlantingEvent plantingEvent = new PlantingEvent();
     plantingEvent.setBatch(batch);
+    plantingEvent.setRemainingUnits(remainingUnits);
     plantingEvent.setStartTime(startTime);
     plantingEvent.setEndTime(endTime);
     plantingEvent.setProductionLine(productionLine);
-    plantingEvent.setGutterNumber(gutterNumber);
+    plantingEvent.setGutterSize(gutterSize);
     plantingEvent.setGutterCount(gutterCount);
-    plantingEvent.setTrayCount(trayCount);
+    plantingEvent.setCellCount(cellCount);
     plantingEvent.setWorkerCount(workerCount);
     plantingEvent.setId(id);
     plantingEvent.setCreatorId(creatorId);
     plantingEvent.setLastModifierId(lastModifierId);
+    plantingEvent.setAdditionalInformation(additionalInformation);
     return persist(plantingEvent);
   }
 
@@ -62,15 +65,15 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
   }
 
   /**
-   * Updates gutterNumber
+   * Updates gutterSize
    *
-   * @param gutterNumber gutterNumber
+   * @param gutterSize gutterSize
    * @param lastModifier modifier
    * @return updated plantingEvent
    */
-  public PlantingEvent updateGutterNumber(PlantingEvent plantingEvent, Integer gutterNumber, UUID lastModifierId) {
+  public PlantingEvent updateGutterSize(PlantingEvent plantingEvent, Integer gutterSize, UUID lastModifierId) {
     plantingEvent.setLastModifierId(lastModifierId);
-    plantingEvent.setGutterNumber(gutterNumber);
+    plantingEvent.setGutterSize(gutterSize);
     return persist(plantingEvent);
   }
 
@@ -88,15 +91,15 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
   }
 
   /**
-   * Updates trayCount
+   * Updates cellCount
    *
-   * @param trayCount trayCount
+   * @param cellCount cellCount
    * @param lastModifier modifier
    * @return updated plantingEvent
    */
-  public PlantingEvent updateTrayCount(PlantingEvent plantingEvent, Integer trayCount, UUID lastModifierId) {
+  public PlantingEvent updateCellCount(PlantingEvent plantingEvent, Integer cellCount, UUID lastModifierId) {
     plantingEvent.setLastModifierId(lastModifierId);
-    plantingEvent.setTrayCount(trayCount);
+    plantingEvent.setCellCount(cellCount);
     return persist(plantingEvent);
   }
 

@@ -23,7 +23,7 @@ import fi.metatavu.famifarm.persistence.model.Event_;
 public class EventDAO extends AbstractEventDAO<Event> {
 
   /**
-   * Lists events by batch optinally limited by first and max results
+   * Lists events by batch optionally limited by first and max results
    * 
    * @param batch batch to retrieve events from
    * @param firstResult first result (optional)
@@ -49,6 +49,70 @@ public class EventDAO extends AbstractEventDAO<Event> {
       query.setMaxResults(maxResults);
     }
 
+    return query.getResultList();
+  }
+
+  /**
+   * Lists events by batch optionally limited by first and max results. Sorts result by descending start time 
+   * 
+   * @param batch batch to retrieve events from
+   * @param firstResult first result (optional)
+   * @param maxResults max results (optional)
+   * @return List of events filtered by batch
+   */
+  public List<Event> listByBatchSortByStartTimeDesc(Batch batch, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
+    Root<Event> root = criteria.from(Event.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(Event_.batch), batch));
+    criteria.orderBy(criteriaBuilder.desc(root.get(Event_.startTime)));
+    
+    TypedQuery<Event> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+    
+    
+
+    return query.getResultList();
+  }
+
+  /**
+   * Lists events by batch optionally limited by first and max results. Sorts result by ascending start time 
+   * 
+   * @param batch batch to retrieve events from
+   * @param firstResult first result (optional)
+   * @param maxResults max results (optional)
+   * @return List of events filtered by batch
+   */
+  public List<Event> listByBatchSortByStartTimeAsc(Batch batch, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
+    Root<Event> root = criteria.from(Event.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(Event_.batch), batch));
+    criteria.orderBy(criteriaBuilder.asc(root.get(Event_.startTime)));
+    
+    TypedQuery<Event> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+    
     return query.getResultList();
   }
 

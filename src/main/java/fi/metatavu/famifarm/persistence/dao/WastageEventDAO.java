@@ -1,11 +1,19 @@
 package fi.metatavu.famifarm.persistence.dao;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.PackingEvent_;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.persistence.model.WastageReason;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * DAO for wastage events
@@ -24,24 +32,45 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    * @param description description
    * @param startTime start time
    * @param endTime end time
+   * @param remainingUnits remaining units
    * @param creatorId creator id
    * @param lastModifierId last modfier id
    * @return created wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, String description, OffsetDateTime startTime, OffsetDateTime endTime, UUID creatorId, UUID lastModifierId) {
+  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, EventType phase, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     WastageEvent wastageEvent = new WastageEvent();
+    wastageEvent.setRemainingUnits(remainingUnits);
     wastageEvent.setAmount(amount);
     wastageEvent.setBatch(batch);
     wastageEvent.setWastageReason(wastageReason);
-    wastageEvent.setDescription(description);
     wastageEvent.setId(id);
     wastageEvent.setStartTime(startTime);
     wastageEvent.setEndTime(endTime);
     wastageEvent.setCreatorId(creatorId);
     wastageEvent.setLastModifierId(lastModifierId);
-
+    wastageEvent.setAdditionalInformation(additionalInformation);
+    wastageEvent.setPhase(phase);
     return persist(wastageEvent);
+  }
+  
+  /**
+   * Lists events by batch
+   * 
+   * @param batch batch
+   * @return List of events
+   */
+  public List<WastageEvent> listByBatch(Batch batch) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<WastageEvent> criteria = criteriaBuilder.createQuery(WastageEvent.class);
+    Root<WastageEvent> root = criteria.from(WastageEvent.class);
+    
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(PackingEvent_.batch), batch));
+    
+    return entityManager.createQuery(criteria).getResultList();
   }
 
   /**
@@ -59,6 +88,20 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
   }
 
   /**
+   * Updates phase
+   * 
+   * @param wastageEvent wastage event to update
+   * @param phase new phase
+   * @param lastModifierId last modifier id
+   * @return updated wastage event
+   */
+  public WastageEvent updatePhase(WastageEvent wastageEvent, EventType phase, UUID lastModifierId) {
+    wastageEvent.setPhase(phase);
+    wastageEvent.setLastModifierId(lastModifierId);
+    return persist(wastageEvent);
+  }
+
+  /**
    * Updates wastage reason
    * 
    * @param wastageEvent wastage event to update
@@ -68,20 +111,6 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    */
   public WastageEvent updateWastageReason(WastageEvent wastageEvent, WastageReason wastageReason, UUID lastModifierId) {
     wastageEvent.setWastageReason(wastageReason);
-    wastageEvent.setLastModifierId(lastModifierId);
-    return persist(wastageEvent);
-  }
-
-  /**
-   * Updates description
-   * 
-   * @param wastageEvent wastage event to update
-   * @param description new description
-   * @param lastModifierId last modifier id
-   * @return updated wastage event
-   */
-  public WastageEvent updateDescription(WastageEvent wastageEvent, String description, UUID lastModifierId) {
-    wastageEvent.setDescription(description);
     wastageEvent.setLastModifierId(lastModifierId);
     return persist(wastageEvent);
   }

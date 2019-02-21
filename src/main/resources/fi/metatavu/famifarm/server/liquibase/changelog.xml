@@ -396,5 +396,152 @@
       </column>
     </createTable>
   </changeSet>  
+
+      
+  <changeSet id="batchstatus" author="antti.leppa">
+    <delete tableName="packingevent"/>
+    <delete tableName="wastageevent"/>
+    <delete tableName="plantingevent"/>
+    <delete tableName="packingevent"/>
+    <delete tableName="harvestevent"/>
+    <delete tableName="cultivationobservationeventaction"/>
+    <delete tableName="cultivationobservationevent"/>
+    <delete tableName="tablespreadevent"/>
+    <delete tableName="sowingevent"/>
+    <delete tableName="event"/>
+    <delete tableName="batch"/>
+  
+    <addColumn tableName="event">
+      <column name="remainingunits" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    
+    <addColumn tableName="batch">
+      <column name="activeevent_id" type="binary(16)">
+        <constraints nullable="true" foreignKeyName="FK_BATCH_ACTIVE_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+    </addColumn>
+  </changeSet>  
+      
+  <changeSet id="plantingeventguttersize" author="antti.leppa">
+    <renameColumn tableName="plantingevent" oldColumnName="gutternumber" newColumnName="guttersize" columnDataType="integer"/>
+  </changeSet>
+      
+  <changeSet id="plantingeventcellcount" author="antti.leppa">
+    <renameColumn tableName="plantingevent" oldColumnName="traycount" newColumnName="cellcount" columnDataType="int(32)"/>
+  </changeSet>
+  
+  <changeSet id="draft" author="antti.leppa">
+    <createTable tableName="draft">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="type" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="data" type="longtext">
+        <constraints nullable="false"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+      
+  <changeSet id="removesowinggutter" author="antti.leppa">
+    <dropColumn tableName="sowingevent" columnName="gutternumber"/>
+  </changeSet>
+  
+  <changeSet id="productionlnedefaultteam" author="antti.leppa">
+    <addColumn tableName="productionline">
+      <column name="defaultteam_id" type="binary(16)">
+        <constraints nullable="true" foreignKeyName="FK_PRODUCTIONLINE_DEFAULT_TEAM_ID" referencedColumnNames="id" referencedTableName="team"/>
+      </column>
+    </addColumn>
+  </changeSet>  
+  
+  <changeSet id="reviewchanges" author="antti.leppa">
+    <delete tableName="packingevent"/>
+    <delete tableName="wastageevent"/>
+    <delete tableName="plantingevent"/>
+    <delete tableName="packingevent"/>
+    <delete tableName="harvestevent"/>
+    <delete tableName="cultivationobservationeventaction"/>
+    <delete tableName="cultivationobservationevent"/>
+    <delete tableName="tablespreadevent"/>
+    <delete tableName="sowingevent"/>
+    <delete tableName="event"/>
+    <delete tableName="batch"/>
+    <delete tableName="packagesize"/>
+    
+    <addColumn tableName="event">
+      <column name="additionalinformation" type="longtext"/>
+    </addColumn>
+    
+    <modifyDataType tableName="productionline" columnName="linenumber" newDataType="varchar(191)"/>
+    <modifyDataType tableName="sowingevent" columnName="amount" newDataType="int(32)"/>
+    
+    <dropColumn tableName="packagesize" columnName="name"/>
+
+    <addColumn tableName="packagesize">
+      <column name="name_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_PACKAGESIZE_NAME_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
+      </column>
+    </addColumn>
+  </changeSet>
+  
+  <changeSet id="pest" author="antti.leppa">
+    <createTable tableName="pest">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="name_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_PEST_NAME_LOCALIZED_ENTRY_ID" referencedColumnNames="id" referencedTableName="localizedentry"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
+  <changeSet id="cultivationobservationeventpest" author="antti.leppa">
+    <dropColumn tableName="cultivationobservationevent" columnName="pests"/>
+    <createTable tableName="cultivationobservationeventpest">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>      
+      <column name="event_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true" foreignKeyName="FK_CULTIVATIONOBSERVATIONEVENTPEST_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="pest_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true" foreignKeyName="FK_CULTIVATIONOBSERVATIONEVENTPEST_PEST_ID" referencedColumnNames="id" referencedTableName="pest"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
+  <changeSet id="wastageeventphase" author="antti.leppa">
+    <addColumn tableName="wastageevent">
+      <column name="phase" type="varchar(191)"/>
+    </addColumn>
+  </changeSet>
       
 </databaseChangeLog>

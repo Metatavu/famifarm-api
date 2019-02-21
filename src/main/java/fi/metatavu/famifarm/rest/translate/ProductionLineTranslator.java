@@ -2,6 +2,7 @@ package fi.metatavu.famifarm.rest.translate;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import fi.metatavu.famifarm.persistence.model.Team;
 import fi.metatavu.famifarm.rest.model.ProductionLine;
 
 /**
@@ -22,9 +23,12 @@ public class ProductionLineTranslator extends AbstractTranslator {
     if (productionLine == null) {
       return null;
     }
+
+    Team defaultTeam = productionLine.getDefaultTeam();
     
     ProductionLine result = new ProductionLine();
     result.setId(productionLine.getId());
+    result.setDefaultTeamId(defaultTeam != null ? defaultTeam.getId() : null);
     result.setLineNumber(productionLine.getLineNumber());
 
     return result;

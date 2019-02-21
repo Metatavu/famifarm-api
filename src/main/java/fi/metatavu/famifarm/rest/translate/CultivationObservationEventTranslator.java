@@ -5,8 +5,8 @@ import javax.inject.Inject;
 
 import fi.metatavu.famifarm.events.CultivationObservationEventController;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * Translator for cultivationObservation events
@@ -20,8 +20,8 @@ public class CultivationObservationEventTranslator extends AbstractEventTranslat
   private CultivationObservationEventController cultivationObservationEventController;
   
   @Override
-  protected TypeEnum getType() {
-    return TypeEnum.CULTIVATION_OBSERVATION;
+  protected EventType getType() {
+    return EventType.CULTIVATION_OBSERVATION;
   }
 
   @Override
@@ -33,7 +33,7 @@ public class CultivationObservationEventTranslator extends AbstractEventTranslat
     CultivationObservationEventData result = new CultivationObservationEventData();
     result.setLuminance(event.getLuminance());
     result.setPerformedActionIds(cultivationObservationEventController.listEventPerformedActionIds(event));
-    result.setPests(event.getPests());
+    result.setPestIds(cultivationObservationEventController.listEventPestIds(event));
     result.setWeight(event.getWeight());
     
     return result;

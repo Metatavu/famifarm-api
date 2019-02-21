@@ -12,8 +12,12 @@ import javax.persistence.criteria.Root;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEventAction;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEventAction_;
+import fi.metatavu.famifarm.persistence.model.CultivationObservationEventPest;
+import fi.metatavu.famifarm.persistence.model.CultivationObservationEventPest_;
 import fi.metatavu.famifarm.persistence.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.persistence.model.PerformedCultivationAction_;
+import fi.metatavu.famifarm.persistence.model.Pest;
+import fi.metatavu.famifarm.persistence.model.Pest_;
 
 /**
  * DAO class for cultivation action event action
@@ -70,6 +74,23 @@ public class CultivationObservationEventActionDAO extends AbstractDAO<Cultivatio
     Join<CultivationObservationEventAction, PerformedCultivationAction> actionJoin = root.join(CultivationObservationEventAction_.action);
     criteria.select(actionJoin.get(PerformedCultivationAction_.id));
     criteria.where(criteriaBuilder.equal(root.get(CultivationObservationEventAction_.event), event));
+    return entityManager.createQuery(criteria).getResultList();
+  }
+
+  /**
+   * Lists pest ids by event
+   * 
+   * @param event event
+   * @return pest ids by event
+   */
+  public List<UUID> listPestIdsByEvent(CultivationObservationEvent event) {
+    EntityManager entityManager = getEntityManager();
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<UUID> criteria = criteriaBuilder.createQuery(UUID.class);
+    Root<CultivationObservationEventPest> root = criteria.from(CultivationObservationEventPest.class);
+    Join<CultivationObservationEventPest, Pest> actionJoin = root.join(CultivationObservationEventPest_.pest);
+    criteria.select(actionJoin.get(Pest_.id));
+    criteria.where(criteriaBuilder.equal(root.get(CultivationObservationEventPest_.event), event));
     return entityManager.createQuery(criteria).getResultList();
   }
   

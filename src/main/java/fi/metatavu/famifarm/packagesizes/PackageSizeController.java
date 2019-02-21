@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.PackageSizeDAO;
+import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 
 /**
@@ -26,7 +27,7 @@ public class PackageSizeController {
    * @param userId userId
    * @return created package size
    */
-  public PackageSize createPackageSize(String name, UUID userId) {
+  public PackageSize createPackageSize(LocalizedEntry name, UUID userId) {
     return packageSizeDAO.create(UUID.randomUUID(), name, userId, userId);
   }
 
@@ -59,7 +60,7 @@ public class PackageSizeController {
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public PackageSize updatePackageSize(PackageSize packageSize, String name, UUID lastModifierId) {
+  public PackageSize updatePackageSize(PackageSize packageSize, LocalizedEntry name, UUID lastModifierId) {
     packageSizeDAO.updateName(packageSize, name, lastModifierId);
     return packageSize;
   }

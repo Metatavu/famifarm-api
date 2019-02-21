@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.ProductionLineDAO;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
+import fi.metatavu.famifarm.persistence.model.Team;
 
 public class ProductionLineController {
   
@@ -17,11 +18,12 @@ public class ProductionLineController {
    * Creates new production line
    * 
    * @param lineNumber lineNumber
+   * @param defaultTeam default team
    * @param userId userId
    * @return created production line
    */
-  public ProductionLine createProductionLine(Integer lineNumber, UUID userId) {
-    return productionLineDAO.create(UUID.randomUUID(), lineNumber, userId, userId);
+  public ProductionLine createProductionLine(String lineNumber, Team defaultTeam, UUID userId) {
+    return productionLineDAO.create(UUID.randomUUID(), lineNumber, defaultTeam, userId, userId);
   }
 
   /**
@@ -50,11 +52,13 @@ public class ProductionLineController {
    * 
    * @param productionLine productionLine
    * @param lineNumber lineNumber
+   * @param defaultTeam default team
    * @param lastModifierId lastModifierId
    * @return updated production line
    */
-  public ProductionLine updateProductionLine(ProductionLine productionLine, Integer lineNumber, UUID lastModifierId) {
+  public ProductionLine updateProductionLine(ProductionLine productionLine, String lineNumber, Team defaultTeam, UUID lastModifierId) {
     productionLineDAO.updateLineNumber(productionLine, lineNumber, lastModifierId);
+    productionLineDAO.updateDefaultTeam(productionLine, defaultTeam, lastModifierId);
     return productionLine;
   }
 

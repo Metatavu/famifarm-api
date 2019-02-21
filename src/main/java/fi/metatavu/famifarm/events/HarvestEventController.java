@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.HarvestEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
@@ -20,6 +21,9 @@ import fi.metatavu.famifarm.persistence.model.Team;
  */
 @ApplicationScoped
 public class HarvestEventController {
+
+  @Inject
+  private BatchDAO batchDAO;
   
   @Inject
   private HarvestEventDAO harvestEventDAO;  
@@ -35,12 +39,13 @@ public class HarvestEventController {
    * @param seedBatch seedBatch
    * @param cellType cellType
    * @param amount amount
+   * @param additionalInformation additional information
    * @return created harvestEvent
    * @param lastModifier modifiername
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent createHarvestEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, UUID creatorId) {
-    return harvestEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, team, harvestType, productionLine, creatorId, creatorId);
+  public HarvestEvent createHarvestEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, String additionalInformation, UUID creatorId) {
+    return harvestEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, team, harvestType, productionLine, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -67,21 +72,25 @@ public class HarvestEventController {
   /**
    * Update harvestEvent
    *
+   * @param harvestEvent event
+   * @param batch batch
    * @param team team
    * @param harvestType harvestType
    * @param productionLine productionLine
    * @param type type
+   * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated harvestEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, UUID modifier) {
+  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, String additionalInformation, UUID modifier) {
     harvestEventDAO.updateBatch(harvestEvent, batch, modifier);
     harvestEventDAO.updateStartTime(harvestEvent, startTime, modifier);
     harvestEventDAO.updateEndTime(harvestEvent, endTime, modifier);
     harvestEventDAO.updateTeam(harvestEvent, team, modifier);
     harvestEventDAO.updateHarvestType(harvestEvent, harvestType, modifier);
     harvestEventDAO.updateProductionLine(harvestEvent, productionLine, modifier);
+    harvestEventDAO.updateAdditionalInformation(harvestEvent, additionalInformation, modifier);
     return harvestEvent;
   }
   
@@ -91,6 +100,7 @@ public class HarvestEventController {
    * @param harvestEvent harvest event to be deleted
    */
   public void deleteHarvestEvent(HarvestEvent harvestEvent) {
+    batchDAO.listByActiveBatch(harvestEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     harvestEventDAO.delete(harvestEvent);
   }
 

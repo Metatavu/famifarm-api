@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.PlantingEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
@@ -19,6 +20,9 @@ import fi.metatavu.famifarm.persistence.model.ProductionLine;
  */
 @ApplicationScoped
 public class PlantingEventController {
+
+  @Inject
+  private BatchDAO batchDAO;
   
   @Inject
   private PlantingEventDAO plantingEventDAO;  
@@ -30,16 +34,17 @@ public class PlantingEventController {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param gutterNumber gutterNumber
+   * @param gutterSize gutterSize
    * @param gutterCount gutterCount
-   * @param trayCount trayCount
+   * @param cellCount cellCount
    * @param workerCount workerCount
+   * @param additionalInformation additional information
    * @return created plantingEvent
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent createPlantingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, Integer gutterCount, Integer trayCount, Integer workerCount, UUID creatorId) {
-    return plantingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterNumber, gutterCount, trayCount, workerCount, creatorId, creatorId);
+  public PlantingEvent createPlantingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, String additionalInformation, UUID creatorId) {
+    return plantingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterSize, gutterCount, cellCount, workerCount, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -71,24 +76,26 @@ public class PlantingEventController {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param gutterNumber gutterNumber
+   * @param gutterSize gutterSize
    * @param gutterCount gutterCount
-   * @param trayCount trayCount
+   * @param cellCount cellCount
    * @param workerCount workerCount
    * @param type type
+   * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated plantingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent updatePlantingEvent(PlantingEvent plantingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterNumber, Integer gutterCount, Integer trayCount, Integer workerCount, UUID modifier) {
+  public PlantingEvent updatePlantingEvent(PlantingEvent plantingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, String additionalInformation, UUID modifier) {
     plantingEventDAO.updateBatch(plantingEvent, batch, modifier);
     plantingEventDAO.updateStartTime(plantingEvent, startTime, modifier);
     plantingEventDAO.updateEndTime(plantingEvent, endTime, modifier);
     plantingEventDAO.updateProductionLine(plantingEvent, productionLine, modifier);
-    plantingEventDAO.updateGutterNumber(plantingEvent, gutterNumber, modifier);
+    plantingEventDAO.updateGutterSize(plantingEvent, gutterSize, modifier);
     plantingEventDAO.updateGutterCount(plantingEvent, gutterCount, modifier);
-    plantingEventDAO.updateTrayCount(plantingEvent, trayCount, modifier);
+    plantingEventDAO.updateCellCount(plantingEvent, cellCount, modifier);
     plantingEventDAO.updateWorkerCount(plantingEvent, workerCount, modifier);
+    plantingEventDAO.updateAdditionalInformation(plantingEvent, additionalInformation, modifier);
     return plantingEvent;
   }
   
@@ -98,6 +105,7 @@ public class PlantingEventController {
    * @param plantingEvent planting event to be deleted
    */
   public void deletePlantingEvent(PlantingEvent plantingEvent) {
+    batchDAO.listByActiveBatch(plantingEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     plantingEventDAO.delete(plantingEvent);
   }
 

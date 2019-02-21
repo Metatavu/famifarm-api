@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.PackingEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
@@ -19,6 +20,9 @@ import fi.metatavu.famifarm.persistence.model.PackingEvent;
  */
 @ApplicationScoped
 public class PackingEventController {
+
+  @Inject
+  private BatchDAO batchDAO;
   
   @Inject
   private PackingEventDAO packingEventDAO;  
@@ -31,12 +35,13 @@ public class PackingEventController {
    * @param endTime endTime
    * @param packageSize package size
    * @param packedAmount packed amount
+   * @param additionalInformation additional information
    * @param creatorId creatorId
    * @return created packing event
    */
   @SuppressWarnings ("squid:S00107")
-  public PackingEvent createPackingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedAmount, UUID creatorId) {
-    return packingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, packageSize, packedAmount, creatorId, creatorId);
+  public PackingEvent createPackingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedAmount, String additionalInformation, UUID creatorId) {
+    return packingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, packageSize, packedAmount, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -69,16 +74,18 @@ public class PackingEventController {
    * @param endTime endTime
    * @param packageSize package size
    * @param packedAmount packed amount
+   * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated packing event
    */
   @SuppressWarnings ("squid:S00107")
-  public PackingEvent updatePackingEvent(PackingEvent packingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedAmount, UUID modifier) {
+  public PackingEvent updatePackingEvent(PackingEvent packingEvent, Batch batch,  OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedAmount, String additionalInformation, UUID modifier) {
     packingEventDAO.updateBatch(packingEvent, batch, modifier);
     packingEventDAO.updateStartTime(packingEvent, startTime, modifier);
     packingEventDAO.updateEndTime(packingEvent, endTime, modifier);
     packingEventDAO.updatePackageSize(packingEvent, packageSize, modifier);
     packingEventDAO.updatePackedAmount(packingEvent, packedAmount, modifier);
+    packingEventDAO.updateAdditionalInformation(packingEvent, additionalInformation, modifier);
     return packingEvent;
   }
   
@@ -88,6 +95,7 @@ public class PackingEventController {
    * @param packingEvent packing event to be deleted
    */
   public void deletePackingEvent(PackingEvent packingEvent) {
+    batchDAO.listByActiveBatch(packingEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     packingEventDAO.delete(packingEvent);
   }
 

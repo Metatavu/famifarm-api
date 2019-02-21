@@ -3,7 +3,7 @@ package fi.metatavu.famifarm.rest.translate;
 import javax.enterprise.context.ApplicationScoped;
 
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.PlantingEventData;
 
 /**
@@ -15,8 +15,8 @@ import fi.metatavu.famifarm.rest.model.PlantingEventData;
 public class PlantingEventTranslator extends AbstractEventTranslator<PlantingEventData, PlantingEvent> {
 
   @Override
-  protected TypeEnum getType() {
-    return TypeEnum.PLANTING;
+  protected EventType getType() {
+    return EventType.PLANTING;
   }
 
   @Override
@@ -27,9 +27,9 @@ public class PlantingEventTranslator extends AbstractEventTranslator<PlantingEve
     
     PlantingEventData result = new PlantingEventData();
     result.setGutterCount(event.getGutterCount());
-    result.setGutterNumber(event.getGutterNumber());
+    result.setGutterSize(event.getGutterSize());
     result.setProductionLineId(event.getProductionLine() != null ? event.getProductionLine().getId() : null);
-    result.setTrayCount(event.getTrayCount());
+    result.setCellCount(event.getCellCount());
     result.setWorkerCount(event.getWorkerCount());
 
     return result;

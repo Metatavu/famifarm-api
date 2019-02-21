@@ -48,4 +48,30 @@ public class EventController {
     return eventDAO.listAll(firstResult, maxResults);
   }
 
+  /**
+   * Updates remaining units count
+   * 
+   * @param event event
+   * @param remainingUnits remaining units
+   * @return updated event
+   */
+  public Event updateRemainingUnits(Event event, Integer remainingUnits) {
+    return eventDAO.updateRemainingUnits(event, remainingUnits);
+  }
+  
+  /**
+   * Finds last event in a batch
+   * 
+   * @param batch batch
+   * @return found event or null if not found
+   */
+  public Event findLastEventByBatch(Batch batch) {
+    List<Event> events = eventDAO.listByBatchSortByStartTimeDesc(batch, null, 1);
+    if (events.isEmpty()) {
+      return null;
+    }
+    
+    return events.get(0);
+  }
+
 }

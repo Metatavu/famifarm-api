@@ -7,6 +7,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
@@ -31,8 +32,11 @@ public class ProductionLine {
   
   @Column(nullable = false)
   @NotNull
-  private Integer lineNumber;
-  
+  private String lineNumber;
+
+  @ManyToOne
+  private Team defaultTeam;
+
   @Column(nullable = false)
   @NotNull
   private UUID creatorId;
@@ -40,7 +44,7 @@ public class ProductionLine {
   @Column(nullable = false)
   @NotNull
   private UUID lastModifierId;
-
+  
   @Column (nullable = false)
   private OffsetDateTime createdAt;
 
@@ -54,13 +58,21 @@ public class ProductionLine {
   public void setId(UUID id) {
     this.id = id;
   }
-
-  public Integer getLineNumber() {
+  
+  public String getLineNumber() {
     return lineNumber;
   }
-
-  public void setLineNumber(int lineNumber) {
+  
+  public void setLineNumber(String lineNumber) {
     this.lineNumber = lineNumber;
+  }
+  
+  public Team getDefaultTeam() {
+    return defaultTeam;
+  }
+  
+  public void setDefaultTeam(Team defaultTeam) {
+    this.defaultTeam = defaultTeam;
   }
 
   public UUID getCreatorId() {
