@@ -62,6 +62,7 @@ import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
 import fi.metatavu.famifarm.rest.model.PackageSize;
 import fi.metatavu.famifarm.rest.model.PackingEventData;
 import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
+import fi.metatavu.famifarm.rest.model.Pest;
 import fi.metatavu.famifarm.rest.model.PlantingEventData;
 import fi.metatavu.famifarm.rest.model.Product;
 import fi.metatavu.famifarm.rest.model.ProductionLine;
@@ -349,8 +350,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createProductionLine(ProductionLine body) {
     Integer lineNumber = body.getLineNumber();
+    UUID defaultTeamId = body.getDefaultTeamId();
+    fi.metatavu.famifarm.persistence.model.Team defaultTeam = null;
     
-    return createOk(productionLineTranslator.translateProductionLine(productionLineController.createProductionLine(lineNumber, getLoggerUserId())));
+    if (defaultTeamId != null) {
+      defaultTeam = teamsController.findTeam(defaultTeamId);
+      if (defaultTeam == null) {
+        return createBadRequest(String.format("Invalid default team id %s", defaultTeamId));
+      }
+    }
+    
+    return createOk(productionLineTranslator.translateProductionLine(productionLineController.createProductionLine(lineNumber, defaultTeam, getLoggerUserId())));
   }
 
   @Override
@@ -853,8 +863,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     Integer lineNumber = body.getLineNumber();
+    UUID defaultTeamId = body.getDefaultTeamId();
+    fi.metatavu.famifarm.persistence.model.Team defaultTeam = null;
     
-    return createOk(productionLineTranslator.translateProductionLine(productionLineController.updateProductionLine(productionLine, lineNumber, getLoggerUserId())));
+    if (defaultTeamId != null) {
+      defaultTeam = teamsController.findTeam(defaultTeamId);
+      if (defaultTeam == null) {
+        return createBadRequest(String.format("Invalid default team id %s", defaultTeamId));
+      }
+    }
+    
+    return createOk(productionLineTranslator.translateProductionLine(productionLineController.updateProductionLine(productionLine, lineNumber, defaultTeam, getLoggerUserId())));
   }
 
   @Override
@@ -1539,6 +1558,36 @@ public class V1RESTService extends AbstractApi implements V1Api {
     
     ObjectMapper objectMapper = new ObjectMapper();
     return objectMapper.readValue(objectMapper.writeValueAsBytes(object), targetClass);
+  }
+
+  @Override
+  public Response createPest(Pest body) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Response deletePest(UUID pestId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Response findPest(UUID pestId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Response listPests(Integer firstResult, Integer maxResults) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Response updatePest(Pest body, UUID pestId) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
 }
