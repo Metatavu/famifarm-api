@@ -56,7 +56,7 @@ public abstract class AbstractFunctionalTest {
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     Double amount = 12d;
     CellType cellType = CellType.LARGE;
-    ProductionLine productionLine = builder.admin().productionLines().create(4);
+    ProductionLine productionLine = builder.admin().productionLines().create(4, null);
     SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
     
     return builder.admin().events().createSowing(batch, startTime, endTime, amount, cellType, productionLine, seedBatch);
@@ -136,7 +136,7 @@ public abstract class AbstractFunctionalTest {
     Batch batch = builder.admin().batches().create(product);
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-    ProductionLine productionLine = builder.admin().productionLines().create(4);
+    ProductionLine productionLine = builder.admin().productionLines().create(4, null);
     
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team name", "Tiimin nimi"));
     fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType = fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BAGGING;
@@ -160,7 +160,7 @@ public abstract class AbstractFunctionalTest {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     Integer gutterNumber = 2;
-    ProductionLine productionLine = builder.admin().productionLines().create(4);
+    ProductionLine productionLine = builder.admin().productionLines().create(4, null);
     
     Integer gutterCount = 2;
     Integer trayCount = 50;

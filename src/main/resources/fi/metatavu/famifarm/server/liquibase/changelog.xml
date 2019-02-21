@@ -461,5 +461,13 @@
   <changeSet id="removesowinggutter" author="antti.leppa">
     <dropColumn tableName="sowingevent" columnName="gutternumber"/>
   </changeSet>
+  
+  <changeSet id="productionlnedefaultteam" author="antti.leppa">
+    <addColumn tableName="productionline">
+      <column name="defaultteam_id" type="binary(16)">
+        <constraints nullable="true" foreignKeyName="FK_PRODUCTIONLINE_DEFAULT_TEAM_ID" referencedColumnNames="id" referencedTableName="team"/>
+      </column>
+    </addColumn>
+  </changeSet>  
       
 </databaseChangeLog>

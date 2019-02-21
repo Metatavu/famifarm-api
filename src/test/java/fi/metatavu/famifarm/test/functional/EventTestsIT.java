@@ -74,7 +74,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Double updateAmount = 14d;
       CellType updateCellType = CellType.SMALL;
-      ProductionLine updateProductionLine = builder.admin().productionLines().create(7);
+      ProductionLine updateProductionLine = builder.admin().productionLines().create(7, null);
       SeedBatch updateSeedBatch = builder.admin().seedBatches().create("123", seed, updateStartTime);
       
       SowingEventData updateData = new SowingEventData();
@@ -276,7 +276,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-      ProductionLine updateProductionLine = builder.admin().productionLines().create(7);
+      ProductionLine updateProductionLine = builder.admin().productionLines().create(7, null);
       Team updateTeam = builder.admin().teams().create(builder.createLocalizedEntry("Updated team", "Päivitetty tiimi"));
       
       HarvestEventData updateData = new HarvestEventData();
@@ -341,7 +341,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Integer updateGutterSize = 24;
-      ProductionLine updateProductionLine = builder.admin().productionLines().create(7);
+      ProductionLine updateProductionLine = builder.admin().productionLines().create(7, null);
       
       PlantingEventData updateData = new PlantingEventData();
       updateData.setGutterCount(6);
@@ -604,7 +604,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Double amount = 12d;
       CellType cellType = CellType.LARGE;
-      ProductionLine productionLine = builder.admin().productionLines().create(4);
+      ProductionLine productionLine = builder.admin().productionLines().create(4, null);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
       
       builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, cellType, productionLine, seedBatch);
