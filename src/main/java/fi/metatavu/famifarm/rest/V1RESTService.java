@@ -293,7 +293,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (batch == null) {
       return createBadRequest("Could not find specified batch");
     }
-
+    
     OffsetDateTime startTime = body.getStartTime();
     OffsetDateTime endTime = body.getEndTime();
     

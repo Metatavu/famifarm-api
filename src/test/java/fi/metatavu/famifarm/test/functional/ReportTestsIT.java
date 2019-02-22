@@ -2,9 +2,11 @@ package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
@@ -32,6 +34,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       createPackingEvent(builder);
       
       byte[] data = builder.admin().reports().createReport("XLS_EXAMPLE");
+      FileUtils.writeByteArrayToFile(new File("/tmp/myyra.xlsx"), data);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -45,30 +48,25 @@ public class ReportTestsIT extends AbstractFunctionalTest {
   }
   
   @Test
-  public void testXlsxGrowthTimeReport() throws Exception {
+  public void testXlsxWastageReport() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      builder.admin().performedCultivationActions();
-      builder.admin().teams();
+      builder.admin().wastageReasons();
+      createWastageEvent(builder);
+      createWastageEvent(builder);
       
-      createSowingEvent(builder);
-      Event tableSpreadEvent = createTableSpreadEvent(builder);
-      Event cultivationObservationEvent = createCultivationObservationEvent(builder);
-      createHarvestEvent(builder);
-      createPlantingEvent(builder);
-      createPackingEvent(builder);
-      
-      byte[] data = builder.admin().reports().createReport("GROWTH_TIME");
+      byte[] data = builder.admin().reports().createReport("WASTAGE");
+      FileUtils.writeByteArrayToFile(new File("/tmp/hhhh.xlsx"), data);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
-        builder.admin().reports().assertCellValue("Team", workbook, 0, 0, 0);
-        builder.admin().reports().assertCellValue("Line", workbook, 0, 0, 1);
+        builder.admin().reports().assertCellValue("Date", workbook, 0, 0, 0);
+        builder.admin().reports().assertCellValue("Worker", workbook, 0, 0, 1);
         builder.admin().reports().assertCellValue("Product", workbook, 0, 0, 2);
-        builder.admin().reports().assertCellValue("Packaging date", workbook, 0, 0, 3);
-        builder.admin().reports().assertCellValue("Sowing date", workbook, 0, 0, 4);
-        builder.admin().reports().assertCellValue("Average weight", workbook, 0, 0, 5);
-        builder.admin().reports().assertCellValue("Growth time", workbook, 0, 0, 6);
-        builder.admin().reports().assertCellValue("Days", workbook, 0, 0, 7);
+        builder.admin().reports().assertCellValue("Product name", workbook, 0, 1, 2);
+        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 1, 3);
+        builder.admin().reports().assertCellValue("Product name", workbook, 0, 2, 2);
+        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 2, 3);
+        builder.admin().reports().assertCellValue("User, Admin", workbook, 0, 1, 1);
       }
     }
   }

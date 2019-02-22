@@ -3,8 +3,8 @@ package fi.metatavu.famifarm.reporting;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.reporting.xlsx.XlsGrowthTimeReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxExampleReport;
+import fi.metatavu.famifarm.reporting.xlsx.XlsxWastageReport;
 
 /**
  * Report controller
@@ -18,7 +18,7 @@ public class ReportController {
   private XlsxExampleReport xlsxExampleReport;
   
   @Inject
-  private XlsGrowthTimeReport xlsxGrowthTimeReport;
+  private XlsxWastageReport xlsxWastageReport;
   
   /**
    * Returns report for giveb report type
@@ -31,8 +31,8 @@ public class ReportController {
     switch (reportType) {
       case XLS_EXAMPLE:
         return xlsxExampleReport;
-      case GROWTH_TIME:
-        return xlsxGrowthTimeReport;
+      case WASTAGE:
+        return xlsxWastageReport;
     }
     
     return null;
