@@ -35,7 +35,6 @@ public class LocalesController {
    * @return localized string
    */
   public String getString(Locale locale, String key, Object... params) {
-
     return (new MessageFormat(getString(locale, key), locale)).format(params);
   }
   
