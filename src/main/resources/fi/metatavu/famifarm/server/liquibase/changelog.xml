@@ -523,7 +523,6 @@
 		</createTable>
 	</changeSet>
 
-
 	<changeSet id="cultivationobservationeventpest" author="antti.leppa">
 		<dropColumn tableName="cultivationobservationevent" columnName="pests" />
 		<createTable tableName="cultivationobservationeventpest">
