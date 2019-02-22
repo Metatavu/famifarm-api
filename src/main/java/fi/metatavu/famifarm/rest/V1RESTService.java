@@ -941,7 +941,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createBadRequest(String.format("Invalid report type %s", typeParam));
     }
     
-    Map<String, String> parameters = new HashMap<String, String>();
+    Map<String, String> parameters = new HashMap<>();
     
     if (fromTime != null) {
       parameters.put("fromTime", fromTime);

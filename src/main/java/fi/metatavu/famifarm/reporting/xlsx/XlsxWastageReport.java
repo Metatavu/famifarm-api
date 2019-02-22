@@ -1,7 +1,6 @@
 package fi.metatavu.famifarm.reporting.xlsx;
 
 import java.io.OutputStream;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;

@@ -9,8 +9,6 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import org.apache.commons.math3.analysis.function.Add;
-
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.persistence.model.Event;
