@@ -75,7 +75,9 @@ public class XlsxWastageReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Batch> batches = batchController.listBatches(null, null, parseDate(parameters.get("fromTime")), parseDate(parameters.get("fromTime")));
+      List<Batch> batches = batchController.listBatches(null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      System.out.println("AAAAAAAA");
+      System.out.println(batches.size());
       int rowIndex = 4;
       
       for (int i = 0; i < batches.size(); i++) {

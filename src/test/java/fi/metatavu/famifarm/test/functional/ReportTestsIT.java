@@ -58,7 +58,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       createWastageEvent(builder);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
-      String toTime = OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
       byte[] data = builder.admin().reports().createReport("WASTAGE", fromTime, toTime);
       assertNotNull(data);
