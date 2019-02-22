@@ -547,9 +547,9 @@
 	<changeSet id="productionlinetowastageevent" author="ville.koivukangas">
 		<addColumn tableName="wastageevent">
 			<column name="productionline_id" type="binary(16)">
-				<constraints nullable="false" foreignKeyName="FK_WASTAGEEVENT_PRODUCTIONLINE_ID" referencedColumnNames="id" referencedTableName="productionline" />
+			 <constraints nullable="false" foreignKeyName="FK_WASTAGEEVENT_PRODUCTIONLINE_ID" referencedColumnNames="id" referencedTableName="productionline" />
 			</column>
 		</addColumn>
 	</changeSet>  
-      
+
 </databaseChangeLog>
