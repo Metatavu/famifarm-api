@@ -1,7 +1,7 @@
 package fi.metatavu.famifarm.rest.translate;
 
 import fi.metatavu.famifarm.rest.model.Event;
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * Abstract translator class for events
@@ -32,6 +32,7 @@ public abstract class AbstractEventTranslator <R, J extends fi.metatavu.famifarm
     result.setStartTime(event.getStartTime());
     result.setType(getType());
     result.setUserId(event.getCreatorId());
+    result.setAdditionalInformation(event.getAdditionalInformation());
 
     return result;
   }
@@ -41,7 +42,7 @@ public abstract class AbstractEventTranslator <R, J extends fi.metatavu.famifarm
    * 
    * @return event type
    */
-  protected abstract TypeEnum getType();
+  protected abstract EventType getType();
 
   /**
    * Translates event data

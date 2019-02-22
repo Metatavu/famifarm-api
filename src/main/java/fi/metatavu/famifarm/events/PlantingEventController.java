@@ -38,12 +38,13 @@ public class PlantingEventController {
    * @param gutterCount gutterCount
    * @param cellCount cellCount
    * @param workerCount workerCount
+   * @param additionalInformation additional information
    * @return created plantingEvent
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent createPlantingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, UUID creatorId) {
-    return plantingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterSize, gutterCount, cellCount, workerCount, 0, creatorId, creatorId);
+  public PlantingEvent createPlantingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, String additionalInformation, UUID creatorId) {
+    return plantingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterSize, gutterCount, cellCount, workerCount, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -80,11 +81,12 @@ public class PlantingEventController {
    * @param cellCount cellCount
    * @param workerCount workerCount
    * @param type type
+   * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated plantingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent updatePlantingEvent(PlantingEvent plantingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, UUID modifier) {
+  public PlantingEvent updatePlantingEvent(PlantingEvent plantingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, String additionalInformation, UUID modifier) {
     plantingEventDAO.updateBatch(plantingEvent, batch, modifier);
     plantingEventDAO.updateStartTime(plantingEvent, startTime, modifier);
     plantingEventDAO.updateEndTime(plantingEvent, endTime, modifier);
@@ -93,6 +95,7 @@ public class PlantingEventController {
     plantingEventDAO.updateGutterCount(plantingEvent, gutterCount, modifier);
     plantingEventDAO.updateCellCount(plantingEvent, cellCount, modifier);
     plantingEventDAO.updateWorkerCount(plantingEvent, workerCount, modifier);
+    plantingEventDAO.updateAdditionalInformation(plantingEvent, additionalInformation, modifier);
     return plantingEvent;
   }
   

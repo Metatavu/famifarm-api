@@ -24,6 +24,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
   public void testXlsxExampleReport() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().performedCultivationActions();
+      builder.admin().pests();
       builder.admin().teams();
       
       createSowingEvent(builder);

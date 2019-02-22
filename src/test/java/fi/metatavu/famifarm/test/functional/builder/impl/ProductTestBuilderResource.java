@@ -42,7 +42,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
   public Product create(LocalizedEntry name, PackageSize packageSize) {
     Product product = new Product();
     product.setName(name);
-    product.setDefaultPackageSize(packageSize.getId());
+    product.setDefaultPackageSizeId(packageSize.getId());
     return addClosable(getApi().createProduct(product));
   }
 
@@ -107,7 +107,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
     try {
       Product product = new Product();
       product.setName(name);
-      product.setDefaultPackageSize(packageSize.getId());
+      product.setDefaultPackageSizeId(packageSize.getId());
       getApi().createProduct(product);
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {

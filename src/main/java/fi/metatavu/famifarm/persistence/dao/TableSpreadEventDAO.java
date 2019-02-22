@@ -31,7 +31,7 @@ public class TableSpreadEventDAO extends AbstractEventDAO<TableSpreadEvent> {
    * @return
    */
   @SuppressWarnings ("squid:S00107")
-  public TableSpreadEvent create(UUID id, Integer tableCount, String location, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
+  public TableSpreadEvent create(UUID id, Integer tableCount, String location, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     TableSpreadEvent tableSpreadEvent = new TableSpreadEvent();
     tableSpreadEvent.setTableCount(tableCount);
     tableSpreadEvent.setRemainingUnits(remainingUnits);
@@ -43,6 +43,7 @@ public class TableSpreadEventDAO extends AbstractEventDAO<TableSpreadEvent> {
     tableSpreadEvent.setId(id);
     tableSpreadEvent.setCreatorId(creatorId);
     tableSpreadEvent.setLastModifierId(lastModifierId);
+    tableSpreadEvent.setAdditionalInformation(additionalInformation);
     return persist(tableSpreadEvent);
   }
 

@@ -3,7 +3,7 @@ package fi.metatavu.famifarm.rest.translate;
 import javax.enterprise.context.ApplicationScoped;
 
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.TableSpreadEventData;
 
 /**
@@ -15,8 +15,8 @@ import fi.metatavu.famifarm.rest.model.TableSpreadEventData;
 public class TableSpreadEventTranslator extends AbstractEventTranslator<TableSpreadEventData, TableSpreadEvent> {
 
   @Override
-  protected TypeEnum getType() {
-    return TypeEnum.TABLE_SPREAD;
+  protected EventType getType() {
+    return EventType.TABLE_SPREAD;
   }
 
   @Override

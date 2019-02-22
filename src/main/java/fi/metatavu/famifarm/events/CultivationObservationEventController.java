@@ -14,10 +14,13 @@ import javax.inject.Inject;
 import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.CultivationObservationEventActionDAO;
 import fi.metatavu.famifarm.persistence.dao.CultivationObservationEventDAO;
+import fi.metatavu.famifarm.persistence.dao.CultivationObservationEventPestDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEventAction;
+import fi.metatavu.famifarm.persistence.model.CultivationObservationEventPest;
 import fi.metatavu.famifarm.persistence.model.PerformedCultivationAction;
+import fi.metatavu.famifarm.persistence.model.Pest;
 
 /**
  * Controller for cultivation observation events
@@ -35,6 +38,9 @@ public class CultivationObservationEventController {
   
   @Inject
   private CultivationObservationEventActionDAO cultivationObservationEventActionDAO;  
+
+  @Inject
+  private CultivationObservationEventPestDAO cultivationObservationEventPestDAO;
   
   /**
    * Create cultivationActionEvent
@@ -45,15 +51,20 @@ public class CultivationObservationEventController {
    * @param weight weight
    * @param luminance luminance
    * @param pests pests
+   * @param additionalInformation additional information
    * @param modifier modifier
    * @return created cultivationActionEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public CultivationObservationEvent createCultivationActionEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, String pests, List<PerformedCultivationAction> actions, UUID creatorId) {
-    CultivationObservationEvent event = cultivationObservationEventDAO.create(UUID.randomUUID(), weight, luminance, pests, batch, startTime, endTime, 0, creatorId, creatorId);
+  public CultivationObservationEvent createCultivationActionEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, List<Pest> pests, List<PerformedCultivationAction> actions, String additionalInformation, UUID creatorId) {
+    CultivationObservationEvent event = cultivationObservationEventDAO.create(UUID.randomUUID(), weight, luminance, batch, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
     
     if (actions != null) {
       actions.stream().forEach(action -> cultivationObservationEventActionDAO.create(UUID.randomUUID(), event, action));
+    }
+    
+    if (pests != null) {
+      pests.stream().forEach(pest -> cultivationObservationEventPestDAO.create(UUID.randomUUID(), event, pest));
     }
     
     return event;
@@ -90,36 +101,59 @@ public class CultivationObservationEventController {
    * @param weight weight
    * @param luminance luminance
    * @param pests pests
+   * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated cultivationActionEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public CultivationObservationEvent updateCultivationActionEvent(CultivationObservationEvent cultivationActionEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, String pests, List<PerformedCultivationAction> actions, UUID modifier) {
+  public CultivationObservationEvent updateCultivationActionEvent(CultivationObservationEvent cultivationActionEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, List<Pest> pests, List<PerformedCultivationAction> actions, String additionalInformation, UUID modifier) {
     cultivationObservationEventDAO.updateBatch(cultivationActionEvent, batch, modifier);
     cultivationObservationEventDAO.updateStartTime(cultivationActionEvent, startTime, modifier);
     cultivationObservationEventDAO.updateEndTime(cultivationActionEvent, endTime, modifier);
     cultivationObservationEventDAO.updateWeight(cultivationActionEvent, weight, modifier);
     cultivationObservationEventDAO.updateLuminance(cultivationActionEvent, luminance, modifier);
-    cultivationObservationEventDAO.updatePests(cultivationActionEvent, pests, modifier);
+    cultivationObservationEventDAO.updateAdditionalInformation(cultivationActionEvent, additionalInformation, modifier);
     
     List<CultivationObservationEventAction> eventActions = cultivationObservationEventActionDAO.listByEvent(cultivationActionEvent);
 
     Map<UUID, CultivationObservationEventAction> eventActionMap = eventActions.stream()
       .collect(Collectors.toMap(eventAction -> eventAction.getAction().getId(), eventAction -> eventAction));  
     
-    Set<UUID> existingIds = new HashSet<>(eventActionMap.keySet());
+    Set<UUID> existingActionIds = new HashSet<>(eventActionMap.keySet());
     
     for (PerformedCultivationAction action : actions) {
-      if (!existingIds.contains(action.getId())) {
+      if (!existingActionIds.contains(action.getId())) {
         cultivationObservationEventActionDAO.create(UUID.randomUUID(), cultivationActionEvent, action);
       } else {
-        existingIds.remove(action.getId());
+        existingActionIds.remove(action.getId());
       }
     }
    
-    for (UUID removedId : existingIds) {
+    for (UUID removedId : existingActionIds) {
       cultivationObservationEventActionDAO.delete(eventActionMap.get(removedId));
     }
+
+    List<CultivationObservationEventPest> eventPests = cultivationObservationEventPestDAO.listByEvent(cultivationActionEvent);
+
+    Map<UUID, CultivationObservationEventPest> eventPestMap = eventPests.stream()
+      .collect(Collectors.toMap(eventPest -> eventPest.getPest().getId(), eventPest -> eventPest));  
+    
+    Set<UUID> existingPestIds = new HashSet<>(eventPestMap.keySet());
+    
+    for (Pest pest : pests) {
+      if (!existingPestIds.contains(pest.getId())) {
+        cultivationObservationEventPestDAO.create(UUID.randomUUID(), cultivationActionEvent, pest);
+      } else {
+        existingPestIds.remove(pest.getId());
+      }
+    }
+   
+    for (UUID removedId : existingPestIds) {
+      cultivationObservationEventPestDAO.delete(eventPestMap.get(removedId));
+    }
+    
+    
+    
     
     return cultivationActionEvent;
   }
@@ -134,6 +168,9 @@ public class CultivationObservationEventController {
     
     cultivationObservationEventActionDAO.listByEvent(cultivationActionEvent).stream()
       .forEach(cultivationObservationEventActionDAO::delete);    
+    
+    cultivationObservationEventPestDAO.listByEvent(cultivationActionEvent).stream()
+      .forEach(cultivationObservationEventPestDAO::delete);    
 
     cultivationObservationEventDAO.delete(cultivationActionEvent);
   }
@@ -146,6 +183,16 @@ public class CultivationObservationEventController {
    */
   public List<UUID> listEventPerformedActionIds(CultivationObservationEvent event) {
     return cultivationObservationEventActionDAO.listPerformedActionIdsByEvent(event);
+  }
+
+  /**
+   * Lists pest ids by event
+   * 
+   * @param event event
+   * @return performed cultivation action ids
+   */
+  public List<UUID> listEventPestIds(CultivationObservationEvent event) {
+    return cultivationObservationEventActionDAO.listPestIdsByEvent(event);
   }
   
 }

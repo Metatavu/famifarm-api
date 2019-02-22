@@ -39,12 +39,13 @@ public class SowingEventController {
    * @param seedBatch seedBatch
    * @param cellType cellType
    * @param amount amount
+   * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated sowingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Double amount, UUID creatorId) {
-    return sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, seedBatch, cellType, amount, 0, creatorId, creatorId);
+  public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Integer amount, String additionalInformation, UUID creatorId) {
+    return sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, seedBatch, cellType, amount, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -79,11 +80,12 @@ public class SowingEventController {
    * @param seedBatch seedBatch
    * @param cellType cellType
    * @param amount amount
+   * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated sowingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent updateSowingEvent(SowingEvent sowingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Double amount, UUID modifier) {
+  public SowingEvent updateSowingEvent(SowingEvent sowingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Integer amount, String additionalInformation, UUID modifier) {
     sowingEventDAO.updateBatch(sowingEvent, batch, modifier);
     sowingEventDAO.updateStartTime(sowingEvent, startTime, modifier);
     sowingEventDAO.updateEndTime(sowingEvent, endTime, modifier);
@@ -91,6 +93,8 @@ public class SowingEventController {
     sowingEventDAO.updateSeedBatch(sowingEvent, seedBatch, modifier);
     sowingEventDAO.updateCellType(sowingEvent, cellType, modifier);
     sowingEventDAO.updateAmount(sowingEvent, amount, modifier);
+    sowingEventDAO.updateAdditionalInformation(sowingEvent, additionalInformation, modifier);
+    
     return sowingEvent;
   }
   

@@ -40,7 +40,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Double amount, Integer remainingUnits, UUID creatorId, UUID lastModifierId) {
+  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Integer amount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     SowingEvent sowingEvent = new SowingEvent();
     sowingEvent.setBatch(batch);
     sowingEvent.setRemainingUnits(remainingUnits);
@@ -53,6 +53,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
     sowingEvent.setId(id);
     sowingEvent.setCreatorId(creatorId);
     sowingEvent.setLastModifierId(lastModifierId);
+    sowingEvent.setAdditionalInformation(additionalInformation);
     return persist(sowingEvent);
   }
   
@@ -124,7 +125,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @param lastModifier modifier
    * @return updated sowingEvent
    */
-  public SowingEvent updateAmount(SowingEvent sowingEvent, Double amount, UUID lastModifierId) {
+  public SowingEvent updateAmount(SowingEvent sowingEvent, Integer amount, UUID lastModifierId) {
     sowingEvent.setLastModifierId(lastModifierId);
     sowingEvent.setAmount(amount);
     return persist(sowingEvent);

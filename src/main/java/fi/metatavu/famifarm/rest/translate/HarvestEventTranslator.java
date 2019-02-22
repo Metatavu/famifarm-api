@@ -3,7 +3,7 @@ package fi.metatavu.famifarm.rest.translate;
 import javax.enterprise.context.ApplicationScoped;
 
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.HarvestEventData;
 
 /**
@@ -15,8 +15,8 @@ import fi.metatavu.famifarm.rest.model.HarvestEventData;
 public class HarvestEventTranslator extends AbstractEventTranslator<HarvestEventData, HarvestEvent> {
 
   @Override
-  protected TypeEnum getType() {
-    return TypeEnum.HARVEST;
+  protected EventType getType() {
+    return EventType.HARVEST;
   }
 
   @Override

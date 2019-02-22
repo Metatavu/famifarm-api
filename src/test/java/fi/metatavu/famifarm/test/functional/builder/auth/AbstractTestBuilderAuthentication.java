@@ -10,6 +10,7 @@ import fi.metatavu.famifarm.test.functional.builder.impl.DraftTestBuilderResourc
 import fi.metatavu.famifarm.test.functional.builder.impl.EventTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PackageSizeTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PerformedCultivationActionTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.PestTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductionLineTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ReportTestBuilderResource;
@@ -35,6 +36,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private BatchTestBuilderResource batches;
   private ProductionLineTestBuilderResource productionLines;
   private PerformedCultivationActionTestBuilderResource performedCultivationActions;
+  private PestTestBuilderResource pests;
   private EventTestBuilderResource events;
   private DraftTestBuilderResource drafts;
   private List<AutoCloseable> closables = new ArrayList<>();
@@ -163,6 +165,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
     
     return productionLines = this.addClosable(new ProductionLineTestBuilderResource(createClient()));
+  }
+  
+  /**
+   * Returns test builder resource for performed cultivation actions
+   * 
+   * @return test builder resource for products
+   * @throws IOException thrown when authentication fails
+   */
+  public PestTestBuilderResource pests() throws IOException {
+    if (pests != null) {
+      return pests;
+    }
+
+    return pests = this.addClosable(new PestTestBuilderResource(createClient()));
   }
   
   /**

@@ -65,5 +65,18 @@ public abstract class AbstractEventDAO <T extends Event> extends AbstractDAO<T> 
     event.setRemainingUnits(remainingUnits);
     return persist(event);
   }
+
+  /**
+   * Updates event's additional information
+   * 
+   * @param event event
+   * @param additionalInformation additional information
+   * @return updated event
+   */
+  public T updateAdditionalInformation(T event, String additionalInformation, UUID lastModifierId) {
+    event.setAdditionalInformation(additionalInformation);
+    event.setLastModifierId(lastModifierId);
+    return persist(event);
+  }
   
 }
