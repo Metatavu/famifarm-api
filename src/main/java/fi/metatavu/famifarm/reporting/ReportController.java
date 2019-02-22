@@ -21,7 +21,7 @@ public class ReportController {
   private XlsxWastageReport xlsxWastageReport;
   
   /**
-   * Returns report for giveb report type
+   * Returns report for given report type
    * 
    * @param reportType report to
    * @return report instance

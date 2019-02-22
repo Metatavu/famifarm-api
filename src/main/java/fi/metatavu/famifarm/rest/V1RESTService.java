@@ -6,7 +6,9 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -934,8 +936,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response getReport(String typeParam, String fromTime, String toTime) {
     ReportType reportType = EnumUtils.getEnum(ReportType.class, typeParam);
+    
     if (reportType == null) {
       return createBadRequest(String.format("Invalid report type %s", typeParam));
+    }
+    
+    Map<String, String> parameters = new HashMap<String, String>();
+    
+    if (fromTime != null) {
+      parameters.put("fromTime", fromTime);
+    }
+    
+    if (toTime != null) {
+      parameters.put("toTime", toTime);
     }
     
     Report report = reportController.getReport(reportType);
@@ -944,7 +957,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-      report.createReport(output, getLocale(), Collections.emptyMap());
+      report.createReport(output, getLocale(), parameters);
       return streamResponse(output.toByteArray(), report.getContentType());
     } catch (IOException e) {
       return createInternalServerError("Failed to stream report");
@@ -1606,8 +1619,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer amount = eventData.getAmount();
     EventType phase = eventData.getPhase();
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(eventData.getReasonId());
-
-    WastageEvent event = wastageEventController.createWastageEvent(batch, startTime, endTime, amount, wastageReason, phase, additionalInformation, creatorId);
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
+    
+    WastageEvent event = wastageEventController.createWastageEvent(batch, startTime, endTime, amount, wastageReason, phase, additionalInformation, productionLine, creatorId);
     batchController.updateRemainingUnits(batch);
     
     return createOk(wastageEventTranslator.translateEvent(updateBatchActiveEvent(event)));

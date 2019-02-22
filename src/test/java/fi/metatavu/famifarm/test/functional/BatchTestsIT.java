@@ -137,28 +137,28 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       Batch openBatch2 = builder.admin().batches().create(product);
       builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 10, CellType.LARGE, productionLine, seedBatch);
       builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 30, CellType.LARGE, productionLine, seedBatch);
-      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 35, wastageReason, null, EventType.HARVEST);
+      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 35, wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
       builder.admin().batches().assertCountByStatus(2, "OPEN");
       builder.admin().batches().assertCountByStatus(0, "CLOSED");
       builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
       
-      Event updateWasteage = builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 5, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 5, wastageReason, null, EventType.HARVEST);
+      Event updateWasteage = builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 5, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 5, wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
       builder.admin().batches().assertCountByStatus(1, "OPEN");
       builder.admin().batches().assertCountByStatus(1, "CLOSED");
       builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
 
-      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 6, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 3, wastageReason, null, EventType.HARVEST);
+      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 6, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 3, wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
       builder.admin().batches().assertCountByStatus(1, "OPEN");
       builder.admin().batches().assertCountByStatus(0, "CLOSED");
       builder.admin().batches().assertCountByStatus(1, "NEGATIVE");
       
-      updateWasteage.setData(builder.admin().events().createWastageEventData(2, wastageReason, EventType.HARVEST));
+      updateWasteage.setData(builder.admin().events().createWastageEventData(2, wastageReason, EventType.HARVEST, productionLine.getId()));
       builder.admin().events().updateEvent(updateWasteage);
       
       builder.admin().batches().assertCount(2);

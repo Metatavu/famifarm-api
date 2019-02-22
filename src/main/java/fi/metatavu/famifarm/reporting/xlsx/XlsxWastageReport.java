@@ -1,8 +1,10 @@
 package fi.metatavu.famifarm.reporting.xlsx;
 
 import java.io.OutputStream;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -13,21 +15,15 @@ import javax.inject.Inject;
 
 import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.EventController;
-import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.events.WastageEventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
-import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
-import fi.metatavu.famifarm.persistence.model.LocalizedValue;
 import fi.metatavu.famifarm.persistence.model.Product;
-import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
-import fi.metatavu.famifarm.persistence.model.WastageReason;
-import fi.metatavu.famifarm.products.ProductController;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.rest.model.Event.TypeEnum;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * Report for growth time
@@ -53,42 +49,48 @@ public class XlsxWastageReport extends AbstractXlsxReport {
   @Override
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
     Map<UUID, String> userCache = new HashMap<>();
-    
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
-      String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.growth_time.title"));
+      String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.wastage.title"));
       
       int dateIndex = 0;
-      int workerIndex = 1;
-      int productIndex = 2;
-      int reasonIndex = 3;
-      int amountIndex = 4;
+      int lineIndex = 1;
+      int workerIndex = 2;
+      int productIndex = 3;
+      int reasonIndex = 4;
+      int amountIndex = 5;
+      
+      Date fromTime = Date.from(parseDate(parameters.get("fromTime")).toInstant());
+      Date toTime = Date.from(parseDate(parameters.get("toTime")).toInstant());
       
       // Headers 
       
-      xlsxBuilder.setCellValue(sheetId, 0, dateIndex, localesController.getString(locale, "reports.wastage.wastageDate")); 
-      xlsxBuilder.setCellValue(sheetId, 0, workerIndex, localesController.getString(locale, "reports.wastage.worker")); 
-      xlsxBuilder.setCellValue(sheetId, 0, productIndex, localesController.getString(locale, "reports.wastage.product")); 
-      xlsxBuilder.setCellValue(sheetId, 0, reasonIndex, localesController.getString(locale, "reports.wastage.wastageReason")); 
-      xlsxBuilder.setCellValue(sheetId, 0, amountIndex, localesController.getString(locale, "reports.wastage.wastageAmount"));
+      xlsxBuilder.setCellValue(sheetId, 0, 0, localesController.getString(locale, "reports.wastage.title")); 
+      xlsxBuilder.setCellValue(sheetId, 1, 0, localesController.getString(locale, "reports.common.dateBetween", fromTime, toTime)); 
+      xlsxBuilder.setCellValue(sheetId, 3, lineIndex, localesController.getString(locale, "reports.wastage.line")); 
+      xlsxBuilder.setCellValue(sheetId, 3, dateIndex, localesController.getString(locale, "reports.wastage.wastageDate")); 
+      xlsxBuilder.setCellValue(sheetId, 3, workerIndex, localesController.getString(locale, "reports.wastage.worker")); 
+      xlsxBuilder.setCellValue(sheetId, 3, productIndex, localesController.getString(locale, "reports.wastage.product")); 
+      xlsxBuilder.setCellValue(sheetId, 3, reasonIndex, localesController.getString(locale, "reports.wastage.wastageReason")); 
+      xlsxBuilder.setCellValue(sheetId, 3, amountIndex, localesController.getString(locale, "reports.wastage.wastageAmount"));
       
       // Values
       
-      List<Batch> batches = batchController.listBatches(null, null, null, null);
-      int rowIndex = 1;
+      List<Batch> batches = batchController.listBatches(null, null, parseDate(parameters.get("fromTime")), parseDate(parameters.get("fromTime")));
+      int rowIndex = 4;
       
       for (int i = 0; i < batches.size(); i++) {
         Batch batch = batches.get(i);
         List<Event> events = eventController.listEvents(batch, null, null);
         Product product = batch.getProduct();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");     
-        
         for (int j = 0; j < events.size(); j++) {
           Event event = events.get(j);
           
-          if (event.getType() == TypeEnum.WASTEAGE) {
+          if (event.getType() == EventType.WASTEAGE) {
             WastageEvent wastageEvent = wastageEventController.findWastageEventById(event.getId());
             OffsetDateTime endTime = wastageEvent.getEndTime();
             
+            xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, wastageEvent.getProductionLine().getLineNumber());
             xlsxBuilder.setCellValue(sheetId, rowIndex, dateIndex, endTime.format(formatter));
             xlsxBuilder.setCellValue(sheetId, rowIndex, workerIndex, getFormattedUser(event.getCreatorId(), userCache));
             xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));

@@ -4,6 +4,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
@@ -12,6 +14,7 @@ import org.junit.Test;
 
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
+
 
 /**
  * Tests for reports
@@ -33,9 +36,8 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       createHarvestEvent(builder);
       createPlantingEvent(builder);
       createPackingEvent(builder);
-      
-      byte[] data = builder.admin().reports().createReport("XLS_EXAMPLE");
-      FileUtils.writeByteArrayToFile(new File("/tmp/myyra.xlsx"), data);
+  
+      byte[] data = builder.admin().reports().createReport("XLS_EXAMPLE", null, null);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -55,19 +57,21 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       createWastageEvent(builder);
       createWastageEvent(builder);
       
-      byte[] data = builder.admin().reports().createReport("WASTAGE");
-      FileUtils.writeByteArrayToFile(new File("/tmp/hhhh.xlsx"), data);
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      
+      byte[] data = builder.admin().reports().createReport("WASTAGE", fromTime, toTime);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
-        builder.admin().reports().assertCellValue("Date", workbook, 0, 0, 0);
-        builder.admin().reports().assertCellValue("Worker", workbook, 0, 0, 1);
-        builder.admin().reports().assertCellValue("Product", workbook, 0, 0, 2);
-        builder.admin().reports().assertCellValue("Product name", workbook, 0, 1, 2);
-        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 1, 3);
-        builder.admin().reports().assertCellValue("Product name", workbook, 0, 2, 2);
-        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 2, 3);
-        builder.admin().reports().assertCellValue("User, Admin", workbook, 0, 1, 1);
+        builder.admin().reports().assertCellValue("Date", workbook, 0, 3, 0);
+        builder.admin().reports().assertCellValue("Worker", workbook, 0, 3, 2);
+        builder.admin().reports().assertCellValue("Product", workbook, 0, 3, 3);
+        builder.admin().reports().assertCellValue("Product name", workbook, 0, 4, 3);
+        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 4, 4);
+        builder.admin().reports().assertCellValue("Product name", workbook, 0, 5, 3);
+        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 5, 4);
+        builder.admin().reports().assertCellValue("User, Admin", workbook, 0, 4, 2);
       }
     }
   }
