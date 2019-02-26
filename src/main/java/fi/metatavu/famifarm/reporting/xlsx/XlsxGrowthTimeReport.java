@@ -52,10 +52,19 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
   
   @Inject
   private LocalizedValueController localizedValueController;
+  
+  private float totalWeight = 0;
+  
+  private int amountOfCultivationObservations = 0;
+  
+  private Event lastPackingEvent = null;
+  
+  private Event firstSowingEvent = null;
+  
+  private double averageWeight = 0;
 
   @Override
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
-    Map<UUID, String> userCache = new HashMap<>();
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
       String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.wastage.title"));
       
@@ -90,37 +99,33 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
         Product product = batch.getProduct();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); 
         
-        Event lastPackingEvent = null;
-        Event firstSowingEvent = null;
-        
-        float totalWeight = 0;
-        int amountOfCultivationObservations = 0;
+        lastPackingEvent = null;
+        firstSowingEvent = null;
+        totalWeight = 0;
+        amountOfCultivationObservations = 0;
+        averageWeight = 0;
         
         for (Event event: events) {
-          if (event.getType() == EventType.PACKING) {
-            if (lastPackingEvent == null) {
-              lastPackingEvent = event;
-            } else {
-              if (event.getEndTime().isAfter(lastPackingEvent.getEndTime())) {
-                lastPackingEvent = event; 
-              }
-            }
-          } else if (event.getType() == EventType.SOWING) {
-            if (firstSowingEvent == null) {
-              firstSowingEvent = event;
-            } else {
-              if (event.getStartTime().isBefore(firstSowingEvent.getStartTime())) {
-                firstSowingEvent = event; 
-              }
-            }
-          } else if (event.getType() == EventType.CULTIVATION_OBSERVATION) {
-            CultivationObservationEvent cultivationObservationEvent = cultivationObservationEventController.findCultivationActionEventById(event.getId());
-            totalWeight += cultivationObservationEvent.getWeight();
-            amountOfCultivationObservations++;
+          switch (event.getType()) {
+            case CULTIVATION_OBSERVATION:
+              handleCultivationObservationEvent(event);
+              break;
+            case PACKING:
+              handlePackingEvent(event);
+              break;
+            case SOWING:
+              handleFirstSowingEvent(event);
+              break;
+            default:
+              break;
           }
         }
         
-        if (lastPackingEvent != null && firstSowingEvent != null && totalWeight > 0 && amountOfCultivationObservations > 0) {
+        if (totalWeight > 0 && amountOfCultivationObservations > 0) {
+          averageWeight = totalWeight / amountOfCultivationObservations;
+        }
+        
+        if (lastPackingEvent != null && firstSowingEvent != null) {
           SowingEvent sowingEvent = sowingEventController.findSowingEventById(firstSowingEvent.getId());
           
           Date packingDate = Date.from(lastPackingEvent.getEndTime().toInstant());
@@ -131,7 +136,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
           xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
           xlsxBuilder.setCellValue(sheetId, rowIndex, packingDateIndex, lastPackingEvent.getEndTime().format(formatter));
           xlsxBuilder.setCellValue(sheetId, rowIndex, sowingDateIndex, firstSowingEvent.getStartTime().format(formatter));
-          xlsxBuilder.setCellValue(sheetId, rowIndex, averageWeightIndex, Double.toString(totalWeight / amountOfCultivationObservations));
+          xlsxBuilder.setCellValue(sheetId, rowIndex, averageWeightIndex, Double.toString(averageWeight));
           xlsxBuilder.setCellValue(sheetId, rowIndex, growthTimeIndex, Integer.toString(days));
           rowIndex++;
         }
@@ -140,6 +145,48 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
       xlsxBuilder.write(output);
     } catch (Exception e) {
       throw new ReportException(e);
+    }
+  }
+  
+  /**
+   * Handle packing event
+   * 
+   * @param event
+   */
+  private void handlePackingEvent(Event event) {
+    if (lastPackingEvent == null) {
+      lastPackingEvent = event;
+    } else {
+      if (event.getEndTime().isAfter(lastPackingEvent.getEndTime())) {
+        lastPackingEvent = event; 
+      }
+    }
+  }
+  
+  /**
+   * Handle sowing event
+   * 
+   * @param event
+   */
+  private void handleFirstSowingEvent(Event event) {
+    if (firstSowingEvent == null) {
+      firstSowingEvent = event;
+    } else {
+      if (event.getStartTime().isBefore(firstSowingEvent.getStartTime())) {
+        firstSowingEvent = event; 
+      }
+    }
+  }
+  
+  /**
+   * Handle cultivation observation event
+   * @param event
+   */
+  private void handleCultivationObservationEvent(Event event) {
+    if (event.getType() == EventType.CULTIVATION_OBSERVATION) {
+      CultivationObservationEvent cultivationObservationEvent = cultivationObservationEventController.findCultivationActionEventById(event.getId());
+      totalWeight += cultivationObservationEvent.getWeight();
+      amountOfCultivationObservations++;
     }
   }
 }
