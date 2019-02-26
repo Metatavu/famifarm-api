@@ -70,7 +70,7 @@ public class WastageEvent extends Event {
   @Transient
   @Override
   public EventType getType() {
-    return EventType.WASTEAGE;
+    return EventType.WASTAGE;
   }
 
 }

@@ -190,7 +190,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
-    event.setType(EventType.WASTEAGE);
+    event.setType(EventType.WASTAGE);
     event.setAdditionalInformation(additionalInformation);
     
     return addClosable(getApi().createEvent(event));

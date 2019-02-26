@@ -74,7 +74,7 @@ public class XlsxWastageReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Batch> batches = batchController.listBatches(null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      List<Batch> batches = batchController.listBatches(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
       int rowIndex = 4;
       
       for (int i = 0; i < batches.size(); i++) {
@@ -85,7 +85,7 @@ public class XlsxWastageReport extends AbstractXlsxReport {
         for (int j = 0; j < events.size(); j++) {
           Event event = events.get(j);
           
-          if (event.getType() == EventType.WASTEAGE) {
+          if (event.getType() == EventType.WASTAGE) {
             WastageEvent wastageEvent = wastageEventController.findWastageEventById(event.getId());
             OffsetDateTime endTime = wastageEvent.getEndTime();
             
