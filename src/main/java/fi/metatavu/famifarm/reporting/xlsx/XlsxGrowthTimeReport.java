@@ -60,8 +60,6 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
   private Event lastPackingEvent = null;
   
   private Event firstSowingEvent = null;
-  
-  private double averageWeight = 0;
 
   @Override
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
@@ -103,7 +101,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
         firstSowingEvent = null;
         totalWeight = 0;
         amountOfCultivationObservations = 0;
-        averageWeight = 0;
+        double averageWeight = 0;
         
         for (Event event: events) {
           switch (event.getType()) {
@@ -114,7 +112,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
               handlePackingEvent(event);
               break;
             case SOWING:
-              handleFirstSowingEvent(event);
+              handleSowingEvent(event);
               break;
             default:
               break;
@@ -130,7 +128,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
           
           Date packingDate = Date.from(lastPackingEvent.getEndTime().toInstant());
           Date sowingDate = Date.from(firstSowingEvent.getStartTime().toInstant());
-          int days = Math.round((packingDate.getTime() - sowingDate.getTime()) / (1000*60*60*24));
+          int days = (int) (packingDate.getTime() - sowingDate.getTime()) / (1000*60*60*24);
 
           xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, sowingEvent.getProductionLine().getLineNumber());
           xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
@@ -162,13 +160,11 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
       }
     }
   }
-  
   /**
    * Handle sowing event
-   * 
    * @param event
    */
-  private void handleFirstSowingEvent(Event event) {
+  private void handleSowingEvent(Event event) {
     if (firstSowingEvent == null) {
       firstSowingEvent = event;
     } else {
