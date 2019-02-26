@@ -4,6 +4,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.reporting.xlsx.XlsxExampleReport;
+import fi.metatavu.famifarm.reporting.xlsx.XlsxGrowthTimeReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxWastageReport;
 
 /**
@@ -20,6 +21,9 @@ public class ReportController {
   @Inject
   private XlsxWastageReport xlsxWastageReport;
   
+  @Inject
+  private XlsxGrowthTimeReport xlsxGrowthTimeReport;
+  
   /**
    * Returns report for given report type
    * 
@@ -33,6 +37,8 @@ public class ReportController {
         return xlsxExampleReport;
       case WASTAGE:
         return xlsxWastageReport;
+      case GROWTH_TIME:
+        return xlsxGrowthTimeReport;
     }
     
     return null;
