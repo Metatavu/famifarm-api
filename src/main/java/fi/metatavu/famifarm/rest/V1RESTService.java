@@ -661,6 +661,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     fi.metatavu.famifarm.persistence.model.Product product = productId != null ? productController.findProduct(productId) : null;
+    if (productId != null && product == null) {
+      return createBadRequest("Invalid product id");
+    }
+    
     Integer remainingUnitsGreaterThan = null;
     Integer remainingUnitsLessThan = null;
     Integer remainingUnitsEqual = null;
