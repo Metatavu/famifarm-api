@@ -25,6 +25,9 @@ public class WastageEvent extends Event {
 
   @ManyToOne(optional = false)
   private WastageReason wastageReason;
+  
+  @ManyToOne(optional = false)
+  private ProductionLine productionLine;
 
   @NotNull
   @Column (nullable = false)
@@ -34,6 +37,14 @@ public class WastageEvent extends Event {
 
   public WastageReason getWastageReason() {
     return wastageReason;
+  }
+
+  public ProductionLine getProductionLine() {
+    return productionLine;
+  }
+
+  public void setProductionLine(ProductionLine productionLine) {
+    this.productionLine = productionLine;
   }
 
   public void setWastageReason(WastageReason wastageReason) {
@@ -59,7 +70,7 @@ public class WastageEvent extends Event {
   @Transient
   @Override
   public EventType getType() {
-    return EventType.WASTEAGE;
+    return EventType.WASTAGE;
   }
 
 }

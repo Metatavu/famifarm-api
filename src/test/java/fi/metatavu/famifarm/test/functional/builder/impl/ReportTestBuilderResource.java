@@ -42,9 +42,9 @@ public class ReportTestBuilderResource extends AbstractTestBuilderResource<Objec
    * @return report data
    * @throws IOException thrown when request fails
    */
-  public byte[] createReport(String type) throws IOException {
+  public byte[] createReport(String type, String fromTime, String toTime) throws IOException {
     ApiClient apiClient = getApiClient();
-    return getBinaryData(apiClient, new URL(String.format("%s/v1/reports/%s", apiClient.getBasePath(), type)));
+    return getBinaryData(apiClient, new URL(String.format("%s/v1/reports/%s?fromTime=%s&toTime=%s", apiClient.getBasePath(), type, fromTime, toTime)));
   }
   
   /**

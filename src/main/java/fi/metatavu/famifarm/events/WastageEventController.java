@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.WastageEventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.persistence.model.WastageReason;
 import fi.metatavu.famifarm.rest.model.EventType;
@@ -42,8 +43,8 @@ public class WastageEventController {
    * @return created wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent createWastageEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, UUID creatorId) {
-    return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, startTime, endTime, 0, phase, additionalInformation, creatorId, creatorId);
+  public WastageEvent createWastageEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, ProductionLine productionLine, UUID creatorId) {
+    return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, startTime, endTime, 0, phase, additionalInformation,  productionLine, creatorId, creatorId);
   }
 
   /**

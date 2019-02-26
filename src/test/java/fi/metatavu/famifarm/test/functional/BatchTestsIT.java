@@ -104,6 +104,24 @@ public class BatchTestsIT extends AbstractFunctionalTest {
   }
   
   @Test
+  public void testListBatchesByProduct() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      Product product1 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Product product2 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Product product3 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      
+      builder.admin().batches().create(product1);
+      builder.admin().batches().create(product2);
+      builder.admin().batches().create(product2);
+
+      builder.admin().batches().assertCountByProduct(1, product1);
+      builder.admin().batches().assertCountByProduct(2, product2);
+      builder.admin().batches().assertCountByProduct(0, product3);
+    }
+  }
+  
+  @Test
   public void testListBatchesByStatus() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().packageSizes();
@@ -125,7 +143,6 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC));
       WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test WastageReason", "Testi Syy"));
       
-      
       Batch openBatch1 = builder.admin().batches().create(product);
       builder.admin().events().createSowing(openBatch1, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, CellType.LARGE, productionLine, seedBatch);
 
@@ -137,28 +154,28 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       Batch openBatch2 = builder.admin().batches().create(product);
       builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 10, CellType.LARGE, productionLine, seedBatch);
       builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 30, CellType.LARGE, productionLine, seedBatch);
-      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 35, wastageReason, null, EventType.HARVEST);
+      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 35, wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
       builder.admin().batches().assertCountByStatus(2, "OPEN");
       builder.admin().batches().assertCountByStatus(0, "CLOSED");
       builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
       
-      Event updateWasteage = builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 5, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 5, wastageReason, null, EventType.HARVEST);
+      Event updateWasteage = builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 5, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 5, wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
       builder.admin().batches().assertCountByStatus(1, "OPEN");
       builder.admin().batches().assertCountByStatus(1, "CLOSED");
       builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
 
-      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 6, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 3, wastageReason, null, EventType.HARVEST);
+      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 6, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 3, wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
       builder.admin().batches().assertCountByStatus(1, "OPEN");
       builder.admin().batches().assertCountByStatus(0, "CLOSED");
       builder.admin().batches().assertCountByStatus(1, "NEGATIVE");
       
-      updateWasteage.setData(builder.admin().events().createWastageEventData(2, wastageReason, EventType.HARVEST));
+      updateWasteage.setData(builder.admin().events().createWastageEventData(2, wastageReason, EventType.HARVEST, productionLine.getId()));
       builder.admin().events().updateEvent(updateWasteage);
       
       builder.admin().batches().assertCount(2);

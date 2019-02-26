@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.localization;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -23,6 +24,18 @@ public class LocalesController {
   public String getString(Locale locale, String key) {
     ResourceBundle resourceBundle = getLocaleBundle(locale);
     return resourceBundle.getString(key);
+  }
+  
+  /**
+   * Returns localized string for given locale, key and params
+   * 
+   * @param locale locale
+   * @param key key
+   * @param params params
+   * @return localized string
+   */
+  public String getString(Locale locale, String key, Object... params) {
+    return (new MessageFormat(getString(locale, key), locale)).format(params);
   }
   
   /**
