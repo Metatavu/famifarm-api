@@ -56,6 +56,7 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @param maxResults max results (optional)
    * @return List of batches
    */
+  @SuppressWarnings ("squid:S00107")
   public List<Batch> list(Product product, Integer remainingUnitsGreaterThan, Integer remainingUnitsLessThan, Integer remainingUnitsEqual, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     
@@ -142,64 +143,6 @@ public class BatchDAO extends AbstractDAO<Batch> {
     batch.setProduct(product);
     return persist(batch);
   }
-  
-//  /**
-//   * List batches created before given time
-//   * 
-//   * @param firstResult firstResult
-//   * @param maxResults maxResults
-//   * @param createdBefore createdBefore
-//   * @return list of batches
-//   */
-//  public List<Batch> listByCreatedBefore(Integer firstResult, Integer maxResults, OffsetDateTime createdBefore) {
-//    EntityManager entityManager = getEntityManager();
-//    
-//    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//    CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
-//    Root<Batch> root = criteria.from(Batch.class);
-//    criteria.select(root);
-//    criteria.where(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.CREATED_AT), createdBefore));
-//    TypedQuery<Batch> query = entityManager.createQuery(criteria);
-//    
-//    if (firstResult != null) {
-//      query.setFirstResult(firstResult);
-//    }
-//    
-//    if (maxResults != null) {
-//      query.setMaxResults(maxResults);
-//    }
-//
-//    return query.getResultList();
-//  }
-//  
-//  /**
-//   * List batches created after given time
-//   * 
-//   * @param firstResult firstResult
-//   * @param maxResults maxResults
-//   * @param createdAfter createdAfter
-//   * @return list of batches
-//   */
-//  public List<Batch> listByCreatedAfter(Integer firstResult, Integer maxResults, OffsetDateTime createdAfter) {
-//    EntityManager entityManager = getEntityManager();
-//    
-//    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//    CriteriaQuery<Batch> criteria = criteriaBuilder.createQuery(Batch.class);
-//    Root<Batch> root = criteria.from(Batch.class);
-//    criteria.select(root);
-//    criteria.where(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.CREATED_AT), createdAfter));
-//    TypedQuery<Batch> query = entityManager.createQuery(criteria);
-//    
-//    if (firstResult != null) {
-//      query.setFirstResult(firstResult);
-//    }
-//    
-//    if (maxResults != null) {
-//      query.setMaxResults(maxResults);
-//    }
-//
-//    return query.getResultList();
-//  }
 
   /**
    * Updates batches active event 

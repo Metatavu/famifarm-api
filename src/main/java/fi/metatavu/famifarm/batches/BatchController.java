@@ -63,6 +63,7 @@ public class BatchController {
    * @param maxResults max results (optional)
    * @return List of batches
    */
+  @SuppressWarnings ("squid:S00107")
   public List<Batch> listBatches(Product product, Integer remainingUnitsGreaterThan, Integer remainingUnitsLessThan, Integer remainingUnitsEqual, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Integer firstResult, Integer maxResults) {
     return batchDAO.list(product, remainingUnitsGreaterThan, remainingUnitsLessThan, remainingUnitsEqual, createdBefore, createdAfter, firstResult, maxResults);
   }
