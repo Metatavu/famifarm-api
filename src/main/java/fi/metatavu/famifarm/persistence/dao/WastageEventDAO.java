@@ -11,6 +11,7 @@ import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.PackingEvent_;
+import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.persistence.model.WastageReason;
 import fi.metatavu.famifarm.rest.model.EventType;
@@ -38,7 +39,7 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    * @return created wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, EventType phase, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, EventType phase, String additionalInformation, ProductionLine productionLine, UUID creatorId, UUID lastModifierId) {
     WastageEvent wastageEvent = new WastageEvent();
     wastageEvent.setRemainingUnits(remainingUnits);
     wastageEvent.setAmount(amount);
@@ -50,6 +51,7 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
     wastageEvent.setCreatorId(creatorId);
     wastageEvent.setLastModifierId(lastModifierId);
     wastageEvent.setAdditionalInformation(additionalInformation);
+    wastageEvent.setProductionLine(productionLine);
     wastageEvent.setPhase(phase);
     return persist(wastageEvent);
   }

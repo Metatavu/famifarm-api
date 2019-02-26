@@ -1,11 +1,14 @@
 package fi.metatavu.famifarm.reporting.xlsx;
 
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Batch;
@@ -56,6 +59,20 @@ public abstract class AbstractXlsxReport implements Report {
     }
         
     return userCache.get(userId);
+  }
+  
+  /**
+   * Parse date
+   * 
+   * @param date date as string
+   * @return date as OffsetDateTime
+   */
+  protected OffsetDateTime parseDate(String date) {
+    if (StringUtils.isEmpty(date)) {
+      return null;
+    }
+    
+    return OffsetDateTime.parse(date);
   }
 
 }

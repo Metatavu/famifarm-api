@@ -4,6 +4,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.reporting.xlsx.XlsxExampleReport;
+import fi.metatavu.famifarm.reporting.xlsx.XlsxWastageReport;
 
 /**
  * Report controller
@@ -16,8 +17,11 @@ public class ReportController {
   @Inject
   private XlsxExampleReport xlsxExampleReport;
   
+  @Inject
+  private XlsxWastageReport xlsxWastageReport;
+  
   /**
-   * Returns report for giveb report type
+   * Returns report for given report type
    * 
    * @param reportType report to
    * @return report instance
@@ -27,6 +31,8 @@ public class ReportController {
     switch (reportType) {
       case XLS_EXAMPLE:
         return xlsxExampleReport;
+      case WASTAGE:
+        return xlsxWastageReport;
     }
     
     return null;
