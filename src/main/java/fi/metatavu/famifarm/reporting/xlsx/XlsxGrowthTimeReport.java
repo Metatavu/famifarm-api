@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.CultivationObservationEventController;
 import fi.metatavu.famifarm.events.EventController;
-import fi.metatavu.famifarm.events.PackingEventController;
 import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
@@ -35,9 +34,6 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
   
   @Inject
   private EventController eventController;
-  
-  @Inject
-  private PackingEventController packingEventController;
   
   @Inject
   private SowingEventController sowingEventController;
