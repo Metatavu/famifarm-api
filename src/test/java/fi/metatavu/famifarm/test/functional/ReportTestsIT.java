@@ -2,13 +2,11 @@ package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
@@ -111,7 +109,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
       byte[] data = builder.admin().reports().createReport("GROWTH_TIME", fromTime, toTime);
-      FileUtils.writeByteArrayToFile(new File("/tmp/tomppa.xlsx"), data);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
