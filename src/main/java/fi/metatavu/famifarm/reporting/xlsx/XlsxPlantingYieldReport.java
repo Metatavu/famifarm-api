@@ -82,16 +82,16 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
         Product product = batch.getProduct();
         String dateString = getDateString(events, formatter);
         String team = getTeam(events, locale);
-        int totalSowedAmount = getTotalSowedAmount(events);
+        int totalPlantedAmount = getTotalPlantedAmount(events);
         int totalAmountInGutters = getTotalAmounInGutters(events);
-        long yield = getYield(totalSowedAmount, totalAmountInGutters);
+        long yield = getYield(totalPlantedAmount, totalAmountInGutters);
         
         xlsxBuilder.setCellValue(sheetId, rowIndex, teamIndex, team);
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
         xlsxBuilder.setCellValue(sheetId, rowIndex, dateIndex, dateString);
-        xlsxBuilder.setCellValue(sheetId, rowIndex, inGuttersIndex, Integer.toString(totalAmountInGutters));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, fromCellsIndex, Integer.toString(totalSowedAmount));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  Long.toString(yield));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, inGuttersIndex, totalAmountInGutters);
+        xlsxBuilder.setCellValue(sheetId, rowIndex, fromCellsIndex, totalPlantedAmount);
+        xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  yield);
         rowIndex++;
       }
       
@@ -133,13 +133,20 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
    * @param events
    * @return total sowed amount
    */
-  private int getTotalSowedAmount(List<Event> events) {
+  private int getTotalPlantedAmount(List<Event> events) {
     int amount = 0;
     
+    SowingEvent sowingEvent = (SowingEvent) events.stream().filter(event -> event.getType() == EventType.SOWING).findFirst().orElse(null);
+    if (sowingEvent == null) {
+      return 0;
+    }
+    
+    CellType cellType = sowingEvent.getCellType();
+
     for (Event event : events) {
-      if (event.getType() == EventType.SOWING) {
-        SowingEvent sowingEvent = (SowingEvent) event;
-        amount += sowingEvent.getAmount() * getCellTypeAmount(sowingEvent.getCellType());
+      if (event.getType() == EventType.PLANTING) {
+        PlantingEvent plantingEvent = (PlantingEvent) event;
+        amount += plantingEvent.getCellCount() * getCellTypeAmount(cellType);
       }
     }
     
