@@ -41,7 +41,6 @@ public abstract class AbstractFunctionalTest {
     Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize);
     Batch batch = builder.admin().batches().create(product);
     return createSowingEvent(builder, batch);
-
   }
 
     /**
@@ -70,8 +69,24 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createSowingEvent(TestBuilder builder, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
-    Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
     Integer amount = 12;
+    
+    return createSowingEvent(builder, batch, amount, startTime, endTime);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch to attach the event to
+   * @param amount amount
+   * @param startTime startTime
+   * @param endTime endTime
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createSowingEvent(TestBuilder builder, Batch batch, int amount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
+    Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
     CellType cellType = CellType.LARGE;
     ProductionLine productionLine = builder.admin().productionLines().create("4", null);
     SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
@@ -191,17 +206,43 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createHarvestEvent(TestBuilder builder) throws IOException {
+    fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType = fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BAGGING;
+
+    return createHarvestEvent(builder, harvestType);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param harvestType harvestType
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
     Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize);
 
     Batch batch = builder.admin().batches().create(product);
+    return createHarvestEvent(builder, harvestType, batch);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param harvestType harvestType
+   * @param batch batch
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Batch batch) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-    ProductionLine productionLine = builder.admin().productionLines().create("4", null);
-    
-    Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team name", "Tiimin nimi"));
-    fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType = fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BAGGING;
 
+    Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team name", "Tiimin nimi"));
+    ProductionLine productionLine = builder.admin().productionLines().create("4", team);
+    
     return builder.admin().events().createHarvest(batch, startTime, endTime, productionLine, team, harvestType);
   }
 
@@ -300,6 +341,49 @@ public abstract class AbstractFunctionalTest {
     
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+
+    Integer amount = 150;
+    String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";
+
+    return builder.admin().events().createWastage(batch, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createWastageEvent(TestBuilder builder, Batch batch) throws IOException {
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
+    Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team 1", "Tiimi 1"));
+    ProductionLine productionLine = builder.admin().productionLines().create("1 A", team);
+    
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+
+    Integer amount = 150;
+    String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";
+
+    return builder.admin().events().createWastage(batch, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch
+   * @param startTime startTime
+   * @param endTime endTime
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createWastageEvent(TestBuilder builder, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
+    Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team 1", "Tiimi 1"));
+    ProductionLine productionLine = builder.admin().productionLines().create("1 A", team);
 
     Integer amount = 150;
     String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";

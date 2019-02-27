@@ -2,11 +2,13 @@ package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
@@ -123,6 +125,54 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("01.02.2022", workbook, 0, 4, 3);
         builder.admin().reports().assertCellValue("15.0", workbook, 0, 4, 4);
         builder.admin().reports().assertCellValue("9", workbook, 0, 4, 5);
+      }
+    }
+  }
+  
+  @Test
+  public void testXlsxYieldReport() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
+      Product product = builder.admin().products().create(name, createdPackageSize);
+      Batch batch = builder.admin().batches().create(product);
+      
+      builder.admin().teams();
+      builder.admin().wastageReasons();
+      
+      createSowingEvent(builder, batch, 160, startTime, endTime);
+      createSowingEvent(builder, batch, 160, startTime, endTime);
+      
+      startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
+      endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      createWastageEvent(builder, batch, startTime, endTime);
+      createHarvestEvent(builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BOXING, batch);
+      
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      
+      byte[] data = builder.admin().reports().createReport("YIELD", fromTime, toTime);
+      FileUtils.writeByteArrayToFile(new File("/tmp/yield.xlsx"), data);
+      assertNotNull(data);
+      
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        builder.admin().reports().assertCellValue("Team", workbook, 0, 3, 0);
+        builder.admin().reports().assertCellValue("Product", workbook, 0, 3, 1);
+        builder.admin().reports().assertCellValue("Date", workbook, 0, 3, 2);
+        builder.admin().reports().assertCellValue("Harvested", workbook, 0, 3, 3);
+        builder.admin().reports().assertCellValue("In boxes", workbook, 0, 3, 4);
+        builder.admin().reports().assertCellValue("Yield %", workbook, 0, 3, 5);
+        
+        builder.admin().reports().assertCellValue("Team name", workbook, 0, 4, 0);
+        builder.admin().reports().assertCellValue("Porduct name", workbook, 0, 4, 1);
+        builder.admin().reports().assertCellValue("03.02.2020", workbook, 0, 4, 2);
+        builder.admin().reports().assertCellValue("11200", workbook, 0, 4, 3);
+        builder.admin().reports().assertCellValue("11050", workbook, 0, 4, 4); // After wastage 150 units
+        builder.admin().reports().assertCellValue("98", workbook, 0, 4, 5); // (11050 * 100) / 11200
       }
     }
   }
