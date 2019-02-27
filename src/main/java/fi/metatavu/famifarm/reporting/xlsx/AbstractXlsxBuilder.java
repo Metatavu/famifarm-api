@@ -147,6 +147,42 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
   }
 
   /**
+   * Sets a cell value
+   * 
+   * @param sheetId sheet id
+   * @param rowNumber row number
+   * @param columnNumber column number
+   * @param value value
+   * @return cell
+   */
+  public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Integer value) {
+    Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
+    if (cell != null) {
+      cell.setCellValue(value);
+    }
+
+    return cell;
+  }
+
+  /**
+   * Sets a cell value
+   * 
+   * @param sheetId sheet id
+   * @param rowNumber row number
+   * @param columnNumber column number
+   * @param value value
+   * @return cell
+   */
+  public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Long value) {
+    Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
+    if (cell != null) {
+      cell.setCellValue(value);
+    }
+
+    return cell;
+  }
+
+  /**
    * Writes sheet into stream
    * 
    * @param stream stream
