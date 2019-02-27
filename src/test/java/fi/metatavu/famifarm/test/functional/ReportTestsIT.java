@@ -175,5 +175,43 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       }
     }
   }
+  
+  @Test
+  public void testXlsxPlantingYieldReport() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
+      Product product = builder.admin().products().create(name, createdPackageSize);
+      Batch batch = builder.admin().batches().create(product);
+      
+      builder.admin().teams();
+      builder.admin().wastageReasons();
+      
+      createSowingEvent(builder, batch, 1, startTime, endTime);
+      createSowingEvent(builder, batch, 1, startTime, endTime);
+      
+      createPlantingEvent(builder, batch, 25, 2);
+      
+      startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
+      endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      createHarvestEvent(builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BOXING, batch);
+      
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      
+      byte[] data = builder.admin().reports().createReport("PLANTING_YIELD", fromTime, toTime);
+      assertNotNull(data);
+      
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        builder.admin().reports().assertCellValue("Team", workbook, 0, 3, 0);
+        builder.admin().reports().assertCellValue("Product", workbook, 0, 3, 1);
+        builder.admin().reports().assertCellValue("Date", workbook, 0, 3, 2);
+      }
+    }
+  }
 
 }
