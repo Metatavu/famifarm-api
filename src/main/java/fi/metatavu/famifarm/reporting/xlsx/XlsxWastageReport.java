@@ -83,7 +83,8 @@ public class XlsxWastageReport extends AbstractXlsxReport {
         Batch batch = batches.get(i);
         List<Event> events = eventController.listEvents(batch, null, null);
         Product product = batch.getProduct();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");     
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"); 
+        
         for (int j = 0; j < events.size(); j++) {
           Event event = events.get(j);
           
