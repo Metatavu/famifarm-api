@@ -1,6 +1,9 @@
 package fi.metatavu.famifarm.test.functional;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -306,5 +309,20 @@ public abstract class AbstractFunctionalTest {
 
     return builder.admin().events().createWastage(batch, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
   }
-  
+
+  /**
+   * Sets remaining units field value for event
+   * 
+   * @param event event
+   * @param remainingUnits value
+   */
+  protected void setEventRemainingUnits(Event event, Integer remainingUnits) {
+    try {
+      Field field = Event.class.getDeclaredField("remainingUnits");
+      field.setAccessible(true);
+      field.set(event, remainingUnits);
+    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+      fail(e.getMessage());
+    }
+  }
 }
