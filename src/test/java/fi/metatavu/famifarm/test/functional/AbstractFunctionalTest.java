@@ -1,6 +1,9 @@
 package fi.metatavu.famifarm.test.functional;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -53,9 +56,24 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createSowingEvent(TestBuilder builder, Batch batch) throws IOException {
-    Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+    
+    return createSowingEvent(builder, batch, startTime, endTime);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch to attach the event to
+   * @param startTime startTime
+   * @param endTime endTime
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createSowingEvent(TestBuilder builder, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
+    Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
     Integer amount = 12;
     CellType cellType = CellType.LARGE;
     ProductionLine productionLine = builder.admin().productionLines().create("4", null);
@@ -110,11 +128,51 @@ public abstract class AbstractFunctionalTest {
     Product product = builder.admin().products().create(name, createdPackageSize);
 
     Batch batch = builder.admin().batches().create(product);
+
+    return createCultivationObservationEvent(builder, batch);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createCultivationObservationEvent(TestBuilder builder, Batch batch) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
     Double luminance = 44d;
     Double weight = 22d;
+    List<PerformedCultivationAction> performedActions = Arrays.asList(
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely")),
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"))
+    );
+    
+    List<Pest> pests = Arrays.asList(
+      builder.admin().pests().create(builder.createLocalizedEntry("Pest 1")),
+      builder.admin().pests().create(builder.createLocalizedEntry("Pest 2"))   
+    );
+    
+    return builder.admin().events().createCultivationObservation(batch, startTime, endTime, luminance, pests, weight, performedActions);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch
+   * @param weight weight
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createCultivationObservationEvent(TestBuilder builder, Batch batch, Double weight) throws IOException {
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+
+    Double luminance = 44d;
     List<PerformedCultivationAction> performedActions = Arrays.asList(
       builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely")),
       builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"))
@@ -194,6 +252,38 @@ public abstract class AbstractFunctionalTest {
     
     return builder.admin().events().createPacking(batch, startTime, endTime, createdPackageSize, packedAmount);
   }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createPackingEvent(TestBuilder builder, Batch batch) throws IOException {
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);    
+    
+    return createPackingEvent(builder, batch, startTime, endTime);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch
+   * @param startTime startTime
+   * @param endTime endTime
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createPackingEvent(TestBuilder builder, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
+    Integer packedAmount = 80;
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+    
+    return builder.admin().events().createPacking(batch, startTime, endTime, createdPackageSize, packedAmount);
+  }
 
   /**
    * Creates test event
@@ -219,5 +309,20 @@ public abstract class AbstractFunctionalTest {
 
     return builder.admin().events().createWastage(batch, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
   }
-  
+
+  /**
+   * Sets remaining units field value for event
+   * 
+   * @param event event
+   * @param remainingUnits value
+   */
+  protected void setEventRemainingUnits(Event event, Integer remainingUnits) {
+    try {
+      Field field = Event.class.getDeclaredField("remainingUnits");
+      field.setAccessible(true);
+      field.set(event, remainingUnits);
+    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+      fail(e.getMessage());
+    }
+  }
 }

@@ -26,7 +26,7 @@ public class WastageEvent extends Event {
   @ManyToOne(optional = false)
   private WastageReason wastageReason;
   
-  @ManyToOne(optional = false)
+  @ManyToOne
   private ProductionLine productionLine;
 
   @NotNull

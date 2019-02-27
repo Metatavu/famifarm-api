@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.events.EventController;
@@ -19,6 +20,7 @@ import fi.metatavu.famifarm.reporting.ReportException;
  * 
  * @author Antti Leppä
  */
+@ApplicationScoped
 public class XlsxExampleReport extends AbstractXlsxReport {
 
   @Inject
