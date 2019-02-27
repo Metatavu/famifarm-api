@@ -2,6 +2,7 @@ package fi.metatavu.famifarm.persistence.dao;
 
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,6 +16,7 @@ import fi.metatavu.famifarm.persistence.model.Draft_;
  * 
  * @author Antti Leppä
  */
+@ApplicationScoped
 public class DraftDAO extends AbstractDAO<Draft> {
 
   /**

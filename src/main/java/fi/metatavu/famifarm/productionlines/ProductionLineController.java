@@ -3,12 +3,14 @@ package fi.metatavu.famifarm.productionlines;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.ProductionLineDAO;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.Team;
 
+@ApplicationScoped
 public class ProductionLineController {
   
   @Inject

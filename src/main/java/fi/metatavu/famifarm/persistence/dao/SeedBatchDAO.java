@@ -3,6 +3,8 @@ package fi.metatavu.famifarm.persistence.dao;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import fi.metatavu.famifarm.persistence.model.Seed;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
 
@@ -11,6 +13,7 @@ import fi.metatavu.famifarm.persistence.model.SeedBatch;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
 
   /**

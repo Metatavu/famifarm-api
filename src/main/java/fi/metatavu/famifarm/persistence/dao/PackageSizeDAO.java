@@ -2,6 +2,8 @@ package fi.metatavu.famifarm.persistence.dao;
 
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 
@@ -10,6 +12,7 @@ import fi.metatavu.famifarm.persistence.model.PackageSize;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class PackageSizeDAO extends AbstractDAO<PackageSize> {
 
   /**

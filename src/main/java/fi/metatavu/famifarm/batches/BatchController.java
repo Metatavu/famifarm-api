@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.BatchDAO;
@@ -20,8 +21,8 @@ import fi.metatavu.famifarm.persistence.model.WastageEvent;
  * Controller for seed batches
  * 
  * @author Ville Koivukangas
- *
  */
+@ApplicationScoped
 public class BatchController {
 
   @Inject
