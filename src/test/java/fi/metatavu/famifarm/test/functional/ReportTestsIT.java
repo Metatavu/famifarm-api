@@ -2,13 +2,11 @@ package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 

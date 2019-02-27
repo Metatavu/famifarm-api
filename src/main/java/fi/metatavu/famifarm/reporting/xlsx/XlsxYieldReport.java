@@ -20,7 +20,6 @@ import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
-import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.rest.model.CellType;
 import fi.metatavu.famifarm.rest.model.EventType;
