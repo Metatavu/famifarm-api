@@ -320,7 +320,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createHarvestEvent(batch, startTime, endTime, additionalInformation, body.getData());
       case PLANTING:
         return createPlantingEvent(batch, startTime, endTime, additionalInformation, body.getData());
-      case WASTEAGE:
+      case WASTAGE:
         return createWastageEvent(batch, startTime, endTime, additionalInformation, body.getData());
       case PACKING:
         return createPackingEvent(batch, startTime, endTime, additionalInformation, body.getData());
@@ -445,7 +445,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       case PLANTING:
         plantingEventController.deletePlantingEvent((PlantingEvent) event);
       break;
-      case WASTEAGE:
+      case WASTAGE:
         wastageEventController.deleteWastageEvent((WastageEvent) event);
       break;
       case PACKING:
@@ -650,7 +650,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   
   @Override
   @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
-  public Response listBatches(String statusParam, Integer firstResult, Integer maxResult, String createdBefore, String createdAfter) {
+  public Response listBatches(String statusParam, UUID productId, Integer firstResult, Integer maxResult, String createdBefore, String createdAfter) {
     BatchListStatus status = null;
     
     if (StringUtils.isNotEmpty(statusParam)) {
@@ -660,27 +660,37 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
     
-    List<fi.metatavu.famifarm.persistence.model.Batch> batches = null;
+    fi.metatavu.famifarm.persistence.model.Product product = productId != null ? productController.findProduct(productId) : null;
+    if (productId != null && product == null) {
+      return createBadRequest("Invalid product id");
+    }
     
-    if (status == null) {
-      batches = batchController.listBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
-    } else {
+    Integer remainingUnitsGreaterThan = null;
+    Integer remainingUnitsLessThan = null;
+    Integer remainingUnitsEqual = null;
+    
+    if (status != null) {
       switch (status) {
         case CLOSED:
-          batches = batchController.listClosedBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
+          remainingUnitsEqual = 0;
         break;
         case NEGATIVE:
-          batches = batchController.listNegativeBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
+          remainingUnitsLessThan = 0;
         break;
         case OPEN:
-          batches = batchController.listOpenBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
+          remainingUnitsGreaterThan = 0;
         break;
       }
     }
     
-    if (batches == null) {
-      return createInternalServerError("Batches list was null");
-    }
+    List<fi.metatavu.famifarm.persistence.model.Batch> batches = batchController.listBatches(product, 
+      remainingUnitsGreaterThan, 
+      remainingUnitsLessThan, 
+      remainingUnitsEqual, 
+      parseTime(createdBefore), 
+      parseTime(createdAfter), 
+      firstResult, 
+      maxResult);
     
     List<Batch> result = batches.stream()
         .map(batchTranslator::translateBatch)
@@ -813,7 +823,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return updateHarvestEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
       case PLANTING:
         return updatePlantingEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
-      case WASTEAGE:
+      case WASTAGE:
         return updateWastageEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
       case PACKING:
         return updatePackingEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
@@ -1084,7 +1094,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return plantingEventTranslator.translateEvent((PlantingEvent) event);
       case PACKING:
         return packingEventTranslator.translateEvent((PackingEvent) event);
-      case WASTEAGE:
+      case WASTAGE:
         return wastageEventTranslator.translateEvent((WastageEvent) event);
       default:
       break;
@@ -1354,8 +1364,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
     
+    Integer amount = eventData.getAmount();
+    
     TypeEnum harvestType = eventData.getType();
-    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType, productionLine, additionalInformation, creatorId);
+    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType, productionLine, additionalInformation, amount, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1619,7 +1631,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer amount = eventData.getAmount();
     EventType phase = eventData.getPhase();
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(eventData.getReasonId());
-    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = eventData.getProductionLineId() != null ? productionLineController.findProductionLine(eventData.getProductionLineId()) : null;
+    
+    if (eventData.getProductionLineId() != null && productionLine == null) {
+      return createBadRequest("Invalid production line");
+    }
     
     WastageEvent event = wastageEventController.createWastageEvent(batch, startTime, endTime, amount, wastageReason, phase, additionalInformation, productionLine, creatorId);
     batchController.updateRemainingUnits(batch);

@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,6 +22,7 @@ import fi.metatavu.famifarm.rest.model.EventType;
  * 
  * @author Heikki Kurhinen
  */
+@ApplicationScoped
 public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
 
   /**

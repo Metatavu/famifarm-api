@@ -10,11 +10,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.EventController;
-import fi.metatavu.famifarm.events.WastageEventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Batch;
@@ -29,15 +29,13 @@ import fi.metatavu.famifarm.rest.model.EventType;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class XlsxWastageReport extends AbstractXlsxReport {
   @Inject
   private LocalesController localesController;
   
   @Inject
   private EventController eventController;
-  
-  @Inject
-  private WastageEventController wastageEventController;
   
   @Inject
   private BatchController batchController;
@@ -78,7 +76,7 @@ public class XlsxWastageReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Batch> batches = batchController.listBatches(null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      List<Batch> batches = batchController.listBatches(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
       int rowIndex = 4;
       
       for (int i = 0; i < batches.size(); i++) {
@@ -89,7 +87,7 @@ public class XlsxWastageReport extends AbstractXlsxReport {
         for (int j = 0; j < events.size(); j++) {
           Event event = events.get(j);
           
-          if (event.getType() == EventType.WASTEAGE) {
+          if (event.getType() == EventType.WASTAGE) {
             WastageEvent wastageEvent = (WastageEvent) event;
             OffsetDateTime endTime = wastageEvent.getEndTime();
             

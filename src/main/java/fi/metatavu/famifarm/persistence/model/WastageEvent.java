@@ -26,7 +26,7 @@ public class WastageEvent extends Event {
   @ManyToOne(optional = false)
   private WastageReason wastageReason;
   
-  @ManyToOne(optional = false)
+  @ManyToOne
   private ProductionLine productionLine;
 
   @NotNull
@@ -70,7 +70,7 @@ public class WastageEvent extends Event {
   @Transient
   @Override
   public EventType getType() {
-    return EventType.WASTEAGE;
+    return EventType.WASTAGE;
   }
 
 }

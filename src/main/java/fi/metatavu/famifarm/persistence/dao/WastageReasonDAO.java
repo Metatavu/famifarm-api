@@ -2,6 +2,8 @@ package fi.metatavu.famifarm.persistence.dao;
 
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.WastageReason;
 
@@ -10,6 +12,7 @@ import fi.metatavu.famifarm.persistence.model.WastageReason;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class WastageReasonDAO extends AbstractDAO<WastageReason> {
 
   /**

@@ -104,6 +104,24 @@ public class BatchTestsIT extends AbstractFunctionalTest {
   }
   
   @Test
+  public void testListBatchesByProduct() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      Product product1 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Product product2 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Product product3 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      
+      builder.admin().batches().create(product1);
+      builder.admin().batches().create(product2);
+      builder.admin().batches().create(product2);
+
+      builder.admin().batches().assertCountByProduct(1, product1);
+      builder.admin().batches().assertCountByProduct(2, product2);
+      builder.admin().batches().assertCountByProduct(0, product3);
+    }
+  }
+  
+  @Test
   public void testListBatchesByStatus() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().packageSizes();
@@ -124,7 +142,6 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       ProductionLine productionLine = builder.admin().productionLines().create("4", null);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC));
       WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test WastageReason", "Testi Syy"));
-      
       
       Batch openBatch1 = builder.admin().batches().create(product);
       builder.admin().events().createSowing(openBatch1, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, CellType.LARGE, productionLine, seedBatch);

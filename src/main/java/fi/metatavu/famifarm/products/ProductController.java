@@ -3,6 +3,7 @@ package fi.metatavu.famifarm.products;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.ProductDAO;
@@ -10,6 +11,7 @@ import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Product;
 
+@ApplicationScoped
 public class ProductController {
   
   @Inject

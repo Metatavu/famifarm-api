@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.batches.BatchController;
@@ -28,6 +29,7 @@ import fi.metatavu.famifarm.rest.model.EventType;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class XlsxGrowthTimeReport extends AbstractXlsxReport {
   @Inject
   private LocalesController localesController;
@@ -83,7 +85,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Batch> batches = batchController.listBatches(null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      List<Batch> batches = batchController.listBatches(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
       int rowIndex = 4;
       
       for (Batch batch : batches) {
