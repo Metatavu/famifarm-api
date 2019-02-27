@@ -320,7 +320,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createHarvestEvent(batch, startTime, endTime, additionalInformation, body.getData());
       case PLANTING:
         return createPlantingEvent(batch, startTime, endTime, additionalInformation, body.getData());
-      case WASTEAGE:
+      case WASTAGE:
         return createWastageEvent(batch, startTime, endTime, additionalInformation, body.getData());
       case PACKING:
         return createPackingEvent(batch, startTime, endTime, additionalInformation, body.getData());
@@ -445,7 +445,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       case PLANTING:
         plantingEventController.deletePlantingEvent((PlantingEvent) event);
       break;
-      case WASTEAGE:
+      case WASTAGE:
         wastageEventController.deleteWastageEvent((WastageEvent) event);
       break;
       case PACKING:
@@ -650,7 +650,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   
   @Override
   @RolesAllowed({Roles.WORKER, Roles.ADMIN, Roles.MANAGER})
-  public Response listBatches(String statusParam, Integer firstResult, Integer maxResult, String createdBefore, String createdAfter) {
+  public Response listBatches(String statusParam, UUID productId, Integer firstResult, Integer maxResult, String createdBefore, String createdAfter) {
     BatchListStatus status = null;
     
     if (StringUtils.isNotEmpty(statusParam)) {
@@ -813,7 +813,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return updateHarvestEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
       case PLANTING:
         return updatePlantingEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
-      case WASTEAGE:
+      case WASTAGE:
         return updateWastageEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
       case PACKING:
         return updatePackingEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
@@ -1084,7 +1084,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return plantingEventTranslator.translateEvent((PlantingEvent) event);
       case PACKING:
         return packingEventTranslator.translateEvent((PackingEvent) event);
-      case WASTEAGE:
+      case WASTAGE:
         return wastageEventTranslator.translateEvent((WastageEvent) event);
       default:
       break;
@@ -1354,8 +1354,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
     
+    Integer amount = eventData.getAmount();
+    
     TypeEnum harvestType = eventData.getType();
-    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType, productionLine, additionalInformation, creatorId);
+    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType, productionLine, additionalInformation, amount, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(event)));

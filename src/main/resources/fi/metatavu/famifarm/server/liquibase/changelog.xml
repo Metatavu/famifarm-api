@@ -551,5 +551,13 @@
       </column>
     </addColumn>
   </changeSet>  
+  
+  <changeSet id="amounttoharvestevent" author="ville.koivukangas">
+    <addColumn tableName="harvestevent">
+      <column name="amount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 
 </databaseChangeLog>

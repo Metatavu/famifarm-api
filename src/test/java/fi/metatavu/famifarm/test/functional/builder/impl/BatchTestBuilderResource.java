@@ -104,7 +104,7 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
       after = createdAfter.toString();
     }
     
-    assertEquals(expected, getApi().listBatches(status, firstResult, maxResults, before, after).size());
+    assertEquals(expected, getApi().listBatches(status, null, firstResult, maxResults, before, after).size());
   }
   
   /** 
@@ -114,7 +114,7 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
    * @param expected expected count
    */
   public void assertCountByStatus(int expected, String status) {
-    assertEquals(expected, getApi().listBatches(status, null, null, null, null).size());
+    assertEquals(expected, getApi().listBatches(status, null, null, null, null, null).size());
   }
   
   /**

@@ -16,7 +16,7 @@ public class WastageEventTranslator extends AbstractEventTranslator<WastageEvent
 
   @Override
   protected EventType getType() {
-    return EventType.WASTEAGE;
+    return EventType.WASTAGE;
   }
 
   @Override

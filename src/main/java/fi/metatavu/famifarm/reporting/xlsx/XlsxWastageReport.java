@@ -85,7 +85,7 @@ public class XlsxWastageReport extends AbstractXlsxReport {
         for (int j = 0; j < events.size(); j++) {
           Event event = events.get(j);
           
-          if (event.getType() == EventType.WASTEAGE) {
+          if (event.getType() == EventType.WASTAGE) {
             WastageEvent wastageEvent = wastageEventController.findWastageEventById(event.getId());
             OffsetDateTime endTime = wastageEvent.getEndTime();
             

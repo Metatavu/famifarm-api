@@ -3,10 +3,12 @@ package fi.metatavu.famifarm.persistence.model;
 import java.beans.Transient;
 
 import javax.persistence.Cacheable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -31,6 +33,10 @@ public class HarvestEvent extends Event {
 
   @ManyToOne
   private ProductionLine productionLine;
+  
+  @NotNull
+  @Column (nullable = false)
+  private Integer amount;
 
   public Team getTeam() {
     return team;
@@ -54,6 +60,14 @@ public class HarvestEvent extends Event {
 
   public void setProductionLine(ProductionLine productionLine) {
     this.productionLine = productionLine;
+  }
+
+  public Integer getAmount() {
+    return amount;
+  }
+
+  public void setAmount(Integer amount) {
+    this.amount = amount;
   }
 
   @Transient

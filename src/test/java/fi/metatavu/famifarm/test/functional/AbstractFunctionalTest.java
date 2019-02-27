@@ -242,8 +242,9 @@ public abstract class AbstractFunctionalTest {
 
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team name", "Tiimin nimi"));
     ProductionLine productionLine = builder.admin().productionLines().create("4", team);
+    Integer amount = 50;
     
-    return builder.admin().events().createHarvest(batch, startTime, endTime, productionLine, team, harvestType);
+    return builder.admin().events().createHarvest(batch, amount, startTime, endTime, productionLine, team, harvestType);
   }
 
   /**
@@ -385,7 +386,7 @@ public abstract class AbstractFunctionalTest {
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team 1", "Tiimi 1"));
     ProductionLine productionLine = builder.admin().productionLines().create("1 A", team);
 
-    Integer amount = 150;
+    Integer amount = 20;
     String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";
 
     return builder.admin().events().createWastage(batch, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());

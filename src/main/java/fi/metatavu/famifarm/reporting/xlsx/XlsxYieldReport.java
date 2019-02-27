@@ -84,8 +84,8 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         String dateString = getDateString(events, formatter);
         String team = getTeam(events, locale);
         int totalSowedAmount = getTotalSowedAmount(events);
-        int totalHarvestedAmount = getTotalHarvestedAmount(events, totalSowedAmount);
-        int totalAmountInBoxes = getTotalAmounInBoxes(events, totalSowedAmount);
+        int totalHarvestedAmount = getTotalHarvestedAmount(events);
+        int totalAmountInBoxes = getTotalAmounInBoxes(events, totalHarvestedAmount);
         long yield = getYield(totalHarvestedAmount, totalAmountInBoxes);
         
         xlsxBuilder.setCellValue(sheetId, rowIndex, teamIndex, team);
@@ -162,44 +162,41 @@ public class XlsxYieldReport extends AbstractXlsxReport {
    * Get total harvested amount
    * 
    * @param events
-   * @param totalSowedAmount totalSowedAmount
    * @return total sowed amount
    */
-  private int getTotalHarvestedAmount(List<Event> events, int totalSowedAmount) {
-    int remainingUnitsOnLastPacking = 0;
+  private int getTotalHarvestedAmount(List<Event> events) {
+    int amount = 0;
     
     for (Event event : events) {
-      if (event.getType() == EventType.PACKING) {
-        remainingUnitsOnLastPacking = event.getRemainingUnits();
+      if (event.getType() == EventType.HARVEST) {
+        HarvestEvent harvestEvent = (HarvestEvent) event;
+        amount += harvestEvent.getAmount();
       }
     }
     
-    return totalSowedAmount - remainingUnitsOnLastPacking;
+    return amount;
   }
   
   /**
    * Get total amount in boxes
    * 
-   * @param events
-   * @param totalSowedAmount
+   * @param events events
+   * @param totalHarvestedAmount totalHarvestedAmount
    * @return total amount in boxes
    */
-  private int getTotalAmounInBoxes(List<Event> events, int totalSowedAmount) {
-    int remainingUnitsOnLastBoxing = 0;
-    int totalWastageAmount = 0;
+  private int getTotalAmounInBoxes(List<Event> events, int totalHarvestedAmount) {
+    int amount = 0;
     
     for (Event event : events) {
       if (event.getType() == EventType.HARVEST) {
         HarvestEvent harvestEvent = (HarvestEvent) event;
         if (harvestEvent.getHarvestType() == TypeEnum.BOXING) {
-          remainingUnitsOnLastBoxing = event.getRemainingUnits();
+          amount += harvestEvent.getAmount();
         }
-      } else if (event.getType() == EventType.WASTEAGE) {
-        WastageEvent wastageEvent = (WastageEvent) event;
-        totalWastageAmount += wastageEvent.getAmount();
       }
     }
-    return (totalSowedAmount - remainingUnitsOnLastBoxing) - totalWastageAmount;
+    
+    return amount;
   }
   
   /**
