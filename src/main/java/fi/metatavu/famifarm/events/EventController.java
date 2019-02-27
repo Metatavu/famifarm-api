@@ -47,6 +47,16 @@ public class EventController {
 
     return eventDAO.listAll(firstResult, maxResults);
   }
+  
+  /**
+   * List by batch and order by start time
+   * 
+   * @param batch batch
+   * @return list of events
+   */
+  public List<Event> listByBatchSortByStartTimeAsc(Batch batch, Integer firstResult, Integer maxResults) {
+    return eventDAO.listByBatchSortByStartTimeAsc(batch, firstResult, maxResults);
+  }
 
   /**
    * Updates remaining units count

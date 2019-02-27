@@ -551,6 +551,14 @@
       </column>
     </addColumn>
   </changeSet>  
+  
+  <changeSet id="amounttoharvestevent" author="ville.koivukangas">
+    <addColumn tableName="harvestevent">
+      <column name="amount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 
   <changeSet id="productionlinetowastageeventnullable" author="antti.leppa">
     <dropNotNullConstraint tableName="wastageevent" columnName="productionline_id" columnDataType="binary(16)"/>

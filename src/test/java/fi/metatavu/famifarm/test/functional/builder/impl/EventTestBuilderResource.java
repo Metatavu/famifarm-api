@@ -130,8 +130,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type type
    * @return created event
    */
-  public Event createHarvest(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
-    HarvestEventData data = createHarvestEventData(productionLine, team, type);
+  public Event createHarvest(Batch batch, Integer amount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+    HarvestEventData data = createHarvestEventData(productionLine, amount, team, type);
 
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -448,10 +448,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type 
    * @return harvest event data
    */
-  private HarvestEventData createHarvestEventData(ProductionLine productionLine, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+  private HarvestEventData createHarvestEventData(ProductionLine productionLine, Integer amount, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
     HarvestEventData data = new HarvestEventData();
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setTeamId(team != null ? team.getId() : null);
+    data.setAmount(amount);
     data.setType(type);
     return data;
   }
