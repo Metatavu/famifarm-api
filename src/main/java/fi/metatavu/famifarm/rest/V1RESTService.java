@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.ejb3.annotation.SecurityDomain;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -53,6 +54,7 @@ import fi.metatavu.famifarm.productionlines.ProductionLineController;
 import fi.metatavu.famifarm.products.ProductController;
 import fi.metatavu.famifarm.reporting.Report;
 import fi.metatavu.famifarm.reporting.ReportController;
+import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.reporting.ReportType;
 import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.Batch;
@@ -114,6 +116,9 @@ import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
 public class V1RESTService extends AbstractApi implements V1Api {
   
   private static final String FAILED_TO_READ_EVENT_DATA = "Failed to read event data";
+
+  @Inject
+  private Logger logger;
 
   @Inject
   private SeedsController seedsController;
@@ -973,10 +978,15 @@ public class V1RESTService extends AbstractApi implements V1Api {
     try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
       report.createReport(output, getLocale(), parameters);
       return streamResponse(output.toByteArray(), report.getContentType());
+    } catch (ReportException e) {
+      this.logger.error("Failed to create report", e);
+      return createInternalServerError("Failed create report");
     } catch (IOException e) {
+      this.logger.error("Failed to stream report", e);
       return createInternalServerError("Failed to stream report");
     } catch (Exception e) {
-      return createInternalServerError("Failed to create report");
+      this.logger.error("Failed to output report", e);
+      return createInternalServerError("Failed to output report");
     }
   }
 
