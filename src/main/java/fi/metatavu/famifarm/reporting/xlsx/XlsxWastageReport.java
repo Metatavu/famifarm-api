@@ -100,8 +100,9 @@ public class XlsxWastageReport extends AbstractXlsxReport {
             xlsxBuilder.setCellValue(sheetId, rowIndex, reasonIndex, localizedValueController.getValue(wastageEvent.getWastageReason().getReason(), locale));
             xlsxBuilder.setCellValue(sheetId, rowIndex, additionalInformationIndex, wastageEvent.getAdditionalInformation());
             xlsxBuilder.setCellValue(sheetId, rowIndex, amountIndex,  wastageEvent.getAmount().toString());
+            rowIndex++;
           }
-          rowIndex++;
+          
         }
       }
       
