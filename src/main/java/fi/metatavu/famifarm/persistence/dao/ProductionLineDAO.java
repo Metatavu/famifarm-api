@@ -2,6 +2,8 @@ package fi.metatavu.famifarm.persistence.dao;
 
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.Team;
 
@@ -10,6 +12,7 @@ import fi.metatavu.famifarm.persistence.model.Team;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
 
   /**

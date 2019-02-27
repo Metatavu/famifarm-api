@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -24,6 +25,7 @@ import fi.metatavu.famifarm.persistence.model.Product;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class BatchDAO extends AbstractDAO<Batch> {
 
   /**

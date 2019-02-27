@@ -2,6 +2,7 @@ package fi.metatavu.famifarm.drafts;
 
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.DraftDAO;
@@ -12,6 +13,7 @@ import fi.metatavu.famifarm.persistence.model.Draft;
  * 
  * @author Antti Leppä
  */
+@ApplicationScoped
 public class DraftController {
 
   @Inject

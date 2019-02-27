@@ -2,6 +2,8 @@ package fi.metatavu.famifarm.persistence.dao;
 
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 
 /**
@@ -9,6 +11,7 @@ import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
  * 
  * @author Antti Leppä
  */
+@ApplicationScoped
 public class LocalizedEntryDAO extends AbstractDAO<LocalizedEntry> {
 
   /**

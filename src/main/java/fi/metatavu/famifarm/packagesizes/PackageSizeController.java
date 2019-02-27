@@ -3,6 +3,7 @@ package fi.metatavu.famifarm.packagesizes;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.PackageSizeDAO;
@@ -13,8 +14,8 @@ import fi.metatavu.famifarm.persistence.model.PackageSize;
  * Controller for seed batches
  * 
  * @author Ville Koivukangas
- *
  */
+@ApplicationScoped
 public class PackageSizeController {
 
   @Inject

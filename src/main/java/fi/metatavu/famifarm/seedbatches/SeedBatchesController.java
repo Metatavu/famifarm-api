@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.SeedBatchDAO;
@@ -16,6 +17,7 @@ import fi.metatavu.famifarm.persistence.model.SeedBatch;
  * @author Ville Koivukangas
  *
  */
+@ApplicationScoped
 public class SeedBatchesController {
 
   @Inject
