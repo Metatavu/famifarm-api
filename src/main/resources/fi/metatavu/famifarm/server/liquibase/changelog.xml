@@ -560,4 +560,8 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="productionlinetowastageeventnullable" author="antti.leppa">
+    <dropNotNullConstraint tableName="wastageevent" columnName="productionline_id" columnDataType="binary(16)"/>
+  </changeSet>
+
 </databaseChangeLog>

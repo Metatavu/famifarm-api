@@ -91,6 +91,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateEvent.setStartTime(updateEndTime);
       updateEvent.setType(EventType.SOWING);
       updateEvent.setUserId(createdEvent.getUserId());
+      setEventRemainingUnits(updateEvent, updateAmount);
       
       builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
@@ -154,6 +155,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateEvent.setStartTime(updateEndTime);
       updateEvent.setType(createdEvent.getType());
       updateEvent.setUserId(createdEvent.getUserId());
+      setEventRemainingUnits(updateEvent, createdEvent.getRemainingUnits());
       
       builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
@@ -231,6 +233,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateEvent.setStartTime(updateEndTime);
       updateEvent.setType(createdEvent.getType());
       updateEvent.setUserId(createdEvent.getUserId());
+      setEventRemainingUnits(updateEvent, createdEvent.getRemainingUnits());
       
       builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
@@ -295,12 +298,13 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateEvent.setStartTime(updateEndTime);
       updateEvent.setType(createdEvent.getType());
       updateEvent.setUserId(createdEvent.getUserId());
+      setEventRemainingUnits(updateEvent, createdEvent.getRemainingUnits());
       
       builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
     }
   }
-  
+
   @Test
   public void testDeleteHarvestEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
@@ -361,6 +365,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateEvent.setStartTime(updateEndTime);
       updateEvent.setType(createdEvent.getType());
       updateEvent.setUserId(createdEvent.getUserId());
+      setEventRemainingUnits(updateEvent, createdEvent.getRemainingUnits());
       
       builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
@@ -427,7 +432,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateEvent.setType(createdEvent.getType());
       updateEvent.setUserId(createdEvent.getUserId());
       updateEvent.setAdditionalInformation(updateAdditionalInformation);
-
+      setEventRemainingUnits(updateEvent, -updateAmount);
+      
       builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
     }
@@ -489,6 +495,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateEvent.setStartTime(updateEndTime);
       updateEvent.setType(createdEvent.getType());
       updateEvent.setUserId(createdEvent.getUserId());
+      setEventRemainingUnits(updateEvent, -updatePackedAmount);
       
       builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));

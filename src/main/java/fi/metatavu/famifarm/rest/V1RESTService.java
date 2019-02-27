@@ -660,27 +660,37 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
     
-    List<fi.metatavu.famifarm.persistence.model.Batch> batches = null;
+    fi.metatavu.famifarm.persistence.model.Product product = productId != null ? productController.findProduct(productId) : null;
+    if (productId != null && product == null) {
+      return createBadRequest("Invalid product id");
+    }
     
-    if (status == null) {
-      batches = batchController.listBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
-    } else {
+    Integer remainingUnitsGreaterThan = null;
+    Integer remainingUnitsLessThan = null;
+    Integer remainingUnitsEqual = null;
+    
+    if (status != null) {
       switch (status) {
         case CLOSED:
-          batches = batchController.listClosedBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
+          remainingUnitsEqual = 0;
         break;
         case NEGATIVE:
-          batches = batchController.listNegativeBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
+          remainingUnitsLessThan = 0;
         break;
         case OPEN:
-          batches = batchController.listOpenBatches(firstResult, maxResult, parseTime(createdBefore), parseTime(createdAfter));  
+          remainingUnitsGreaterThan = 0;
         break;
       }
     }
     
-    if (batches == null) {
-      return createInternalServerError("Batches list was null");
-    }
+    List<fi.metatavu.famifarm.persistence.model.Batch> batches = batchController.listBatches(product, 
+      remainingUnitsGreaterThan, 
+      remainingUnitsLessThan, 
+      remainingUnitsEqual, 
+      parseTime(createdBefore), 
+      parseTime(createdAfter), 
+      firstResult, 
+      maxResult);
     
     List<Batch> result = batches.stream()
         .map(batchTranslator::translateBatch)
@@ -1621,7 +1631,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer amount = eventData.getAmount();
     EventType phase = eventData.getPhase();
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController.findWastageReason(eventData.getReasonId());
-    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = eventData.getProductionLineId() != null ? productionLineController.findProductionLine(eventData.getProductionLineId()) : null;
+    
+    if (eventData.getProductionLineId() != null && productionLine == null) {
+      return createBadRequest("Invalid production line");
+    }
     
     WastageEvent event = wastageEventController.createWastageEvent(batch, startTime, endTime, amount, wastageReason, phase, additionalInformation, productionLine, creatorId);
     batchController.updateRemainingUnits(batch);

@@ -33,7 +33,8 @@ public abstract class AbstractEventTranslator <R, J extends fi.metatavu.famifarm
     result.setType(getType());
     result.setUserId(event.getCreatorId());
     result.setAdditionalInformation(event.getAdditionalInformation());
-
+    result.setRemainingUnits(event.getRemainingUnits());
+    
     return result;
   }
   
