@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.batches.BatchController;
@@ -29,6 +30,7 @@ import fi.metatavu.famifarm.rest.model.EventType;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class XlsxWastageReport extends AbstractXlsxReport {
   @Inject
   private LocalesController localesController;

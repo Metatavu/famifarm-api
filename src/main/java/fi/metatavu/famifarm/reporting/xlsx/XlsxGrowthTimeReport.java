@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.batches.BatchController;
@@ -28,6 +29,7 @@ import fi.metatavu.famifarm.rest.model.EventType;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class XlsxGrowthTimeReport extends AbstractXlsxReport {
   @Inject
   private LocalesController localesController;

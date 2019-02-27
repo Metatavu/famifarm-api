@@ -3,6 +3,7 @@ package fi.metatavu.famifarm.persistence.dao;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -24,6 +25,7 @@ import fi.metatavu.famifarm.persistence.model.Pest_;
  * 
  * @author Antti Leppä
  */
+@ApplicationScoped
 public class CultivationObservationEventPestDAO extends AbstractDAO<CultivationObservationEventPest> {
 
   /**

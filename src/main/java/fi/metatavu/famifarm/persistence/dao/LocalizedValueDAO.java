@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -19,6 +20,7 @@ import fi.metatavu.famifarm.persistence.model.LocalizedValue_;
  * 
  * @author Antti Leppä
  */
+@ApplicationScoped
 public class LocalizedValueDAO extends AbstractDAO<LocalizedValue> {
 
   /**
