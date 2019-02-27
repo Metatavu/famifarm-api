@@ -8,13 +8,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.EventController;
-import fi.metatavu.famifarm.events.HarvestEventController;
-import fi.metatavu.famifarm.events.SowingEventController;
-import fi.metatavu.famifarm.events.WastageEventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Batch;
@@ -33,6 +31,7 @@ import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
  * 
  * @author Ville Koivukangas
  */
+@ApplicationScoped
 public class XlsxYieldReport extends AbstractXlsxReport {
   @Inject
   private LocalesController localesController;
@@ -41,31 +40,10 @@ public class XlsxYieldReport extends AbstractXlsxReport {
   private EventController eventController;
   
   @Inject
-  private WastageEventController wastageEventController;
-  
-  @Inject
-  private HarvestEventController harvestEventController;
-  
-  @Inject
-  private SowingEventController sowingEventController;
-  
-  @Inject
   private BatchController batchController;
   
   @Inject
   private LocalizedValueController localizedValueController;
-  
-  private long yield = 0;
-  
-  private int totalSowedAmount = 0;
-  
-  private int totalHarvestedAmount = 0;
-  
-  private int totalAmountInBoxes = 0;
-  
-  private String team = "-";
-  
-  private String dateString = "";
 
   @Override
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
@@ -100,15 +78,15 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       int rowIndex = 4;
       
       for (Batch batch : batches) {
-        List<Event> events = eventController.listByBatchSortByStartTimeAsc(batch, null, null);
+        List<Event> events = eventController.listByBatchSortByStartTimeAsc(batch, null, null); 
         
         Product product = batch.getProduct();
-        setDateString(events, formatter);
-        setTeam(events, locale);
-        setTotalSowedAmount(events);
-        setTotalHarvestedAmount(events);
-        setTotalAmounInBoxes(events);
-        setYield();
+        String dateString = getDateString(events, formatter);
+        String team = getTeam(events, locale);
+        int totalSowedAmount = getTotalSowedAmount(events);
+        int totalHarvestedAmount = getTotalHarvestedAmount(events, totalSowedAmount);
+        int totalAmountInBoxes = getTotalAmounInBoxes(events, totalSowedAmount);
+        long yield = getYield(totalHarvestedAmount, totalAmountInBoxes);
         
         xlsxBuilder.setCellValue(sheetId, rowIndex, teamIndex, team);
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
@@ -125,42 +103,46 @@ public class XlsxYieldReport extends AbstractXlsxReport {
   }
   
   /**
-   * Set date
+   * Get date
    * 
    * @param events events
    * @param formatter formatter
+   * @return date string
    */
-  private void setDateString(List<Event> events, DateTimeFormatter formatter) {
+  private String getDateString(List<Event> events, DateTimeFormatter formatter) {
     OffsetDateTime date = null;
     
     for (Event event : events) {
       if (event.getType() == EventType.HARVEST) {
-        HarvestEvent harvestEvent = harvestEventController.findHarvestEventById(event.getId());
+        HarvestEvent harvestEvent = (HarvestEvent) event;
         if (harvestEvent.getEndTime() != null) {
           date = harvestEvent.getEndTime();
         }
       }
     }
     
-    dateString = date.format(formatter);
+    if (date != null) {
+      return date.format(formatter);
+    }
+    
+    return "";
   }
   
   /**
-   * Set total sowed amount
+   * Get total sowed amount
    * 
    * @param events events
+   * @return total sowed amount
    */
-  private void setTotalSowedAmount(List<Event> events) {
-    totalSowedAmount = 0;
+  private int getTotalSowedAmount(List<Event> events) {
+    int totalSowedAmount = 0;
     for (Event event : events) {
       if (event.getType() == EventType.SOWING) {
-        SowingEvent sowingEvent = sowingEventController.findSowingEventById(event.getId());
-        
-        if (sowingEvent != null) {
-          totalSowedAmount += sowingEvent.getAmount() * getCellTypeAmount(sowingEvent.getCellType());
-        }
+        SowingEvent sowingEvent = (SowingEvent) event;
+        totalSowedAmount += sowingEvent.getAmount() * getCellTypeAmount(sowingEvent.getCellType());
       }
     }
+    return totalSowedAmount;
   }
   
   /**
@@ -177,11 +159,13 @@ public class XlsxYieldReport extends AbstractXlsxReport {
   }
   
   /**
-   * Set total harvested amount
+   * Get total harvested amount
    * 
    * @param events
+   * @param totalSowedAmount totalSowedAmount
+   * @return total sowed amount
    */
-  private void setTotalHarvestedAmount(List<Event> events) {
+  private int getTotalHarvestedAmount(List<Event> events, int totalSowedAmount) {
     int remainingUnitsOnLastPacking = 0;
     
     for (Event event : events) {
@@ -190,54 +174,61 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       }
     }
     
-    totalHarvestedAmount = totalSowedAmount - remainingUnitsOnLastPacking;
+    return totalSowedAmount - remainingUnitsOnLastPacking;
   }
   
   /**
-   * Set total amount in boxes
+   * Get total amount in boxes
    * 
    * @param events
+   * @param totalSowedAmount
+   * @return total amount in boxes
    */
-  private void setTotalAmounInBoxes(List<Event> events) {
+  private int getTotalAmounInBoxes(List<Event> events, int totalSowedAmount) {
     int remainingUnitsOnLastBoxing = 0;
     int totalWastageAmount = 0;
     
     for (Event event : events) {
       if (event.getType() == EventType.HARVEST) {
-        HarvestEvent harvestEvent = harvestEventController.findHarvestEventById(event.getId());
+        HarvestEvent harvestEvent = (HarvestEvent) event;
         if (harvestEvent.getHarvestType() == TypeEnum.BOXING) {
           remainingUnitsOnLastBoxing = event.getRemainingUnits();
         }
       } else if (event.getType() == EventType.WASTEAGE) {
-        WastageEvent wastageEvent = wastageEventController.findWastageEventById(event.getId());
+        WastageEvent wastageEvent = (WastageEvent) event;
         totalWastageAmount += wastageEvent.getAmount();
       }
     }
-    totalAmountInBoxes = (totalSowedAmount - remainingUnitsOnLastBoxing) - totalWastageAmount;
+    return (totalSowedAmount - remainingUnitsOnLastBoxing) - totalWastageAmount;
   }
   
   /**
-   * Set yield percentage
+   * Get yield percentage
    * 
+   * @param totalHarvestedAmount totalHarvestedAmount
+   * @param totalAmountInBoxes totalAmountInBoxes
+   * @return yield
    */
-  private void setYield() {
-    yield = (totalAmountInBoxes * 100) / totalHarvestedAmount; 
+  private long getYield(int totalHarvestedAmount, int totalAmountInBoxes) {
+    return (totalAmountInBoxes * 100) / totalHarvestedAmount; 
   }
   
   /**
-   * Set team id
+   * Get team
    * 
    * @param events events
+   * @return team
    */
-  private void setTeam(List<Event> events, Locale locale) {
+  private String getTeam(List<Event> events, Locale locale) {
     for (Event event : events) {
       if (event.getType() == EventType.HARVEST) {
-        HarvestEvent harvestEvent = harvestEventController.findHarvestEventById(event.getId());
+        HarvestEvent harvestEvent = (HarvestEvent) event;
         if (harvestEvent.getProductionLine().getDefaultTeam() != null) {
-          team = localizedValueController.getValue(harvestEvent.getProductionLine().getDefaultTeam().getName(), locale);
+          return localizedValueController.getValue(harvestEvent.getProductionLine().getDefaultTeam().getName(), locale);
         }
         break;
       }
     }
+    return "";
   }
 }
