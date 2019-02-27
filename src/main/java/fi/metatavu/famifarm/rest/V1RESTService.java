@@ -429,6 +429,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(String.format("Could not find event %s", eventId));
     }
     
+    fi.metatavu.famifarm.persistence.model.Batch batch = event.getBatch();
+    
     switch (event.getType()) {
       case CULTIVATION_OBSERVATION:
         cultivationObservationEventController.deleteCultivationActionEvent((CultivationObservationEvent) event);
@@ -455,6 +457,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return Response.status(Status.NOT_IMPLEMENTED).build();
     }
     
+    updateBatchActiveEvent(batch);
+
     return createNoContent();
   }
 
@@ -1684,9 +1688,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
    * @return same event
    */
   private <E extends fi.metatavu.famifarm.persistence.model.Event> E updateBatchActiveEvent(E event) {
-    fi.metatavu.famifarm.persistence.model.Event activeEvent = eventController.findLastEventByBatch(event.getBatch());
-    batchController.updateBatchActiveEvent(event.getBatch(), activeEvent);
+    updateBatchActiveEvent(event.getBatch());
     return event;
+  }
+  
+  /**
+   * Updates batche's active event
+   * 
+   * @param batch batch
+   * @return same event
+   */
+  private void updateBatchActiveEvent(fi.metatavu.famifarm.persistence.model.Batch batch) {
+    fi.metatavu.famifarm.persistence.model.Event activeEvent = eventController.findLastEventByBatch(batch);
+    batchController.updateBatchActiveEvent(batch, activeEvent);
   }
   
   private <D> D readEventData(Class<D> targetClass, Object object) throws IOException {
