@@ -19,9 +19,7 @@ import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
-import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.rest.model.CellType;
 import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
 
@@ -83,7 +81,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         String dateString = getDateString(events, formatter);
         String team = getTeam(events, locale);
         int totalHarvestedAmount = getTotalHarvestedAmount(events);
-        int totalAmountInBoxes = getTotalAmounInBoxes(events, totalHarvestedAmount);
+        int totalAmountInBoxes = getTotalAmounInBoxes(events);
         long yield = getYield(totalHarvestedAmount, totalAmountInBoxes);
         
         xlsxBuilder.setCellValue(sheetId, rowIndex, teamIndex, team);
@@ -127,19 +125,6 @@ public class XlsxYieldReport extends AbstractXlsxReport {
   }
   
   /**
-   * Get cell type as int
-   * 
-   * @param cellType, cellType
-   * @return amount
-   */
-  private int getCellTypeAmount(CellType cellType) {
-    if (CellType.SMALL == cellType) {
-      return 54;
-    }
-    return 35;
-  }
-  
-  /**
    * Get total harvested amount
    * 
    * @param events
@@ -165,7 +150,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
    * @param totalHarvestedAmount totalHarvestedAmount
    * @return total amount in boxes
    */
-  private int getTotalAmounInBoxes(List<Event> events, int totalHarvestedAmount) {
+  private int getTotalAmounInBoxes(List<Event> events) {
     int amount = 0;
     
     for (Event event : events) {
