@@ -72,7 +72,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Batch> batches = batchController.listBatches(null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      List<Batch> batches = batchController.listBatches(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
       int rowIndex = 4;
       
@@ -82,7 +82,6 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         Product product = batch.getProduct();
         String dateString = getDateString(events, formatter);
         String team = getTeam(events, locale);
-        int totalSowedAmount = getTotalSowedAmount(events);
         int totalHarvestedAmount = getTotalHarvestedAmount(events);
         int totalAmountInBoxes = getTotalAmounInBoxes(events, totalHarvestedAmount);
         long yield = getYield(totalHarvestedAmount, totalAmountInBoxes);
@@ -125,23 +124,6 @@ public class XlsxYieldReport extends AbstractXlsxReport {
     }
     
     return "";
-  }
-  
-  /**
-   * Get total sowed amount
-   * 
-   * @param events events
-   * @return total sowed amount
-   */
-  private int getTotalSowedAmount(List<Event> events) {
-    int totalSowedAmount = 0;
-    for (Event event : events) {
-      if (event.getType() == EventType.SOWING) {
-        SowingEvent sowingEvent = (SowingEvent) event;
-        totalSowedAmount += sowingEvent.getAmount() * getCellTypeAmount(sowingEvent.getCellType());
-      }
-    }
-    return totalSowedAmount;
   }
   
   /**

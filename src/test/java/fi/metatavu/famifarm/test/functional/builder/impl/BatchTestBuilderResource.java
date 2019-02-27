@@ -117,6 +117,16 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
     assertEquals(expected, getApi().listBatches(status, null, null, null, null, null).size());
   }
   
+  /** 
+   * Asserts batch count within the system by status
+   * 
+   * @param status used status filter
+   * @param expected expected count
+   */
+  public void assertCountByProduct(int expected, Product product) {
+    assertEquals(expected, getApi().listBatches(null, product.getId(), null, null, null, null).size());
+  }
+  
   /**
    * Asserts find status fails with given status code
    * 
