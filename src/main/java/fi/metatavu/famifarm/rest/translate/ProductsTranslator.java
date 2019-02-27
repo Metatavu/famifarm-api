@@ -26,6 +26,7 @@ public class ProductsTranslator extends AbstractTranslator {
     Product result = new Product();
     result.setId(product.getId());
     result.setName(translatelocalizedValue(product.getName()));
+    result.setDefaultPackageSizeId(product.getDefaultPackageSize() != null ? product.getDefaultPackageSize().getId() : null);
 
     return result;
   }

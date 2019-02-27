@@ -9,5 +9,6 @@ public enum ReportType {
 
   XLS_EXAMPLE,
   WASTAGE,
-  GROWTH_TIME
+  GROWTH_TIME,
+  YIELD
 }
