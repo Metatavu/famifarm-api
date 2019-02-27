@@ -240,12 +240,26 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Batch batch) throws IOException {
+    Integer amount = 50;
+    
+    return createHarvestEvent(builder, harvestType, batch, amount);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param harvestType harvestType
+   * @param batch batch
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Batch batch, Integer amount) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team name", "Tiimin nimi"));
     ProductionLine productionLine = builder.admin().productionLines().create("4", team);
-    Integer amount = 50;
     
     return builder.admin().events().createHarvest(batch, amount, startTime, endTime, productionLine, team, harvestType);
   }
@@ -263,16 +277,41 @@ public abstract class AbstractFunctionalTest {
     Product product = builder.admin().products().create(name, createdPackageSize);
     
     Batch batch = builder.admin().batches().create(product);
+    
+    return createPlantingEvent(builder, batch);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createPlantingEvent(TestBuilder builder, Batch batch) throws IOException {
+    Integer gutterSize = 2;
+    Integer gutterCount = 2;
+    
+    return createPlantingEvent(builder, batch, gutterSize, gutterCount);
+  }
+  
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createPlantingEvent(TestBuilder builder, Batch batch, Integer gutterSize, Integer gutterCount) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-    Integer gutterNumber = 2;
     ProductionLine productionLine = builder.admin().productionLines().create("4", null);
-    
-    Integer gutterCount = 2;
     Integer trayCount = 50;
     Integer workerCount = 2;
     
-    return builder.admin().events().createPlanting(batch, startTime, endTime, gutterCount, gutterNumber, productionLine, trayCount, workerCount);
+    return builder.admin().events().createPlanting(batch, startTime, endTime, gutterCount, gutterSize, productionLine, trayCount, workerCount);
   }
 
   /**

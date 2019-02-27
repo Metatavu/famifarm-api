@@ -11,7 +11,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.batches.BatchController;
-import fi.metatavu.famifarm.events.CultivationObservationEventController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.localization.LocalesController;
@@ -22,7 +21,6 @@ import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * Report for growth time
@@ -41,23 +39,13 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
   private SowingEventController sowingEventController;
   
   @Inject
-  private CultivationObservationEventController cultivationObservationEventController;
-  
-  @Inject
   private BatchController batchController;
   
   @Inject
   private LocalizedValueController localizedValueController;
-  
-  private float totalWeight = 0;
-  
-  private int amountOfCultivationObservations = 0;
-  
-  private Event lastPackingEvent = null;
-  
-  private Event firstSowingEvent = null;
 
   @Override
+  @SuppressWarnings ("squid:S3776")
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
       String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.wastage.title"));
@@ -93,25 +81,32 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
         Product product = batch.getProduct();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); 
         
-        lastPackingEvent = null;
-        firstSowingEvent = null;
-        totalWeight = 0;
-        amountOfCultivationObservations = 0;
+        float totalWeight = 0;    
+        int amountOfCultivationObservations = 0;    
+        Event lastPackingEvent = null;
+        Event firstSowingEvent = null;
+        
         double averageWeight = 0;
         
         for (Event event: events) {
           switch (event.getType()) {
             case CULTIVATION_OBSERVATION:
-              handleCultivationObservationEvent(event);
-              break;
+              CultivationObservationEvent cultivationObservationEvent = (CultivationObservationEvent) event;
+              amountOfCultivationObservations++;
+              totalWeight += cultivationObservationEvent.getWeight();
+            break;
             case PACKING:
-              handlePackingEvent(event);
-              break;
+              if ((lastPackingEvent == null) || (lastPackingEvent != null && event.getEndTime().isAfter(lastPackingEvent.getEndTime()))) {
+                lastPackingEvent = event; 
+              }
+            break;
             case SOWING:
-              handleSowingEvent(event);
-              break;
+              if ((firstSowingEvent == null) || (firstSowingEvent != null && event.getStartTime().isBefore(firstSowingEvent.getStartTime()))) {
+                firstSowingEvent = event; 
+              }
+            break;
             default:
-              break;
+            break;
           }
         }
         
@@ -141,44 +136,5 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
       throw new ReportException(e);
     }
   }
-  
-  /**
-   * Handle packing event
-   * 
-   * @param event
-   */
-  private void handlePackingEvent(Event event) {
-    if (lastPackingEvent == null) {
-      lastPackingEvent = event;
-    } else {
-      if (event.getEndTime().isAfter(lastPackingEvent.getEndTime())) {
-        lastPackingEvent = event; 
-      }
-    }
-  }
-  /**
-   * Handle sowing event
-   * @param event
-   */
-  private void handleSowingEvent(Event event) {
-    if (firstSowingEvent == null) {
-      firstSowingEvent = event;
-    } else {
-      if (event.getStartTime().isBefore(firstSowingEvent.getStartTime())) {
-        firstSowingEvent = event; 
-      }
-    }
-  }
-  
-  /**
-   * Handle cultivation observation event
-   * @param event
-   */
-  private void handleCultivationObservationEvent(Event event) {
-    if (event.getType() == EventType.CULTIVATION_OBSERVATION) {
-      CultivationObservationEvent cultivationObservationEvent = cultivationObservationEventController.findCultivationActionEventById(event.getId());
-      totalWeight += cultivationObservationEvent.getWeight();
-      amountOfCultivationObservations++;
-    }
-  }
+
 }
