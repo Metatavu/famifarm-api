@@ -188,12 +188,16 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
   /**
    * Get yield percentage
    * 
-   * @param totalSowedAmount totalSowedAmount
+   * @param totalPlantedAmount totalSowedAmount
    * @param totalAmountInGutters totalAmountInGutters
    * @return yield
    */
-  private long getYield(int totalSowedAmount, int totalAmountInGutters) {
-    return (totalAmountInGutters * 100) / totalSowedAmount; 
+  private long getYield(int totalPlantedAmount, int totalAmountInGutters) {
+    if (totalAmountInGutters == 0) {
+      return 0l;
+    }
+    
+    return (totalAmountInGutters * 100) / totalPlantedAmount; 
   }
   
   /**
