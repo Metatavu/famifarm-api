@@ -173,6 +173,10 @@ public class XlsxYieldReport extends AbstractXlsxReport {
    * @return yield
    */
   private long getYield(int totalHarvestedAmount, int totalAmountInBoxes) {
+    if (totalHarvestedAmount == 0) {
+      return 0l;
+    }
+    
     return (totalAmountInBoxes * 100) / totalHarvestedAmount; 
   }
   
