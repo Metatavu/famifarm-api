@@ -70,9 +70,11 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("Worker", workbook, 0, 3, 2);
         builder.admin().reports().assertCellValue("Product", workbook, 0, 3, 3);
         builder.admin().reports().assertCellValue("Product name", workbook, 0, 4, 3);
-        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 4, 4);
+        builder.admin().reports().assertCellValue("HARVEST", workbook, 0, 4, 4);
+        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 4, 5);
+        builder.admin().reports().assertCellValue("Additional information", workbook, 0, 3, 6);
         builder.admin().reports().assertCellValue("Product name", workbook, 0, 5, 3);
-        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 5, 4);
+        builder.admin().reports().assertCellValue("Test reason", workbook, 0, 5, 5);
         builder.admin().reports().assertCellValue("User, Admin", workbook, 0, 4, 2);
       }
     }
