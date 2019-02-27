@@ -45,6 +45,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
   private LocalizedValueController localizedValueController;
 
   @Override
+  @SuppressWarnings ("squid:S3776")
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
       String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.wastage.title"));
@@ -93,23 +94,19 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
               CultivationObservationEvent cultivationObservationEvent = (CultivationObservationEvent) event;
               amountOfCultivationObservations++;
               totalWeight += cultivationObservationEvent.getWeight();
-              break;
+            break;
             case PACKING:
-              if (lastPackingEvent != null && event.getEndTime().isAfter(lastPackingEvent.getEndTime())) {
-                lastPackingEvent = event; 
-              } else if (lastPackingEvent == null) {
+              if ((lastPackingEvent == null) || (lastPackingEvent != null && event.getEndTime().isAfter(lastPackingEvent.getEndTime()))) {
                 lastPackingEvent = event; 
               }
-              break;
+            break;
             case SOWING:
-              if (firstSowingEvent != null && event.getStartTime().isBefore(firstSowingEvent.getStartTime())) {
-                firstSowingEvent = event; 
-              } else if (firstSowingEvent == null) {
+              if ((firstSowingEvent == null) || (firstSowingEvent != null && event.getStartTime().isBefore(firstSowingEvent.getStartTime()))) {
                 firstSowingEvent = event; 
               }
-              break;
+            break;
             default:
-              break;
+            break;
           }
         }
         
