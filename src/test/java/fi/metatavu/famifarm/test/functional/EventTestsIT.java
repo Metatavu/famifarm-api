@@ -273,7 +273,9 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testUpdateHarvestEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createHarvestEvent(builder);
-      
+      @SuppressWarnings("unchecked") Map<String, Object> createdData = (Map<String, Object>) createdEvent.getData();
+      Integer createdAmount = (Integer) createdData.get("amount");
+
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
       
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"));
@@ -289,6 +291,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateData.setProductionLineId(updateProductionLine.getId());
       updateData.setTeamId(updateTeam.getId());
       updateData.setType(fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.CUTTING);
+      updateData.setAmount(createdAmount);
 
       Event updateEvent = new Event(); 
       updateEvent.setId(createdEvent.getId());
