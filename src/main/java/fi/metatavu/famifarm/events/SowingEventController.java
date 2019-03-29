@@ -13,7 +13,7 @@ import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
-import fi.metatavu.famifarm.rest.model.CellType;
+import fi.metatavu.famifarm.rest.model.PotType;
 
 /**
  * Controller for sowing events
@@ -37,15 +37,15 @@ public class SowingEventController {
    * @param endTime endTime
    * @param productionLine productionLine
    * @param seedBatch seedBatch
-   * @param cellType cellType
+   * @param potType pot type
    * @param amount amount
    * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated sowingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Integer amount, String additionalInformation, UUID creatorId) {
-    return sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, seedBatch, cellType, amount, 0, additionalInformation, creatorId, creatorId);
+  public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, PotType potType, Integer amount, String additionalInformation, UUID creatorId) {
+    return sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, seedBatch, potType, amount, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -78,20 +78,20 @@ public class SowingEventController {
    * @param endTime endTime
    * @param productionLine productionLine
    * @param seedBatch seedBatch
-   * @param cellType cellType
+   * @param potType pot type
    * @param amount amount
    * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated sowingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent updateSowingEvent(SowingEvent sowingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Integer amount, String additionalInformation, UUID modifier) {
+  public SowingEvent updateSowingEvent(SowingEvent sowingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, PotType potType, Integer amount, String additionalInformation, UUID modifier) {
     sowingEventDAO.updateBatch(sowingEvent, batch, modifier);
     sowingEventDAO.updateStartTime(sowingEvent, startTime, modifier);
     sowingEventDAO.updateEndTime(sowingEvent, endTime, modifier);
     sowingEventDAO.updateProductionLine(sowingEvent, productionLine, modifier);
     sowingEventDAO.updateSeedBatch(sowingEvent, seedBatch, modifier);
-    sowingEventDAO.updateCellType(sowingEvent, cellType, modifier);
+    sowingEventDAO.updatePotType(sowingEvent, potType, modifier);
     sowingEventDAO.updateAmount(sowingEvent, amount, modifier);
     sowingEventDAO.updateAdditionalInformation(sowingEvent, additionalInformation, modifier);
     

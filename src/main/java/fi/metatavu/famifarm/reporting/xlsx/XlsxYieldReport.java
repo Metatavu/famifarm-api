@@ -18,6 +18,7 @@ import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
+import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.rest.model.EventType;
@@ -80,16 +81,16 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         Product product = batch.getProduct();
         String dateString = getDateString(events, formatter);
         String team = getTeam(events, locale);
-        int totalHarvestedAmount = getTotalHarvestedAmount(events);
-        int totalAmountInBoxes = getTotalAmounInBoxes(events);
-        long yield = getYield(totalHarvestedAmount, totalAmountInBoxes);
+        double totalHarvestedAmount = getTotalHarvestedAmount(events);
+        double totalAmountInBoxes = getTotalAmounInBoxes(events);
+        double yield = getYield(totalHarvestedAmount, totalAmountInBoxes);
         
         xlsxBuilder.setCellValue(sheetId, rowIndex, teamIndex, team);
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
         xlsxBuilder.setCellValue(sheetId, rowIndex, dateIndex, dateString);
-        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestedIndex, Integer.toString(totalHarvestedAmount));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, inBoxesIndex, Integer.toString(totalAmountInBoxes));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  Long.toString(yield));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestedIndex, Double.toString(totalHarvestedAmount));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, inBoxesIndex, Double.toString(totalAmountInBoxes));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  Double.toString(yield));
       }
       
       xlsxBuilder.write(output);
@@ -123,20 +124,46 @@ public class XlsxYieldReport extends AbstractXlsxReport {
     
     return "";
   }
-  
+
+  /**
+   * Get weighted average gutter hole count
+   * 
+   * @param events
+   * @return weighted average gutter hole count
+   */
+  private double getAverageGutterHoleCount(List<Event> events) {
+    int totalWeightedSize = 0;
+    int totalGutterCount = 0;
+    
+    for (Event event : events) {
+      if (event.getType() == EventType.PLANTING) {
+        PlantingEvent plantingEvent = (PlantingEvent) event;
+        totalWeightedSize += (plantingEvent.getGutterSize() * plantingEvent.getGutterCount());
+        totalGutterCount += plantingEvent.getGutterCount();
+      }
+    }
+
+    if (totalWeightedSize == 0 || totalGutterCount == 0) {
+      return 0;
+    }
+
+    return totalWeightedSize / totalGutterCount;
+  }
+
   /**
    * Get total harvested amount
    * 
    * @param events
    * @return total sowed amount
    */
-  private int getTotalHarvestedAmount(List<Event> events) {
-    int amount = 0;
-    
+  private double getTotalHarvestedAmount(List<Event> events) {
+    double amount = 0;
+    double gutterHoleCount = getAverageGutterHoleCount(events);
+
     for (Event event : events) {
       if (event.getType() == EventType.HARVEST) {
         HarvestEvent harvestEvent = (HarvestEvent) event;
-        amount += harvestEvent.getAmount();
+        amount += (harvestEvent.getGutterCount() * gutterHoleCount);
       }
     }
     
@@ -150,14 +177,15 @@ public class XlsxYieldReport extends AbstractXlsxReport {
    * @param totalHarvestedAmount totalHarvestedAmount
    * @return total amount in boxes
    */
-  private int getTotalAmounInBoxes(List<Event> events) {
-    int amount = 0;
-    
+  private double getTotalAmounInBoxes(List<Event> events) {
+    double amount = 0;
+    double gutterHoleCount = getAverageGutterHoleCount(events);
+
     for (Event event : events) {
       if (event.getType() == EventType.HARVEST) {
         HarvestEvent harvestEvent = (HarvestEvent) event;
         if (harvestEvent.getHarvestType() == TypeEnum.BOXING) {
-          amount += harvestEvent.getAmount();
+          amount += harvestEvent.getGutterCount() * gutterHoleCount;
         }
       }
     }
@@ -172,7 +200,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
    * @param totalAmountInBoxes totalAmountInBoxes
    * @return yield
    */
-  private long getYield(int totalHarvestedAmount, int totalAmountInBoxes) {
+  private double getYield(double totalHarvestedAmount, double totalAmountInBoxes) {
     if (totalHarvestedAmount == 0) {
       return 0l;
     }

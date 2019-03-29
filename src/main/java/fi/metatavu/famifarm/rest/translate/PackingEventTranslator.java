@@ -27,7 +27,7 @@ public class PackingEventTranslator extends AbstractEventTranslator<PackingEvent
     
     PackingEventData result = new PackingEventData();
     result.setPackageSizeId(event.getPackageSize() != null ? event.getPackageSize().getId() : null);
-    result.setPackedAmount(event.getPackedAmount());
+    result.setPackedCount(event.getPackedCount());
     
     return result;
   }

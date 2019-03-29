@@ -16,7 +16,7 @@ import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.client.EventsApi;
 import fi.metatavu.famifarm.client.model.Batch;
-import fi.metatavu.famifarm.client.model.CellType;
+import fi.metatavu.famifarm.client.model.PotType;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.EventType;
 import fi.metatavu.famifarm.client.model.HarvestEventData;
@@ -53,13 +53,13 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param startTime event start time
    * @param endTime event end time
    * @param amount amount
-   * @param cellType cell type
+   * @param potType type
    * @param productionLine production line id
    * @param seedBatch seed batch
    * @return created event
    */
-  public Event createSowing(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
-    SowingEventData data = createSowingEventData(amount, cellType, productionLine, seedBatch);
+  public Event createSowing(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, SeedBatch seedBatch) {
+    SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatch);
     
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -274,13 +274,13 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param startTime event start time
    * @param endTime event end time
    * @param amount amount
-   * @param cellType cell type
+   * @param potType cell type
    * @param productionLine production line
    * @param seedBatch seed batch
    */
-  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
+  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, SeedBatch seedBatch) {
     try {
-      SowingEventData data = createSowingEventData(amount, cellType, productionLine, seedBatch);
+      SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatch);
       
       Event event = new Event();
       event.setBatchId(batch != null ? batch.getId() : null);
@@ -395,16 +395,16 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Creates event data object
    * 
    * @param amount amount
-   * @param cellType cell type
+   * @param potType cell type
    * @param gutterNumber gutter number
    * @param productionLine production line
    * @param seedBatch seed batch
    * @return
    */
-  private SowingEventData createSowingEventData(Integer amount, CellType cellType, ProductionLine productionLine, SeedBatch seedBatch) {
+  private SowingEventData createSowingEventData(Integer amount, PotType potType, ProductionLine productionLine, SeedBatch seedBatch) {
     SowingEventData data = new SowingEventData();
     data.setAmount(amount);
-    data.setCellType(cellType);
+    data.setPotType(potType);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setSeedBatchId(seedBatch != null ? seedBatch.getId() : null);
     return data;

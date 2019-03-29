@@ -34,17 +34,17 @@ public class PlantingEventController {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param gutterSize gutterSize
+   * @param gutterHoleCount gutterHoleCount
    * @param gutterCount gutterCount
-   * @param cellCount cellCount
+   * @param trayCount trayCount
    * @param workerCount workerCount
    * @param additionalInformation additional information
    * @return created plantingEvent
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent createPlantingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, String additionalInformation, UUID creatorId) {
-    return plantingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterSize, gutterCount, cellCount, workerCount, 0, additionalInformation, creatorId, creatorId);
+  public PlantingEvent createPlantingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, String additionalInformation, UUID creatorId) {
+    return plantingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, gutterHoleCount, gutterCount, trayCount, workerCount, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -76,9 +76,9 @@ public class PlantingEventController {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param gutterSize gutterSize
+   * @param gutterHoleCount gutterHoleCount
    * @param gutterCount gutterCount
-   * @param cellCount cellCount
+   * @param trayCount trayCount
    * @param workerCount workerCount
    * @param type type
    * @param additionalInformation additional information
@@ -86,14 +86,14 @@ public class PlantingEventController {
    * @return updated plantingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent updatePlantingEvent(PlantingEvent plantingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterSize, Integer gutterCount, Integer cellCount, Integer workerCount, String additionalInformation, UUID modifier) {
+  public PlantingEvent updatePlantingEvent(PlantingEvent plantingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, String additionalInformation, UUID modifier) {
     plantingEventDAO.updateBatch(plantingEvent, batch, modifier);
     plantingEventDAO.updateStartTime(plantingEvent, startTime, modifier);
     plantingEventDAO.updateEndTime(plantingEvent, endTime, modifier);
     plantingEventDAO.updateProductionLine(plantingEvent, productionLine, modifier);
-    plantingEventDAO.updateGutterSize(plantingEvent, gutterSize, modifier);
+    plantingEventDAO.updateGutterHoleCount(plantingEvent, gutterHoleCount, modifier);
     plantingEventDAO.updateGutterCount(plantingEvent, gutterCount, modifier);
-    plantingEventDAO.updateCellCount(plantingEvent, cellCount, modifier);
+    plantingEventDAO.updateTrayCount(plantingEvent, trayCount, modifier);
     plantingEventDAO.updateWorkerCount(plantingEvent, workerCount, modifier);
     plantingEventDAO.updateAdditionalInformation(plantingEvent, additionalInformation, modifier);
     return plantingEvent;

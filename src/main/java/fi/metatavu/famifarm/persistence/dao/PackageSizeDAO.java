@@ -18,15 +18,17 @@ public class PackageSizeDAO extends AbstractDAO<PackageSize> {
   /**
    * Creates new package size
    *
-   * @param id id
+   * @param id   id
    * @param name name
+   * @param size size
    * @return created seed
    * @param lastModifier modifier
    */
-  public PackageSize create(UUID id, LocalizedEntry name, UUID creatorId, UUID lastModifierId) {
+  public PackageSize create(UUID id, LocalizedEntry name, Integer size, UUID creatorId, UUID lastModifierId) {
     PackageSize packageSize = new PackageSize();
     packageSize.setId(id);
     packageSize.setName(name);
+    packageSize.setSize(size);
     packageSize.setCreatorId(creatorId);
     packageSize.setLastModifierId(lastModifierId);
     return persist(packageSize);
@@ -43,6 +45,21 @@ public class PackageSizeDAO extends AbstractDAO<PackageSize> {
   public PackageSize updateName(PackageSize packageSize, LocalizedEntry name, UUID lastModifierId) {
     packageSize.setLastModifierId(lastModifierId);
     packageSize.setName(name);
+    return persist(packageSize);
+  }
+
+
+  /**
+   * Updates size
+   *
+   * @param packageSize packageSize
+   * @param size size
+   * @param lastModifier modifier
+   * @return updated packageSize
+   */
+  public PackageSize updateSize(PackageSize packageSize, Integer size, UUID lastModifierId) {
+    packageSize.setLastModifierId(lastModifierId);
+    packageSize.setSize(size);
     return persist(packageSize);
   }
 

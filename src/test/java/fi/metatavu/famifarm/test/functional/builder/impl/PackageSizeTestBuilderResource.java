@@ -33,9 +33,10 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * @param name name
    * @return created seed
    */
-  public PackageSize create(LocalizedEntry name) {
+  public PackageSize create(LocalizedEntry name, Integer size) {
     PackageSize packageSize = new PackageSize();
     packageSize.setName(name);
+    packageSize.setSize(size);
     return addClosable(getApi().createPackageSize(packageSize));
   }
   

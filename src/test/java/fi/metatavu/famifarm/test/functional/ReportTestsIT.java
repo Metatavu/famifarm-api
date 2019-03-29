@@ -88,7 +88,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Batch batch = builder.admin().batches().create(product);
@@ -137,7 +137,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Batch batch = builder.admin().batches().create(product);
@@ -184,7 +184,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Batch batch = builder.admin().batches().create(product);

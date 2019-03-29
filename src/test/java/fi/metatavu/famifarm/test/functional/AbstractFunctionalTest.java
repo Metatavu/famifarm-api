@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import fi.metatavu.famifarm.client.model.Batch;
-import fi.metatavu.famifarm.client.model.CellType;
+import fi.metatavu.famifarm.client.model.PotType;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.EventType;
 import fi.metatavu.famifarm.client.model.LocalizedEntry;
@@ -40,7 +40,7 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createSowingEvent(TestBuilder builder) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize);
     Batch batch = builder.admin().batches().create(product);
     return createSowingEvent(builder, batch);
@@ -90,11 +90,11 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createSowingEvent(TestBuilder builder, Batch batch, int amount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-    CellType cellType = CellType.LARGE;
-    ProductionLine productionLine = builder.admin().productionLines().create("4", null);
+    PotType potType = PotType.LARGE;
+    ProductionLine productionLine = builder.admin().productionLines().create("4", null, 8);
     SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
     
-    return builder.admin().events().createSowing(batch, startTime, endTime, amount, cellType, productionLine, seedBatch);
+    return builder.admin().events().createSowing(batch, startTime, endTime, amount, potType, productionLine, seedBatch);
   }
 
   /**
@@ -105,7 +105,7 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createTableSpreadEvent(TestBuilder builder) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, createdPackageSize);
 
@@ -138,7 +138,7 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createCultivationObservationEvent(TestBuilder builder) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, createdPackageSize);
 
@@ -223,7 +223,7 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize);
 
     Batch batch = builder.admin().batches().create(product);
@@ -259,7 +259,7 @@ public abstract class AbstractFunctionalTest {
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team name", "Tiimin nimi"));
-    ProductionLine productionLine = builder.admin().productionLines().create("4", team);
+    ProductionLine productionLine = builder.admin().productionLines().create("4", team, 8);
     
     return builder.admin().events().createHarvest(batch, amount, startTime, endTime, productionLine, team, harvestType);
   }
@@ -272,7 +272,7 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createPlantingEvent(TestBuilder builder) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 12);
     LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, createdPackageSize);
     
@@ -307,7 +307,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createPlantingEvent(TestBuilder builder, Batch batch, Integer gutterSize, Integer gutterCount) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-    ProductionLine productionLine = builder.admin().productionLines().create("4", null);
+    ProductionLine productionLine = builder.admin().productionLines().create("4", null, 8);
     Integer trayCount = 50;
     Integer workerCount = 2;
     
@@ -322,7 +322,7 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createPackingEvent(TestBuilder builder) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, createdPackageSize);
     
