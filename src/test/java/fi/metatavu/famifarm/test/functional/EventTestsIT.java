@@ -274,7 +274,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createHarvestEvent(builder);
       @SuppressWarnings("unchecked") Map<String, Object> createdData = (Map<String, Object>) createdEvent.getData();
-      Integer createdAmount = (Integer) createdData.get("amount");
+      Integer createdAmount = (Integer) createdData.get("gutterCount");
 
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
       
