@@ -573,6 +573,7 @@
   </changeSet>
 
   <changeSet id="deleteharvestteamid" author="Heikki Kurhinen">
+    <dropForeignKeyConstraint baseTableName="harvestevent" constraintName="FK_HARVESTEVENT_TEAM_ID"/>
     <dropColumn tableName="harvestevent" columnName="team_id"/>
   </changeSet>
 
