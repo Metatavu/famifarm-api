@@ -565,11 +565,11 @@
   </changeSet>
 
   <changeSet id="sowingeventcelltopottype" author="Heikki Kurhinen">
-    <renameColumn newColumnName="pottype" oldColumnName="celltype" tableName="sowingevent"/>
+    <renameColumn newColumnName="pottype" oldColumnName="celltype" tableName="sowingevent" columnDataType="varchar(191)"/>
   </changeSet>
 
   <changeSet id="spreadingeventtablecounttotraycount" author="Heikki Kurhinen">
-    <renameColumn newColumnName="traycount" oldColumnName="tablecount" tableName="tablespreadevent"/>
+    <renameColumn newColumnName="traycount" oldColumnName="tablecount" tableName="tablespreadevent" columnDataType="int(32)" />
   </changeSet>
 
   <changeSet id="deleteharvestteamid" author="Heikki Kurhinen">
@@ -577,7 +577,7 @@
   </changeSet>
 
   <changeSet id="harvesteventamounttoguttercount" author="Heikki Kurhinen">
-    <renameColumn newColumnName="guttercount" oldColumnName="amount" tableName="harvestevent"/>
+    <renameColumn newColumnName="guttercount" oldColumnName="amount" tableName="harvestevent" columnDataType="int(32)" />
   </changeSet>
 
   <changeSet id="packagesizesize" author="Heikki Kurhinen">
@@ -595,15 +595,15 @@
   </changeSet>
 
   <changeSet id="packingeventpackedamounttopackedcount" author="Heikki Kurhinen">
-    <renameColumn newColumnName="packedcount" oldColumnName="packedamount" tableName="packingevent"/>
+    <renameColumn newColumnName="packedcount" oldColumnName="packedamount" tableName="packingevent" columnDataType="int(32)" />
   </changeSet>
 
   <changeSet id="plantingeventguttersizetogutterholecount" author="Heikki Kurhinen">
-    <renameColumn newColumnName="gutterholecount" oldColumnName="guttersize" tableName="plantingevent"/>
+    <renameColumn newColumnName="gutterholecount" oldColumnName="guttersize" tableName="plantingevent" columnDataType="int(32)" />
   </changeSet>
 
   <changeSet id="plantingeventcellcounttotraycount" author="Heikki Kurhinen">
-    <renameColumn newColumnName="traycount" oldColumnName="cellcount" tableName="plantingevent"/>
+    <renameColumn newColumnName="traycount" oldColumnName="cellcount" tableName="plantingevent" columnDataType="int(32)" />
   </changeSet>
 
 </databaseChangeLog>
