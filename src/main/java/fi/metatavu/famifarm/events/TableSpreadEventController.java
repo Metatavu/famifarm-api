@@ -32,15 +32,15 @@ public class TableSpreadEventController {
    * @param batch batch
    * @param startTime startTime
    * @param endTime endTime
-   * @param tableCount tableCount
+   * @param trayCount trayCount
    * @param location location
    * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated tableSpreadEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public TableSpreadEvent createTableSpreadEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer tableCount, String location, String additionalInformation, UUID creatorId) {
-    return tableSpreadEventDAO.create(UUID.randomUUID(), tableCount, location, batch, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
+  public TableSpreadEvent createTableSpreadEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer trayCount, String location, String additionalInformation, UUID creatorId) {
+    return tableSpreadEventDAO.create(UUID.randomUUID(), trayCount, location, batch, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -71,18 +71,18 @@ public class TableSpreadEventController {
    * @param batch batch
    * @param startTime startTime
    * @param endTime endTime
-   * @param tableCount tableCount
+   * @param trayCount trayCount
    * @param location location
    * @param additionalInformation additional information
    * @param modifier modifier
    * @return updated tableSpreadEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public TableSpreadEvent updateTableSpreadEvent(TableSpreadEvent tableSpreadEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer tableCount, String location, String additionalInformation, UUID modifier) {
+  public TableSpreadEvent updateTableSpreadEvent(TableSpreadEvent tableSpreadEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer trayCount, String location, String additionalInformation, UUID modifier) {
     tableSpreadEventDAO.updateBatch(tableSpreadEvent, batch, modifier);
     tableSpreadEventDAO.updateStartTime(tableSpreadEvent, startTime, modifier);
     tableSpreadEventDAO.updateEndTime(tableSpreadEvent, endTime, modifier);
-    tableSpreadEventDAO.updateTableCount(tableSpreadEvent, tableCount, modifier);
+    tableSpreadEventDAO.updateTrayCount(tableSpreadEvent, trayCount, modifier);
     tableSpreadEventDAO.updateLocation(tableSpreadEvent, location, modifier);
     tableSpreadEventDAO.updateAdditionalInformation(tableSpreadEvent, additionalInformation, modifier);
     return tableSpreadEvent;

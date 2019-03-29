@@ -88,7 +88,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Batch batch = builder.admin().batches().create(product);
@@ -137,7 +137,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Batch batch = builder.admin().batches().create(product);
@@ -147,6 +147,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       createSowingEvent(builder, batch, 1, startTime, endTime);
       createSowingEvent(builder, batch, 1, startTime, endTime);
+      createPlantingEvent(builder, batch, 10, 3);
       
       startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
       endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -171,9 +172,9 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("Team name", workbook, 0, 4, 0);
         builder.admin().reports().assertCellValue("Porduct name", workbook, 0, 4, 1);
         builder.admin().reports().assertCellValue("03.02.2020", workbook, 0, 4, 2);
-        builder.admin().reports().assertCellValue("50", workbook, 0, 4, 3);
-        builder.admin().reports().assertCellValue("50", workbook, 0, 4, 4); 
-        builder.admin().reports().assertCellValue("100", workbook, 0, 4, 5);
+        builder.admin().reports().assertCellValue("500.0", workbook, 0, 4, 3);
+        builder.admin().reports().assertCellValue("500.0", workbook, 0, 4, 4); 
+        builder.admin().reports().assertCellValue("100.0", workbook, 0, 4, 5);
       }
     }
   }
@@ -184,7 +185,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Batch batch = builder.admin().batches().create(product);

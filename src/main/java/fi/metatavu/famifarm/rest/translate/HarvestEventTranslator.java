@@ -27,10 +27,9 @@ public class HarvestEventTranslator extends AbstractEventTranslator<HarvestEvent
     
     HarvestEventData result = new HarvestEventData();
     result.setProductionLineId(event.getProductionLine() != null ? event.getProductionLine().getId() : null);
-    result.setTeamId(event.getTeam() != null ? event.getTeam().getId() : null);
     result.setType(event.getHarvestType());
-    result.setAmount(event.getAmount());
-        
+    result.setGutterCount(event.getGutterCount());
+    
     return result;
   }
   

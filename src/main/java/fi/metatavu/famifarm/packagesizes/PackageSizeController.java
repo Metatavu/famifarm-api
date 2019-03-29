@@ -25,11 +25,12 @@ public class PackageSizeController {
    * Creates new package size
    * 
    * @param name name
+   * @param size size
    * @param userId userId
    * @return created package size
    */
-  public PackageSize createPackageSize(LocalizedEntry name, UUID userId) {
-    return packageSizeDAO.create(UUID.randomUUID(), name, userId, userId);
+  public PackageSize createPackageSize(LocalizedEntry name, Integer size, UUID userId) {
+    return packageSizeDAO.create(UUID.randomUUID(), name, size, userId, userId);
   }
 
   /**
@@ -58,11 +59,13 @@ public class PackageSizeController {
    * 
    * @param packageSize packageSize
    * @param name name
+   * @param size size
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public PackageSize updatePackageSize(PackageSize packageSize, LocalizedEntry name, UUID lastModifierId) {
+  public PackageSize updatePackageSize(PackageSize packageSize, LocalizedEntry name, Integer size, UUID lastModifierId) {
     packageSizeDAO.updateName(packageSize, name, lastModifierId);
+    packageSizeDAO.updateSize(packageSize, size, lastModifierId);
     return packageSize;
   }
 

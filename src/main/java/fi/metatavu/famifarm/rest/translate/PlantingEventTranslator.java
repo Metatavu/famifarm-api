@@ -27,9 +27,9 @@ public class PlantingEventTranslator extends AbstractEventTranslator<PlantingEve
     
     PlantingEventData result = new PlantingEventData();
     result.setGutterCount(event.getGutterCount());
-    result.setGutterSize(event.getGutterSize());
+    result.setGutterHoleCount(event.getGutterHoleCount());
     result.setProductionLineId(event.getProductionLine() != null ? event.getProductionLine().getId() : null);
-    result.setCellCount(event.getCellCount());
+    result.setTrayCount(event.getTrayCount());
     result.setWorkerCount(event.getWorkerCount());
 
     return result;

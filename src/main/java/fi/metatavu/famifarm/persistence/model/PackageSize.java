@@ -45,6 +45,9 @@ public class PackageSize {
   private OffsetDateTime createdAt;
 
   @Column(nullable = false)
+  private Integer size;
+
+  @Column(nullable = false)
   private OffsetDateTime modifiedAt;
 
   public UUID getId() {
@@ -61,6 +64,14 @@ public class PackageSize {
   
   public void setName(LocalizedEntry name) {
     this.name = name;
+  }
+
+  public Integer getSize() {
+    return size;
+  }
+
+  public void setSize(Integer size) {
+    this.size = size;
   }
 
   public UUID getCreatorId() {

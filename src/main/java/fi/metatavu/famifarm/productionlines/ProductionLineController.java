@@ -21,11 +21,12 @@ public class ProductionLineController {
    * 
    * @param lineNumber lineNumber
    * @param defaultTeam default team
+   * @param defaultGutterHoleCount default gutter hole count
    * @param userId userId
    * @return created production line
    */
-  public ProductionLine createProductionLine(String lineNumber, Team defaultTeam, UUID userId) {
-    return productionLineDAO.create(UUID.randomUUID(), lineNumber, defaultTeam, userId, userId);
+  public ProductionLine createProductionLine(String lineNumber, Team defaultTeam, Integer defaultGutterHoleCount, UUID userId) {
+    return productionLineDAO.create(UUID.randomUUID(), lineNumber, defaultTeam, defaultGutterHoleCount, userId, userId);
   }
 
   /**
@@ -55,12 +56,14 @@ public class ProductionLineController {
    * @param productionLine productionLine
    * @param lineNumber lineNumber
    * @param defaultTeam default team
+   * @param defaultGutterHoleCount default gutter hole count
    * @param lastModifierId lastModifierId
    * @return updated production line
    */
-  public ProductionLine updateProductionLine(ProductionLine productionLine, String lineNumber, Team defaultTeam, UUID lastModifierId) {
+  public ProductionLine updateProductionLine(ProductionLine productionLine, String lineNumber, Team defaultTeam, Integer defaultGutterHoleCount, UUID lastModifierId) {
     productionLineDAO.updateLineNumber(productionLine, lineNumber, lastModifierId);
     productionLineDAO.updateDefaultTeam(productionLine, defaultTeam, lastModifierId);
+    productionLineDAO.updateDefaultGutterHoleCount(productionLine, defaultGutterHoleCount, lastModifierId);
     return productionLine;
   }
 

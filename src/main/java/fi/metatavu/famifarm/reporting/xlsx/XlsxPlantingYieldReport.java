@@ -22,7 +22,7 @@ import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.rest.model.CellType;
+import fi.metatavu.famifarm.rest.model.PotType;
 import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
@@ -141,12 +141,12 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
       return 0;
     }
     
-    CellType cellType = sowingEvent.getCellType();
+    PotType potType = sowingEvent.getPotType();
 
     for (Event event : events) {
       if (event.getType() == EventType.PLANTING) {
         PlantingEvent plantingEvent = (PlantingEvent) event;
-        amount += plantingEvent.getCellCount() * getCellTypeAmount(cellType);
+        amount += plantingEvent.getTrayCount() * getPotTypeAmount(potType);
       }
     }
     
@@ -156,11 +156,11 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
   /**
    * Get cell type as int
    * 
-   * @param cellType, cellType
+   * @param potType, potType
    * @return amount
    */
-  private int getCellTypeAmount(CellType cellType) {
-    if (CellType.SMALL == cellType) {
+  private int getPotTypeAmount(PotType potType) {
+    if (PotType.SMALL == potType) {
       return 54;
     }
     return 35;
@@ -178,7 +178,7 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
     for (Event event : events) {
       if (event.getType() == EventType.PLANTING) {
         PlantingEvent plantingEvent = (PlantingEvent) event;
-        amount += plantingEvent.getGutterSize() * plantingEvent.getGutterCount();
+        amount += plantingEvent.getGutterHoleCount() * plantingEvent.getGutterCount();
       }
     }
     

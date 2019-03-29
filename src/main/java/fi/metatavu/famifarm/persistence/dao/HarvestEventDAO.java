@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
-import fi.metatavu.famifarm.persistence.model.Team;
 
 /**
  * DAO class for HarvestEvents
@@ -18,49 +17,37 @@ import fi.metatavu.famifarm.persistence.model.Team;
 @ApplicationScoped
 public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
 
+
   /**
-   * Creates new harvestEvent
-   *
-   * @param batch batch
-   * @param startTime startTime
-   * @param endTime endTime
-   * @param productionLine productionLine
-   * @param gutterNumber gutterNumber
-   * @param seedBatch seedBatch
-   * @param cellType cellType
-   * @param amount amount
+   * Creates new harvest event
+   * 
+   * @param id event id
+   * @param batch batch event is connected to
+   * @param startTime start time
+   * @param endTime end time
+   * @param harvestType type
+   * @param productionLine production line
    * @param remainingUnits remaining units
-   * @return created harvestEvent
-   * @param lastModifier modifier
+   * @param additionalInformation additional information
+   * @param gutterCount gutterCount
+   * @param creatorId creator
+   * @param lastModifierId last modifier
+   * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer remainingUnits, String additionalInformation, Integer amount, UUID creatorId, UUID lastModifierId) {
+  public HarvestEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer remainingUnits, String additionalInformation, Integer gutterCount, UUID creatorId, UUID lastModifierId) {
     HarvestEvent harvestEvent = new HarvestEvent();
     harvestEvent.setBatch(batch);
     harvestEvent.setRemainingUnits(remainingUnits);
     harvestEvent.setStartTime(startTime);
     harvestEvent.setEndTime(endTime);
-    harvestEvent.setTeam(team);
     harvestEvent.setHarvestType(harvestType);
     harvestEvent.setProductionLine(productionLine);
-    harvestEvent.setAmount(amount);
+    harvestEvent.setGutterCount(gutterCount);
     harvestEvent.setId(id);
     harvestEvent.setCreatorId(creatorId);
     harvestEvent.setLastModifierId(lastModifierId);
     harvestEvent.setAdditionalInformation(additionalInformation);
-    return persist(harvestEvent);
-  }
-
-  /**
-   * Updates team
-   *
-   * @param team team
-   * @param lastModifier modifier
-   * @return updated harvestEvent
-   */
-  public HarvestEvent updateTeam(HarvestEvent harvestEvent, Team team, UUID lastModifierId) {
-    harvestEvent.setLastModifierId(lastModifierId);
-    harvestEvent.setTeam(team);
     return persist(harvestEvent);
   }
 

@@ -58,7 +58,7 @@ import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.reporting.ReportType;
 import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.Batch;
-import fi.metatavu.famifarm.rest.model.CellType;
+import fi.metatavu.famifarm.rest.model.PotType;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.rest.model.Draft;
 import fi.metatavu.famifarm.rest.model.Event;
@@ -338,7 +338,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
   public Response createPackageSize(PackageSize body) {
     LocalizedEntry name = createLocalizedEntry(body.getName());
-    return createOk(packageSizeTranslator.translatePackageSize(packageSizeController.createPackageSize(name, getLoggerUserId())));
+    Integer size = body.getSize();
+    return createOk(packageSizeTranslator.translatePackageSize(packageSizeController.createPackageSize(name, size, getLoggerUserId())));
   }
 
   @Override
@@ -368,6 +369,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response createProductionLine(ProductionLine body) {
     String lineNumber = body.getLineNumber();
     UUID defaultTeamId = body.getDefaultTeamId();
+    Integer defaultGutterHoleCount = body.getDefaultGutterHoleCount();
     fi.metatavu.famifarm.persistence.model.Team defaultTeam = null;
     
     if (defaultTeamId != null) {
@@ -377,7 +379,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
     
-    return createOk(productionLineTranslator.translateProductionLine(productionLineController.createProductionLine(lineNumber, defaultTeam, getLoggerUserId())));
+    return createOk(productionLineTranslator.translateProductionLine(productionLineController.createProductionLine(lineNumber, defaultTeam, defaultGutterHoleCount, getLoggerUserId())));
   }
 
   @Override
@@ -850,7 +852,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     LocalizedEntry name = createLocalizedEntry(body.getName());
-    return createOk(packageSizeTranslator.translatePackageSize(packageSizeController.updatePackageSize(packageSize, name, getLoggerUserId())));
+    Integer size = body.getSize();
+    return createOk(packageSizeTranslator.translatePackageSize(packageSizeController.updatePackageSize(packageSize, name, size, getLoggerUserId())));
   }
 
   @Override
@@ -893,6 +896,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
     
+    Integer defaultGutterHoleCount = body.getDefaultGutterHoleCount();
     String lineNumber = body.getLineNumber();
     UUID defaultTeamId = body.getDefaultTeamId();
     fi.metatavu.famifarm.persistence.model.Team defaultTeam = null;
@@ -904,7 +908,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
     
-    return createOk(productionLineTranslator.translateProductionLine(productionLineController.updateProductionLine(productionLine, lineNumber, defaultTeam, getLoggerUserId())));
+    return createOk(productionLineTranslator.translateProductionLine(productionLineController.updateProductionLine(productionLine, lineNumber, defaultTeam, defaultGutterHoleCount, getLoggerUserId())));
   }
 
   @Override
@@ -1142,10 +1146,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(eventData.getSeedBatchId());
-    CellType cellType = eventData.getCellType();
+    PotType potType = eventData.getPotType();
     Integer amount = eventData.getAmount();
     
-    SowingEvent event = sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, seedBatch, cellType, amount, additionalInformation, creatorId);
+    SowingEvent event = sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, seedBatch, potType, amount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
     
     return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1177,9 +1181,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(eventData.getSeedBatchId());
-    CellType cellType = eventData.getCellType();
+    PotType potType = eventData.getPotType();
     Integer amount = eventData.getAmount();    
-    SowingEvent updatedEvent = sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime, productionLine, seedBatch, cellType, amount, additionalInformation, creatorId);
+    SowingEvent updatedEvent = sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime, productionLine, seedBatch, potType, amount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
     
     return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
@@ -1209,8 +1213,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     String location = eventData.getLocation();
-    Integer tableCount = eventData.getTableCount();
-    TableSpreadEvent event = tableSpreadEventController.createTableSpreadEvent(batch, startTime, endTime, tableCount, location, additionalInformation, creatorId);
+    Integer trayCount = eventData.getTrayCount();
+    TableSpreadEvent event = tableSpreadEventController.createTableSpreadEvent(batch, startTime, endTime, trayCount, location, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(tableSpreadEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1241,9 +1245,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     String location = eventData.getLocation();
-    Integer tableCount = eventData.getTableCount();
+    Integer trayCount = eventData.getTrayCount();
     
-    TableSpreadEvent updatedEvent = tableSpreadEventController.updateTableSpreadEvent((TableSpreadEvent) event, batch, startTime, endTime, tableCount, location, additionalInformation, creatorId);
+    TableSpreadEvent updatedEvent = tableSpreadEventController.updateTableSpreadEvent((TableSpreadEvent) event, batch, startTime, endTime, trayCount, location, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(tableSpreadEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
@@ -1370,18 +1374,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
     
-    fi.metatavu.famifarm.persistence.model.Team team = null;
-    if (eventData.getTeamId() != null) {
-      team = teamsController.findTeam(eventData.getTeamId());
-      if (team == null) {
-        return createBadRequest("Invalid team");        
-      }
-    }
-    
-    Integer amount = eventData.getAmount();
+    Integer amount = eventData.getGutterCount();
     
     TypeEnum harvestType = eventData.getType();
-    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType, productionLine, additionalInformation, amount, creatorId);
+    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, harvestType, productionLine, additionalInformation, amount, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1419,17 +1415,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createBadRequest("Invalid production line");
       }
     }
-    
-    fi.metatavu.famifarm.persistence.model.Team team = null;
-    if (eventData.getTeamId() != null) {
-      team = teamsController.findTeam(eventData.getTeamId());
-      if (team == null) {
-        return createBadRequest("Invalid team");        
-      }
-    }
-    
+
     TypeEnum harvestType = eventData.getType();
-    HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, batch, startTime, endTime, team, harvestType, productionLine, additionalInformation, creatorId);
+    HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, batch, startTime, endTime, harvestType, productionLine, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
@@ -1459,12 +1447,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
-    Integer gutterSize = eventData.getGutterSize();
+    Integer gutterHoleCount = eventData.getGutterHoleCount();
     Integer gutterCount = eventData.getGutterCount();
-    Integer cellCount = eventData.getCellCount();
+    Integer trayCount = eventData.getTrayCount();
     Integer workerCount = eventData.getWorkerCount();
     
-    PlantingEvent event = plantingEventController.createPlantingEvent(batch, startTime, endTime, productionLine, gutterSize, gutterCount, cellCount, workerCount, additionalInformation, creatorId);
+    PlantingEvent event = plantingEventController.createPlantingEvent(batch, startTime, endTime, productionLine, gutterHoleCount, gutterCount, trayCount, workerCount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
     
     return createOk(plantingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1495,12 +1483,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
-    Integer gutterSize = eventData.getGutterSize();
+    Integer gutterHoleCount = eventData.getGutterHoleCount();
     Integer gutterCount = eventData.getGutterCount();
-    Integer cellCount = eventData.getCellCount();
+    Integer trayCount = eventData.getTrayCount();
     Integer workerCount = eventData.getWorkerCount();
     
-    PlantingEvent updatedEvent = plantingEventController.updatePlantingEvent((PlantingEvent) event, batch, startTime, endTime, productionLine, gutterSize, gutterCount, cellCount, workerCount, additionalInformation, creatorId);
+    PlantingEvent updatedEvent = plantingEventController.updatePlantingEvent((PlantingEvent) event, batch, startTime, endTime, productionLine, gutterHoleCount, gutterCount, trayCount, workerCount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(plantingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
@@ -1530,9 +1518,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = eventData.getPackageSizeId() != null ? packageSizeController.findPackageSize(eventData.getPackageSizeId()) : null;
-    Integer packedAmount = eventData.getPackedAmount();
+    Integer packedCount = eventData.getPackedCount();
 
-    PackingEvent event = packingEventController.createPackingEvent(batch, startTime, endTime, packageSize, packedAmount, additionalInformation, creatorId);
+    PackingEvent event = packingEventController.createPackingEvent(batch, startTime, endTime, packageSize, packedCount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
     
     return createOk(packingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1563,9 +1551,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = eventData.getPackageSizeId() != null ? packageSizeController.findPackageSize(eventData.getPackageSizeId()) : null;
-    Integer packedAmount = eventData.getPackedAmount();
+    Integer packedCount = eventData.getPackedCount();
     
-    PackingEvent updatedEvent = packingEventController.updatePackingEvent((PackingEvent) event, batch, startTime, endTime, packageSize, packedAmount, additionalInformation, creatorId);
+    PackingEvent updatedEvent = packingEventController.updatePackingEvent((PackingEvent) event, batch, startTime, endTime, packageSize, packedCount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(packingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));

@@ -146,7 +146,7 @@ public class BatchController {
     }
 
     for (PackingEvent event : packingEvents) {
-      count -= event.getPackedAmount();
+      count -= (event.getPackedCount() * event.getPackageSize().getSize());
     }
     
     return count;
