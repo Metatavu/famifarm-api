@@ -147,6 +147,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       createSowingEvent(builder, batch, 1, startTime, endTime);
       createSowingEvent(builder, batch, 1, startTime, endTime);
+      createPlantingEvent(builder, batch, 10, 3);
       
       startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
       endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
