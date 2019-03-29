@@ -174,7 +174,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("03.02.2020", workbook, 0, 4, 2);
         builder.admin().reports().assertCellValue("500.0", workbook, 0, 4, 3);
         builder.admin().reports().assertCellValue("500.0", workbook, 0, 4, 4); 
-        builder.admin().reports().assertCellValue("100", workbook, 0, 4, 5);
+        builder.admin().reports().assertCellValue("100.0", workbook, 0, 4, 5);
       }
     }
   }
