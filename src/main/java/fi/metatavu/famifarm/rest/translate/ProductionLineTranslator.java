@@ -30,6 +30,7 @@ public class ProductionLineTranslator extends AbstractTranslator {
     result.setId(productionLine.getId());
     result.setDefaultTeamId(defaultTeam != null ? defaultTeam.getId() : null);
     result.setLineNumber(productionLine.getLineNumber());
+    result.setDefaultGutterHoleCount(productionLine.getDefaultGutterHoleCount());
 
     return result;
   }

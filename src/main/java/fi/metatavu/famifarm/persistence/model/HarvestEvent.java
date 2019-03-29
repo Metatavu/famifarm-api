@@ -25,9 +25,6 @@ import fi.metatavu.famifarm.rest.model.EventType;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class HarvestEvent extends Event {
 
-  @ManyToOne
-  private Team team;
-
   @Enumerated(EnumType.STRING)
   private fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType;
 
@@ -36,15 +33,7 @@ public class HarvestEvent extends Event {
   
   @NotNull
   @Column (nullable = false)
-  private Integer amount;
-
-  public Team getTeam() {
-    return team;
-  }
-
-  public void setTeam(Team team) {
-    this.team = team;
-  }
+  private Integer gutterCount;
 
   public fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum getHarvestType() {
     return harvestType;
@@ -62,12 +51,12 @@ public class HarvestEvent extends Event {
     this.productionLine = productionLine;
   }
 
-  public Integer getAmount() {
-    return amount;
+  public Integer getGutterCount() {
+    return gutterCount;
   }
 
-  public void setAmount(Integer amount) {
-    this.amount = amount;
+  public void setGutterCount(Integer gutterCount) {
+    this.gutterCount = gutterCount;
   }
 
   @Transient

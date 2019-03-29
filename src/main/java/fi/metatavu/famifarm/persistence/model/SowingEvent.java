@@ -12,8 +12,8 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import fi.metatavu.famifarm.rest.model.CellType;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.PotType;
 
 /**
  * JPA entity for sowing event
@@ -32,7 +32,7 @@ public class SowingEvent extends Event {
   private SeedBatch seedBatch;
   
   @Enumerated (EnumType.STRING)
-  private CellType cellType;
+  private PotType potType;
   
   @Column (nullable = false)
   private Integer amount;
@@ -53,12 +53,12 @@ public class SowingEvent extends Event {
     this.seedBatch = seedBatch;
   }
 
-  public CellType getCellType() {
-    return cellType;
+  public PotType getPotType() {
+    return potType;
   }
 
-  public void setCellType(CellType cellType) {
-    this.cellType = cellType;
+  public void setPotType(PotType potType) {
+    this.potType = potType;
   }
 
   public Integer getAmount() {

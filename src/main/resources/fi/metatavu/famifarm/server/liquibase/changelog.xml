@@ -564,4 +564,47 @@
     <dropNotNullConstraint tableName="wastageevent" columnName="productionline_id" columnDataType="binary(16)"/>
   </changeSet>
 
+  <changeSet id="sowingeventcelltopottype" author="Heikki Kurhinen">
+    <renameColumn newColumnName="pottype" oldColumnName="celltype" tableName="sowingevent" columnDataType="varchar(191)"/>
+  </changeSet>
+
+  <changeSet id="spreadingeventtablecounttotraycount" author="Heikki Kurhinen">
+    <renameColumn newColumnName="traycount" oldColumnName="tablecount" tableName="tablespreadevent" columnDataType="int(32)" />
+  </changeSet>
+
+  <changeSet id="deleteharvestteamid" author="Heikki Kurhinen">
+    <dropForeignKeyConstraint baseTableName="harvestevent" constraintName="FK_HARVESTEVENT_TEAM_ID"/>
+    <dropColumn tableName="harvestevent" columnName="team_id"/>
+  </changeSet>
+
+  <changeSet id="harvesteventamounttoguttercount" author="Heikki Kurhinen">
+    <renameColumn newColumnName="guttercount" oldColumnName="amount" tableName="harvestevent" columnDataType="int(32)" />
+  </changeSet>
+
+  <changeSet id="packagesizesize" author="Heikki Kurhinen">
+    <addColumn tableName="packagesize">
+      <column name="size" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="productionlinedefaultgutterholecount" author="Heikki Kurhinen">
+    <addColumn tableName="productionline">
+      <column name="defaultgutterholecount" type="int(32)"></column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="packingeventpackedamounttopackedcount" author="Heikki Kurhinen">
+    <renameColumn newColumnName="packedcount" oldColumnName="packedamount" tableName="packingevent" columnDataType="int(32)" />
+  </changeSet>
+
+  <changeSet id="plantingeventguttersizetogutterholecount" author="Heikki Kurhinen">
+    <renameColumn newColumnName="gutterholecount" oldColumnName="guttersize" tableName="plantingevent" columnDataType="int(32)" />
+  </changeSet>
+
+  <changeSet id="plantingeventcellcounttotraycount" author="Heikki Kurhinen">
+    <renameColumn newColumnName="traycount" oldColumnName="cellcount" tableName="plantingevent" columnDataType="int(32)" />
+  </changeSet>
+
 </databaseChangeLog>

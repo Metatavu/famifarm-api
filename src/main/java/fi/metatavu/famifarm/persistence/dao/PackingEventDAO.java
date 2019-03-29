@@ -30,20 +30,20 @@ public class PackingEventDAO extends AbstractEventDAO<PackingEvent> {
    * @param startTime startTime
    * @param endTime endTime
    * @param packageSize package size
-   * @param packedAmount packed amount
+   * @param packedCount packed amount
    * @param remainingUnits remaining units
    * @param lastModifier modifier
    * @return created packingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public PackingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedAmount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public PackingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedCount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     PackingEvent packingEvent = new PackingEvent();
     packingEvent.setBatch(batch);
     packingEvent.setRemainingUnits(remainingUnits);
     packingEvent.setStartTime(startTime);
     packingEvent.setEndTime(endTime);
     packingEvent.setPackageSize(packageSize);
-    packingEvent.setPackedAmount(packedAmount);
+    packingEvent.setPackedCount(packedCount);
     packingEvent.setId(id);
     packingEvent.setCreatorId(creatorId);
     packingEvent.setLastModifierId(lastModifierId);
@@ -65,15 +65,15 @@ public class PackingEventDAO extends AbstractEventDAO<PackingEvent> {
   }
 
   /**
-   * Updates packedAmount
+   * Updates packedCount
    *
-   * @param packedAmount packedAmount
+   * @param packedCount packedCount
    * @param lastModifier modifier
    * @return updated packingEvent
    */
-  public PackingEvent updatePackedAmount(PackingEvent packingEvent, Integer packedAmount, UUID lastModifierId) {
+  public PackingEvent updatePackedCount(PackingEvent packingEvent, Integer packedCount, UUID lastModifierId) {
     packingEvent.setLastModifierId(lastModifierId);
-    packingEvent.setPackedAmount(packedAmount);
+    packingEvent.setPackedCount(packedCount);
     return persist(packingEvent);
   }
   

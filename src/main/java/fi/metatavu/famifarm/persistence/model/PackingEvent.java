@@ -28,7 +28,7 @@ public class PackingEvent extends Event {
 
   @NotNull
   @Column(nullable = false)
-  private Integer packedAmount;
+  private Integer packedCount;
 
   public PackageSize getPackageSize() {
     return packageSize;
@@ -38,12 +38,12 @@ public class PackingEvent extends Event {
     this.packageSize = packageSize;
   }
 
-  public Integer getPackedAmount() {
-    return packedAmount;
+  public Integer getPackedCount() {
+    return packedCount;
   }
 
-  public void setPackedAmount(Integer packedAmount) {
-    this.packedAmount = packedAmount;
+  public void setPackedCount(Integer packedCount) {
+    this.packedCount = packedCount;
   }
 
   @Transient

@@ -22,17 +22,17 @@ import fi.metatavu.famifarm.rest.model.EventType;
 public class TableSpreadEvent extends Event {
 
   @Column(nullable = false)
-  private Integer tableCount;
+  private Integer trayCount;
 
   @Column(nullable = false)
   private String location;
 
-  public Integer getTableCount() {
-    return tableCount;
+  public Integer getTrayCount() {
+    return trayCount;
   }
 
-  public void setTableCount(Integer tableCount) {
-    this.tableCount = tableCount;
+  public void setTrayCount(Integer trayCount) {
+    this.trayCount = trayCount;
   }
 
   public String getLocation() {

@@ -15,7 +15,7 @@ import fi.metatavu.famifarm.persistence.model.PackingEvent_;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
-import fi.metatavu.famifarm.rest.model.CellType;
+import fi.metatavu.famifarm.rest.model.PotType;
 
 /**
  * DAO class for SowingEvents
@@ -33,14 +33,14 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @param endTime endTime
    * @param productionLine productionLine
    * @param seedBatch seedBatch
-   * @param cellType cellType
+   * @param potType pot type
    * @param amount amount
    * @param remainingUnits remaining units
    * @return created sowingEvent
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, CellType cellType, Integer amount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, PotType potType, Integer amount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     SowingEvent sowingEvent = new SowingEvent();
     sowingEvent.setBatch(batch);
     sowingEvent.setRemainingUnits(remainingUnits);
@@ -48,7 +48,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
     sowingEvent.setEndTime(endTime);
     sowingEvent.setProductionLine(productionLine);
     sowingEvent.setSeedBatch(seedBatch);
-    sowingEvent.setCellType(cellType);
+    sowingEvent.setPotType(potType);
     sowingEvent.setAmount(amount);
     sowingEvent.setId(id);
     sowingEvent.setCreatorId(creatorId);
@@ -104,16 +104,16 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
   }
 
   /**
-   * Updates cellType
+   * Updates pot type
    *
    * @param sowingEvent event to be updated
-   * @param cellType cellType
+   * @param potType pot type
    * @param lastModifier modifier
    * @return updated sowingEvent
    */
-  public SowingEvent updateCellType(SowingEvent sowingEvent, CellType cellType, UUID lastModifierId) {
+  public SowingEvent updatePotType(SowingEvent sowingEvent, PotType potType, UUID lastModifierId) {
     sowingEvent.setLastModifierId(lastModifierId);
-    sowingEvent.setCellType(cellType);
+    sowingEvent.setPotType(potType);
     return persist(sowingEvent);
   }
 

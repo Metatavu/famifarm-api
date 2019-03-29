@@ -26,6 +26,7 @@ public class PackageSizeTranslator extends AbstractTranslator {
     PackageSize result = new PackageSize();
     result.setId(packageSize.getId());
     result.setName(translatelocalizedValue(packageSize.getName()));
+    result.setSize(packageSize.getSize());
 
     return result;
   }

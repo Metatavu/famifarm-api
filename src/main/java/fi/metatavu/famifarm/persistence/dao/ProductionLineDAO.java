@@ -21,15 +21,17 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
    * @param id id
    * @param lineNumber lineNumber
    * @param defaultTeam default team
+   * @param defaultGutterHoleCount default gutter hole count
    * @param creatorId creatorId
    * @param lastModifierId lastModifierId
    * @return created production line
    */
-  public ProductionLine create(UUID id, String lineNumber, Team defaultTeam, UUID creatorId, UUID lastModifierId) {
+  public ProductionLine create(UUID id, String lineNumber, Team defaultTeam, Integer defaultGutterHoleCount, UUID creatorId, UUID lastModifierId) {
     ProductionLine productionLine = new ProductionLine();
     productionLine.setId(id);
     productionLine.setLineNumber(lineNumber);
     productionLine.setDefaultTeam(defaultTeam);
+    productionLine.setDefaultGutterHoleCount(defaultGutterHoleCount);
     productionLine.setCreatorId(creatorId);
     productionLine.setLastModifierId(lastModifierId);
     return persist(productionLine);
@@ -60,6 +62,20 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
   public ProductionLine updateDefaultTeam(ProductionLine productionLine, Team defaultTeam, UUID lastModifierId) {
     productionLine.setLastModifierId(lastModifierId);
     productionLine.setDefaultTeam(defaultTeam);
+    return persist(productionLine);
+  }
+
+  /**
+   * Updates defaultGutterHoleCount
+   *
+   * @param productionLine productionLine
+   * @param defaultGutterHoleCount defaultGutterHoleCount
+   * @param lastModifier modifier
+   * @return updated production line
+   */
+  public ProductionLine updateDefaultGutterHoleCount(ProductionLine productionLine, Integer defaultGutterHoleCount, UUID lastModifierId) {
+    productionLine.setLastModifierId(lastModifierId);
+    productionLine.setDefaultGutterHoleCount(defaultGutterHoleCount);
     return persist(productionLine);
   }
 }

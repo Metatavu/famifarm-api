@@ -44,6 +44,9 @@ public class ProductionLine {
   @Column(nullable = false)
   @NotNull
   private UUID lastModifierId;
+
+  @Column
+  private Integer defaultGutterHoleCount;
   
   @Column (nullable = false)
   private OffsetDateTime createdAt;
@@ -73,6 +76,14 @@ public class ProductionLine {
   
   public void setDefaultTeam(Team defaultTeam) {
     this.defaultTeam = defaultTeam;
+  }
+
+  public Integer getDefaultGutterHoleCount() {
+    return defaultGutterHoleCount;
+  }
+
+  public void setDefaultGutterHoleCount(Integer defaultGutterHoleCount) {
+    this.defaultGutterHoleCount = defaultGutterHoleCount;
   }
 
   public UUID getCreatorId() {
