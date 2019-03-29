@@ -132,8 +132,8 @@ public class XlsxYieldReport extends AbstractXlsxReport {
    * @return weighted average gutter hole count
    */
   private double getAverageGutterHoleCount(List<Event> events) {
-    int totalWeightedSize = 0;
-    int totalGutterCount = 0;
+    double totalWeightedSize = 0;
+    double totalGutterCount = 0;
     
     for (Event event : events) {
       if (event.getType() == EventType.PLANTING) {
