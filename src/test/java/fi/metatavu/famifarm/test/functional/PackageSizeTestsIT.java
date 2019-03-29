@@ -88,7 +88,8 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
       PackageSize updatePackageSize = new PackageSize(); 
       updatePackageSize.setId(createdPackageSize.getId());
       updatePackageSize.setName(builder.createLocalizedEntry("Updated PackageSize"));
-     
+      updatePackageSize.setSize(12);
+
       builder.admin().packageSizes().updatePackageSize(updatePackageSize);
       builder.admin().packageSizes().assertPackageSizeEqual(updatePackageSize, builder.admin().packageSizes().findPackageSize(createdPackageSize.getId()));
     }
