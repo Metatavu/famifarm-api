@@ -278,13 +278,13 @@ public class EventTestsIT extends AbstractFunctionalTest {
 
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
       
-      PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"));
+      PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
       Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
      
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-      ProductionLine updateProductionLine = builder.admin().productionLines().create("7", null);
+      ProductionLine updateProductionLine = builder.admin().productionLines().create("7", null, 8);
       
       HarvestEventData updateData = new HarvestEventData();
       updateData.setProductionLineId(updateProductionLine.getId());
@@ -547,7 +547,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       createTableSpreadEvent(builder);
       builder.admin().events().assertCount(2);
 
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Batch batch = builder.admin().batches().create(product);
@@ -606,7 +606,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateEventPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
@@ -616,7 +616,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Integer amount = 12;
       PotType potType = PotType.LARGE;
-      ProductionLine productionLine = builder.admin().productionLines().create("4", null);
+      ProductionLine productionLine = builder.admin().productionLines().create("4", null, 8);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
       
       builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, potType, productionLine, seedBatch);

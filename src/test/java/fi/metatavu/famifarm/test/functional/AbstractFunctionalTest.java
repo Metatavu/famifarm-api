@@ -261,7 +261,7 @@ public abstract class AbstractFunctionalTest {
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team name", "Tiimin nimi"));
     ProductionLine productionLine = builder.admin().productionLines().create("4", team, 8);
     
-    return builder.admin().events().createHarvest(batch, amount, startTime, endTime, productionLine, team, harvestType);
+    return builder.admin().events().createHarvest(batch, amount, startTime, endTime, productionLine, harvestType);
   }
 
   /**
@@ -361,7 +361,7 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createPackingEvent(TestBuilder builder, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     Integer packedAmount = 80;
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     
     return builder.admin().events().createPacking(batch, startTime, endTime, createdPackageSize, packedAmount);
   }
@@ -375,11 +375,11 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createWastageEvent(TestBuilder builder) throws IOException {
     WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"));
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, createdPackageSize);
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team 1", "Tiimi 1"));
-    ProductionLine productionLine = builder.admin().productionLines().create("1 A", team);
+    ProductionLine productionLine = builder.admin().productionLines().create("1 A", team, 7);
     Batch batch = builder.admin().batches().create(product);
     
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -402,7 +402,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createWastageEvent(TestBuilder builder, Batch batch) throws IOException {
     WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team 1", "Tiimi 1"));
-    ProductionLine productionLine = builder.admin().productionLines().create("1 A", team);
+    ProductionLine productionLine = builder.admin().productionLines().create("1 A", team, 7);
     
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
@@ -426,7 +426,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createWastageEvent(TestBuilder builder, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team 1", "Tiimi 1"));
-    ProductionLine productionLine = builder.admin().productionLines().create("1 A", team);
+    ProductionLine productionLine = builder.admin().productionLines().create("1 A", team, 7);
 
     Integer amount = 20;
     String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";

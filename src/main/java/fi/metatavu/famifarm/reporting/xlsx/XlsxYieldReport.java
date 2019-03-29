@@ -138,7 +138,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
     for (Event event : events) {
       if (event.getType() == EventType.PLANTING) {
         PlantingEvent plantingEvent = (PlantingEvent) event;
-        totalWeightedSize += (plantingEvent.getGutterSize() * plantingEvent.getGutterCount());
+        totalWeightedSize += (plantingEvent.getGutterHoleCount() * plantingEvent.getGutterCount());
         totalGutterCount += plantingEvent.getGutterCount();
       }
     }

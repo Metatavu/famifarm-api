@@ -130,8 +130,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type type
    * @return created event
    */
-  public Event createHarvest(Batch batch, Integer amount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
-    HarvestEventData data = createHarvestEventData(productionLine, amount, team, type);
+  public Event createHarvest(Batch batch, Integer amount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+    HarvestEventData data = createHarvestEventData(productionLine, amount, type);
 
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -413,13 +413,13 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   /**
    * Creates table spread event data object
    * @param location location
-   * @param tableCount table count
+   * @param trayCount tray count
    * @return
    */
-  private TableSpreadEventData createTableSpreadEventData(String location, Integer tableCount) {
+  private TableSpreadEventData createTableSpreadEventData(String location, Integer trayCount) {
     TableSpreadEventData data = new TableSpreadEventData();
     data.setLocation(location);
-    data.setTableCount(tableCount);
+    data.trayCount(trayCount);
     return data;
   }
 
@@ -444,15 +444,14 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   /**
    * Creates event data object
    * @param productionLine production line
-   * @param team team
+   * @param gutterCount gutterCount
    * @param type 
    * @return harvest event data
    */
-  private HarvestEventData createHarvestEventData(ProductionLine productionLine, Integer amount, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+  private HarvestEventData createHarvestEventData(ProductionLine productionLine, Integer gutterCount, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
     HarvestEventData data = new HarvestEventData();
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
-    data.setTeamId(team != null ? team.getId() : null);
-    data.setAmount(amount);
+    data.setGutterCount(gutterCount);
     data.setType(type);
     return data;
   }
@@ -470,9 +469,9 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   private PlantingEventData createPlantingEventData(Integer gutterCount, Integer gutterSize, ProductionLine productionLine, Integer cellCount, Integer workerCount) {
     PlantingEventData data = new PlantingEventData();
     data.setGutterCount(gutterCount);
-    data.setGutterSize(gutterSize);
+    data.setGutterHoleCount(gutterSize);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
-    data.setCellCount(cellCount);
+    data.setTrayCount(cellCount);
     data.setWorkerCount(workerCount);
     return data;
   }
@@ -487,7 +486,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   private PackingEventData createPackingEventData(PackageSize packageSize, Integer packedAmount) {
     PackingEventData data = new PackingEventData();
     data.setPackageSizeId(packageSize != null ? packageSize.getId() : null);
-    data.setPackedAmount(packedAmount);
+    data.setPackedCount(packedAmount);
     return data;
   }
 
