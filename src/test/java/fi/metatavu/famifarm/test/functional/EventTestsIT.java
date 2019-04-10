@@ -280,7 +280,9 @@ public class EventTestsIT extends AbstractFunctionalTest {
       
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
       Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
-     
+
+      Team updateTeam = builder.admin().teams().create(builder.createLocalizedEntry("new team name", "uusi tiimi"));
+
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
@@ -289,6 +291,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       HarvestEventData updateData = new HarvestEventData();
       updateData.setProductionLineId(updateProductionLine.getId());
       updateData.setType(fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.CUTTING);
+      updateData.setTeamId(updateTeam.getId());
       updateData.setGutterCount(createdAmount);
 
       Event updateEvent = new Event(); 
