@@ -268,6 +268,24 @@ public abstract class AbstractFunctionalTest {
    * Creates test event
    * 
    * @param builder test builder
+   * @param harvestType harvestType
+   * @param batch batch
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Batch batch, Integer amount, Team team) throws IOException {
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+
+    ProductionLine productionLine = builder.admin().productionLines().create("4", team, 8);
+    
+    return builder.admin().events().createHarvest(batch, amount, startTime, endTime, productionLine, team, harvestType);
+  }
+
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
    * @return created event
    * @throws IOException thrown when event creation fails
    */
@@ -361,6 +379,23 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createPackingEvent(TestBuilder builder, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     Integer packedAmount = 80;
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+    
+    return builder.admin().events().createPacking(batch, startTime, endTime, createdPackageSize, packedAmount);
+  }
+
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param batch batch
+   * @param packedAmount packed amount
+   * @param startTime startTime
+   * @param endTime endTime
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createPackingEvent(TestBuilder builder, Batch batch, Integer packedAmount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     
     return builder.admin().events().createPacking(batch, startTime, endTime, createdPackageSize, packedAmount);

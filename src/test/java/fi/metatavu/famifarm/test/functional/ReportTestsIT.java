@@ -2,18 +2,17 @@ package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
 import fi.metatavu.famifarm.client.model.Batch;
 import fi.metatavu.famifarm.client.model.Event;
+import fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum;
 import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.Product;
@@ -154,6 +153,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       createWastageEvent(builder, batch, startTime, endTime);
       createHarvestEvent(builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BOXING, batch);
+      createPackingEvent(builder, batch, 62, startTime, endTime);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
@@ -173,8 +173,8 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("Porduct name", workbook, 0, 4, 1);
         builder.admin().reports().assertCellValue("03.02.2020", workbook, 0, 4, 2);
         builder.admin().reports().assertCellValue("500.0", workbook, 0, 4, 3);
-        builder.admin().reports().assertCellValue("500.0", workbook, 0, 4, 4); 
-        builder.admin().reports().assertCellValue("100.0", workbook, 0, 4, 5);
+        builder.admin().reports().assertCellValue("496.0", workbook, 0, 4, 4); 
+        builder.admin().reports().assertCellValue("99.2", workbook, 0, 4, 5);
       }
     }
   }
@@ -213,6 +213,150 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("Team", workbook, 0, 3, 0);
         builder.admin().reports().assertCellValue("Product", workbook, 0, 3, 1);
         builder.admin().reports().assertCellValue("Date", workbook, 0, 3, 2);
+      }
+    }
+  }
+
+  @Test
+  public void testXlsxSowedReport() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Batch batch = builder.admin().batches().create(product);
+      
+      createSowingEvent(builder, batch, 10, startTime, endTime);
+      createSowingEvent(builder, batch, 10, startTime, endTime);
+
+      Batch batch2 = builder.admin().batches().create(product);
+      createSowingEvent(builder, batch2, 10, startTime, endTime);
+
+      Product product2 = builder.admin().products().create(builder.createLocalizedEntry("B - product", "B - tuote"), createdPackageSize);
+      Batch batch3 = builder.admin().batches().create(product2);
+      createSowingEvent(builder, batch3, 25, startTime, endTime);
+      
+      startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
+      endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      
+      byte[] data = builder.admin().reports().createReport("SOWED", fromTime, toTime);
+      assertNotNull(data);
+      
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
+        builder.admin().reports().assertCellValue("30.0", workbook, 0, 4, 1);
+        builder.admin().reports().assertCellValue("B - product", workbook, 0, 5, 0);
+        builder.admin().reports().assertCellValue("25.0", workbook, 0, 5, 1);
+      }
+    }
+  }
+
+  @Test
+  public void testXlsxPlantedReport() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Batch batch = builder.admin().batches().create(product);
+      
+      createSowingEvent(builder, batch, 10, startTime, endTime);
+      createPlantingEvent(builder, batch, 10, 3);
+      
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      
+      byte[] data = builder.admin().reports().createReport("PLANTED", fromTime, toTime);
+      assertNotNull(data);
+      
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
+        builder.admin().reports().assertCellValue("30.0", workbook, 0, 4, 1);
+      }
+    }
+  }
+
+  @Test
+  public void testXlsxSpreadReport() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Batch batch = builder.admin().batches().create(product);
+      
+      createSowingEvent(builder, batch, 10, startTime, endTime);
+      createTableSpreadEvent(builder, batch);
+      
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      
+      byte[] data = builder.admin().reports().createReport("SPREAD", fromTime, toTime);
+      assertNotNull(data);
+      
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
+        builder.admin().reports().assertCellValue("525.0", workbook, 0, 4, 1);
+      }
+    }
+  }
+
+  @Test
+  public void testXlsxHarvestedReport() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Batch batch = builder.admin().batches().create(product);
+      
+      createSowingEvent(builder, batch, 10, startTime, endTime);
+      createPlantingEvent(builder, batch, 10, 3);
+      createHarvestEvent(builder, TypeEnum.BOXING, batch, 3, null);
+      
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      
+      byte[] data = builder.admin().reports().createReport("HARVESTED", fromTime, toTime);
+      assertNotNull(data);
+      
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
+        builder.admin().reports().assertCellValue("30.0", workbook, 0, 4, 1);
+      }
+    }
+  }
+
+
+  @Test
+  public void testXlsxPackedReport() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Batch batch = builder.admin().batches().create(product);
+      
+      createSowingEvent(builder, batch, 10, startTime, endTime);
+      createPackingEvent(builder, batch, startTime, endTime);
+      
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      
+      byte[] data = builder.admin().reports().createReport("PACKED", fromTime, toTime);
+      assertNotNull(data);
+      
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
+        builder.admin().reports().assertCellValue("640.0", workbook, 0, 4, 1);
       }
     }
   }
