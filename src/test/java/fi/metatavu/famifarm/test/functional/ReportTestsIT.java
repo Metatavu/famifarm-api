@@ -153,6 +153,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       createWastageEvent(builder, batch, startTime, endTime);
       createHarvestEvent(builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BOXING, batch);
+      createPackingEvent(builder, batch, 62, startTime, endTime);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
@@ -172,8 +173,8 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("Porduct name", workbook, 0, 4, 1);
         builder.admin().reports().assertCellValue("03.02.2020", workbook, 0, 4, 2);
         builder.admin().reports().assertCellValue("500.0", workbook, 0, 4, 3);
-        builder.admin().reports().assertCellValue("500.0", workbook, 0, 4, 4); 
-        builder.admin().reports().assertCellValue("100.0", workbook, 0, 4, 5);
+        builder.admin().reports().assertCellValue("496.0", workbook, 0, 4, 4); 
+        builder.admin().reports().assertCellValue("99.2", workbook, 0, 4, 5);
       }
     }
   }

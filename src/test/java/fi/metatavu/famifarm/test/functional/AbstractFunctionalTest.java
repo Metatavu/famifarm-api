@@ -370,6 +370,23 @@ public abstract class AbstractFunctionalTest {
    * Creates test event
    * 
    * @param builder test builder
+   * @param batch batch
+   * @param packedAmount packed amount
+   * @param startTime startTime
+   * @param endTime endTime
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createPackingEvent(TestBuilder builder, Batch batch, Integer packedAmount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+    
+    return builder.admin().events().createPacking(batch, startTime, endTime, createdPackageSize, packedAmount);
+  }
+
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
    * @return created event
    * @throws IOException thrown when event creation fails
    */
