@@ -5,7 +5,12 @@ import javax.inject.Inject;
 
 import fi.metatavu.famifarm.reporting.xlsx.XlsxExampleReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxGrowthTimeReport;
+import fi.metatavu.famifarm.reporting.xlsx.XlsxHarvestedReport;
+import fi.metatavu.famifarm.reporting.xlsx.XlsxPackedReport;
+import fi.metatavu.famifarm.reporting.xlsx.XlsxPlantedReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxPlantingYieldReport;
+import fi.metatavu.famifarm.reporting.xlsx.XlsxSowedReport;
+import fi.metatavu.famifarm.reporting.xlsx.XlsxSpreadReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxWastageReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxYieldReport;
 
@@ -32,6 +37,21 @@ public class ReportController {
   @Inject
   private XlsxPlantingYieldReport xlsxPlantingYieldReport;
   
+  @Inject
+  private XlsxSowedReport xlsxSowedReport;
+
+  @Inject
+  private XlsxPlantedReport xlsxPlantedReport;
+
+  @Inject
+  private XlsxSpreadReport xlsxSpreadReport;
+
+  @Inject
+  private XlsxHarvestedReport xlsxHarvestedReport;
+
+  @Inject
+  private XlsxPackedReport xlsxPackedReport;
+
   /**
    * Returns report for given report type
    * 
@@ -51,6 +71,16 @@ public class ReportController {
         return xlsxYieldReport;
       case PLANTING_YIELD:
         return xlsxPlantingYieldReport;
+      case SOWED:
+        return xlsxSowedReport;
+      case PLANTED:
+        return xlsxPlantedReport;
+      case SPREAD:
+        return xlsxSpreadReport;
+      case HARVESTED:
+        return xlsxHarvestedReport;
+      case PACKED:
+        return xlsxPackedReport;
     }
     
     return null;

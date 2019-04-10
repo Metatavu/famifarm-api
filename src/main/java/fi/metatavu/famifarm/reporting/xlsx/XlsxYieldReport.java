@@ -18,11 +18,11 @@ import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
+import fi.metatavu.famifarm.persistence.model.PackingEvent;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.rest.model.EventType;
-import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
 
 /**
  * Report for yield
@@ -46,7 +46,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
   @Override
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
-      String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.wastage.title"));
+      String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.yield.yieldTitle"));
       
       int teamIndex = 0;
       int productIndex = 1;
@@ -91,6 +91,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         xlsxBuilder.setCellValue(sheetId, rowIndex, harvestedIndex, Double.toString(totalHarvestedAmount));
         xlsxBuilder.setCellValue(sheetId, rowIndex, inBoxesIndex, Double.toString(totalAmountInBoxes));
         xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  Double.toString(yield));
+        rowIndex++;
       }
       
       xlsxBuilder.write(output);
@@ -179,14 +180,11 @@ public class XlsxYieldReport extends AbstractXlsxReport {
    */
   private double getTotalAmounInBoxes(List<Event> events) {
     double amount = 0;
-    double gutterHoleCount = getAverageGutterHoleCount(events);
 
     for (Event event : events) {
-      if (event.getType() == EventType.HARVEST) {
-        HarvestEvent harvestEvent = (HarvestEvent) event;
-        if (harvestEvent.getHarvestType() == TypeEnum.BOXING) {
-          amount += harvestEvent.getGutterCount() * gutterHoleCount;
-        }
+      if (event.getType() == EventType.PACKING) {
+        PackingEvent packingEvent = (PackingEvent) event;
+        amount += (packingEvent.getPackedCount() * packingEvent.getPackageSize().getSize());
       }
     }
     
