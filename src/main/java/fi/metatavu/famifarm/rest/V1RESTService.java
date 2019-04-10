@@ -1373,11 +1373,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createBadRequest("Invalid production line");
       }
     }
-    
+
+    fi.metatavu.famifarm.persistence.model.Team team = null;
+    if (eventData.getTeamId() != null) {
+      team = teamsController.findTeam(eventData.getTeamId());
+      if (team == null) {
+        return createBadRequest("Invalid team");        
+      }
+    }
+
     Integer amount = eventData.getGutterCount();
     
     TypeEnum harvestType = eventData.getType();
-    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, harvestType, productionLine, additionalInformation, amount, creatorId);
+    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType, productionLine, additionalInformation, amount, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1416,8 +1424,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
 
+    fi.metatavu.famifarm.persistence.model.Team team = null;
+    if (eventData.getTeamId() != null) {
+      team = teamsController.findTeam(eventData.getTeamId());
+      if (team == null) {
+        return createBadRequest("Invalid team");        
+      }
+    }
+
     TypeEnum harvestType = eventData.getType();
-    HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, batch, startTime, endTime, harvestType, productionLine, additionalInformation, creatorId);
+    HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, batch, startTime, endTime, team, harvestType, productionLine, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));

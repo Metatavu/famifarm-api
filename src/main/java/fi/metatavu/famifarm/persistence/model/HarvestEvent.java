@@ -30,6 +30,9 @@ public class HarvestEvent extends Event {
 
   @ManyToOne
   private ProductionLine productionLine;
+
+  @ManyToOne
+  private Team team;
   
   @NotNull
   @Column (nullable = false)
@@ -37,6 +40,14 @@ public class HarvestEvent extends Event {
 
   public fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum getHarvestType() {
     return harvestType;
+  }
+
+  public Team getTeam() {
+    return team;
+  }
+
+  public void setTeam(Team team) {
+    this.team = team;
   }
 
   public void setHarvestType(fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType) {

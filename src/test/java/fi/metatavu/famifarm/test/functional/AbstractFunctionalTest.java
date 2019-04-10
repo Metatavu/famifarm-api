@@ -261,7 +261,7 @@ public abstract class AbstractFunctionalTest {
     Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team name", "Tiimin nimi"));
     ProductionLine productionLine = builder.admin().productionLines().create("4", team, 8);
     
-    return builder.admin().events().createHarvest(batch, amount, startTime, endTime, productionLine, harvestType);
+    return builder.admin().events().createHarvest(batch, amount, startTime, endTime, productionLine, team, harvestType);
   }
 
   /**

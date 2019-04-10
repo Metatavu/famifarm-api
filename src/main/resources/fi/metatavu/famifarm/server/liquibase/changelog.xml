@@ -607,4 +607,12 @@
     <renameColumn newColumnName="traycount" oldColumnName="cellcount" tableName="plantingevent" columnDataType="int(32)" />
   </changeSet>
 
+  <changeSet id="addharvestteamid" author="Heikki Kurhinen">
+    <addColumn tableName="harvestevent">
+      <column name="team_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_HARVESTEVENT_TEAM_ID" referencedColumnNames="id" referencedTableName="team"/>
+      </column>
+    </addColumn>
+  </changeSet
+
 </databaseChangeLog>
