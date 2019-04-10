@@ -45,7 +45,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
   @SuppressWarnings ("squid:S3776")
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
-      String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.wastage.title"));
+      String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.growth_time.title"));
       
       int lineIndex = 0;
       int productIndex = 1;
