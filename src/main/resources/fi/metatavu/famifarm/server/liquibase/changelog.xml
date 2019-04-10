@@ -613,6 +613,6 @@
         <constraints nullable="false" foreignKeyName="FK_HARVESTEVENT_TEAM_ID" referencedColumnNames="id" referencedTableName="team"/>
       </column>
     </addColumn>
-  </changeSet
+  </changeSet>
 
 </databaseChangeLog>
