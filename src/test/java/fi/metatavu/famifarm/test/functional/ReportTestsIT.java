@@ -319,7 +319,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       createSowingEvent(builder, batch, 10, startTime, endTime);
       createPlantingEvent(builder, batch, 10, 3);
-      createHarvestEvent(builder, TypeEnum.BOXING, batch, 3);
+      createHarvestEvent(builder, TypeEnum.BOXING, batch, 3, null);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
