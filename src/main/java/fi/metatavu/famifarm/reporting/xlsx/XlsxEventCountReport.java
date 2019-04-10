@@ -97,7 +97,7 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
 
       for (ReportRow row : rows) {
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, row.getProductName());
-        xlsxBuilder.setCellValue(sheetId, rowIndex, countIndex, row.getCount());
+        xlsxBuilder.setCellValue(sheetId, rowIndex, countIndex, Double.toString(row.getCount()));
         rowIndex++;
       } 
 
