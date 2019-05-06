@@ -38,6 +38,8 @@ public class Batch {
   private Product product;
 
   @Enumerated (EnumType.STRING)
+  @Column(nullable = false)
+  @NotNull
   private BatchPhase phase;
 
   @ManyToOne
