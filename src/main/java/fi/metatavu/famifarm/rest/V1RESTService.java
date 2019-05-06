@@ -808,8 +808,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (product == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
-
-    return createOk(batchController.updateBatch(batch, product, body.getPhase(), getLoggerUserId()));
+    fi.metatavu.famifarm.persistence.model.Batch updatedBatch = batchController.updateBatch(batch, product, body.getPhase(), getLoggerUserId());
+    return createOk(batchTranslator.translateBatch(updatedBatch));
   }
 
   @Override
