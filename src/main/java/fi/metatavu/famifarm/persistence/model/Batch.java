@@ -6,6 +6,8 @@ import java.util.UUID;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
@@ -14,6 +16,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import fi.metatavu.famifarm.rest.model.BatchPhase;
 
 /**
  * JPA entity for batch
@@ -32,6 +36,9 @@ public class Batch {
 
   @ManyToOne(optional = false)
   private Product product;
+
+  @Enumerated (EnumType.STRING)
+  private BatchPhase phase;
 
   @ManyToOne
   private Event activeEvent;
@@ -68,6 +75,14 @@ public class Batch {
 
   public void setProduct(Product product) {
     this.product = product;
+  }
+
+  public BatchPhase getPhase() {
+    return phase;
+  }
+
+  public void setPhase(BatchPhase phase) {
+    this.phase = phase;
   }
 
   public void setCreatorId(UUID creatorId) {

@@ -19,6 +19,7 @@ import fi.metatavu.famifarm.persistence.model.Batch_;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Event_;
 import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.rest.model.BatchPhase;
 
 /**
  * DAO class for batches
@@ -59,7 +60,7 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @return List of batches
    */
   @SuppressWarnings ("squid:S00107")
-  public List<Batch> list(Product product, Integer remainingUnitsGreaterThan, Integer remainingUnitsLessThan, Integer remainingUnitsEqual, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Integer firstResult, Integer maxResults) {
+  public List<Batch> list(Product product, BatchPhase phase, Integer remainingUnitsGreaterThan, Integer remainingUnitsLessThan, Integer remainingUnitsEqual, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -74,14 +75,18 @@ public class BatchDAO extends AbstractDAO<Batch> {
       restrictions.add(criteriaBuilder.equal(root.get(Batch_.product), product));
     }
     
+    if (phase != null) {
+      restrictions.add(criteriaBuilder.equal(root.get(Batch_.phase), phase));
+    }
+
     if (createdBefore != null) {
       restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Batch_.createdAt), createdBefore));
     }
- 
+
     if (createdAfter != null) {
       restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
     }
-    
+
     if (remainingUnitsEqual != null || remainingUnitsLessThan != null || remainingUnitsGreaterThan != null) {
       Join<Batch, Event> activeEventJoin = root.join(Batch_.activeEvent);
 
@@ -143,6 +148,20 @@ public class BatchDAO extends AbstractDAO<Batch> {
   public Batch updateProduct(Batch batch, Product product, UUID lastModifierId) {
     batch.setLastModifierId(lastModifierId);
     batch.setProduct(product);
+    return persist(batch);
+  }
+
+  /**
+   * Updates phase
+   *
+   * @param batch batch
+   * @param phase phase
+   * @param lastModifier modifier
+   * @return updated batch
+   */
+  public Batch updatePhase(Batch batch, BatchPhase phase, UUID lastModifierId) {
+    batch.setLastModifierId(lastModifierId);
+    batch.setPhase(phase);
     return persist(batch);
   }
 

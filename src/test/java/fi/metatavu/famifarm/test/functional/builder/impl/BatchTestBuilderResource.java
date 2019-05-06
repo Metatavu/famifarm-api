@@ -14,6 +14,7 @@ import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.client.BatchesApi;
 import fi.metatavu.famifarm.client.model.Batch;
+import fi.metatavu.famifarm.client.model.BatchPhase;
 import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -42,6 +43,21 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
   public Batch create(Product product) {
     Batch batch = new Batch();
     batch.setProductId(product.getId());
+    batch.setPhase(BatchPhase.SOWING);
+    return addClosable(getApi().createBatch(batch));
+  }
+
+  /**
+   * Creates new batch
+   * 
+   * @param product product
+   * @param phase phase
+   * @return created batch
+   */
+  public Batch create(Product product, BatchPhase phase) {
+    Batch batch = new Batch();
+    batch.setProductId(product.getId());
+    batch.setPhase(phase);
     return addClosable(getApi().createBatch(batch));
   }
 
@@ -104,7 +120,7 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
       after = createdAfter.toString();
     }
     
-    assertEquals(expected, getApi().listBatches(status, null, firstResult, maxResults, before, after).size());
+    assertEquals(expected, getApi().listBatches(status, null, null, firstResult, maxResults, before, after).size());
   }
   
   /** 
@@ -114,7 +130,7 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
    * @param expected expected count
    */
   public void assertCountByStatus(int expected, String status) {
-    assertEquals(expected, getApi().listBatches(status, null, null, null, null, null).size());
+    assertEquals(expected, getApi().listBatches(status, null, null, null, null, null, null).size());
   }
   
   /** 
@@ -124,7 +140,17 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
    * @param expected expected count
    */
   public void assertCountByProduct(int expected, Product product) {
-    assertEquals(expected, getApi().listBatches(null, product.getId(), null, null, null, null).size());
+    assertEquals(expected, getApi().listBatches(null, null, product.getId(), null, null, null, null).size());
+  }
+
+  /** 
+   * Asserts batch count within the system by phase
+   * 
+   * @param phase phase used to filter
+   * @param expected expected count
+   */
+  public void assertCountByPhase(int expected, BatchPhase phase) {
+    assertEquals(expected, getApi().listBatches(null, phase, null, null, null, null, null).size());
   }
   
   /**
