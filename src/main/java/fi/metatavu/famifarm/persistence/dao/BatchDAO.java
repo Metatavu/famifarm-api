@@ -34,14 +34,16 @@ public class BatchDAO extends AbstractDAO<Batch> {
    *
    * @param id id
    * @param product product
+   * @param phase phase
    * @param creatorId creatorId
    * @param lastModifierId lastModifierId
    * @return created seed
    */
-  public Batch create(UUID id, Product product, UUID creatorId, UUID lastModifierId) {
+  public Batch create(UUID id, Product product, BatchPhase phase, UUID creatorId, UUID lastModifierId) {
     Batch batch = new Batch();
     batch.setId(id);
     batch.setProduct(product);
+    batch.setPhase(phase);
     batch.setCreatorId(creatorId);
     batch.setLastModifierId(lastModifierId);
     return persist(batch);

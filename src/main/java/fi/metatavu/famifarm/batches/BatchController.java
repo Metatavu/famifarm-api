@@ -36,11 +36,12 @@ public class BatchController {
    * Creates new batch
    * 
    * @param product product
+   * @param phase phase
    * @param userId userId
    * @return created batch
    */
-  public Batch createBatch(Product product, UUID userId) {
-    return batchDAO.create(UUID.randomUUID(), product, userId, userId);
+  public Batch createBatch(Product product, BatchPhase phase, UUID userId) {
+    return batchDAO.create(UUID.randomUUID(), product, phase, userId, userId);
   }
 
   /**

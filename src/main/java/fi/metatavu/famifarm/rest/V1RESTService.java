@@ -299,7 +299,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
-    return createOk(batchTranslator.translateBatch(batchController.createBatch(product, getLoggerUserId())));
+    return createOk(batchTranslator.translateBatch(batchController.createBatch(product, body.getPhase(), getLoggerUserId())));
   }
 
   @Override
