@@ -231,7 +231,8 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       
       Batch createdBatch = builder.admin().batches().create(product);
       
-      Batch updateBatch = new Batch(); 
+      Batch updateBatch = new Batch();
+      updateBatch.setPhase(BatchPhase.PLANTING); 
       updateBatch.setId(createdBatch.getId());
       
       name = builder.createLocalizedEntry("Updated name", "Tuotteen nimi");
