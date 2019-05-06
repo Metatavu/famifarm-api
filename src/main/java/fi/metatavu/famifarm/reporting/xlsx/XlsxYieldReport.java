@@ -71,7 +71,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Batch> batches = batchController.listBatches(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
+      List<Batch> batches = batchController.listBatches(null, null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
       int rowIndex = 4;
       
