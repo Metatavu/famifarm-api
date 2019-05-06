@@ -76,7 +76,7 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Batch> batches = batchController.listBatches(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
+      List<Batch> batches = batchController.listBatches(null, null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       
       for (Batch batch : batches) {

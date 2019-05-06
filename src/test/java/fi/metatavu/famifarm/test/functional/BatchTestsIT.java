@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.junit.Test;
 
 import fi.metatavu.famifarm.client.model.Batch;
+import fi.metatavu.famifarm.client.model.BatchPhase;
 import fi.metatavu.famifarm.client.model.PotType;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.EventType;
@@ -120,6 +121,26 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       builder.admin().batches().assertCountByProduct(0, product3);
     }
   }
+
+  @Test
+  public void testListBatchesByPhase() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      
+      Batch sowingPhaseBatch = builder.admin().batches().create(product, BatchPhase.SOWING);
+      builder.admin().batches().create(product, BatchPhase.HARVEST);
+      builder.admin().batches().create(product, BatchPhase.HARVEST);
+
+      builder.admin().batches().assertCountByPhase(1, BatchPhase.SOWING);
+      builder.admin().batches().assertCountByPhase(2, BatchPhase.HARVEST);
+
+      sowingPhaseBatch.setPhase(BatchPhase.HARVEST);
+      builder.admin().batches().updateBatch(sowingPhaseBatch);
+
+      builder.admin().batches().assertCountByPhase(3, BatchPhase.HARVEST);
+    }
+  }
   
   @Test
   public void testListBatchesByStatus() throws Exception {
@@ -210,7 +231,8 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       
       Batch createdBatch = builder.admin().batches().create(product);
       
-      Batch updateBatch = new Batch(); 
+      Batch updateBatch = new Batch();
+      updateBatch.setPhase(BatchPhase.PLANTING); 
       updateBatch.setId(createdBatch.getId());
       
       name = builder.createLocalizedEntry("Updated name", "Tuotteen nimi");
