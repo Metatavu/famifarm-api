@@ -11,6 +11,7 @@ ADD --chown=jboss ./docker/host.cli /opt/docker/host.cli
 ADD --chown=jboss ./docker/kubernets-jgroups.cli /opt/docker/kubernets-jgroups.cli
 ADD --chown=jboss ./docker/jdbc.cli /opt/docker/jdbc.cli
 ADD --chown=jboss ./docker/env.cli /opt/docker/env.cli
+ADD --chown=jboss ./docker/keycloak.cli /opt/docker/keycloak.cli
 RUN chmod a+x /opt/docker/entrypoint.sh
 
 RUN curl -o /tmp/mysql-module.zip -L https://static.metatavu.io/wildfly/wildfly-${WILDFLY_VERSION}-mysql-module-${MYSQL_MODULE_VERSION}.zip
@@ -23,6 +24,7 @@ RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/host.cli
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/jdbc.cli
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/kubernets-jgroups.cli
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/env.cli
+RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/opt/docker/keycloak.cli
 RUN /opt/jboss/wildfly/bin/jboss-cli.sh --properties=/opt/docker/jboss-cli.properties --file=/opt/jboss/wildfly/bin/adapter-elytron-install-offline.cli
 RUN rm /tmp/*.zip
 
