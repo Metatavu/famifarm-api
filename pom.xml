@@ -58,20 +58,20 @@
     
     <!-- Wildfly -->
     
-    <wildfly.version>15.0.1.Final</wildfly.version>
+    <wildfly.version>18.0.0.Final</wildfly.version>
 
     <!-- TODO: Selvitä commonslog versio -->
     <commons-logging.version>1.2</commons-logging.version>
     <log4j.version>2.11.1</log4j.version>
     <slf4j-api.version>1.7.22</slf4j-api.version>
-    
+
     <!-- Liquibase -->
     
     <liquibase.version>3.6.2</liquibase.version>
     
     <!-- Keycloak admin client -->
     
-    <keycloak.version>4.8.3.Final</keycloak.version>
+    <keycloak.version>7.0.0</keycloak.version>
     
     <!-- Mailgun -->
     
@@ -148,7 +148,7 @@
 
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+      <artifactId>jboss-servlet-api_4.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
     
@@ -211,10 +211,10 @@
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-api.version}</version>
     </dependency>
-    
+
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
       <scope>provided</scope>
     </dependency>
     
@@ -229,13 +229,7 @@
       <artifactId>jboss-ejb-api_3.2_spec</artifactId>
       <scope>provided</scope>
     </dependency>
-    
-    <dependency>
-      <groupId>org.jboss.spec.javax.transaction</groupId>
-      <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -576,7 +570,7 @@
                 <log>${project.basedir}/target/cargo.log</log>
                 <output>${project.basedir}/target/wildfly.log</output>
                 <zipUrlInstaller>
-                  <url>http://download.jboss.org/wildfly/${wildfly.version}/wildfly-${wildfly.version}.zip</url>
+                  <url>https://download.jboss.org/wildfly/${wildfly.version}/wildfly-${wildfly.version}.zip</url>
                   <downloadDir>${project.basedir}/.cargo/downloads</downloadDir>
                   <extractDir>${project.basedir}/.cargo/extracts</extractDir>
                 </zipUrlInstaller>
