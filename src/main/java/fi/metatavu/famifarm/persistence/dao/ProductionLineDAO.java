@@ -54,7 +54,7 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
     CriteriaQuery<ProductionLine> criteria = criteriaBuilder.createQuery(ProductionLine.class);
     Root<ProductionLine> root = criteria.from(ProductionLine.class);
     criteria.select(root);
-    criteria.orderBy(criteriaBuilder.desc(root.get(ProductionLine_.lineNumber)));
+    criteria.orderBy(criteriaBuilder.asc(root.get(ProductionLine_.lineNumber)));
     
     TypedQuery<ProductionLine> query = entityManager.createQuery(criteria);
     
