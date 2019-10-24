@@ -92,14 +92,14 @@ public class XlsxWastageReport extends AbstractXlsxReport {
             WastageEvent wastageEvent = (WastageEvent) event;
             OffsetDateTime endTime = wastageEvent.getEndTime();
             
-            xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, wastageEvent.getProductionLine().getLineNumber());
+            xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, wastageEvent.getProductionLine() != null ? wastageEvent.getProductionLine().getLineNumber() : "");
             xlsxBuilder.setCellValue(sheetId, rowIndex, dateIndex, endTime.format(formatter));
             xlsxBuilder.setCellValue(sheetId, rowIndex, workerIndex, getFormattedUser(event.getCreatorId(), userCache));
             xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
-            xlsxBuilder.setCellValue(sheetId, rowIndex, phaseIndex, wastageEvent.getPhase().toString());
-            xlsxBuilder.setCellValue(sheetId, rowIndex, reasonIndex, localizedValueController.getValue(wastageEvent.getWastageReason().getReason(), locale));
+            xlsxBuilder.setCellValue(sheetId, rowIndex, phaseIndex, wastageEvent.getPhase() != null ? wastageEvent.getPhase().toString() : "");
+            xlsxBuilder.setCellValue(sheetId, rowIndex, reasonIndex, wastageEvent.getWastageReason() != null ? localizedValueController.getValue(wastageEvent.getWastageReason().getReason(), locale) : "");
             xlsxBuilder.setCellValue(sheetId, rowIndex, additionalInformationIndex, wastageEvent.getAdditionalInformation());
-            xlsxBuilder.setCellValue(sheetId, rowIndex, amountIndex,  wastageEvent.getAmount().toString());
+            xlsxBuilder.setCellValue(sheetId, rowIndex, amountIndex, wastageEvent.getAmount() != null ? wastageEvent.getAmount().toString() : "");
             rowIndex++;
           }
           
