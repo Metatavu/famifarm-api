@@ -47,7 +47,7 @@ public class ProductionLineController {
    * @return list of production lines
    */
   public List<ProductionLine> listProductionLines(Integer firstResult, Integer maxResults) {
-    return productionLineDAO.listAll(firstResult, maxResults);
+    return productionLineDAO.listSortByLineNumber(firstResult, maxResults);
   }
 
   /**

@@ -1,10 +1,17 @@
 package fi.metatavu.famifarm.persistence.dao;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
+import fi.metatavu.famifarm.persistence.model.ProductionLine_;
 import fi.metatavu.famifarm.persistence.model.Team;
 
 /**
@@ -35,6 +42,31 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
     productionLine.setCreatorId(creatorId);
     productionLine.setLastModifierId(lastModifierId);
     return persist(productionLine);
+  }
+
+  /**
+   * Lists production lines sorted by line number
+   */
+  public List<ProductionLine> listSortByLineNumber(Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ProductionLine> criteria = criteriaBuilder.createQuery(ProductionLine.class);
+    Root<ProductionLine> root = criteria.from(ProductionLine.class);
+    criteria.select(root);
+    criteria.orderBy(criteriaBuilder.asc(root.get(ProductionLine_.lineNumber)));
+    
+    TypedQuery<ProductionLine> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
   }
 
   /**
