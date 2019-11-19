@@ -175,7 +175,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       Batch openBatch2 = builder.admin().batches().create(product);
       builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 10, PotType.LARGE, productionLine, seedBatch);
       builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 30, PotType.LARGE, productionLine, seedBatch);
-      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 35, wastageReason, null, EventType.HARVEST, productionLine.getId());
+      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), (40 * getPotTypeAmount(PotType.LARGE) - 5), wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
       builder.admin().batches().assertCountByStatus(2, "OPEN");
