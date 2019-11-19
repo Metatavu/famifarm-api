@@ -91,7 +91,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateEvent.setStartTime(updateEndTime);
       updateEvent.setType(EventType.SOWING);
       updateEvent.setUserId(createdEvent.getUserId());
-      setEventRemainingUnits(updateEvent, updateAmount);
+      setEventRemainingUnits(updateEvent, (updateAmount * getPotTypeAmount(updatePotType)));
       
       builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
