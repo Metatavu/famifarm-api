@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.drafts;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -41,9 +42,22 @@ public class DraftController {
    * @return found draft or null if not found
    */
   public Draft findDraftByCreatorIdAndType(UUID creatorId, String type) {
-    return draftDAO.findByCreatorIdAndType(creatorId, type);
+    List<Draft> drafts = draftDAO.listByCreatorIdAndType(creatorId, type);
+    return drafts.isEmpty() ? null : drafts.get(drafts.size() - 1);
   }
-  
+
+  /**
+   * deletes drafts by creator id and type
+   * 
+   * @param creatorId creator id
+   * @param type type
+   */
+  public void deleteDraftsByCreatorIdAndType(UUID creatorId, String type) {
+    draftDAO.listByCreatorIdAndType(creatorId, type)
+      .stream()
+      .forEach(draftDAO::delete);
+  }
+
   /**
    * Deletes a draft
    * 

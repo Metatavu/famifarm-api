@@ -484,5 +484,18 @@ public abstract class AbstractFunctionalTest {
       fail(e.getMessage());
     }
   }
+
+  /**
+   * Get number of plants in tray depending on pot type
+   * 
+   * @param potType, potType
+   * @return amount
+   */
+  protected int getPotTypeAmount(PotType potType) {
+    if (PotType.SMALL == potType) {
+      return 54;
+    }
+    return 35;
+  }
   
 }

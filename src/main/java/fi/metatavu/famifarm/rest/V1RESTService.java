@@ -292,7 +292,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response createBatch(Batch body) {
     fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
     if (product == null) {
@@ -451,6 +451,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       break;
     case SOWING:
       sowingEventController.deleteSowingEvent((SowingEvent) event);
+      batchController.refreshCreationDate(batch);
       break;
     case TABLE_SPREAD:
       tableSpreadEventController.deleteTableSpreadEvent((TableSpreadEvent) event);
@@ -1014,8 +1015,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response createDraft(Draft body) {
+    UUID creatorId = getLoggerUserId();
+
+    //TODO: Add unique index to database to prevent duplicates created by ui errors
+    draftController.deleteDraftsByCreatorIdAndType(creatorId, body.getType());
     return createOk(
-        draftTranslator.translateDraft(draftController.createDraft(body.getType(), body.getData(), getLoggerUserId())));
+        draftTranslator.translateDraft(draftController.createDraft(body.getType(), body.getData(), creatorId)));
   }
 
   @Override
@@ -1172,6 +1177,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     SowingEvent event = sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, seedBatch,
         potType, amount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
+    batchController.refreshCreationDate(batch);
 
     return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
   }
@@ -1211,6 +1217,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     SowingEvent updatedEvent = sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime,
         productionLine, seedBatch, potType, amount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
+    batchController.refreshCreationDate(batch);
 
     return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
   }

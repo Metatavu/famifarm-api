@@ -17,6 +17,7 @@ import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.rest.model.BatchPhase;
+import fi.metatavu.famifarm.rest.model.PotType;
 
 /**
  * Controller for seed batches
@@ -130,7 +131,39 @@ public class BatchController {
       eventDAO.updateRemainingUnits(event, countRemainingUnits(sowingEvents, wasteageEvents, packingEvents));  
     }
   }
-  
+
+  /**
+   * Updates batch creation date to the same as the earliest sowing event
+   * 
+   * @param batch batch
+   */
+  public void refreshCreationDate(Batch batch) {
+    Event sowingEvent = eventDAO.listByBatchSortByStartTimeAsc(batch, null, null)
+      .stream()
+      .filter(event -> event instanceof SowingEvent)
+      .findFirst()
+      .orElse(null);
+
+    if (sowingEvent == null) {
+      return;
+    }
+
+    batchDAO.updateCreatedAt(batch, sowingEvent.getStartTime());
+  }
+
+  /**
+   * Get number of plants in tray depending on pot type
+   * 
+   * @param potType, potType
+   * @return amount
+   */
+  private int getPotTypeAmount(PotType potType) {
+    if (PotType.SMALL == potType) {
+      return 54;
+    }
+    return 35;
+  }
+
   /**
    * Calculates remaining units by given event lists
    * 
@@ -143,7 +176,7 @@ public class BatchController {
     Integer count = 0;
     
     for (SowingEvent event : sowingEvents) {
-      count += event.getAmount();
+      count += (getPotTypeAmount(event.getPotType()) * event.getAmount());
     }
     
     for (WastageEvent event : wasteageEvents) {

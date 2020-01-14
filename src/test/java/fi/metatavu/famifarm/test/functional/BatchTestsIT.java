@@ -48,7 +48,6 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       
-      builder.worker1().batches().assertCreateFailStatus(403, product);
       builder.anonymous().batches().assertCreateFailStatus(401, product);
       builder.invalid().batches().assertCreateFailStatus(401, product);
     }
@@ -175,7 +174,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       Batch openBatch2 = builder.admin().batches().create(product);
       builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 10, PotType.LARGE, productionLine, seedBatch);
       builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 30, PotType.LARGE, productionLine, seedBatch);
-      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 35, wastageReason, null, EventType.HARVEST, productionLine.getId());
+      builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), (40 * getPotTypeAmount(PotType.LARGE) - 5), wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
       builder.admin().batches().assertCountByStatus(2, "OPEN");
