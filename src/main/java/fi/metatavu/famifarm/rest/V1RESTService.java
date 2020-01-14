@@ -1014,8 +1014,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response createDraft(Draft body) {
+    UUID creatorId = getLoggerUserId();
+
+    //TODO: Add unique index to database to prevent duplicates created by ui errors
+    draftController.deleteDraftsByCreatorIdAndType(creatorId, body.getType());
     return createOk(
-        draftTranslator.translateDraft(draftController.createDraft(body.getType(), body.getData(), getLoggerUserId())));
+        draftTranslator.translateDraft(draftController.createDraft(body.getType(), body.getData(), creatorId)));
   }
 
   @Override

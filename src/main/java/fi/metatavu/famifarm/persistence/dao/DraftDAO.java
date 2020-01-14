@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.persistence.dao;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -40,13 +41,13 @@ public class DraftDAO extends AbstractDAO<Draft> {
   }
   
   /**
-   * Finds a draft by creator and type
+   * Lists drafts by creator and type
    * 
    * @param creatorId creatorId
    * @param type type
-   * @return found draft or null if not found
+   * @return list of found drafts
    */
-  public Draft findByCreatorIdAndType(UUID creatorId, String type) {
+  public List<Draft> listByCreatorIdAndType(UUID creatorId, String type) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -58,7 +59,7 @@ public class DraftDAO extends AbstractDAO<Draft> {
       criteriaBuilder.equal(root.get(Draft_.creatorId), creatorId)
     ));
     
-    return getSingleResult(entityManager.createQuery(criteria));
+    return entityManager.createQuery(criteria).getResultList();
   }  
 
   /**
