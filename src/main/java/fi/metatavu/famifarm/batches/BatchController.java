@@ -133,6 +133,25 @@ public class BatchController {
   }
 
   /**
+   * Updates batch creation date to the same as the earliest sowing event
+   * 
+   * @param batch batch
+   */
+  public void refreshCreationDate(Batch batch) {
+    Event sowingEvent = eventDAO.listByBatchSortByStartTimeAsc(batch, null, null)
+      .stream()
+      .filter(event -> event instanceof SowingEvent)
+      .findFirst()
+      .orElse(null);
+
+    if (sowingEvent == null) {
+      return;
+    }
+
+    batchDAO.updateCreatedAt(batch, sowingEvent.getStartTime());
+  }
+
+  /**
    * Get number of plants in tray depending on pot type
    * 
    * @param potType, potType

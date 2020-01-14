@@ -179,4 +179,16 @@ public class BatchDAO extends AbstractDAO<Batch> {
     return persist(batch);
   }
 
+  /**
+   * Updates batches creation date
+   * 
+   * @param batch batch
+   * @param createdAt created at
+   * @return updated batch
+   */
+  public Batch updateCreatedAt(Batch batch, OffsetDateTime createdAt) {
+    batch.setCreatedAt(createdAt);
+    return persist(batch);
+  }
+
 }
