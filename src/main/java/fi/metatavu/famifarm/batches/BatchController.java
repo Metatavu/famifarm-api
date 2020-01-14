@@ -140,7 +140,7 @@ public class BatchController {
   public void refreshCreationDate(Batch batch) {
     Event sowingEvent = eventDAO.listByBatchSortByStartTimeAsc(batch, null, null)
       .stream()
-      .filter((event) -> event instanceof SowingEvent)
+      .filter(event -> event instanceof SowingEvent)
       .findFirst()
       .orElse(null);
 
@@ -148,7 +148,7 @@ public class BatchController {
       return;
     }
 
-    batchDAO.updateCreatedAt(batch, sowingEvent.getCreatedAt());
+    batchDAO.updateCreatedAt(batch, sowingEvent.getStartTime());
   }
 
   /**
