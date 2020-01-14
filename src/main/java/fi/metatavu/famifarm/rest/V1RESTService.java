@@ -292,7 +292,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response createBatch(Batch body) {
     fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
     if (product == null) {
