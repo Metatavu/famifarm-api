@@ -48,7 +48,6 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       
-      builder.worker1().batches().assertCreateFailStatus(403, product);
       builder.anonymous().batches().assertCreateFailStatus(401, product);
       builder.invalid().batches().assertCreateFailStatus(401, product);
     }
