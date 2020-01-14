@@ -1172,6 +1172,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     SowingEvent event = sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, seedBatch,
         potType, amount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
+    batchController.refreshCreationDate(batch);
 
     return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
   }
@@ -1211,6 +1212,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     SowingEvent updatedEvent = sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime,
         productionLine, seedBatch, potType, amount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
+    batchController.refreshCreationDate(batch);
 
     return createOk(sowingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
   }
