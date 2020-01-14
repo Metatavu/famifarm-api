@@ -451,6 +451,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       break;
     case SOWING:
       sowingEventController.deleteSowingEvent((SowingEvent) event);
+      batchController.refreshCreationDate(batch);
       break;
     case TABLE_SPREAD:
       tableSpreadEventController.deleteTableSpreadEvent((TableSpreadEvent) event);
