@@ -1,5 +1,7 @@
 package fi.metatavu.famifarm.persistence.dao;
 
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -7,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
@@ -48,6 +51,36 @@ public class EventDAO extends AbstractEventDAO<Event> {
     if (maxResults != null) {
       query.setMaxResults(maxResults);
     }
+
+    return query.getResultList();
+  }
+
+  /**
+   * Lists events between dates
+   * 
+   * @param createdBefore created before
+   * @param createdAfter created after
+   * @return list of events
+   */
+  public List<Event> listByCreatedAfterAndCreatedBefore(OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    EntityManager entityManager = getEntityManager();
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
+    Root<Event> root = criteria.from(Event.class);
+    criteria.select(root);
+
+    List<Predicate> restrictions = new ArrayList<>();
+
+    if (createdBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Event_.createdAt), createdBefore));
+    }
+
+    if (createdAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Event_.createdAt), createdAfter));
+    }
+
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
+    TypedQuery<Event> query = entityManager.createQuery(criteria);
 
     return query.getResultList();
   }
