@@ -81,8 +81,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param tableCount 
    * @return created event
    */
-  public Event createTableSpread(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, String location, Integer tableCount) {
-    TableSpreadEventData data = createTableSpreadEventData(location, tableCount);
+  public Event createTableSpread(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer tableCount) {
+    TableSpreadEventData data = createTableSpreadEventData(tableCount);
     
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -416,9 +416,9 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param trayCount tray count
    * @return
    */
-  private TableSpreadEventData createTableSpreadEventData(String location, Integer trayCount) {
+  private TableSpreadEventData createTableSpreadEventData(Integer trayCount) {
     TableSpreadEventData data = new TableSpreadEventData();
-    data.setLocation(location);
+    // TODO: Remove location
     data.trayCount(trayCount);
     return data;
   }

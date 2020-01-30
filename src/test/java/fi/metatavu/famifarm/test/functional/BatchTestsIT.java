@@ -2,6 +2,8 @@ package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.time.OffsetDateTime;
 import java.time.Period;
@@ -21,6 +23,7 @@ import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.client.model.SeedBatch;
+import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
@@ -130,7 +133,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       Batch sowingPhaseBatch = builder.admin().batches().create(product, BatchPhase.SOWING);
       builder.admin().batches().create(product, BatchPhase.HARVEST);
       builder.admin().batches().create(product, BatchPhase.HARVEST);
-
+      
       builder.admin().batches().assertCountByPhase(1, BatchPhase.SOWING);
       builder.admin().batches().assertCountByPhase(2, BatchPhase.HARVEST);
 
@@ -284,6 +287,36 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       builder.worker1().batches().assertDeleteFailStatus(403, packageSize);
       builder.anonymous().batches().assertDeleteFailStatus(401, packageSize);
       builder.invalid().batches().assertDeleteFailStatus(401, packageSize);
+    }
+  }
+
+  @Test
+  public void testBatchSowingLineNumbers() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team"));
+      ProductionLine productionLine6a = builder.admin().productionLines().create("6a", team, 8);
+      ProductionLine productionLine7a = builder.admin().productionLines().create("7a", team, 8);
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Seed"));
+      SeedBatch seedBatch = builder.admin().seedBatches().create("Code", seed, OffsetDateTime.now());
+      Batch batch = builder.admin().batches().create(product, BatchPhase.SOWING);
+      assertEquals(0, batch.getSowingLineNumbers().size());
+      
+      builder.admin().events().createSowing(batch, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine6a, seedBatch);
+      batch = builder.admin().batches().findBatch(batch.getId());
+      assertEquals(1, batch.getSowingLineNumbers().size());
+      assertEquals("6a", batch.getSowingLineNumbers().get(0));
+
+      builder.admin().events().createSowing(batch, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine7a, seedBatch);
+      batch = builder.admin().batches().findBatch(batch.getId());
+      assertEquals(2, batch.getSowingLineNumbers().size());
+      assertThat(batch.getSowingLineNumbers(), containsInAnyOrder("6a", "7a"));
+
+      builder.admin().events().createSowing(batch, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine7a, seedBatch);
+      batch = builder.admin().batches().findBatch(batch.getId());
+      assertEquals(2, batch.getSowingLineNumbers().size());
+      assertThat(batch.getSowingLineNumbers(), containsInAnyOrder("6a", "7a"));
     }
   }
   
