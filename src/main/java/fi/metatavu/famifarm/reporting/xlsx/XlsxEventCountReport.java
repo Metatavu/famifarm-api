@@ -2,6 +2,7 @@ package fi.metatavu.famifarm.reporting.xlsx;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,11 +14,9 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
-import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.ReportException;
@@ -35,9 +34,6 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
   
   @Inject
   private EventController eventController;
-  
-  @Inject
-  private BatchController batchController;
   
   @Inject
   private LocalizedValueController localizedValueController;
@@ -75,21 +71,18 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
       xlsxBuilder.setCellValue(sheetId, 1, 0, localesController.getString(locale, "reports.common.dateBetween", fromTime, toTime)); 
       
       // Values
-      
-      List<Batch> batches = batchController.listBatches(null, null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
+
+      List<Event> events = eventController.listByCreatedAfterAndCreatedBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
-      
-      for (Batch batch : batches) {
-        List<Event> events = eventController.listEvents(batch, null, null);
-        
-        Product product = batch.getProduct();
-        Double count = countUnits(events);
+      events.stream().forEach(event -> {
+        Product product = event.getBatch().getProduct();
+        Double count = countUnits(Arrays.asList(event));
         if (rowLookup.containsKey(product.getId())) {
           rowLookup.get(product.getId()).addCount(count);
         } else {
           rowLookup.put(product.getId(), new ReportRow(localizedValueController.getValue(product.getName(), locale), count));
         }
-      }
+      });
 
       int rowIndex = 4;
       List<ReportRow> rows = new ArrayList<>(rowLookup.values());
@@ -106,7 +99,7 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
       throw new ReportException(e);
     }
   }
-  
+
   /**
    * Inner class representing single row in report
    */
@@ -116,7 +109,7 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
       this.productName = productName;
       this.count = count;
     }
-    
+
     private Double count;
 
     private String productName;

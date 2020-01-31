@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.events;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,17 @@ public class EventController {
    */
   public Event findEventById(UUID id) {
     return eventDAO.findById(id);
+  }
+ 
+    /**
+   * Lists events between dates
+   * 
+   * @param createdBefore created before
+   * @param createdAfter created after
+   * @return list of events
+   */
+  public List<Event> listByCreatedAfterAndCreatedBefore(OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    return eventDAO.listByCreatedAfterAndCreatedBefore(createdBefore, createdAfter);
   }
   
   /**
