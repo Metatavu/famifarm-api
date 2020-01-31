@@ -28,9 +28,6 @@ public class SowingEvent extends Event {
   @ManyToOne
   private ProductionLine productionLine;
   
-  @ManyToOne
-  private SeedBatch seedBatch;
-  
   @Enumerated (EnumType.STRING)
   private PotType potType;
   
@@ -43,14 +40,6 @@ public class SowingEvent extends Event {
 
   public void setProductionLine(ProductionLine productionLine) {
     this.productionLine = productionLine;
-  }
-
-  public SeedBatch getSeedBatch() {
-    return seedBatch;
-  }
-
-  public void setSeedBatch(SeedBatch seedBatch) {
-    this.seedBatch = seedBatch;
   }
 
   public PotType getPotType() {

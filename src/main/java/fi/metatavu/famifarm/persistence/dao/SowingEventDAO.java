@@ -13,7 +13,6 @@ import javax.persistence.criteria.Root;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.PackingEvent_;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
-import fi.metatavu.famifarm.persistence.model.SeedBatch;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.rest.model.PotType;
 
@@ -32,7 +31,6 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param seedBatch seedBatch
    * @param potType pot type
    * @param amount amount
    * @param remainingUnits remaining units
@@ -40,14 +38,13 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, SeedBatch seedBatch, PotType potType, Integer amount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, PotType potType, Integer amount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     SowingEvent sowingEvent = new SowingEvent();
     sowingEvent.setBatch(batch);
     sowingEvent.setRemainingUnits(remainingUnits);
     sowingEvent.setStartTime(startTime);
     sowingEvent.setEndTime(endTime);
     sowingEvent.setProductionLine(productionLine);
-    sowingEvent.setSeedBatch(seedBatch);
     sowingEvent.setPotType(potType);
     sowingEvent.setAmount(amount);
     sowingEvent.setId(id);
@@ -87,19 +84,6 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
   public SowingEvent updateProductionLine(SowingEvent sowingEvent, ProductionLine productionLine, UUID lastModifierId) {
     sowingEvent.setLastModifierId(lastModifierId);
     sowingEvent.setProductionLine(productionLine);
-    return persist(sowingEvent);
-  }
-
-  /**
-   * Updates seedBatch
-   *
-   * @param seedBatch seedBatch
-   * @param lastModifier modifier
-   * @return updated sowingEvent
-   */
-  public SowingEvent updateSeedBatch(SowingEvent sowingEvent, SeedBatch seedBatch, UUID lastModifierId) {
-    sowingEvent.setLastModifierId(lastModifierId);
-    sowingEvent.setSeedBatch(seedBatch);
     return persist(sowingEvent);
   }
 

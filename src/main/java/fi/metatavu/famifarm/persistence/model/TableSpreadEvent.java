@@ -24,23 +24,12 @@ public class TableSpreadEvent extends Event {
   @Column(nullable = false)
   private Integer trayCount;
 
-  @Column(nullable = false)
-  private String location;
-
   public Integer getTrayCount() {
     return trayCount;
   }
 
   public void setTrayCount(Integer trayCount) {
     this.trayCount = trayCount;
-  }
-
-  public String getLocation() {
-    return location;
-  }
-
-  public void setLocation(String location) {
-    this.location = location;
   }
 
   @Transient
