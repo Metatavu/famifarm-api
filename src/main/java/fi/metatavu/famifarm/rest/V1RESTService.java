@@ -1246,7 +1246,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     UUID creatorId = getLoggerUserId();
-    String location = eventData.getLocation();
+    // TODO: Remove location
+    String location = null; //eventData.getLocation();
     Integer trayCount = eventData.getTrayCount();
     TableSpreadEvent event = tableSpreadEventController.createTableSpreadEvent(batch, startTime, endTime, trayCount,
         location, additionalInformation, creatorId);
@@ -1281,7 +1282,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     UUID creatorId = getLoggerUserId();
-    String location = eventData.getLocation();
+    // TODO: Remove location
+    String location = null; //eventData.getLocation();
     Integer trayCount = eventData.getTrayCount();
 
     TableSpreadEvent updatedEvent = tableSpreadEventController.updateTableSpreadEvent((TableSpreadEvent) event, batch,

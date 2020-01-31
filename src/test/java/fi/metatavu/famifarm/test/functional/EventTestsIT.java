@@ -140,11 +140,9 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-      String updateLocation = "updated location";
       Integer updateTrayCount = 82;
       
       TableSpreadEventData updateData = new TableSpreadEventData();
-      updateData.setLocation(updateLocation);
       updateData.setTrayCount(updateTrayCount);
 
       Event updateEvent = new Event(); 

@@ -68,6 +68,16 @@ public class SowingEventController {
   public List<SowingEvent> listSowingEvents(Integer firstResult, Integer maxResults) {
     return sowingEventDAO.listAll(firstResult, maxResults);
   }
+  
+  /**
+   * Lists sowing events by batch 
+   * 
+   * @param batch batch
+   * @return sowing events by batch 
+   */
+  public List<SowingEvent> listBatchSowingEvents(Batch batch) {
+    return sowingEventDAO.listByBatch(batch);
+  }
 
   /**
    * Update sowingEvent

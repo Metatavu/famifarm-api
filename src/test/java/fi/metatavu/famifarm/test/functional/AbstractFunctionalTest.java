@@ -124,10 +124,9 @@ public abstract class AbstractFunctionalTest {
   protected Event createTableSpreadEvent(TestBuilder builder, Batch batch) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-    String location = "Location";
     Integer tableCount = 15;
     
-    return builder.admin().events().createTableSpread(batch, startTime, endTime, location, tableCount);
+    return builder.admin().events().createTableSpread(batch, startTime, endTime, tableCount);
   }
 
   /**

@@ -1,7 +1,14 @@
 package fi.metatavu.famifarm.rest.translate;
 
-import javax.enterprise.context.ApplicationScoped;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import fi.metatavu.famifarm.events.SowingEventController;
+import fi.metatavu.famifarm.persistence.model.ProductionLine;
+import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.rest.model.Batch;
 
 /**
@@ -11,6 +18,9 @@ import fi.metatavu.famifarm.rest.model.Batch;
  */
 @ApplicationScoped
 public class BatchTranslator extends AbstractTranslator {
+  
+  @Inject
+  private SowingEventController sowingEventController;
   
   /**
    * Translates JPA batch object into REST batch object
@@ -31,6 +41,14 @@ public class BatchTranslator extends AbstractTranslator {
     if (batch.getProduct() != null) {
       result.setProductId(batch.getProduct().getId());
     }
+    
+    List<String> sowingLineNumbers = sowingEventController.listBatchSowingEvents(batch).stream()
+      .map(SowingEvent::getProductionLine)
+      .map(ProductionLine::getLineNumber)
+      .distinct()
+      .collect(Collectors.toList());
+    
+    result.setSowingLineNumbers(sowingLineNumbers);
 
     return result;
   }
