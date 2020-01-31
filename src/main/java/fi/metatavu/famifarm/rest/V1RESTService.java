@@ -1165,16 +1165,28 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (eventData == null) {
       return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
     }
+    
+    List<UUID> seedBatchIds = eventData.getSeedBatchIds();
+    if (seedBatchIds == null) {
+      seedBatchIds = Collections.emptyList();
+    }
+    
+    List<fi.metatavu.famifarm.persistence.model.SeedBatch> seedBatches = new ArrayList<>(seedBatchIds.size());
+    for (UUID seedBatchId : seedBatchIds) {
+      fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
+      if (seedBatch == null) {
+        return createBadRequest(String.format("Invalid seed batch id %s", seedBatchId));
+      }
+      
+      seedBatches.add(seedBatch);
+    }
 
     UUID creatorId = getLoggerUserId();
-    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController
-        .findProductionLine(eventData.getProductionLineId());
-    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController
-        .findSeedBatch(eventData.getSeedBatchId());
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
     PotType potType = eventData.getPotType();
     Integer amount = eventData.getAmount();
 
-    SowingEvent event = sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, seedBatch,
+    SowingEvent event = sowingEventController.createSowingEvent(batch, startTime, endTime, productionLine, seedBatches,
         potType, amount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
     batchController.refreshCreationDate(batch);
@@ -1206,16 +1218,29 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (eventData == null) {
       return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
     }
+    
+    List<UUID> seedBatchIds = eventData.getSeedBatchIds();
+    if (seedBatchIds == null) {
+      seedBatchIds = Collections.emptyList();
+    }
+    
+    List<fi.metatavu.famifarm.persistence.model.SeedBatch> seedBatches = new ArrayList<>(seedBatchIds.size());
+    for (UUID seedBatchId : seedBatchIds) {
+      fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
+      if (seedBatch == null) {
+        return createBadRequest(String.format("Invalid seed batch id %s", seedBatchId));
+      }
+      
+      seedBatches.add(seedBatch);
+    }
 
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController
         .findProductionLine(eventData.getProductionLineId());
-    fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController
-        .findSeedBatch(eventData.getSeedBatchId());
     PotType potType = eventData.getPotType();
     Integer amount = eventData.getAmount();
     SowingEvent updatedEvent = sowingEventController.updateSowingEvent((SowingEvent) event, batch, startTime, endTime,
-        productionLine, seedBatch, potType, amount, additionalInformation, creatorId);
+        productionLine, seedBatches, potType, amount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
     batchController.refreshCreationDate(batch);
 
@@ -1246,10 +1271,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     UUID creatorId = getLoggerUserId();
-    String location = eventData.getLocation();
     Integer trayCount = eventData.getTrayCount();
     TableSpreadEvent event = tableSpreadEventController.createTableSpreadEvent(batch, startTime, endTime, trayCount,
-        location, additionalInformation, creatorId);
+        additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(tableSpreadEventTranslator.translateEvent(updateBatchActiveEvent(event)));
@@ -1281,11 +1305,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     UUID creatorId = getLoggerUserId();
-    String location = eventData.getLocation();
     Integer trayCount = eventData.getTrayCount();
 
     TableSpreadEvent updatedEvent = tableSpreadEventController.updateTableSpreadEvent((TableSpreadEvent) event, batch,
-        startTime, endTime, trayCount, location, additionalInformation, creatorId);
+        startTime, endTime, trayCount, additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(tableSpreadEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));

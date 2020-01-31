@@ -94,7 +94,7 @@ public abstract class AbstractFunctionalTest {
     ProductionLine productionLine = builder.admin().productionLines().create("4", null, 8);
     SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
     
-    return builder.admin().events().createSowing(batch, startTime, endTime, amount, potType, productionLine, seedBatch);
+    return builder.admin().events().createSowing(batch, startTime, endTime, amount, potType, productionLine, Arrays.asList(seedBatch));
   }
 
   /**
@@ -124,10 +124,9 @@ public abstract class AbstractFunctionalTest {
   protected Event createTableSpreadEvent(TestBuilder builder, Batch batch) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-    String location = "Location";
     Integer tableCount = 15;
     
-    return builder.admin().events().createTableSpread(batch, startTime, endTime, location, tableCount);
+    return builder.admin().events().createTableSpread(batch, startTime, endTime, tableCount);
   }
 
   /**

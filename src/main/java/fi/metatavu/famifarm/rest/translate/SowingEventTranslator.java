@@ -1,7 +1,14 @@
 package fi.metatavu.famifarm.rest.translate;
 
-import javax.enterprise.context.ApplicationScoped;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import fi.metatavu.famifarm.events.SowingEventController;
+import fi.metatavu.famifarm.persistence.model.SeedBatch;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.SowingEventData;
@@ -13,6 +20,9 @@ import fi.metatavu.famifarm.rest.model.SowingEventData;
  */
 @ApplicationScoped
 public class SowingEventTranslator extends AbstractEventTranslator<SowingEventData, SowingEvent> {
+  
+  @Inject
+  private SowingEventController sowingEventController;
 
   @Override
   protected EventType getType() {
@@ -29,7 +39,13 @@ public class SowingEventTranslator extends AbstractEventTranslator<SowingEventDa
     result.setAmount(event.getAmount());
     result.setPotType(event.getPotType());
     result.setProductionLineId(event.getProductionLine() != null ? event.getProductionLine().getId() : null);
-    result.setSeedBatchId(event.getSeedBatch() != null ? event.getSeedBatch().getId() : null);
+    
+    List<UUID> seedBatchIds = sowingEventController.listSowingEventSeedBatches(event).stream()
+      .map(SeedBatch::getId)
+      .collect(Collectors.toList());
+    
+    result.setSeedBatchIds(seedBatchIds);
+    
     return result;
   }
   

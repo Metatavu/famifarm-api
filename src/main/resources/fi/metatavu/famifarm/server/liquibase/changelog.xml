@@ -623,6 +623,30 @@
     </addColumn>
     <sql>UPDATE batch SET phase="SOWING"</sql>
   </changeSet>
-
+  
+  <changeSet id="eventlocation" author="Antti Leppa">
+    <dropColumn tableName="tablespreadevent" columnName="location"/>
+  </changeSet>
+  
+  <changeSet id="sowingeventseedbatch" author="Antti Leppa">
+    <createTable tableName="sowingeventseedbatch">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="sowingevent_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_SOWINGEVENTSEEDBATCH_SOWINGEVENT_ID" referencedColumnNames="id" referencedTableName="sowingevent"/>
+      </column>
+      <column name="seedbatch_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_SOWINGEVENTSEEDBATCH_SEEDBATCH_ID" referencedColumnNames="id" referencedTableName="seedbatch"/>
+      </column>
+    </createTable>
+    
+    <addUniqueConstraint constraintName="UN_SOWINGEVENTSEEDBATCH_SOWINGEVENT_ID_SEEDBATCH_ID" columnNames="sowingevent_id,seedbatch_id" tableName="sowingeventseedbatch"/>
+    
+    <sql>INSERT INTO sowingeventseedbatch (id, sowingevent_id, seedbatch_id) SELECT UNHEX(REPLACE(uuid(), "-","")), id, seedbatch_id FROM sowingevent</sql>
+    
+    <dropForeignKeyConstraint baseTableName="sowingevent" constraintName="FK_SOWINGEVENT_SEEDBATCH_ID"/>
+    <dropColumn tableName="sowingevent" columnName="seedbatch_id"/>
+  </changeSet>
 
 </databaseChangeLog>

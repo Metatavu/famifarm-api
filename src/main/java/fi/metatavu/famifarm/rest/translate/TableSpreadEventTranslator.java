@@ -26,7 +26,8 @@ public class TableSpreadEventTranslator extends AbstractEventTranslator<TableSpr
     }
     
     TableSpreadEventData result = new TableSpreadEventData();
-    result.setLocation(event.getLocation());
+    // TODO: Remove
+    // result.setLocation(event.getLocation());
     result.setTrayCount(event.getTrayCount());
 
     return result;
