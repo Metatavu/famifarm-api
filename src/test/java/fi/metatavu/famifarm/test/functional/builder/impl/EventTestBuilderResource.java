@@ -55,11 +55,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param amount amount
    * @param potType type
    * @param productionLine production line id
-   * @param seedBatch seed batch
+   * @param seedBatches seed batch
    * @return created event
    */
-  public Event createSowing(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, SeedBatch seedBatch) {
-    SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatch);
+  public Event createSowing(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
+    SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatches);
     
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -278,9 +278,9 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param productionLine production line
    * @param seedBatch seed batch
    */
-  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, SeedBatch seedBatch) {
+  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
     try {
-      SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatch);
+      SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatches);
       
       Event event = new Event();
       event.setBatchId(batch != null ? batch.getId() : null);
@@ -401,12 +401,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param seedBatch seed batch
    * @return
    */
-  private SowingEventData createSowingEventData(Integer amount, PotType potType, ProductionLine productionLine, SeedBatch seedBatch) {
+  private SowingEventData createSowingEventData(Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
     SowingEventData data = new SowingEventData();
     data.setAmount(amount);
     data.setPotType(potType);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
-    data.setSeedBatchId(seedBatch != null ? seedBatch.getId() : null);
+    data.setSeedBatchIds(seedBatches.stream().map(SeedBatch::getId).collect(Collectors.toList()));
     return data;
   }
 

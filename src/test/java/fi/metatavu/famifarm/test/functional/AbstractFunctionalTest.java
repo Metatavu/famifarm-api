@@ -94,7 +94,7 @@ public abstract class AbstractFunctionalTest {
     ProductionLine productionLine = builder.admin().productionLines().create("4", null, 8);
     SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
     
-    return builder.admin().events().createSowing(batch, startTime, endTime, amount, potType, productionLine, seedBatch);
+    return builder.admin().events().createSowing(batch, startTime, endTime, amount, potType, productionLine, Arrays.asList(seedBatch));
   }
 
   /**

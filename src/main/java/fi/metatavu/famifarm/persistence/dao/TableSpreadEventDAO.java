@@ -21,7 +21,6 @@ public class TableSpreadEventDAO extends AbstractEventDAO<TableSpreadEvent> {
    * 
    * @param id id
    * @param trayCount trayCount
-   * @param location location
    * @param batch batch
    * @param startTime event start time
    * @param endTime event end time
@@ -31,11 +30,10 @@ public class TableSpreadEventDAO extends AbstractEventDAO<TableSpreadEvent> {
    * @return
    */
   @SuppressWarnings ("squid:S00107")
-  public TableSpreadEvent create(UUID id, Integer trayCount, String location, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public TableSpreadEvent create(UUID id, Integer trayCount, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     TableSpreadEvent tableSpreadEvent = new TableSpreadEvent();
     tableSpreadEvent.setTrayCount(trayCount);
     tableSpreadEvent.setRemainingUnits(remainingUnits);
-    tableSpreadEvent.setLocation(location);
     tableSpreadEvent.setId(id);
     tableSpreadEvent.setBatch(batch);
     tableSpreadEvent.setStartTime(startTime);
@@ -57,19 +55,6 @@ public class TableSpreadEventDAO extends AbstractEventDAO<TableSpreadEvent> {
   public TableSpreadEvent updateTrayCount(TableSpreadEvent tableSpreadEvent, Integer trayCount, UUID lastModifierId) {
     tableSpreadEvent.setLastModifierId(lastModifierId);
     tableSpreadEvent.setTrayCount(trayCount);
-    return persist(tableSpreadEvent);
-  }
-
-  /**
-   * Updates location
-   *
-   * @param location location
-   * @param lastModifier modifier
-   * @return updated tableSpreadEvent
-   */
-  public TableSpreadEvent updateLocation(TableSpreadEvent tableSpreadEvent, String location, UUID lastModifierId) {
-    tableSpreadEvent.setLastModifierId(lastModifierId);
-    tableSpreadEvent.setLocation(location);
     return persist(tableSpreadEvent);
   }
 

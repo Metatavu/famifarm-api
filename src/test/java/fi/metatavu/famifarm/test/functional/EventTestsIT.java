@@ -2,10 +2,13 @@ package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -58,16 +61,31 @@ public class EventTestsIT extends AbstractFunctionalTest {
     }
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void testUpdateSowingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      Event createdEvent = createSowingEvent(builder);
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket new", "Rucola uusi"));
+
+      SeedBatch seedBatch1 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now());
+      SeedBatch seedBatch2 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now());
+      SeedBatch seedBatch3 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now());
+      
+      PackageSize createPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
+      Product createProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createPackageSize);
+      Batch createBatch = builder.admin().batches().create(createProduct);
+      ProductionLine createProductionLine = builder.admin().productionLines().create("5", null, 7);
+      Event createdEvent = builder.admin().events().createSowing(createBatch, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 1, PotType.LARGE, createProductionLine, Arrays.asList(seedBatch1, seedBatch2));
+
+      Map<String, Object> createdData = (Map<String, Object>) createdEvent.getData();
+      List<String> createdSeedBatchIds = (List<String>) createdData.get("seedBatchIds");
+      assertEquals(2, createdSeedBatchIds.size());      
+      assertThat(createdSeedBatchIds, containsInAnyOrder(seedBatch1.getId().toString(), seedBatch2.getId().toString()));
       
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
       
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
       Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
-      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket new", "Rucola uusi"));
      
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -75,13 +93,12 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Integer updateAmount = 14;
       PotType updatePotType = PotType.SMALL;
       ProductionLine updateProductionLine = builder.admin().productionLines().create("7", null, 8);
-      SeedBatch updateSeedBatch = builder.admin().seedBatches().create("123", seed, updateStartTime);
       
       SowingEventData updateData = new SowingEventData();
       updateData.setAmount(updateAmount);
       updateData.setPotType(updatePotType);
       updateData.setProductionLineId(updateProductionLine.getId());
-      updateData.setSeedBatchId(updateSeedBatch.getId());
+      updateData.setSeedBatchIds(Arrays.asList(seedBatch2.getId(), seedBatch3.getId()));
       
       Event updateEvent = new Event(); 
       updateEvent.setId(createdEvent.getId());
@@ -94,7 +111,13 @@ public class EventTestsIT extends AbstractFunctionalTest {
       setEventRemainingUnits(updateEvent, (updateAmount * getPotTypeAmount(updatePotType)));
       
       builder.admin().events().updateEvent(updateEvent);
-      builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
+      Event updatedEvent = builder.admin().events().findEvent(createdEvent.getId());
+      builder.admin().events().assertEventsEqual(updateEvent, updatedEvent);
+      
+      Map<String, Object> updatedData = (Map<String, Object>) updatedEvent.getData();
+      List<String> updatedSeedBatchIds = (List<String>) updatedData.get("seedBatchIds");
+      assertEquals(2, updatedSeedBatchIds.size());      
+      assertThat(updatedSeedBatchIds, containsInAnyOrder(seedBatch2.getId().toString(), seedBatch3.getId().toString()));
     }
   }
   
@@ -620,8 +643,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
       ProductionLine productionLine = builder.admin().productionLines().create("4", null, 8);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
       
-      builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, potType, productionLine, seedBatch);
-      builder.invalid().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, potType, productionLine, seedBatch);
+      builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, potType, productionLine, Arrays.asList(seedBatch));
+      builder.invalid().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, potType, productionLine, Arrays.asList(seedBatch));
     }
   }
 

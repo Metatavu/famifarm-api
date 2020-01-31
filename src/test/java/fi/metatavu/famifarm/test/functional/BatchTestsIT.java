@@ -8,6 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.time.OffsetDateTime;
 import java.time.Period;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -167,7 +168,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test WastageReason", "Testi Syy"));
       
       Batch openBatch1 = builder.admin().batches().create(product);
-      builder.admin().events().createSowing(openBatch1, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine, seedBatch);
+      builder.admin().events().createSowing(openBatch1, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine, Arrays.asList(seedBatch));
 
       builder.admin().batches().assertCount(1);
       builder.admin().batches().assertCountByStatus(1, "OPEN");
@@ -175,8 +176,8 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
 
       Batch openBatch2 = builder.admin().batches().create(product);
-      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 10, PotType.LARGE, productionLine, seedBatch);
-      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 30, PotType.LARGE, productionLine, seedBatch);
+      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 10, PotType.LARGE, productionLine, Arrays.asList(seedBatch));
+      builder.admin().events().createSowing(openBatch2, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 30, PotType.LARGE, productionLine, Arrays.asList(seedBatch));
       builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), (40 * getPotTypeAmount(PotType.LARGE) - 5), wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
@@ -303,17 +304,17 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       Batch batch = builder.admin().batches().create(product, BatchPhase.SOWING);
       assertEquals(0, batch.getSowingLineNumbers().size());
       
-      builder.admin().events().createSowing(batch, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine6a, seedBatch);
+      builder.admin().events().createSowing(batch, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine6a, Arrays.asList(seedBatch));
       batch = builder.admin().batches().findBatch(batch.getId());
       assertEquals(1, batch.getSowingLineNumbers().size());
       assertEquals("6a", batch.getSowingLineNumbers().get(0));
 
-      builder.admin().events().createSowing(batch, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine7a, seedBatch);
+      builder.admin().events().createSowing(batch, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine7a, Arrays.asList(seedBatch));
       batch = builder.admin().batches().findBatch(batch.getId());
       assertEquals(2, batch.getSowingLineNumbers().size());
       assertThat(batch.getSowingLineNumbers(), containsInAnyOrder("6a", "7a"));
 
-      builder.admin().events().createSowing(batch, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine7a, seedBatch);
+      builder.admin().events().createSowing(batch, OffsetDateTime.of(2020, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 200, PotType.LARGE, productionLine7a, Arrays.asList(seedBatch));
       batch = builder.admin().batches().findBatch(batch.getId());
       assertEquals(2, batch.getSowingLineNumbers().size());
       assertThat(batch.getSowingLineNumbers(), containsInAnyOrder("6a", "7a"));
