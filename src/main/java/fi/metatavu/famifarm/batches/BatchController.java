@@ -110,7 +110,7 @@ public class BatchController {
    * @param batch batch to be deleted
    */
   public void deleteBatch(Batch batch) {
-    eventDAO.listByBatch(batch, null, null).stream().forEach(eventController::deleteEvent);;
+    eventDAO.listByBatch(batch, null, null).stream().forEach(eventController::deleteEvent);
     batchDAO.delete(batch);
   }
 
