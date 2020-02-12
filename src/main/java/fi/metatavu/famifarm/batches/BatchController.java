@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.EventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
@@ -32,6 +33,9 @@ public class BatchController {
 
   @Inject
   private EventDAO eventDAO;
+
+  @Inject
+  private EventController eventController;
 
   /**
    * Creates new batch
@@ -106,6 +110,7 @@ public class BatchController {
    * @param batch batch to be deleted
    */
   public void deleteBatch(Batch batch) {
+    eventDAO.listByBatch(batch, null, null).stream().forEach(eventController::deleteEvent);;
     batchDAO.delete(batch);
   }
 

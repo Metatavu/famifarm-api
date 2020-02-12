@@ -7,9 +7,18 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+
 import fi.metatavu.famifarm.persistence.dao.EventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.Event;
+import fi.metatavu.famifarm.persistence.model.HarvestEvent;
+import fi.metatavu.famifarm.persistence.model.PackingEvent;
+import fi.metatavu.famifarm.persistence.model.PlantingEvent;
+import fi.metatavu.famifarm.persistence.model.SowingEvent;
+import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
+import fi.metatavu.famifarm.persistence.model.WastageEvent;
 
 /**
  * Controller for events
@@ -19,7 +28,31 @@ import fi.metatavu.famifarm.persistence.model.Event;
  */
 @ApplicationScoped
 public class EventController {
-  
+
+  @Inject
+  private Logger logger;
+
+  @Inject
+  private SowingEventController sowingEventController;
+
+  @Inject
+  private TableSpreadEventController tableSpreadEventController;
+
+  @Inject
+  private CultivationObservationEventController cultivationObservationEventController;
+
+  @Inject
+  private HarvestEventController harvestEventController;
+
+  @Inject
+  private PlantingEventController plantingEventController;
+
+  @Inject
+  private PackingEventController packingEventController;
+
+  @Inject
+  private WastageEventController wastageEventController;
+
   @Inject
   private EventDAO eventDAO;
   
@@ -94,6 +127,40 @@ public class EventController {
     }
     
     return events.get(0);
+  }
+
+  /**
+   * Deletes event and related objects using correct controller 
+   * 
+   * @param event event to be deleted
+   */
+  public void deleteEvent(Event event) {
+    switch (event.getType()) {
+      case CULTIVATION_OBSERVATION:
+        cultivationObservationEventController.deleteCultivationActionEvent((CultivationObservationEvent) event);
+      break;
+      case SOWING:
+        sowingEventController.deleteSowingEvent((SowingEvent) event);
+      break;
+      case TABLE_SPREAD:
+        tableSpreadEventController.deleteTableSpreadEvent((TableSpreadEvent) event);
+      break;
+      case HARVEST:
+        harvestEventController.deleteHarvestEvent((HarvestEvent) event);
+      break;
+      case PLANTING:
+        plantingEventController.deletePlantingEvent((PlantingEvent) event);
+      break;
+      case WASTAGE:
+        wastageEventController.deleteWastageEvent((WastageEvent) event);
+      break;
+      case PACKING:
+        packingEventController.deletePackingEvent((PackingEvent) event);
+      break;
+      default:
+        logger.error("Cannot delete event with unknown type {}", event.getType());
+      break;
+    }
   }
 
 }
