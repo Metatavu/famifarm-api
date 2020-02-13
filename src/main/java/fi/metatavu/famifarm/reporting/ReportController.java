@@ -9,6 +9,7 @@ import fi.metatavu.famifarm.reporting.xlsx.XlsxHarvestedReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxPackedReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxPlantedReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxPlantingYieldReport;
+import fi.metatavu.famifarm.reporting.xlsx.XlsxProductPhaseCountReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxSowedReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxSpreadReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxWastageReport;
@@ -52,6 +53,9 @@ public class ReportController {
   @Inject
   private XlsxPackedReport xlsxPackedReport;
 
+  @Inject
+  private XlsxProductPhaseCountReport xlsxProductPhaseCountReport;
+
   /**
    * Returns report for given report type
    * 
@@ -81,6 +85,8 @@ public class ReportController {
         return xlsxHarvestedReport;
       case PACKED:
         return xlsxPackedReport;
+      case PRODUCT_PHASE_COUNT:
+        return xlsxProductPhaseCountReport;
     }
     
     return null;
