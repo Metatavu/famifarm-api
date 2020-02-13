@@ -444,36 +444,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     fi.metatavu.famifarm.persistence.model.Batch batch = event.getBatch();
-
-    switch (event.getType()) {
-    case CULTIVATION_OBSERVATION:
-      cultivationObservationEventController.deleteCultivationActionEvent((CultivationObservationEvent) event);
-      break;
-    case SOWING:
-      sowingEventController.deleteSowingEvent((SowingEvent) event);
+    eventController.deleteEvent(event);
+    if (event.getType().equals(EventType.SOWING)) {
       batchController.refreshCreationDate(batch);
-      break;
-    case TABLE_SPREAD:
-      tableSpreadEventController.deleteTableSpreadEvent((TableSpreadEvent) event);
-      break;
-    case HARVEST:
-      harvestEventController.deleteHarvestEvent((HarvestEvent) event);
-      break;
-    case PLANTING:
-      plantingEventController.deletePlantingEvent((PlantingEvent) event);
-      break;
-    case WASTAGE:
-      wastageEventController.deleteWastageEvent((WastageEvent) event);
-      break;
-    case PACKING:
-      packingEventController.deletePackingEvent((PackingEvent) event);
-      break;
-    default:
-      return Response.status(Status.NOT_IMPLEMENTED).build();
     }
-
     updateBatchActiveEvent(batch);
-
     return createNoContent();
   }
 
