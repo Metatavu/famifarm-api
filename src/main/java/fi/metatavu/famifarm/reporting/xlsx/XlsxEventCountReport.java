@@ -2,7 +2,6 @@ package fi.metatavu.famifarm.reporting.xlsx;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +19,8 @@ import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.ReportException;
+import fi.metatavu.famifarm.reporting.ReportUtils;
+import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
  * Abstract Report for event counts
@@ -39,12 +40,11 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
   private LocalizedValueController localizedValueController;
 
   /**
-   * Counts units from single batch
+   * Returns event type for each report
    * 
-   * @param events events from single batch
-   * @return count of units
+   * @return event type for each report
    */
-  protected abstract Double countUnits(List<Event> events);
+  protected abstract EventType getEventType();
 
   /**
    * Gets the localized report title
@@ -76,11 +76,12 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
         Product product = event.getBatch().getProduct();
-        Double count = countUnits(Arrays.asList(event));
-        if (rowLookup.containsKey(product.getId())) {
-          rowLookup.get(product.getId()).addCount(count);
-        } else {
-          rowLookup.put(product.getId(), new ReportRow(localizedValueController.getValue(product.getName(), locale), count));
+        if (!rowLookup.containsKey(product.getId())) {
+          rowLookup.put(
+            product.getId(),
+            new ReportRow(localizedValueController.getValue(product.getName(), locale),
+            ReportUtils.countUnitsByProductAndEventType(events, product, getEventType()))
+          );
         }
       });
 
@@ -113,15 +114,6 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
     private Double count;
 
     private String productName;
-
-    /**
-     * Increases count
-     * 
-     * @param toAdd amount to increase
-     */
-    public void addCount(Double toAdd) {
-      count += toAdd;
-    }
 
     /**
      * @return the productName
