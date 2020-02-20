@@ -498,7 +498,7 @@
 	                    <env>
 	                      <MYSQL_ROOT_PASSWORD>rootpass</MYSQL_ROOT_PASSWORD>
 	                      <MYSQL_DATABASE>db</MYSQL_DATABASE>
-	                      <MYSQL_USER>root</MYSQL_USER>
+	                      <MYSQL_USER>user</MYSQL_USER>
 	                      <MYSQL_PASSWORD>rootpass</MYSQL_PASSWORD>
 	                    </env>
 	                    <wait>
@@ -577,6 +577,7 @@
 	                  </run>
 	                </image>
           		</images>
+          		<showLogs>true</showLogs>
           	</configuration>
           	<executions>
               <execution>
