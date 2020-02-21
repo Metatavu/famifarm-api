@@ -545,7 +545,6 @@
 	                      <link>test-keycloak:test-keycloak</link>
 	                    </links>
 	                    <env>
-	                     <IT_TEST>true</IT_TEST>
 	                     <KEYCLOAK_ADMIN_CLIENT_ID>admin-cli</KEYCLOAK_ADMIN_CLIENT_ID>
 	                     <KEYCLOAK_ADMIN_CLIENT_SECRET>041e7b11-70a1-4beb-a59a-c1de3fde1cf8</KEYCLOAK_ADMIN_CLIENT_SECRET>
 	                     <KEYCLOAK_ADMIN_PASSWORD>admin</KEYCLOAK_ADMIN_PASSWORD>
@@ -567,6 +566,8 @@
                          <FAMIFARM_TX_IDENTIFIER>test</FAMIFARM_TX_IDENTIFIER>
                          <KUBERNETES_NAMESPACE>test</KUBERNETES_NAMESPACE>
                          <KUBERNETES_LABELS>test</KUBERNETES_LABELS>
+                         <IT_HOST>localhost</IT_HOST>
+                         <IT_PORT_HTTP>1234</IT_PORT_HTTP>
                          <runmode>TEST</runmode>
 	                    </env>
 	                    <volumes>

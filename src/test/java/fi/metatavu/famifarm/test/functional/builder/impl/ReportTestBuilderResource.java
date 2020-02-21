@@ -86,7 +86,7 @@ public class ReportTestBuilderResource extends AbstractTestBuilderResource<Objec
    * @param cellIndex cell index
    */
   public void assertCellValue(String expected, Workbook workbook, int sheetIndex, int rowIndex, int cellIndex) {
-    Cell cell = getCell(workbook, sheetIndex, rowIndex, cellIndex);    
+    Cell cell = getCell(workbook, sheetIndex, rowIndex, cellIndex);  
     assertEquals(expected, cell.getStringCellValue());
   }
   
@@ -136,6 +136,7 @@ public class ReportTestBuilderResource extends AbstractTestBuilderResource<Objec
     
     Cell cell = row.getCell(cellIndex);
     assertNotNull(cell);
+
     return cell;
   }
 

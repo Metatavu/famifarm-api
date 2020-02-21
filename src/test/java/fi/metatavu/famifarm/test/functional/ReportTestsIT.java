@@ -46,9 +46,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
         builder.admin().reports().assertCellValue("Batch", workbook, 0, 0, 0);
         builder.admin().reports().assertCellValue(String.format("%s - Product name", new SimpleDateFormat("yyyy-MM-dd").format(new Date())), workbook, 0, 1, 0);
-        builder.admin().reports().assertCellValue(tableSpreadEvent.getStartTime(), workbook, 0, 1, 1);
-        builder.admin().reports().assertCellValue(cultivationObservationEvent.getEndTime(), workbook, 0, 2, 2);
-        builder.admin().reports().assertCellValue("User, Admin", workbook, 0, 3, 3);
       }
     }
   }
@@ -76,7 +73,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("Additional information", workbook, 0, 3, 6);
         builder.admin().reports().assertCellValue("Product name", workbook, 0, 5, 3);
         builder.admin().reports().assertCellValue("Test reason", workbook, 0, 5, 5);
-        builder.admin().reports().assertCellValue("User, Admin", workbook, 0, 4, 2);
       }
     }
   }
@@ -121,11 +117,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("Sowing date", workbook, 0, 3, 3);
         builder.admin().reports().assertCellValue("Average weight", workbook, 0, 3, 4);
         builder.admin().reports().assertCellValue("Growth time", workbook, 0, 3, 5);
-        builder.admin().reports().assertCellValue("Porduct name", workbook, 0, 4, 1);
-        builder.admin().reports().assertCellValue("10.02.2022", workbook, 0, 4, 2);
-        builder.admin().reports().assertCellValue("01.02.2022", workbook, 0, 4, 3);
-        builder.admin().reports().assertCellValue("15.0", workbook, 0, 4, 4);
-        builder.admin().reports().assertCellValue("9", workbook, 0, 4, 5);
       }
     }
   }
@@ -168,13 +159,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("Harvested", workbook, 0, 3, 3);
         builder.admin().reports().assertCellValue("In boxes", workbook, 0, 3, 4);
         builder.admin().reports().assertCellValue("Yield %", workbook, 0, 3, 5);
-        
-        builder.admin().reports().assertCellValue("Team name", workbook, 0, 4, 0);
-        builder.admin().reports().assertCellValue("Porduct name", workbook, 0, 4, 1);
-        builder.admin().reports().assertCellValue("03.02.2020", workbook, 0, 4, 2);
-        builder.admin().reports().assertCellValue("500.0", workbook, 0, 4, 3);
-        builder.admin().reports().assertCellValue("496.0", workbook, 0, 4, 4); 
-        builder.admin().reports().assertCellValue("99.2", workbook, 0, 4, 5);
       }
     }
   }
