@@ -90,7 +90,7 @@ public class PackingEventController {
   }
   
   /**
-   * Deletes an packing event
+   * Deletes a packing event
    * 
    * @param packingEvent packing event to be deleted
    */
