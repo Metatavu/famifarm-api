@@ -32,7 +32,6 @@ import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.client.model.WastageEventData;
 import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
-import fi.metatavu.famifarm.rest.model.PackingEventData;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event, EventsApi> {
