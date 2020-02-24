@@ -7,6 +7,8 @@ import javax.enterprise.context.ApplicationScoped;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Packing;
 
+import fi.metatavu.famifarm.rest.model.PackageState;
+
 /**
  * DAO class for Packing
  * 
@@ -26,10 +28,12 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param packedCount
      * @return packing
      */
-    public Packing create(UUID creatorId, UUID id, UUID lastModifierId, PackageSize packageSize, Integer packedCount) {
+    public Packing create(UUID creatorId, UUID productId, UUID id, UUID lastModifierId, PackageSize packageSize, Integer packedCount, PackageState packageState) {
       Packing packing = new Packing();
       packing.setCreatorId(creatorId);
       packing.setId(id);
+      packing.setProductId(productId);
+      packing.setPackageState(packageState);
       packing.setLastModifierId(lastModifierId);
       packing.setPackageSize(packageSize);
       packing.setPackedCount(packedCount);
@@ -63,4 +67,18 @@ public class PackingDAO extends AbstractDAO<Packing>{
       packing.setPackedCount(packedCount);
       return persist(packing);
     }
+    
+    /**
+     * Updates package state
+     * 
+     * @param packing
+     * @param packageState
+     * @return updated packing
+     */
+    public Packing updatePackageState(Packing packing, PackageState packageState UUID lastModifierId) {
+      packing.setLastModifierId(lastModifierId);
+      packing.setPackageState(packageState);
+      return persist(packaging);
+    }
 }
+

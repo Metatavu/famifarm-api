@@ -10,6 +10,8 @@ import fi.metatavu.famifarm.persistence.dao.PackingDAO;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Packing;
 
+import fi.metatavu.famifarm.rest.model.PackageState;
+
 /**
  * Controller for packing
  * 
@@ -31,8 +33,8 @@ public class PackingController {
    * @param packedCount
    * @return created packing
    */
-  public Packing create(UUID creatorId, PackageSize packageSize, Integer packedCount) {
-    return packingDAO.create(creatorId, UUID.randomUUID(), creatorId, packageSize, packedCount);
+  public Packing create(UUID creatorId, UUID productId, PackageSize packageSize, Integer packedCount, PackageState packageState) {
+    return packingDAO.create(creatorId, productId, UUID.randomUUID(), creatorId, packageSize, packedCount, packageState);
   }
   
   /**
