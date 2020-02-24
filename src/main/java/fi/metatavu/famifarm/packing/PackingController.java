@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.packing;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,15 +27,19 @@ public class PackingController {
   private PackingDAO packingDAO;
   
   /**
-   * Creates packing
+   * Creates new packing
    * 
    * @param creatorId
+   * @param productId
    * @param packageSize
    * @param packedCount
-   * @return created packing
+   * @param packageState
+   * @param startTime
+   * @param endTime
+   * @return packing
    */
-  public Packing create(UUID creatorId, UUID productId, PackageSize packageSize, Integer packedCount, PackageState packageState) {
-    return packingDAO.create(creatorId, productId, UUID.randomUUID(), creatorId, packageSize, packedCount, packageState);
+  public Packing create(UUID creatorId, UUID productId, PackageSize packageSize, Integer packedCount, PackageState packageState, OffsetDateTime startTime, OffsetDateTime endTime) {
+    return packingDAO.create(creatorId, productId, UUID.randomUUID(), creatorId, packageSize, packedCount, packageState, startTime, endTime);
   }
   
   /**

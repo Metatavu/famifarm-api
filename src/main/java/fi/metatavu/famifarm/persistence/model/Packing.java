@@ -48,6 +48,12 @@ public class Packing {
   private PackageState packageState;
   
   @Column(nullable = false)
+  private OffsetDateTime startTime;
+
+  @Column
+  private OffsetDateTime endTime;
+  
+  @Column(nullable = false)
   @NotNull
   private UUID creatorId;
 
@@ -131,6 +137,22 @@ public class Packing {
 
   public void setModifiedAt(OffsetDateTime modifiedAt) {
     this.modifiedAt = modifiedAt;
+  }
+  
+  public OffsetDateTime getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(OffsetDateTime startTime) {
+    this.startTime = startTime;
+  }
+
+  public OffsetDateTime getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(OffsetDateTime endTime) {
+    this.endTime = endTime;
   }
   
   @PrePersist
