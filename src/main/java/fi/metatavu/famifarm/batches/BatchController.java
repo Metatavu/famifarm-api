@@ -13,7 +13,9 @@ import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.EventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
+import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.PackingEvent;
+import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
@@ -122,18 +124,21 @@ public class BatchController {
   public void updateRemainingUnits(Batch batch) {
     List<SowingEvent> sowingEvents = new ArrayList<>();
     List<WastageEvent> wasteageEvents = new ArrayList<>();
-    List<PackingEvent> packingEvents = new ArrayList<>();
+    List<HarvestEvent> harvestEvents = new ArrayList<>();
+    List<PlantingEvent> plantingEvents = new ArrayList<>();
     
     for (Event event : eventDAO.listByBatchSortByStartTimeAsc(batch, null, null)) {
       if (event instanceof SowingEvent) {
         sowingEvents.add((SowingEvent) event); 
       } else if (event instanceof WastageEvent) {
         wasteageEvents.add((WastageEvent) event);
-      } else if (event instanceof PackingEvent) {
-        packingEvents.add((PackingEvent) event);
+      } else if (event instanceof HarvestEvent) {
+        harvestEvents.add((HarvestEvent) event);
+      } else if (event instanceof PlantingEvent) {
+        plantingEvents.add((PlantingEvent) event);
       }
       
-      eventDAO.updateRemainingUnits(event, countRemainingUnits(sowingEvents, wasteageEvents, packingEvents));  
+      eventDAO.updateRemainingUnits(event, countRemainingUnits(sowingEvents, wasteageEvents, harvestEvents, plantingEvents));  
     }
   }
 
@@ -177,9 +182,9 @@ public class BatchController {
    * @param packingEvents packing events
    * @return count
    */
-  private Integer countRemainingUnits(List<SowingEvent> sowingEvents, List<WastageEvent> wasteageEvents, List<PackingEvent> packingEvents) {
+  private Integer countRemainingUnits(List<SowingEvent> sowingEvents, List<WastageEvent> wasteageEvents, List<HarvestEvent> harvestEvents, List<PlantingEvent> plantingEvents) {
     Integer count = 0;
-    
+    Integer gutterHoleCount = getAverageGutterHoleCount(plantingEvents);
     for (SowingEvent event : sowingEvents) {
       count += (getPotTypeAmount(event.getPotType()) * event.getAmount());
     }
@@ -188,11 +193,35 @@ public class BatchController {
       count -= event.getAmount();
     }
 
-    for (PackingEvent event : packingEvents) {
-      count -= (event.getPackedCount() * event.getPackageSize().getSize());
+    for (HarvestEvent event : harvestEvents) {
+      count -= (event.getGutterCount() * gutterHoleCount);
     }
     
     return count;
+  }
+  
+  /**
+   * Get weighted average gutter hole count
+   * 
+   * @param events
+   * @return weighted average gutter hole count
+   */
+  private static Integer getAverageGutterHoleCount(List<PlantingEvent> events) {
+    Double totalWeightedSize = 0d;
+    Double totalGutterCount = 0d;
+    
+    for (PlantingEvent plantingEvent : events) {
+
+        totalWeightedSize += (plantingEvent.getGutterHoleCount() * plantingEvent.getGutterCount());
+        totalGutterCount += plantingEvent.getGutterCount();
+
+    }
+
+    if (totalWeightedSize == 0 || totalGutterCount == 0) {
+      return 0;
+    }
+
+    return (int) Math.round(totalWeightedSize / totalGutterCount);
   }
 
 }

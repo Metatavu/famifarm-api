@@ -80,7 +80,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param packageState
      * @return updated packing
      */
-    public Packing updatePackingState(Packing packing, PackingState packingState UUID lastModifierId) {
+    public Packing updatePackingState(Packing packing, PackingState packingState, UUID lastModifierId) {
       packing.setLastModifierId(lastModifierId);
       packing.setPackingState(packingState);
       return persist(packaging);

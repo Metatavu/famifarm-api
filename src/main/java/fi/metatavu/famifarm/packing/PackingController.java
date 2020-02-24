@@ -11,7 +11,7 @@ import fi.metatavu.famifarm.persistence.dao.PackingDAO;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Packing;
 
-import fi.metatavu.famifarm.rest.model.PackageState;
+import fi.metatavu.famifarm.rest.model.PackingState;
 
 /**
  * Controller for packing
@@ -58,7 +58,7 @@ public class PackingController {
    * @param maxResults max results
    * @return list of packing
    */
-  public List<Packing> listPackingEvents(Integer firstResult, Integer maxResults) {
+  public List<Packing> listPackings(Integer firstResult, Integer maxResults) {
     return packingDAO.listAll(firstResult, maxResults);
   }
   
@@ -74,7 +74,7 @@ public class PackingController {
   public Packing updatePacking(Packing packing, PackageSize packageSize, PackingState packingState, Integer packedCount, UUID modifier) {
     packingDAO.updatePackageSize(packing, packageSize, modifier);
     packingDAO.updatePackedCount(packing, packedCount, modifier);
-    packingDAO.updatePackingState(packingState);
+    packingDAO.updatePackingState(packingState, packingState, modifier);
     return packing;
   }
   

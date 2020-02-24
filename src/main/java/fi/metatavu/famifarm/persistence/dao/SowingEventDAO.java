@@ -11,7 +11,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
-import fi.metatavu.famifarm.persistence.model.PackingEvent_;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.rest.model.PotType;
