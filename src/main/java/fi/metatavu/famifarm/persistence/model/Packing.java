@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import fi.metatavu.famifarm.rest.model.PackageType;
+import fi.metatavu.famifarm.rest.model.PackingState;
 
 /**
  * JPA entity for Packing
@@ -45,7 +45,7 @@ public class Packing {
   
   @Column(nullable = false)
   @NotNull
-  private PackageState packageState;
+  private PackingState packingState;
   
   @Column(nullable = false)
   private OffsetDateTime time;
@@ -80,12 +80,12 @@ public class Packing {
     this.packedCount = packedCount;
   }
   
-  public PackageState getPackageState() {
-    return this.packageState;
+  public PackingState getPackingState() {
+    return this.packingState;
   }
   
-  public void setPackageState(PackageState packageState) {
-    this.packageState = packageState;
+  public void setPackingState(PackingState packageState) {
+    this.packingState = packageState;
   }
   
   public UUID getProductId() {

@@ -33,12 +33,12 @@ public class PackingController {
    * @param productId
    * @param packageSize
    * @param packedCount
-   * @param packageState
+   * @param packingState
    * @param time
    * @return packing
    */
-  public Packing create(UUID creatorId, UUID productId, PackageSize packageSize, Integer packedCount, PackageState packageState, OffsetDateTime time) {
-    return packingDAO.create(creatorId, productId, UUID.randomUUID(), creatorId, packageSize, packedCount, packageState, time);
+  public Packing create(UUID creatorId, UUID productId, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time) {
+    return packingDAO.create(creatorId, productId, UUID.randomUUID(), creatorId, packageSize, packedCount, packingState, time);
   }
   
   /**
@@ -71,9 +71,10 @@ public class PackingController {
    * @param modifier
    * @return updated packing
    */
-  public Packing updatePacking(Packing packing, PackageSize packageSize, Integer packedCount, UUID modifier) {
+  public Packing updatePacking(Packing packing, PackageSize packageSize, PackingState packingState, Integer packedCount, UUID modifier) {
     packingDAO.updatePackageSize(packing, packageSize, modifier);
     packingDAO.updatePackedCount(packing, packedCount, modifier);
+    packingDAO.updatePackingState(packingState);
     return packing;
   }
   

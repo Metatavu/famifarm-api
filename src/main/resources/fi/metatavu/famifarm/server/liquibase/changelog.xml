@@ -268,7 +268,7 @@
       <column name="packedamount" type="int(32)">
         <constraints nullable="false"/>
       </column>
-      <column name="state" type="varchar(20)">
+      <column name="packingstate" type="varchar(20)">
         <constraints nullable="false"/>
       </column>
     </createTable>

@@ -1,11 +1,18 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import org.json.JSONException;
+
+import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.Packing;
+import fi.metatavu.famifarm.client.model.PackingState;
 
 /**
  * Test builder resource for PackingsApi
@@ -13,7 +20,7 @@ import fi.metatavu.famifarm.client.model.Packing;
  * @author simeon
  *
  */
-public class PackingTestBuilderResource extends AbstractTestBuilderResource<Packing, PackingsApi>{
+public class PackingTestBuilderResource extends AbstractTestBuilderResource<Packing, PackingsApi> {
   
   /**
    * Constructor
@@ -34,12 +41,12 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @param packageSize
    * @return
    */
-  public Packing create(UUID productId, OffsetDateTime time, Integer packedCount, PackageState packageState, PackageSize packageSize) {
+  public Packing create(UUID productId, OffsetDateTime time, Integer packedCount, PackingState packingState, PackageSize packageSize) {
     Packing packing = new Packing();
     packing.setProductId(productId);
     packing.setTime(time);
     packing.setPackedCount(packedCount);
-    packing.setPackageState(packageState);
+    packing.setPackingState(packingState);
     packing.setPackageSize(packageSize);
     return addClosable(getApi().createPacking(packing));
   }
@@ -88,6 +95,27 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
   public Packing delete(Packing packing) {
     getApi().deletePacking(packing.getId());
     removeClosable(closable -> !closable.getId().equals(packing.getId()));
+  }
+  
+  /**
+   * Asserts that packings have identical properties
+   * 
+   * @param expected
+   * @param actual
+   * @throws IOException
+   * @throws JSONException
+   */
+  public void assertPackingsEqual(Packing expected, Packing actual) throws IOException, JSONException {
+    assertJsonsEqual(expected, actual);
+  }
+  
+  public void assertFindFailStatus(int expectedStatus, UUID packingId) {
+    try {
+      getApi().findPacking(packingId);
+      fail(String.format("Expected find to fail with status %d.", expectedStatus));
+    } catch (FeignException e){
+      assertEquals(expectedStatus, e.status());
+    }
   }
   
   @Override
