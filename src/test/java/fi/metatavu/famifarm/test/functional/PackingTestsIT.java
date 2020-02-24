@@ -16,7 +16,7 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 public class PackingTestsIT extends AbstractFunctionalTest {
   @Test
-  public void testCreatePacking() {
+  public void testCreatePacking() throws Exception{
     try (TestBuilder builder = new TestBuilder()) {
       LocalizedEntry testEntry = new LocalizedEntry();
       LocalizedValue testValue = new LocalizedValue();

@@ -52,14 +52,18 @@ public class PackingController {
   }
   
   /**
-   * Returns list of packing
+   * Return list of packings
    * 
-   * @param firstResult first result
-   * @param maxResults max results
-   * @return list of packing
+   * @param firstResult
+   * @param maxResults
+   * @param productId
+   * @param state
+   * @param createdBefore
+   * @param createdAfter
+   * @return packings
    */
-  public List<Packing> listPackings(Integer firstResult, Integer maxResults) {
-    return packingDAO.listAll(firstResult, maxResults);
+  public List<Packing> listPackings(Integer firstResult, Integer maxResults, UUID productId, PackingState state, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    return packingDAO.list(firstResult, maxResults, productId, state, createdBefore, createdAfter);
   }
   
   /**
@@ -74,7 +78,7 @@ public class PackingController {
   public Packing updatePacking(Packing packing, PackageSize packageSize, PackingState packingState, Integer packedCount, UUID modifier) {
     packingDAO.updatePackageSize(packing, packageSize, modifier);
     packingDAO.updatePackedCount(packing, packedCount, modifier);
-    packingDAO.updatePackingState(packingState, packingState, modifier);
+    packingDAO.updatePackingState(packing, packingState, modifier);
     return packing;
   }
   

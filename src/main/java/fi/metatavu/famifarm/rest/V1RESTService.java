@@ -65,6 +65,8 @@ import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.HarvestEventData;
 import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
 import fi.metatavu.famifarm.rest.model.PackageSize;
+import fi.metatavu.famifarm.rest.model.Packing;
+import fi.metatavu.famifarm.rest.model.PackingState;
 import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.rest.model.Pest;
 import fi.metatavu.famifarm.rest.model.PlantingEventData;
@@ -224,7 +226,44 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Inject
   private DraftTranslator draftTranslator;
+  
 
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response createPackaging(Packing body) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response deletePacking(UUID packingId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response findPacking(UUID packingId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response listPackings(Integer firstResult, Integer maxResults, UUID productId, PackingState status,
+      String createdBefore, String createdAfter) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response updatePacking(Packing body, UUID packingId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   public Response createSeed(Seed body) {

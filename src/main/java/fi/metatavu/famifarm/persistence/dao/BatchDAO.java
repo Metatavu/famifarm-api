@@ -17,7 +17,6 @@ import javax.persistence.criteria.Root;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Batch_;
 import fi.metatavu.famifarm.persistence.model.Event;
-import fi.metatavu.famifarm.persistence.model.Event_;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.rest.model.BatchPhase;
 

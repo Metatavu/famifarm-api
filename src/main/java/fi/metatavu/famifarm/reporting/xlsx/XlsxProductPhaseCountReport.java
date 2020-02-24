@@ -80,7 +80,6 @@ public class XlsxProductPhaseCountReport extends AbstractXlsxReport {
           row.setSpreadCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.TABLE_SPREAD));
           row.setPlantedCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.PLANTING));
           row.setHarvestedCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.HARVEST));
-          row.setPackedCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.PACKING));
           row.setWastedCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.WASTAGE));
         }
       });

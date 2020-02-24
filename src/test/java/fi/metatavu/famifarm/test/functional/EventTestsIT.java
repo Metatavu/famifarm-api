@@ -23,7 +23,6 @@ import fi.metatavu.famifarm.client.model.EventType;
 import fi.metatavu.famifarm.client.model.HarvestEventData;
 import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.PackageSize;
-import fi.metatavu.famifarm.client.model.PackingEventData;
 import fi.metatavu.famifarm.client.model.PlantingEventData;
 import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.client.model.ProductionLine;
@@ -492,8 +491,6 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertCount(4);
       createPlantingEvent(builder);
       builder.admin().events().assertCount(5);
-      createPackingEvent(builder);
-      builder.admin().events().assertCount(6);
     }
   }
 

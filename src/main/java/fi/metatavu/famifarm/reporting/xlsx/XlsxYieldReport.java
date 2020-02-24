@@ -15,10 +15,11 @@ import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
+import fi.metatavu.famifarm.packing.PackingController;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
-import fi.metatavu.famifarm.persistence.model.PackingEvent;
+import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.ReportException;
@@ -42,6 +43,9 @@ public class XlsxYieldReport extends AbstractXlsxReport {
   
   @Inject
   private LocalizedValueController localizedValueController;
+  
+  @Inject
+  private PackingController packingController;
 
   @Override
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
@@ -79,10 +83,11 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         List<Event> events = eventController.listByBatchSortByStartTimeAsc(batch, null, null); 
         
         Product product = batch.getProduct();
+        List<Packing> packings = packingController.listPackings(null, null, product.getId(), null, null, null);
         String dateString = getDateString(events, formatter);
         String team = getTeam(events, locale);
         double totalHarvestedAmount = getTotalHarvestedAmount(events);
-        double totalAmountInBoxes = getTotalAmounInBoxes(events);
+        double totalAmountInBoxes = getTotalAmountInBoxes(packings);
         double yield = getYield(totalHarvestedAmount, totalAmountInBoxes);
         
         xlsxBuilder.setCellValue(sheetId, rowIndex, teamIndex, team);
@@ -178,14 +183,11 @@ public class XlsxYieldReport extends AbstractXlsxReport {
    * @param totalHarvestedAmount totalHarvestedAmount
    * @return total amount in boxes
    */
-  private double getTotalAmounInBoxes(List<Event> events) {
+  private double getTotalAmountInBoxes(List<Packing> packings) {
     double amount = 0;
 
-    for (Event event : events) {
-      if (event.getType() == EventType.PACKING) {
-        PackingEvent packingEvent = (PackingEvent) event;
-        amount += (packingEvent.getPackedCount() * packingEvent.getPackageSize().getSize());
-      }
+    for (Packing packing : packings) {
+      amount += packing.getPackedCount();
     }
     
     return amount;

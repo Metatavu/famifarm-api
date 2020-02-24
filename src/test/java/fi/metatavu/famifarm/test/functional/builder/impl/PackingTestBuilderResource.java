@@ -1,18 +1,22 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.json.JSONException;
 
 import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
+import fi.metatavu.famifarm.client.PackingsApi;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.Packing;
 import fi.metatavu.famifarm.client.model.PackingState;
+import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 /**
  * Test builder resource for PackingsApi
@@ -46,9 +50,9 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
     packing.setProductId(productId);
     packing.setTime(time);
     packing.setPackedCount(packedCount);
-    packing.setPackingState(packingState);
-    packing.setPackageSize(packageSize);
-    return addClosable(getApi().createPacking(packing));
+    packing.setState(packingState);
+    packing.setPackageSizeId(packageSize.getId());
+    return addClosable(getApi().createPackaging(packing));
   }
   
   /**
@@ -62,8 +66,8 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @param createdBefore
    * @return
    */
-  public List<Packing> list(int firstResult, int maxResults, UUID productId, PackageState packageState, OffsetDateTime createdAfter, OffsetDateTime createdBefore) {
-    return addClosable(getApi.listPackings(firstResult, maxResults, productId, packageState, createdAfter, createdBefore));
+  public List<Packing> list(int firstResult, int maxResults, UUID productId, PackingState packingState, OffsetDateTime createdAfter, OffsetDateTime createdBefore) {
+    return addClosable(getApi().listPackings(firstResult, maxResults, productId, packingState, createdAfter.toString(), createdBefore.toString()));
   }
   
   /**
@@ -73,7 +77,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @return packing with corresponding id or null if not found
    */
   public Packing find(UUID packingId) {
-    return addClosable(getApi.findPacking(packingId));
+    return addClosable(getApi().findPacking(packingId));
   }
   
   /**
@@ -92,7 +96,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @param packing to be deleted
    * @return
    */
-  public Packing delete(Packing packing) {
+  public void delete(Packing packing) {
     getApi().deletePacking(packing.getId());
     removeClosable(closable -> !closable.getId().equals(packing.getId()));
   }

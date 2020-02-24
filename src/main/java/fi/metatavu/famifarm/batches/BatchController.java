@@ -14,7 +14,6 @@ import fi.metatavu.famifarm.persistence.dao.EventDAO;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
-import fi.metatavu.famifarm.persistence.model.PackingEvent;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
