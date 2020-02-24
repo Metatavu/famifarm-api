@@ -474,69 +474,6 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
     }
   }
-
-  @Test
-  public void testCreatePackingEvent() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      assertNotNull(createPackingEvent(builder));
-    }
-  }
-  
-  @Test
-  public void testFindPackingEvent() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      Event createdEvent = createPackingEvent(builder);
-      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
-      Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
-      assertEquals(createdEvent.getId(), foundEvent.getId());
-      builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
-    }
-  }
-  
-  @Test
-  public void testUpdatePackingEvent() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      Event createdEvent = createPackingEvent(builder);
-      
-      builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
-      
-      PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
-      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
-     
-      Batch updateBatch = builder.admin().batches().create(updateProduct);
-      OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
-      OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-      
-      Integer updatePackedAmount = 22;
-      PackingEventData updateData = new PackingEventData();
-      updateData.setPackageSizeId(updatePackageSize.getId());
-      updateData.setPackedCount(updatePackedAmount);
-
-      Event updateEvent = new Event(); 
-      updateEvent.setId(createdEvent.getId());
-      updateEvent.setBatchId(updateBatch.getId());
-      updateEvent.setData(updateData);
-      updateEvent.setEndTime(updateStartTime);
-      updateEvent.setStartTime(updateEndTime);
-      updateEvent.setType(createdEvent.getType());
-      updateEvent.setUserId(createdEvent.getUserId());
-      setEventRemainingUnits(updateEvent, -(updatePackedAmount * 8));
-      
-      builder.admin().events().updateEvent(updateEvent);
-      builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
-    }
-  }
-  
-  @Test
-  public void testDeletePackingEvent() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      Event createdEvent = createPackingEvent(builder);
-      Event foundSeed = builder.admin().events().findEvent(createdEvent.getId());
-      assertEquals(createdEvent.getId(), foundSeed.getId());
-      builder.admin().events().delete(createdEvent);
-      builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
-    }
-  }
   
   @Test
   public void testListEvents() throws Exception {
