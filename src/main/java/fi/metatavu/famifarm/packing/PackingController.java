@@ -34,12 +34,11 @@ public class PackingController {
    * @param packageSize
    * @param packedCount
    * @param packageState
-   * @param startTime
-   * @param endTime
+   * @param time
    * @return packing
    */
-  public Packing create(UUID creatorId, UUID productId, PackageSize packageSize, Integer packedCount, PackageState packageState, OffsetDateTime startTime, OffsetDateTime endTime) {
-    return packingDAO.create(creatorId, productId, UUID.randomUUID(), creatorId, packageSize, packedCount, packageState, startTime, endTime);
+  public Packing create(UUID creatorId, UUID productId, PackageSize packageSize, Integer packedCount, PackageState packageState, OffsetDateTime time) {
+    return packingDAO.create(creatorId, productId, UUID.randomUUID(), creatorId, packageSize, packedCount, packageState, time);
   }
   
   /**

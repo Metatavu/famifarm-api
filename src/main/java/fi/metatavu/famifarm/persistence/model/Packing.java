@@ -48,10 +48,7 @@ public class Packing {
   private PackageState packageState;
   
   @Column(nullable = false)
-  private OffsetDateTime startTime;
-
-  @Column
-  private OffsetDateTime endTime;
+  private OffsetDateTime time;
   
   @Column(nullable = false)
   @NotNull
@@ -139,20 +136,12 @@ public class Packing {
     this.modifiedAt = modifiedAt;
   }
   
-  public OffsetDateTime getStartTime() {
-    return startTime;
+  public OffsetDateTime getTime() {
+    return time;
   }
 
-  public void setStartTime(OffsetDateTime startTime) {
-    this.startTime = startTime;
-  }
-
-  public OffsetDateTime getEndTime() {
-    return endTime;
-  }
-
-  public void setEndTime(OffsetDateTime endTime) {
-    this.endTime = endTime;
+  public void setTime(OffsetDateTime time) {
+    this.time = time;
   }
   
   @PrePersist

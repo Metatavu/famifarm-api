@@ -9,6 +9,7 @@ import fi.metatavu.famifarm.test.functional.builder.impl.BatchTestBuilderResourc
 import fi.metatavu.famifarm.test.functional.builder.impl.DraftTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.EventTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PackageSizeTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.PackingTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PerformedCultivationActionTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.PestTestBuilderResource;
 import fi.metatavu.famifarm.test.functional.builder.impl.ProductTestBuilderResource;
@@ -39,8 +40,16 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private PestTestBuilderResource pests;
   private EventTestBuilderResource events;
   private DraftTestBuilderResource drafts;
+  private PackingTestBuilderResource packings;
   private List<AutoCloseable> closables = new ArrayList<>();
   
+  public PackingTestBuilderResource packings() throws IOException {
+    if (packings != null) {
+      return packings;
+    }
+    
+    return packings = this.addClosable(new PackingTestBuilderResource(createClient()));
+  }
   /**
    * Returns test builder resource for reports
    * 

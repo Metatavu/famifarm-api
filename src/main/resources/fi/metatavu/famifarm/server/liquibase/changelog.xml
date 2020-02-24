@@ -247,10 +247,9 @@
       <column name="product_id" type="binary(16)">
         <constraints nullable="false" foreignKeyName="FK_PACKING_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
       </column>
-      <column name="starttime" type="timestamp">
+      <column name="time" type="timestamp">
         <constraints nullable="false"/>
       </column>
-      <column name="endtime" type="timestamp"/>
       <column name="creatorid" type="binary(16)">
         <constraints nullable="false"/>
       </column>

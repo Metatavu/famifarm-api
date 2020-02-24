@@ -30,10 +30,9 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param packedCount
      * @param packageState
      * @param startTime
-     * @param endTime
      * @return packing
      */
-    public Packing create(UUID creatorId, UUID productId, UUID id, UUID lastModifierId, PackageSize packageSize, Integer packedCount, PackageState packageState, OffsetDateTime startTime, OffsetDateTime endTime) {
+    public Packing create(UUID creatorId, UUID productId, UUID id, UUID lastModifierId, PackageSize packageSize, Integer packedCount, PackageState packageState, OffsetDateTime time) {
       Packing packing = new Packing();
       packing.setCreatorId(creatorId);
       packing.setId(id);
@@ -42,8 +41,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
       packing.setLastModifierId(lastModifierId);
       packing.setPackageSize(packageSize);
       packing.setPackedCount(packedCount);
-      packing.setStartTime(startTime);
-      packing.setEndTime(endTime);
+      packing.setTime(time);
       return persist(packing);
     }
     
@@ -89,29 +87,17 @@ public class PackingDAO extends AbstractDAO<Packing>{
     }
     
     /**
-     * Updates startTime
+     * Updates time
      *
-     * @param startTime startTime
+     * @param time
      * @param lastModifier modifier
      * @return updated packing
      */
-    public Packing updateStartTime(Packing packing, OffsetDateTime startTime, UUID lastModifierId) {
+    public Packing updateStartTime(Packing packing, OffsetDateTime time, UUID lastModifierId) {
       packing.setLastModifierId(lastModifierId);
-      packing.setStartTime(startTime);
+      packing.setTime(time);
       return persist(packing);
     }
 
-    /**
-     * Updates endTime
-     *
-     * @param endTime endTime
-     * @param lastModifier modifier
-     * @return updated event
-     */
-    public Packing updateEndTime(Packing packing, OffsetDateTime endTime, UUID lastModifierId) {
-      packing.setLastModifierId(lastModifierId);
-      packing.setEndTime(endTime);
-      return persist(packing);
-    }
 }
 
