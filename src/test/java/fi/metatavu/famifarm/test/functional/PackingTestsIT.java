@@ -1,8 +1,11 @@
 package fi.metatavu.famifarm.test.functional;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -35,7 +38,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
   }
   
   @Test
-  public void testListPackings() {
+  public void testListPackings() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       LocalizedEntry testEntry = new LocalizedEntry();
       LocalizedValue testValue = new LocalizedValue();
@@ -73,7 +76,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
   }
   
   @Test
-  public void testUpdatePacking() {
+  public void testUpdatePacking() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       LocalizedEntry testEntry = new LocalizedEntry();
       LocalizedValue testValue = new LocalizedValue();
@@ -86,7 +89,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       Product product = builder.admin().products().create(testEntry, size);
       Packing packing = builder.admin().packings().create(product.getId(), OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
       
-      packing.setPackingState(PackingState.REMOVED);
+      packing.setState(PackingState.REMOVED);
       assertNotNull(builder.admin().packings().update(packing));
       Packing foundPacking = builder.admin().packings().find(packing.getId());
       builder.admin().packings().assertPackingsEqual(packing, foundPacking);
@@ -94,7 +97,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
   }
   
   @Test
-  public void testDeletePacking() {
+  public void testDeletePacking() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       LocalizedEntry testEntry = new LocalizedEntry();
       LocalizedValue testValue = new LocalizedValue();

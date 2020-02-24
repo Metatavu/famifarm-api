@@ -66,8 +66,8 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @param createdBefore
    * @return
    */
-  public List<Packing> list(int firstResult, int maxResults, UUID productId, PackingState packingState, OffsetDateTime createdAfter, OffsetDateTime createdBefore) {
-    return addClosable(getApi().listPackings(firstResult, maxResults, productId, packingState, createdAfter.toString(), createdBefore.toString()));
+  public List<Packing> list(Integer firstResult, Integer maxResults, UUID productId, PackingState packingState, OffsetDateTime createdAfter, OffsetDateTime createdBefore) {
+    return addClosables(getApi().listPackings(firstResult, maxResults, productId, packingState, createdAfter.toString(), createdBefore.toString()));
   }
   
   /**
