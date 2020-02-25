@@ -313,30 +313,4 @@ public class ReportTestsIT extends AbstractFunctionalTest {
     }
   }
 
-
-  @Test
-  public void testXlsxPackedReport() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
-      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
-      
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
-      Batch batch = builder.admin().batches().create(product);
-      
-      createSowingEvent(builder, batch, 10, startTime, endTime);
-      
-      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
-      String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
-      
-      byte[] data = builder.admin().reports().createReport("PACKED", fromTime, toTime);
-      assertNotNull(data);
-      
-      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
-        builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
-        builder.admin().reports().assertCellValue("640.0", workbook, 0, 4, 1);
-      }
-    }
-  }
-
 }

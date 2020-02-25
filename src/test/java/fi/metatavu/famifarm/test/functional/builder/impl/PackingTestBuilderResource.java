@@ -67,7 +67,17 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @return
    */
   public List<Packing> list(Integer firstResult, Integer maxResults, UUID productId, PackingState packingState, OffsetDateTime createdAfter, OffsetDateTime createdBefore) {
-    return addClosables(getApi().listPackings(firstResult, maxResults, productId, packingState, createdAfter.toString(), createdBefore.toString()));
+    String createdAfterStr = null;
+    if (createdAfter != null) {
+      createdAfterStr = createdAfter.toString();
+    }
+    
+    String createdBeforeStr = null;
+    if (createdBefore != null) {
+      createdBeforeStr = createdBefore.toString();
+    }
+    
+    return getApi().listPackings(firstResult, maxResults, productId, packingState, createdAfterStr, createdBeforeStr);
   }
   
   /**
@@ -77,7 +87,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @return packing with corresponding id or null if not found
    */
   public Packing find(UUID packingId) {
-    return addClosable(getApi().findPacking(packingId));
+    return getApi().findPacking(packingId);
   }
   
   /**
@@ -87,7 +97,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @return packing
    */
   public Packing update(Packing packing) {
-    return addClosable(getApi().updatePacking(packing, packing.getId()));
+    return getApi().updatePacking(packing, packing.getId());
   }
   
   /**
@@ -124,6 +134,8 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
   
   @Override
   public void clean(Packing packing) {
-    getApi().deletePacking(packing.getId());  
+    if (find(packing.getId()) != null) {
+      getApi().deletePacking(packing.getId());  
+    }
   }
 }

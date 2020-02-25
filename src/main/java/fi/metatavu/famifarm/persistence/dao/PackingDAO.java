@@ -133,7 +133,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param createdAfter
      * @return packings
      */
-    public List<Packing> list(Integer firstResult, Integer maxResults, UUID productId, PackingState state, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    public List<Packing> list(Integer firstResult, Integer maxResults, Product product, PackingState state, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
       EntityManager entityManager = getEntityManager();
       
       CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -144,8 +144,8 @@ public class PackingDAO extends AbstractDAO<Packing>{
       
       List<Predicate> restrictions = new ArrayList<>();
       
-      if (productId != null) {
-        restrictions.add(criteriaBuilder.equal(root.get(Packing_.product), productId));
+      if (product != null) {
+        restrictions.add(criteriaBuilder.equal(root.get(Packing_.product), product));
       }
       
       if (state != null) {

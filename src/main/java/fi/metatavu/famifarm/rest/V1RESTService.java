@@ -277,17 +277,26 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response listPackings(Integer firstResult, Integer maxResults, UUID productId, PackingState status,
       String createdBefore, String createdAfter) {
-    
-    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(productId);
-    
-    if (product == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+    fi.metatavu.famifarm.persistence.model.Product product = null;
+    if (productId != null) {
+      product = productController.findProduct(productId);
+      
+      if (product == null) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
     }
     
+    OffsetDateTime createdBeforeTime = null;
+    if (createdBefore != null) {
+      createdBeforeTime = OffsetDateTime.parse(createdBefore);
+    }
     
-    List<Packing> packings = packingController.listPackings(firstResult, maxResults, productId, status, OffsetDateTime.parse(createdBefore), OffsetDateTime.parse(createdAfter)).stream().map(packing -> packingTranslator.translate(packing)).collect(Collectors.toList());
-        
-    return createOk(packings);
+    OffsetDateTime createdAfterTime = null;
+    if (createdAfter != null) {
+      createdAfterTime = OffsetDateTime.parse(createdAfter);
+    }
+
+    return createOk(packingController.listPackings(firstResult, maxResults, product, status, createdBeforeTime, createdAfterTime).stream().map(packing -> packingTranslator.translate(packing)).collect(Collectors.toList()));
   }
 
   @Override

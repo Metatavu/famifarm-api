@@ -62,8 +62,8 @@ public class PackingController {
    * @param createdAfter
    * @return packings
    */
-  public List<Packing> listPackings(Integer firstResult, Integer maxResults, UUID productId, PackingState state, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
-    return packingDAO.list(firstResult, maxResults, productId, state, createdBefore, createdAfter);
+  public List<Packing> listPackings(Integer firstResult, Integer maxResults, Product product, PackingState state, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    return packingDAO.list(firstResult, maxResults, product, state, createdBefore, createdAfter);
   }
   
   /**

@@ -83,7 +83,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         List<Event> events = eventController.listByBatchSortByStartTimeAsc(batch, null, null); 
         
         Product product = batch.getProduct();
-        List<Packing> packings = packingController.listPackings(null, null, product.getId(), null, null, null);
+        List<Packing> packings = packingController.listPackings(null, null, product, null, null, null);
         String dateString = getDateString(events, formatter);
         String team = getTeam(events, locale);
         double totalHarvestedAmount = getTotalHarvestedAmount(events);

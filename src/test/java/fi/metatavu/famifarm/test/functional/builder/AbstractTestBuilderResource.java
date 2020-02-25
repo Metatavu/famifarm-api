@@ -40,7 +40,6 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
   
   private ApiClient apiClient;
   private List<T> closables = new ArrayList<>();
-  private List<List<T>> closableLists = new ArrayList<>();
   
   /**
    * Constructor
@@ -54,12 +53,6 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
   @Override
   public T addClosable(T t) {
     closables.add(t);
-    return t;
-  }
-  
-  @Override
-  public List<T> addClosables(List<T> t) {
-    closableLists.add(t);
     return t;
   }
   
@@ -79,10 +72,6 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
    */
   public void removeClosable(Predicate<? super T> predicate) {
     closables = closables.stream().filter(predicate).collect(Collectors.toList());
-    
-    closableLists = closableLists.stream().map(closableList -> {
-      return closableList.stream().filter(predicate).collect(Collectors.toList());
-    }).collect(Collectors.toList());
   }
   
   @Override
@@ -91,15 +80,7 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
       clean(closables.get(i));
     }
     
-    for (int i = closableLists.size() - 1; i >= 0; i--) {
-      for (int j = closableLists.get(i).size()- 1; j >= 0; j--) {
-        clean(closableLists.get(i).get(j));
-      }
-      closableLists.get(i).clear();
-    }
-    
     closables.clear();
-    closableLists.clear();
   }
 
   /**
