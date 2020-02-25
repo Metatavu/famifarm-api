@@ -16,7 +16,7 @@ import javax.persistence.criteria.Root;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.persistence.model.Packing_;
-
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.rest.model.PackingState;
 
 /**
@@ -41,11 +41,11 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param startTime
      * @return packing
      */
-    public Packing create(UUID creatorId, UUID productId, UUID id, UUID lastModifierId, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time) {
+    public Packing create(UUID creatorId, Product product, UUID id, UUID lastModifierId, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time) {
       Packing packing = new Packing();
       packing.setCreatorId(creatorId);
       packing.setId(id);
-      packing.setProductId(productId);
+      packing.setProduct(product);
       packing.setPackingState(packingState);
       packing.setLastModifierId(lastModifierId);
       packing.setPackageSize(packageSize);
@@ -102,9 +102,23 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param lastModifier modifier
      * @return updated packing
      */
-    public Packing updateStartTime(Packing packing, OffsetDateTime time, UUID lastModifierId) {
+    public Packing updateTime(Packing packing, OffsetDateTime time, UUID lastModifierId) {
       packing.setLastModifierId(lastModifierId);
       packing.setTime(time);
+      return persist(packing);
+    }
+    
+    /**
+     * Updates product
+     * 
+     * @param packing
+     * @param product
+     * @param lastModifierId
+     * @return updated packing
+     */
+    public Packing updateProduct(Packing packing, Product product, UUID lastModifierId) {
+      packing.setLastModifierId(lastModifierId);
+      packing.setProduct(product);
       return persist(packing);
     }
     
@@ -131,11 +145,11 @@ public class PackingDAO extends AbstractDAO<Packing>{
       List<Predicate> restrictions = new ArrayList<>();
       
       if (productId != null) {
-        restrictions.add(criteriaBuilder.equal(root.get(Packing_.productId), productId));
+        restrictions.add(criteriaBuilder.equal(root.get(Packing_.product), productId));
       }
       
       if (state != null) {
-        restrictions.add(criteriaBuilder.equal(root.get(Packing_.state), state));
+        restrictions.add(criteriaBuilder.equal(root.get(Packing_.packingState), state));
       }
       
       if (createdBefore != null) {
@@ -147,7 +161,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
       }
       
       criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
-      criteria.orderBy(criteriaBuilder.desc(root.get(Packing_.creadetAt)));
+      criteria.orderBy(criteriaBuilder.desc(root.get(Packing_.createdAt)));
       
       TypedQuery<Packing> query = entityManager.createQuery(criteria);
       

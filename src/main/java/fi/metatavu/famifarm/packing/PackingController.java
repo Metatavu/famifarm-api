@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import fi.metatavu.famifarm.persistence.dao.PackingDAO;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Packing;
-
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.rest.model.PackingState;
 
 /**
@@ -37,8 +37,8 @@ public class PackingController {
    * @param time
    * @return packing
    */
-  public Packing create(UUID creatorId, UUID productId, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time) {
-    return packingDAO.create(creatorId, productId, UUID.randomUUID(), creatorId, packageSize, packedCount, packingState, time);
+  public Packing create(UUID creatorId, Product product, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time) {
+    return packingDAO.create(creatorId, product, UUID.randomUUID(), creatorId, packageSize, packedCount, packingState, time);
   }
   
   /**
@@ -75,10 +75,12 @@ public class PackingController {
    * @param modifier
    * @return updated packing
    */
-  public Packing updatePacking(Packing packing, PackageSize packageSize, PackingState packingState, Integer packedCount, UUID modifier) {
+  public Packing updatePacking(Packing packing, PackageSize packageSize, PackingState packingState, Integer packedCount, Product product, OffsetDateTime time, UUID modifier) {
     packingDAO.updatePackageSize(packing, packageSize, modifier);
     packingDAO.updatePackedCount(packing, packedCount, modifier);
     packingDAO.updatePackingState(packing, packingState, modifier);
+    packingDAO.updateProduct(packing, product, modifier);
+    packingDAO.updateTime(packing, time, modifier);
     return packing;
   }
   

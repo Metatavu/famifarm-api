@@ -245,7 +245,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getPackageSizeId());
-    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), body.getProductId(), packageSize, body.getPackedCount(), body.getState(), body.getTime())));
+    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), product, packageSize, body.getPackedCount(), body.getState(), body.getTime())));
   }
 
   @Override
@@ -293,14 +293,15 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response updatePacking(Packing body, UUID packingId) {
-    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
+    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(body.getId());
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
     
-    if (packing == null) {
+    if (packing == null || product == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
     
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getPackageSizeId());
-    return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), getLoggerUserId())));
+    return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), product, body.getTime(), getLoggerUserId())));
   }
   
   @Override
@@ -555,7 +556,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     
     packingController.listPackings(null, null, null, null, null, null).forEach(packing -> {
-      if (packing.getProductId() == productId) {
+      if (packing.getProduct().getId() == productId) {
         packingController.deletePacking(packing);
       }
     });

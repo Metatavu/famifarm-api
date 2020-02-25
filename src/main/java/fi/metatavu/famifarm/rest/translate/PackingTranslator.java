@@ -29,7 +29,7 @@ public class PackingTranslator {
     result.setId(packing.getId());
     result.setPackageSizeId(packing.getPackageSize().getId());
     result.setPackedCount(packing.getPackedCount());
-    result.setProductId(packing.getProductId());
+    result.setProductId(packing.getProduct().getId());
     result.setState(packing.getPackingState());
     result.setTime(packing.getTime());
     

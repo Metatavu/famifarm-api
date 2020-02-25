@@ -39,9 +39,8 @@ public class Packing {
   @NotNull
   private UUID id;
   
-  @Column(nullable = false)
-  @NotNull
-  private UUID productId;
+  @ManyToOne(optional = false)
+  private Product product;
   
   @Column(nullable = false)
   @NotNull
@@ -88,12 +87,12 @@ public class Packing {
     this.packingState = packageState;
   }
   
-  public UUID getProductId() {
-    return this.productId;
+  public Product getProduct() {
+    return this.product;
   }
   
-  public void setProductId(UUID productId) {
-    this.productId = productId;
+  public void setProduct(Product product) {
+    this.product = product;
   }
   
   public UUID getId() {

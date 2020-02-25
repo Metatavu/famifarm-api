@@ -3,7 +3,6 @@ package fi.metatavu.famifarm.test.functional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -56,7 +55,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       
       builder.admin().packings().create(product2.getId(), OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
       builder.admin().packings().create(product2.getId(), OffsetDateTime.now(), 0, PackingState.REMOVED, size);
-      
+      System.out.println("create packing ok");
       List<Packing> packings = builder.admin().packings().list(null, null, null, null, null, null);
       assertNotNull(packings);
       assertEquals(4, packings.size());
