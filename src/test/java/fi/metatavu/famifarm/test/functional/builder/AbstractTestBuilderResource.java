@@ -79,14 +79,7 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
    */
   public void removeClosable(Predicate<? super T> predicate) {
     closables = closables.stream().filter(predicate).collect(Collectors.toList());
-  }
-  
-  /**
-   * Removes a closable list from clean queue
-   * 
-   * @param predicate filter predicate
-   */
-  public void removeClosables(Predicate<? super T> predicate) {
+    
     closableLists = closableLists.stream().map(closableList -> {
       return closableList.stream().filter(predicate).collect(Collectors.toList());
     }).collect(Collectors.toList());

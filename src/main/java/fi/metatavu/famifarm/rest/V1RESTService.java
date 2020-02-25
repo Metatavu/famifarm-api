@@ -39,6 +39,7 @@ import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.events.TableSpreadEventController;
 import fi.metatavu.famifarm.events.WastageEventController;
 import fi.metatavu.famifarm.packagesizes.PackageSizeController;
+import fi.metatavu.famifarm.packing.PackingController;
 import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
@@ -84,6 +85,7 @@ import fi.metatavu.famifarm.rest.translate.CultivationObservationEventTranslator
 import fi.metatavu.famifarm.rest.translate.DraftTranslator;
 import fi.metatavu.famifarm.rest.translate.HarvestEventTranslator;
 import fi.metatavu.famifarm.rest.translate.PackageSizeTranslator;
+import fi.metatavu.famifarm.rest.translate.PackingTranslator;
 import fi.metatavu.famifarm.rest.translate.PerformedCultivationActionTranslator;
 import fi.metatavu.famifarm.rest.translate.PestsTranslator;
 import fi.metatavu.famifarm.rest.translate.PlantingEventTranslator;
@@ -227,41 +229,78 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Inject
   private DraftTranslator draftTranslator;
   
+  @Inject
+  private PackingController packingController;
+  
+  @Inject
+  private PackingTranslator packingTranslator;
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response createPackaging(Packing body) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
+    
+    if (product == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getPackageSizeId());
+    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), body.getProductId(), packageSize, body.getPackedCount(), body.getState(), body.getTime())));
   }
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response deletePacking(UUID packingId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
+    
+    if (packing == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    packingController.deletePacking(packing);
+    return createNoContent();
   }
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response findPacking(UUID packingId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
+    
+    if (packing == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(packingTranslator.translate(packing));
   }
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response listPackings(Integer firstResult, Integer maxResults, UUID productId, PackingState status,
       String createdBefore, String createdAfter) {
-    // TODO Auto-generated method stub
-    return null;
+    
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(productId);
+    
+    if (product == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    
+    List<Packing> packings = packingController.listPackings(firstResult, maxResults, productId, status, OffsetDateTime.parse(createdBefore), OffsetDateTime.parse(createdAfter)).stream().map(packing -> packingTranslator.translate(packing)).collect(Collectors.toList());
+        
+    return createOk(packings);
   }
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response updatePacking(Packing body, UUID packingId) {
-    // TODO Auto-generated method stub
-    return null;
+    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
+    
+    if (packing == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getPackageSizeId());
+    return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), getLoggerUserId())));
   }
   
   @Override
@@ -514,7 +553,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (product == null) {
       return createNotFound("Product not found");
     }
-
+    
+    packingController.listPackings(null, null, null, null, null, null).forEach(packing -> {
+      if (packing.getProductId() == productId) {
+        packingController.deletePacking(packing);
+      }
+    });
+    
     productController.deleteProduct(product);
 
     return createNoContent();
