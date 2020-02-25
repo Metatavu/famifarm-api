@@ -44,7 +44,6 @@ public class ReportTestBuilderResource extends AbstractTestBuilderResource<Objec
    */
   public byte[] createReport(String type, String fromTime, String toTime) throws IOException {
     ApiClient apiClient = getApiClient();
-    System.out.println("base path: "+ apiClient.getBasePath());
     return getBinaryData(apiClient, new URL(String.format("%s/v1/reports/%s?fromTime=%s&toTime=%s", apiClient.getBasePath(), type, fromTime, toTime)));
   }
   
