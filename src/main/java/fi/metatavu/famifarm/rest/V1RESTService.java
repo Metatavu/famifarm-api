@@ -564,11 +564,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound("Product not found");
     }
     
-    packingController.listPackings(null, null, null, null, null, null).forEach(packing -> {
+    for (fi.metatavu.famifarm.persistence.model.Packing packing : packingController.listPackings(null, null, null, null, null, null)) {
       if (packing.getProduct().getId() == productId) {
-        packingController.deletePacking(packing);
+        return createBadRequest("Product can not be deleted, because it is linked to packings");
       }
-    });
+    }
     
     productController.deleteProduct(product);
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-
-  <changeSet id="localizedvalues" author="antti.leppa">
+   <changeSet id="localizedvalues" author="antti.leppa">
     <createTable tableName="localizedentry">
       <column name="id" type="binary(16)">
         <constraints unique="true" nullable="false" primaryKey="true"/>
@@ -239,40 +238,7 @@
       </column>
     </createTable>
   </changeSet>
-  <changeSet id="packing" author="simeon.platonov">
-    <createTable tableName="packing">
-      <column name="id" type="binary(16)">
-        <constraints unique="true" nullable="false" primaryKey="true"/>
-      </column>
-      <column name="product_id" type="binary(16)">
-        <constraints nullable="false" foreignKeyName="FK_PACKING_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
-      </column>
-      <column name="time" type="timestamp">
-        <constraints nullable="false"/>
-      </column>
-      <column name="creatorid" type="binary(16)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="lastmodifierid" type="binary(16)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="createdat" type="timestamp">
-        <constraints nullable="false"/>
-      </column>
-      <column name="modifiedat" type="timestamp">
-        <constraints nullable="false"/>
-      </column>
-      <column name="packagesize_id" type="binary(16)">
-        <constraints nullable="false" foreignKeyName="FK_PACKING_PACKAGESIZE_ID" referencedColumnNames="id" referencedTableName="packagesize"/>
-      </column>
-      <column name="packedamount" type="int(32)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="packingstate" type="varchar(20)">
-        <constraints nullable="false"/>
-      </column>
-    </createTable>
-  </changeSet> 
+      
   <changeSet id="event" author="antti.leppa">
     <createTable tableName="event">
       <column name="id" type="binary(16)">
@@ -414,10 +380,28 @@
       <column name="description" type="longtext"></column>
     </createTable>
   </changeSet>
+
+      
+  <changeSet id="packingevent" author="antti.leppa">
+    <createTable tableName="packingevent">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_PACKINGEVENT_EVENT_ID" referencedColumnNames="id" referencedTableName="event"/>
+      </column>
+      <column name="packagesize_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_PACKINGEVENT_PACKAGESIZE_ID" referencedColumnNames="id" referencedTableName="packagesize"/>
+      </column>
+      <column name="packedamount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>  
+
       
   <changeSet id="batchstatus" author="antti.leppa">
+    <delete tableName="packingevent"/>
     <delete tableName="wastageevent"/>
     <delete tableName="plantingevent"/>
+    <delete tableName="packingevent"/>
     <delete tableName="harvestevent"/>
     <delete tableName="cultivationobservationeventaction"/>
     <delete tableName="cultivationobservationevent"/>
@@ -486,9 +470,10 @@
   </changeSet>
   
   <changeSet id="reviewchanges" author="antti.leppa">
-    <delete tableName="packing"/>
+    <delete tableName="packingevent"/>
     <delete tableName="wastageevent"/>
     <delete tableName="plantingevent"/>
+    <delete tableName="packingevent"/>
     <delete tableName="harvestevent"/>
     <delete tableName="cultivationobservationeventaction"/>
     <delete tableName="cultivationobservationevent"/>
@@ -609,8 +594,8 @@
     </addColumn>
   </changeSet>
 
-  <changeSet id="packingpackedamounttopackedcount" author="Heikki Kurhinen">
-    <renameColumn newColumnName="packedcount" oldColumnName="packedamount" tableName="packing" columnDataType="int(32)" />
+  <changeSet id="packingeventpackedamounttopackedcount" author="Heikki Kurhinen">
+    <renameColumn newColumnName="packedcount" oldColumnName="packedamount" tableName="packingevent" columnDataType="int(32)" />
   </changeSet>
 
   <changeSet id="plantingeventguttersizetogutterholecount" author="Heikki Kurhinen">
@@ -661,6 +646,49 @@
     
     <dropForeignKeyConstraint baseTableName="sowingevent" constraintName="FK_SOWINGEVENT_SEEDBATCH_ID"/>
     <dropColumn tableName="sowingevent" columnName="seedbatch_id"/>
+  </changeSet>
+  
+  <changeSet id="packing" author="simeon.platonov">
+    <createTable tableName="packing">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="product_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_PACKING_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
+      </column>
+      <column name="time" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="packagesize_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_PACKING_PACKAGESIZE_ID" referencedColumnNames="id" referencedTableName="packagesize"/>
+      </column>
+      <column name="packedamount" type="int(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="packingstate" type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet> 
+  
+  <changeSet id="packingeventpackedamounttopackedcount" author="simeon.platonov">
+    <renameColumn newColumnName="packedcount" oldColumnName="packedamount" tableName="packing" columnDataType="int(32)" />
+  </changeSet>
+  
+  <changeSet id="removeoldpackingeventtavle" author="simeon.platonov">
+  	<delete tableName="packingevent"></delete>
   </changeSet>
 
 </databaseChangeLog>

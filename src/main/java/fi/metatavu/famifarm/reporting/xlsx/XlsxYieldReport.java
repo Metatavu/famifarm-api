@@ -187,7 +187,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
     double amount = 0;
 
     for (Packing packing : packings) {
-      amount += packing.getPackedCount();
+      amount += packing.getPackedCount() * packing.getPackageSize().getSize();
     }
     
     return amount;
