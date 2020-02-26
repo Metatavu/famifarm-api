@@ -14,7 +14,6 @@ import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
-import fi.metatavu.famifarm.persistence.model.PackingEvent;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
@@ -46,9 +45,6 @@ public class EventController {
 
   @Inject
   private PlantingEventController plantingEventController;
-
-  @Inject
-  private PackingEventController packingEventController;
 
   @Inject
   private WastageEventController wastageEventController;
@@ -153,9 +149,6 @@ public class EventController {
       break;
       case WASTAGE:
         wastageEventController.deleteWastageEvent((WastageEvent) event);
-      break;
-      case PACKING:
-        packingEventController.deletePackingEvent((PackingEvent) event);
       break;
       default:
         logger.error("Cannot delete event with unknown type {}", event.getType());

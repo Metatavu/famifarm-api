@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
-import fi.metatavu.famifarm.persistence.model.PackingEvent;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
@@ -60,8 +59,6 @@ public class ReportUtils {
         return 0d; //Cultivation observation events dont store amount
       case HARVEST:
         return countHarvestedUnits(events);
-      case PACKING:
-        return countPackedUnits(events);
       default:
         return 0d;
     }
@@ -146,24 +143,6 @@ public class ReportUtils {
       }
     }
     
-    return count;
-  }
-
-  /**
-   * Counts packed units from the list of events
-   * 
-   * @param events list of events to count units from
-   * @return list of packed units
-   */
-  public static Double countPackedUnits(List<Event> events) {
-    Double count = 0d;
-    for (Event event : events) {
-      if (event.getType() == EventType.PACKING) {
-        PackingEvent packingEvent = (PackingEvent) event;
-        count += (packingEvent.getPackedCount() * packingEvent.getPackageSize().getSize());
-      }
-    }
-
     return count;
   }
 

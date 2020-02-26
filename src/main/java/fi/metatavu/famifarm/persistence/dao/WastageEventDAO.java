@@ -11,7 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
-import fi.metatavu.famifarm.persistence.model.PackingEvent_;
+import fi.metatavu.famifarm.persistence.model.WastageEvent_;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.persistence.model.WastageReason;
@@ -72,7 +72,7 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
     Root<WastageEvent> root = criteria.from(WastageEvent.class);
     
     criteria.select(root);
-    criteria.where(criteriaBuilder.equal(root.get(PackingEvent_.batch), batch));
+    criteria.where(criteriaBuilder.equal(root.get(WastageEvent_.batch), batch));
     
     return entityManager.createQuery(criteria).getResultList();
   }

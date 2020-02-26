@@ -11,9 +11,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
-import fi.metatavu.famifarm.persistence.model.PackingEvent_;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
+import fi.metatavu.famifarm.persistence.model.SowingEvent_;
 import fi.metatavu.famifarm.rest.model.PotType;
 
 /**
@@ -68,7 +68,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
     Root<SowingEvent> root = criteria.from(SowingEvent.class);
     
     criteria.select(root);
-    criteria.where(criteriaBuilder.equal(root.get(PackingEvent_.batch), batch));
+    criteria.where(criteriaBuilder.equal(root.get(SowingEvent_.batch), batch));
     
     return entityManager.createQuery(criteria).getResultList();
   }

@@ -17,7 +17,7 @@ import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.Event;
-import fi.metatavu.famifarm.persistence.model.PackingEvent;
+import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
@@ -81,7 +81,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
         
         float totalWeight = 0;    
         int amountOfCultivationObservations = 0;    
-        PackingEvent lastPackingEvent = null;
+        HarvestEvent lastHarvestEvent = null;
         SowingEvent firstSowingEvent = null;
         
         double averageWeight = 0;
@@ -95,9 +95,9 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
                 totalWeight += cultivationObservationEvent.getWeight();
               }
             break;
-            case PACKING:
-              if ((lastPackingEvent == null) || (lastPackingEvent != null && event.getEndTime() != null && event.getEndTime().isAfter(lastPackingEvent.getEndTime()))) {
-                lastPackingEvent = (PackingEvent) event; 
+            case HARVEST:
+              if ((lastHarvestEvent == null) || (lastHarvestEvent != null && event.getEndTime() != null && event.getEndTime().isAfter(lastHarvestEvent.getEndTime()))) {
+                lastHarvestEvent = (HarvestEvent) event; 
               }
             break;
             case SOWING:
@@ -114,14 +114,14 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
           averageWeight = totalWeight / amountOfCultivationObservations;
         }
 
-        if (lastPackingEvent != null && firstSowingEvent != null) {
-          Date packingDate = Date.from(lastPackingEvent.getEndTime().toInstant());
+        if (lastHarvestEvent != null && firstSowingEvent != null) {
+          Date packingDate = Date.from(lastHarvestEvent.getEndTime().toInstant());
           Date sowingDate = Date.from(firstSowingEvent.getStartTime().toInstant());
           int days = (int) (packingDate.getTime() - sowingDate.getTime()) / (1000*60*60*24);
 
           xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, firstSowingEvent.getProductionLine().getLineNumber());
           xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
-          xlsxBuilder.setCellValue(sheetId, rowIndex, packingDateIndex, lastPackingEvent.getEndTime().format(formatter));
+          xlsxBuilder.setCellValue(sheetId, rowIndex, packingDateIndex, lastHarvestEvent.getEndTime().format(formatter));
           xlsxBuilder.setCellValue(sheetId, rowIndex, sowingDateIndex, firstSowingEvent.getStartTime().format(formatter));
           xlsxBuilder.setCellValue(sheetId, rowIndex, averageWeightIndex, Double.toString(averageWeight));
           xlsxBuilder.setCellValue(sheetId, rowIndex, growthTimeIndex, Integer.toString(days));

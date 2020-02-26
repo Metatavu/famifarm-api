@@ -38,7 +38,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       Event cultivationObservationEvent = createCultivationObservationEvent(builder);
       createHarvestEvent(builder);
       createPlantingEvent(builder);
-      createPackingEvent(builder);
   
       byte[] data = builder.admin().reports().createReport("XLS_EXAMPLE", null, null);
       assertNotNull(data);
@@ -101,9 +100,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       startTime = OffsetDateTime.of(2022, 2, 9, 4, 5, 6, 0, ZoneOffset.UTC);
       endTime = OffsetDateTime.of(2022, 2, 10, 4, 5, 6, 0, ZoneOffset.UTC);
       
-      createPackingEvent(builder, batch, startTime, endTime);
-      createPackingEvent(builder, batch, startTime, endTime);
-      
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
@@ -144,7 +140,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       createWastageEvent(builder, batch, startTime, endTime);
       createHarvestEvent(builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BOXING, batch);
-      createPackingEvent(builder, batch, 62, startTime, endTime);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
@@ -314,33 +309,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
         builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
         builder.admin().reports().assertCellValue("30.0", workbook, 0, 4, 1);
-      }
-    }
-  }
-
-
-  @Test
-  public void testXlsxPackedReport() throws Exception {
-    try (TestBuilder builder = new TestBuilder()) {
-      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
-      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
-      
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
-      Batch batch = builder.admin().batches().create(product);
-      
-      createSowingEvent(builder, batch, 10, startTime, endTime);
-      createPackingEvent(builder, batch, startTime, endTime);
-      
-      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
-      String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
-      
-      byte[] data = builder.admin().reports().createReport("PACKED", fromTime, toTime);
-      assertNotNull(data);
-      
-      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
-        builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
-        builder.admin().reports().assertCellValue("640.0", workbook, 0, 4, 1);
       }
     }
   }

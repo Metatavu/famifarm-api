@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.test.functional.builder;
 
+
 /**
  * Interface describing a test builder resource.
  * 
@@ -16,7 +17,7 @@ public interface TestBuilderResource <T> extends AutoCloseable {
    * @return given instance
    */
   public T addClosable(T t);
-  
+
   /**
    * Cleans given resource
    * 

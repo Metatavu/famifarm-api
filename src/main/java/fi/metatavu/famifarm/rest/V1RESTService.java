@@ -34,17 +34,16 @@ import fi.metatavu.famifarm.drafts.DraftController;
 import fi.metatavu.famifarm.events.CultivationObservationEventController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.HarvestEventController;
-import fi.metatavu.famifarm.events.PackingEventController;
 import fi.metatavu.famifarm.events.PlantingEventController;
 import fi.metatavu.famifarm.events.SowingEventController;
 import fi.metatavu.famifarm.events.TableSpreadEventController;
 import fi.metatavu.famifarm.events.WastageEventController;
 import fi.metatavu.famifarm.packagesizes.PackageSizeController;
+import fi.metatavu.famifarm.packing.PackingController;
 import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
-import fi.metatavu.famifarm.persistence.model.PackingEvent;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
@@ -67,7 +66,8 @@ import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.HarvestEventData;
 import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
 import fi.metatavu.famifarm.rest.model.PackageSize;
-import fi.metatavu.famifarm.rest.model.PackingEventData;
+import fi.metatavu.famifarm.rest.model.Packing;
+import fi.metatavu.famifarm.rest.model.PackingState;
 import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.rest.model.Pest;
 import fi.metatavu.famifarm.rest.model.PlantingEventData;
@@ -85,7 +85,7 @@ import fi.metatavu.famifarm.rest.translate.CultivationObservationEventTranslator
 import fi.metatavu.famifarm.rest.translate.DraftTranslator;
 import fi.metatavu.famifarm.rest.translate.HarvestEventTranslator;
 import fi.metatavu.famifarm.rest.translate.PackageSizeTranslator;
-import fi.metatavu.famifarm.rest.translate.PackingEventTranslator;
+import fi.metatavu.famifarm.rest.translate.PackingTranslator;
 import fi.metatavu.famifarm.rest.translate.PerformedCultivationActionTranslator;
 import fi.metatavu.famifarm.rest.translate.PestsTranslator;
 import fi.metatavu.famifarm.rest.translate.PlantingEventTranslator;
@@ -215,12 +215,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
   private PlantingEventTranslator plantingEventTranslator;
 
   @Inject
-  private PackingEventController packingEventController;
-
-  @Inject
-  private PackingEventTranslator packingEventTranslator;
-
-  @Inject
   private WastageEventController wastageEventController;
 
   @Inject
@@ -234,7 +228,91 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Inject
   private DraftTranslator draftTranslator;
+  
+  @Inject
+  private PackingController packingController;
+  
+  @Inject
+  private PackingTranslator packingTranslator;
 
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response createPackaging(Packing body) {
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
+    
+    if (product == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getPackageSizeId());
+    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), product, packageSize, body.getPackedCount(), body.getState(), body.getTime())));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response deletePacking(UUID packingId) {
+    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
+    
+    if (packing == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    packingController.deletePacking(packing);
+    return createNoContent();
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response findPacking(UUID packingId) {
+    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
+    
+    if (packing == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    return createOk(packingTranslator.translate(packing));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response listPackings(Integer firstResult, Integer maxResults, UUID productId, PackingState status,
+      String createdBefore, String createdAfter) {
+    fi.metatavu.famifarm.persistence.model.Product product = null;
+    if (productId != null) {
+      product = productController.findProduct(productId);
+      
+      if (product == null) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
+    }
+    
+    OffsetDateTime createdBeforeTime = null;
+    if (createdBefore != null) {
+      createdBeforeTime = OffsetDateTime.parse(createdBefore);
+    }
+    
+    OffsetDateTime createdAfterTime = null;
+    if (createdAfter != null) {
+      createdAfterTime = OffsetDateTime.parse(createdAfter);
+    }
+
+    return createOk(packingController.listPackings(firstResult, maxResults, product, status, createdBeforeTime, createdAfterTime).stream().map(packing -> packingTranslator.translate(packing)).collect(Collectors.toList()));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response updatePacking(Packing body, UUID packingId) {
+    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(body.getId());
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
+    
+    if (packing == null || product == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+    
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getPackageSizeId());
+    return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), product, body.getTime(), getLoggerUserId())));
+  }
+  
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   public Response createSeed(Seed body) {
@@ -327,8 +405,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createPlantingEvent(batch, startTime, endTime, additionalInformation, body.getData());
     case WASTAGE:
       return createWastageEvent(batch, startTime, endTime, additionalInformation, body.getData());
-    case PACKING:
-      return createPackingEvent(batch, startTime, endTime, additionalInformation, body.getData());
     default:
       return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -487,7 +563,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (product == null) {
       return createNotFound("Product not found");
     }
-
+    
+    for (fi.metatavu.famifarm.persistence.model.Packing packing : packingController.listPackings(null, null, null, null, null, null)) {
+      if (packing.getProduct().getId() == productId) {
+        return createBadRequest("Product can not be deleted, because it is linked to packings");
+      }
+    }
+    
     productController.deleteProduct(product);
 
     return createNoContent();
@@ -818,8 +900,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return updatePlantingEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
     case WASTAGE:
       return updateWastageEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
-    case PACKING:
-      return updatePackingEvent(event, batch, startTime, endTime, additionalInformation, body.getData());
     default:
       return Response.status(Status.NOT_IMPLEMENTED).build();
     }
@@ -1107,8 +1187,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return harvestEventTranslator.translateEvent((HarvestEvent) event);
     case PLANTING:
       return plantingEventTranslator.translateEvent((PlantingEvent) event);
-    case PACKING:
-      return packingEventTranslator.translateEvent((PackingEvent) event);
     case WASTAGE:
       return wastageEventTranslator.translateEvent((WastageEvent) event);
     default:
@@ -1563,80 +1641,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
     batchController.updateRemainingUnits(batch);
 
     return createOk(plantingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
-  }
-
-  /**
-   * Creates new packing event
-   * 
-   * @param batch     batch
-   * @param startTime start time
-   * @param endTime   end time
-   * @param eventData event data
-   * @return response
-   */
-  private Response createPackingEvent(fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime,
-      OffsetDateTime endTime, String additionalInformation, Object eventDataObject) {
-    PackingEventData eventData;
-
-    try {
-      eventData = readEventData(PackingEventData.class, eventDataObject);
-    } catch (IOException e) {
-      return createInternalServerError(e.getMessage());
-    }
-
-    if (eventData == null) {
-      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
-    }
-
-    UUID creatorId = getLoggerUserId();
-    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = eventData.getPackageSizeId() != null
-        ? packageSizeController.findPackageSize(eventData.getPackageSizeId())
-        : null;
-    Integer packedCount = eventData.getPackedCount();
-
-    PackingEvent event = packingEventController.createPackingEvent(batch, startTime, endTime, packageSize, packedCount,
-        additionalInformation, creatorId);
-    batchController.updateRemainingUnits(batch);
-
-    return createOk(packingEventTranslator.translateEvent(updateBatchActiveEvent(event)));
-  }
-
-  /**
-   * Updates packing event
-   * 
-   * @param event           event
-   * @param batch           batch
-   * @param startTime       start time
-   * @param endTime         end time
-   * @param eventDataObject event data object
-   * @return response
-   */
-  private Response updatePackingEvent(fi.metatavu.famifarm.persistence.model.Event event,
-      fi.metatavu.famifarm.persistence.model.Batch batch, OffsetDateTime startTime, OffsetDateTime endTime,
-      String additionalInformation, Object eventDataObject) {
-    PackingEventData eventData;
-
-    try {
-      eventData = readEventData(PackingEventData.class, eventDataObject);
-    } catch (IOException e) {
-      return createInternalServerError(e.getMessage());
-    }
-
-    if (eventData == null) {
-      return createInternalServerError(FAILED_TO_READ_EVENT_DATA);
-    }
-
-    UUID creatorId = getLoggerUserId();
-    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = eventData.getPackageSizeId() != null
-        ? packageSizeController.findPackageSize(eventData.getPackageSizeId())
-        : null;
-    Integer packedCount = eventData.getPackedCount();
-
-    PackingEvent updatedEvent = packingEventController.updatePackingEvent((PackingEvent) event, batch, startTime,
-        endTime, packageSize, packedCount, additionalInformation, creatorId);
-    batchController.updateRemainingUnits(batch);
-
-    return createOk(packingEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
   }
 
   /**
