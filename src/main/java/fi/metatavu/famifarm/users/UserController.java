@@ -110,7 +110,7 @@ public class UserController {
    * @return Keycloak client secret setting
    */
   private String getClientSecret() {
-    return System.getProperty("keycloak-admin-client-secret");
+    return System.getenv("KEYCLOAK_ADMIN_CLIENT_SECRET");
   }
 
   /**
@@ -119,7 +119,7 @@ public class UserController {
    * @return Keycloak client id setting
    */
   private String getClientId() {
-    return System.getProperty("keycloak-admin-client-id");
+    return System.getenv("KEYCLOAK_ADMIN_CLIENT_ID");
   }
 
   /**
@@ -128,7 +128,7 @@ public class UserController {
    * @return Keycloak admin password setting
    */
   private String getAdminPassword() {
-    return System.getProperty("keycloak-admin-password");
+    return System.getenv("KEYCLOAK_ADMIN_PASSWORD");
   }
 
   /**
@@ -137,7 +137,7 @@ public class UserController {
    * @return Keycloak admin user setting
    */
   private String getAdminUser() {
-    return System.getProperty("keycloak-admin-user");
+    return System.getenv("KEYCLOAK_ADMIN_USER");
   }
 
   /**
@@ -146,7 +146,7 @@ public class UserController {
    * @return Keycloak realm  setting
    */
   private String getRealm() {
-    return System.getProperty("keycloak-admin-realm");
+    return System.getenv("KEYCLOAK_ADMIN_REALM");
   }
 
   /**
@@ -155,7 +155,7 @@ public class UserController {
    * @return Keycloak server URL setting
    */
   private String getServerUrl() {
-    return System.getProperty("keycloak-admin-server-url");
+    return System.getenv("KEYCLOAK_URL");
   }
   
 }

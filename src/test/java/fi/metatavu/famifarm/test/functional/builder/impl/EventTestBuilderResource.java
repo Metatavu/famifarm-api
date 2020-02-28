@@ -32,7 +32,6 @@ import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.client.model.WastageEventData;
 import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
-import fi.metatavu.famifarm.rest.model.PackingEventData;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event, EventsApi> {
@@ -192,29 +191,6 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setStartTime(startTime);
     event.setType(EventType.WASTAGE);
     event.setAdditionalInformation(additionalInformation);
-    
-    return addClosable(getApi().createEvent(event));
-  }
-
-  /**
-   * Creates new event
-   * 
-   * @param batch batch
-   * @param startTime start time
-   * @param endTime end time
-   * @param packageSize package size
-   * @param packedAmount packed amount
-   * @return created event
-   */
-  public Event createPacking(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, PackageSize packageSize, Integer packedAmount) {
-    PackingEventData data = createPackingEventData(packageSize, packedAmount);
-    
-    Event event = new Event();
-    event.setBatchId(batch != null ? batch.getId() : null);
-    event.setData(data);
-    event.setEndTime(endTime);
-    event.setStartTime(startTime);
-    event.setType(EventType.PACKING);
     
     return addClosable(getApi().createEvent(event));
   }
@@ -474,20 +450,6 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setTrayCount(cellCount);
     data.setWorkerCount(workerCount);
-    return data;
-  }
-  
-  /**
-   * Creates event data object
-   *
-   * @param packageSize 
-   * @param packedAmount 
-   * @return event data
-   */
-  private PackingEventData createPackingEventData(PackageSize packageSize, Integer packedAmount) {
-    PackingEventData data = new PackingEventData();
-    data.setPackageSizeId(packageSize != null ? packageSize.getId() : null);
-    data.setPackedCount(packedAmount);
     return data;
   }
 

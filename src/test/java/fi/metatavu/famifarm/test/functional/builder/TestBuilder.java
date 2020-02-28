@@ -19,7 +19,7 @@ public class TestBuilder implements AutoCloseable {
   
   private static final String REALM = "test";
   private static final String CLIENT_ID = "ui";
-  private static final String ADMIN_USER = "admin@example.com";
+  private static final String ADMIN_USER = "admin";
   private static final String ADMIN_PASSWORD = "test";
   private static final String MANAGER_USER = "manager@example.com";
   private static final String MANAGER_PASSWORD = "test";
@@ -41,7 +41,7 @@ public class TestBuilder implements AutoCloseable {
     if (admin != null) {
       return admin;
     }
-    
+
     return admin = this.addClosable(new TestBuilderAuthentication(new DefaultAccessTokenProvider(REALM, CLIENT_ID, ADMIN_USER, ADMIN_PASSWORD, null)));
   }
 
