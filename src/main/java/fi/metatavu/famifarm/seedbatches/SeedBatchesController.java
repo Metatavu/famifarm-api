@@ -53,8 +53,8 @@ public class SeedBatchesController {
    * @param maxResults max results
    * @return list of seed batches
    */
-  public List<SeedBatch> listSeedBatches(Integer firstResult, Integer maxResults) {
-    return seedBatchDAO.listAll(firstResult, maxResults);
+  public List<SeedBatch> listSeedBatches(Integer firstResult, Integer maxResults, Boolean active) {
+    return seedBatchDAO.listAll(firstResult, maxResults, active);
   }
 
   /**
@@ -67,10 +67,11 @@ public class SeedBatchesController {
    * @param lastModifierId lastModifierId
    * @return created seed batch
    */
-  public SeedBatch updateSeedBatch(SeedBatch seedBatch, String code, Seed seed, OffsetDateTime time, UUID lastModifierId) {
+  public SeedBatch updateSeedBatch(SeedBatch seedBatch, String code, Seed seed, OffsetDateTime time, Boolean active, UUID lastModifierId) {
     seedBatchDAO.updateCode(seedBatch, code, lastModifierId);
     seedBatchDAO.updateSeed(seedBatch, seed, lastModifierId);
     seedBatchDAO.updateTime(seedBatch, time, lastModifierId);
+    seedBatchDAO.updateActive(seedBatch, active, lastModifierId);
     return seedBatch;
   }
 

@@ -43,8 +43,14 @@ public class SeedBatchTestIT extends AbstractFunctionalTest {
 
       builder.admin().seedBatches().create("code", seed, OffsetDateTime.now());
       builder.admin().seedBatches().assertCount(1);
-      builder.admin().seedBatches().create("code", seed, OffsetDateTime.now());
+      SeedBatch batch = builder.admin().seedBatches().create("code", seed, OffsetDateTime.now());
       builder.admin().seedBatches().assertCount(2);
+      
+      batch.setActive(false);
+      builder.admin().seedBatches().updateSeedBatch(batch);
+      assertEquals(1, builder.admin().seedBatches().listSeedBatches(null, null, null).size());
+      assertEquals(1, builder.admin().seedBatches().listSeedBatches(null, null, false).size());
+      assertEquals(2, builder.admin().seedBatches().listSeedBatches(null, null, true).size());
     }
   }
 
@@ -60,6 +66,7 @@ public class SeedBatchTestIT extends AbstractFunctionalTest {
       updatedSeedBatch.setCode("code 2");
       updatedSeedBatch.setSeedId(createdSeedBatch.getSeedId());
       updatedSeedBatch.setTime(createdSeedBatch.getTime());
+      updatedSeedBatch.setActive(false);
 
       builder.admin().seedBatches().updateSeedBatch(updatedSeedBatch);
       builder.admin().seedBatches().assertSeedBatchesEqual(updatedSeedBatch, builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId()));

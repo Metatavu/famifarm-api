@@ -829,8 +829,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
-  public Response listSeedBatches(Integer firstResult, Integer maxResults) {
-    List<SeedBatch> result = seedBatchController.listSeedBatches(firstResult, maxResults).stream()
+  public Response listSeedBatches(Integer firstResult, Integer maxResults, Boolean isPassive) {
+    List<SeedBatch> result = seedBatchController.listSeedBatches(firstResult, maxResults, !isPassive).stream()
         .map(seedBatchesTranslator::translateSeedBatch).collect(Collectors.toList());
 
     return createOk(result);
@@ -994,8 +994,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
     OffsetDateTime time = body.getTime();
     UUID seedId = body.getSeedId();
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
+    Boolean active = body.isisActive();
 
-    return createOk(seedBatchController.updateSeedBatch(seedBatch, code, seed, time, getLoggerUserId()));
+    return createOk(seedBatchController.updateSeedBatch(seedBatch, code, seed, time, active, getLoggerUserId()));
   }
 
   @Override
