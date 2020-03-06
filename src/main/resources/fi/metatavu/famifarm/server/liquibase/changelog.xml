@@ -690,5 +690,13 @@
   <changeSet id="removeoldpackingeventtavle" author="simeon.platonov">
   	<delete tableName="packingevent"></delete>
   </changeSet>
+  
+  <changeSet id="addColumnForSeedBatchState" author="Simeon Platonov">
+  	<addColumn tableName="seedbatch">
+  		<column name="active" type="boolean">
+  			<constraints nullable="false"/>
+  		</column>
+  	</addColumn>
+  </changeSet>
 
 </databaseChangeLog>
