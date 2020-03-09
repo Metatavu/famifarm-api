@@ -51,6 +51,7 @@ public class SeedBatchesController {
    * 
    * @param firstResult first result
    * @param maxResults max results
+   * @param active if true or null, list only active seed batches
    * @return list of seed batches
    */
   public List<SeedBatch> listSeedBatches(Integer firstResult, Integer maxResults, Boolean active) {

@@ -91,7 +91,7 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
    * 
    * @param firstResult
    * @param maxResults
-   * @param active
+   * @param active if true or null, list only active seed batches
    * @return seed batches that match the criteria
    */
   public List<SeedBatch> listAll (Integer firstResult, Integer maxResults, Boolean active) {
@@ -105,8 +105,8 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
     
     List<Predicate> restrictions = new ArrayList<>();
     
-    if (active != null) {
-      restrictions.add(criteriaBuilder.equal(root.get(SeedBatch_.active), active));
+    if (active == null || active == true){
+      restrictions.add(criteriaBuilder.equal(root.get(SeedBatch_.active), true));
     }
     
     criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
