@@ -998,7 +998,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     OffsetDateTime time = body.getTime();
     UUID seedId = body.getSeedId();
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
-    Boolean active = body.isisActive();
+    boolean active = body.isisActive() != null ? body.isisActive() : Boolean.FALSE;
 
     return createOk(seedBatchController.updateSeedBatch(seedBatch, code, seed, time, active, getLoggerUserId()));
   }
