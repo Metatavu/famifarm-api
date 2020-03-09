@@ -697,6 +697,9 @@
   			<constraints nullable="false"/>
   		</column>
   	</addColumn>
+  	<sql>
+  	  UPDATE seedbatch SET active = true
+  	</sql>
   </changeSet>
 
 </databaseChangeLog>
