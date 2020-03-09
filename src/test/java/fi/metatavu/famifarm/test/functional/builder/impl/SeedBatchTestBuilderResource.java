@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.json.JSONException;
@@ -65,6 +66,18 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    */
   public SeedBatch updateSeedBatch(SeedBatch body) {
     return getApi().updateSeedBatch(body, body.getId());
+  }
+  
+  /**
+   * Lists seed batches
+   * 
+   * @param firstResult
+   * @param maxResults
+   * @param isPassive
+   * @return
+   */
+  public List<SeedBatch> listSeedBatches(Integer firstResult, Integer maxResults, Boolean isPassive) {
+    return getApi().listSeedBatches(firstResult, maxResults, isPassive);
   }
   
   /**
