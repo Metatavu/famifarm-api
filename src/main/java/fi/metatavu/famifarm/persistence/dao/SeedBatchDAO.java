@@ -1,12 +1,21 @@
 package fi.metatavu.famifarm.persistence.dao;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Seed;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
+import fi.metatavu.famifarm.persistence.model.SeedBatch_;
 
 /**
  * DAO class for seed batches
@@ -34,6 +43,7 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
     seedBatch.setTime(time);
     seedBatch.setCreatorId(creatorId);
     seedBatch.setLastModifierId(lastModifierId);
+    seedBatch.setActive(true);
     return persist(seedBatch);
   }
 
@@ -73,6 +83,58 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
   public SeedBatch updateTime(SeedBatch seedBatch, OffsetDateTime time, UUID lastModifierId) {
     seedBatch.setLastModifierId(lastModifierId);
     seedBatch.setTime(time);
+    return persist(seedBatch);
+  }
+  
+  /**
+   * Lists seed batches
+   * 
+   * @param firstResult
+   * @param maxResults
+   * @param active if true or null, list only active seed batches
+   * @return seed batches that match the criteria
+   */
+  public List<SeedBatch> listAll (Integer firstResult, Integer maxResults, Boolean active) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<SeedBatch> criteria = criteriaBuilder.createQuery(SeedBatch.class);
+    Root<SeedBatch> root = criteria.from(SeedBatch.class);
+    
+    criteria.select(root);
+    
+    List<Predicate> restrictions = new ArrayList<>();
+    
+    if (active == null || active == true){
+      restrictions.add(criteriaBuilder.equal(root.get(SeedBatch_.active), true));
+    }
+    
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
+    
+    TypedQuery<SeedBatch> query = entityManager.createQuery(criteria);
+    
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+    
+    return query.getResultList(); 
+  }
+  
+  /**
+   * Updates seed batch state (active/passive)
+   * 
+   * @param seedBatch
+   * @param active
+   * @param lastModifierId
+   * @return
+   */
+  public SeedBatch updateActive(SeedBatch seedBatch, boolean active, UUID lastModifierId) {
+    seedBatch.setLastModifierId(lastModifierId);
+    seedBatch.setActive(active);
     return persist(seedBatch);
   }
 

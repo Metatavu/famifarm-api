@@ -54,6 +54,9 @@ public class SeedBatch {
 
   @Column(nullable = false)
   private OffsetDateTime modifiedAt;
+  
+  @Column(nullable = false)
+  private boolean active;
 
   public UUID getId() {
     return id;
@@ -62,7 +65,15 @@ public class SeedBatch {
   public void setId(UUID id) {
     this.id = id;
   }
-
+  
+  public boolean isActive() {
+    return this.active;
+  }
+  
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+  
   public String getCode() {
     return code;
   }
