@@ -7,15 +7,11 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 
+import fi.metatavu.famifarm.client.model.*;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
-import fi.metatavu.famifarm.client.model.Batch;
-import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum;
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
-import fi.metatavu.famifarm.client.model.PackageSize;
-import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 
@@ -309,6 +305,29 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
         builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
         builder.admin().reports().assertCellValue("30.0", workbook, 0, 4, 1);
+      }
+    }
+  }
+
+  @Test
+  public void testXlsxPackedReport() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      OffsetDateTime startTime = OffsetDateTime.of(2022, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      builder.admin().packings().create(product.getId(), startTime, 10, PackingState.IN_STORE, createdPackageSize);
+
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+
+      byte[] data = builder.admin().reports().createReport("PACKED", fromTime, toTime);
+      assertNotNull(data);
+
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
+        builder.admin().reports().assertCellValue("80.0", workbook, 0, 4, 1);
       }
     }
   }
