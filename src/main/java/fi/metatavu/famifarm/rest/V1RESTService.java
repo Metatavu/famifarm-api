@@ -512,7 +512,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response deleteEvent(UUID eventId) {
     fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
     if (event == null) {
@@ -859,7 +859,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response updateBatch(Batch body, UUID batchId) {
     fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(batchId);
     if (batch == null) {
