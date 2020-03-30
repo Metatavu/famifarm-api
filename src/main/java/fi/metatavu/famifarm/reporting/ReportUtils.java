@@ -3,13 +3,7 @@ package fi.metatavu.famifarm.reporting;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import fi.metatavu.famifarm.persistence.model.Event;
-import fi.metatavu.famifarm.persistence.model.HarvestEvent;
-import fi.metatavu.famifarm.persistence.model.PlantingEvent;
-import fi.metatavu.famifarm.persistence.model.Product;
-import fi.metatavu.famifarm.persistence.model.SowingEvent;
-import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
-import fi.metatavu.famifarm.persistence.model.WastageEvent;
+import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.PotType;
 
@@ -22,6 +16,22 @@ public class ReportUtils {
 
   private ReportUtils(){
     //Private constructor
+  }
+
+  /**
+   * Counts packed units by product
+   *
+   * @param packings list of packings to count from
+   * @param product product to count by
+   * @return number of packed units
+   */
+  public static Double countPackedUnitsByProduct(List<Packing> packings, Product product) {
+    List<Packing> productPackings = packings.stream().filter(packing -> packing.getProduct().getId().equals(product.getId())).collect(Collectors.toList());
+    Double count = 0d;
+    for (Packing packing : productPackings) {
+      count+= packing.getPackedCount() * packing.getPackageSize().getSize();;
+    }
+    return count;
   }
 
   /**

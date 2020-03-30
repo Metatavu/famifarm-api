@@ -1,680 +1,681 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>fi.metatavu.famifarm</groupId>
-  <artifactId>famifarm-api</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
-  <name>famifarm-api</name>
-  <description>Famifarm API</description>
-  <url>https://github.com/Metatavu/famifarm-api</url>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>fi.metatavu.famifarm</groupId>
+    <artifactId>famifarm-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>famifarm-api</name>
+    <description>Famifarm API</description>
+    <url>https://github.com/Metatavu/famifarm-api</url>
 
-  <licenses>
-    <license>
-      <name>GNU Affero General Public License v3</name>
-      <url>http://www.gnu.org/licenses/agpl-3.0.html</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  
-  <developers>
-    <developer>
-      <name>Metatavu Oy</name>
-      <organization>Metatavu Oy</organization>
-      <organizationUrl>http://www.metatavu.fi</organizationUrl>
-    </developer>
-  </developers>
-  
-  <issueManagement>
-    <system>GitHub</system>
-    <url>https://github.com/Metatavu/famifarm-api/issues</url>
-  </issueManagement>
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3</name>
+            <url>http://www.gnu.org/licenses/agpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-  <scm>
-    <developerConnection>scm:git:git@github.com:Metatavu/famifarm-api.git</developerConnection>
-    <url>git@github.com:Metatavu/famifarm-api.git</url>
-    <connection>scm:git:git@github.com:Metatavu/famifarm-api.git</connection>
-    <tag>HEAD</tag>
-  </scm>
+    <developers>
+        <developer>
+            <name>Metatavu Oy</name>
+            <organization>Metatavu Oy</organization>
+            <organizationUrl>http://www.metatavu.fi</organizationUrl>
+        </developer>
+    </developers>
 
-  <organization>
-    <name>Metatavu Oy</name>
-    <url>http://www.metatavu.fi</url>
-  </organization>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/Metatavu/famifarm-api/issues</url>
+    </issueManagement>
 
-  <properties>
-  
-    <!-- Project -->
+    <scm>
+        <developerConnection>scm:git:git@github.com:Metatavu/famifarm-api.git</developerConnection>
+        <url>git@github.com:Metatavu/famifarm-api.git</url>
+        <connection>scm:git:git@github.com:Metatavu/famifarm-api.git</connection>
+        <tag>HEAD</tag>
+    </scm>
 
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    
-    <!-- Famifarm -->
-    
-    <famifarm-api-spec.version>1.0.41</famifarm-api-spec.version>
-    
-    <!-- Maven -->
+    <organization>
+        <name>Metatavu Oy</name>
+        <url>http://www.metatavu.fi</url>
+    </organization>
 
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    
-    <!-- Wildfly -->
-    
-    <wildfly.version>18.0.0.Final</wildfly.version>
+    <properties>
 
-    <!-- TODO: Selvitä commonslog versio -->
-    <commons-logging.version>1.2</commons-logging.version>
-    <log4j.version>2.11.1</log4j.version>
-    <slf4j-api.version>1.7.22</slf4j-api.version>
+        <!-- Project -->
 
-    <!-- Liquibase -->
-    
-    <liquibase.version>3.6.2</liquibase.version>
-    
-    <!-- Keycloak admin client -->
-    
-    <keycloak.version>7.0.0</keycloak.version>
-    
-    <!-- Mailgun -->
-    
-    <mailgun.version>1.9.0</mailgun.version>
-    
-    <!-- POI -->
-    
-    <poi.version>4.0.1</poi.version>
-    
-    <!-- Test -->
-    
-    <awaitility.version>3.1.2</awaitility.version>
-    <rest-assured.version>3.2.0</rest-assured.version>
-    <wiremock.version>2.19.0</wiremock.version>
-    <jsonassert.version>1.5.0</jsonassert.version>
-    <famifarm-api-client.version>1.0.39</famifarm-api-client.version>
-    <mariadb-java-client.version>2.3.0</mariadb-java-client.version>
-  </properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.wildfly</groupId>
-        <artifactId>wildfly-spec-api</artifactId>
-        <version>${wildfly.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-  
-  <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M1</version>
-      </plugin>    
-      <plugin>
-        <groupId>org.bsc.maven</groupId>
-        <artifactId>maven-processor-plugin</artifactId>
-        <version>3.3.3</version>
-        <executions>
-          <execution>
-            <id>process</id>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <processors>
-                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-              </processors>
-            </configuration>
-          </execution>
-        </executions>
+        <!-- Famifarm -->
+
+        <famifarm-api-spec.version>1.0.41</famifarm-api-spec.version>
+
+        <!-- Maven -->
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <!-- Wildfly -->
+
+        <wildfly.version>18.0.0.Final</wildfly.version>
+
+        <!-- TODO: Selvitä commonslog versio -->
+        <commons-logging.version>1.2</commons-logging.version>
+        <log4j.version>2.11.1</log4j.version>
+        <slf4j-api.version>1.7.22</slf4j-api.version>
+
+        <!-- Liquibase -->
+
+        <liquibase.version>3.6.2</liquibase.version>
+
+        <!-- Keycloak admin client -->
+
+        <keycloak.version>7.0.0</keycloak.version>
+
+        <!-- Mailgun -->
+
+        <mailgun.version>1.9.0</mailgun.version>
+
+        <!-- POI -->
+
+        <poi.version>4.0.1</poi.version>
+
+        <!-- Test -->
+
+        <awaitility.version>3.1.2</awaitility.version>
+        <rest-assured.version>3.2.0</rest-assured.version>
+        <wiremock.version>2.19.0</wiremock.version>
+        <jsonassert.version>1.5.0</jsonassert.version>
+        <famifarm-api-client.version>1.0.39</famifarm-api-client.version>
+        <mariadb-java-client.version>2.3.0</mariadb-java-client.version>
+    </properties>
+
+    <dependencyManagement>
         <dependencies>
-          <dependency>        
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>5.3.7.Final</version>
-          </dependency>
+            <dependency>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-spec-api</artifactId>
+                <version>${wildfly.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
-      </plugin>
-    </plugins>
-  </build>
+    </dependencyManagement>
 
-  <dependencies>
-    <dependency>
-      <groupId>fi.metatavu.famifarm</groupId>
-      <artifactId>famifarm-api-spec</artifactId>
-      <version>${famifarm-api-spec.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_4.0_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
-      <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.wildfly</groupId>
-      <artifactId>wildfly-clustering-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jaxrs</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.spec.javax.ws.rs</groupId>
-      <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>${commons-logging.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <version>${log4j.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>${log4j.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-api.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>jakarta.enterprise</groupId>
-      <artifactId>jakarta.enterprise.cdi-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.jboss.spec.javax.interceptor</groupId>
-      <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.jboss.spec.javax.ejb</groupId>
-      <artifactId>jboss-ejb-api_3.2_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.jboss.weld</groupId>
-      <artifactId>weld-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.jboss.weld</groupId>
-      <artifactId>weld-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.wildfly</groupId>
-      <artifactId>wildfly-ejb3</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.infinispan</groupId>
-      <artifactId>infinispan-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- Jackson -->
-
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jackson2-provider</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- Persistence -->
-
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>6.0.13.Final</version>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.liquibase</groupId>
-      <artifactId>liquibase-cdi</artifactId>
-      <version>${liquibase.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    
-    <!-- Keycloak -->
-  
-    <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-core</artifactId>
-      <version>${keycloak.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-adapter-spi</artifactId>
-      <version>${keycloak.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  
-    <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-adapter-core</artifactId>
-      <version>${keycloak.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-admin-client</artifactId>
-      <version>${keycloak.version}</version>
-      <exclusions>      
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-        </exclusion>      
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-        </exclusion> 
-        <exclusion>
-          <groupId>org.keycloak</groupId>
-          <artifactId>keycloak-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    
-    <!-- Mailgun -->
-
-    <dependency>
-      <groupId>net.sargue</groupId>
-      <artifactId>mailgun</artifactId>
-      <version>${mailgun.version}</version>
-    </dependency>
-    
-    <!-- POI -->
-    
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi</artifactId>
-      <version>${poi.version}</version>
-    </dependency>
-      
-    <dependency>  
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi-ooxml</artifactId>
-      <version>${poi.version}</version>
-    </dependency>
-    
-    <!-- Test -->
-    
-    <dependency>
-      <groupId>org.mariadb.jdbc</groupId>
-      <artifactId>mariadb-java-client</artifactId>
-      <version>${mariadb-java-client.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock</artifactId>
-      <version>${wiremock.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.skyscreamer</groupId>
-      <artifactId>jsonassert</artifactId>
-      <version>${jsonassert.version}</version>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>rest-assured</artifactId>
-      <version>${rest-assured.version}</version>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.awaitility</groupId>
-      <artifactId>awaitility</artifactId>
-      <version>${awaitility.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest-library</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    
-    <dependency>
-      <artifactId>famifarm-api-client</artifactId>
-      <groupId>fi.metatavu.famifarm.client</groupId>
-      <version>${famifarm-api-client.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-wildfly-adapter-dist</artifactId>
-      <version>${keycloak.version}</version>
-      <type>zip</type>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
-  
-  <profiles>
-    <profile>
-      <id>itests</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      
-      <properties>
-        <it.port.http>1234</it.port.http>
-        <it.host>localhost</it.host>
-        <it.jdbc.driver>org.mariadb.jdbc.MySQLDataSource</it.jdbc.driver>
-        <it.jdbc.module>com.mariadb.jdbc</it.jdbc.module>
-        <it.jdbc.dbname>fftest</it.jdbc.dbname>
-        <it.jdbc.url>jdbc:mysql://localhost:3306/${it.jdbc.dbname}</it.jdbc.url>
-        <it.jdbc.jndi>java:jboss/datasources/famifarm-api</it.jdbc.jndi>
-        <it.jdbc.username>sa</it.jdbc.username>
-        <it.jdbc.password>sa</it.jdbc.password>
-        <it.skipdatabasedrop>true</it.skipdatabasedrop>
-        <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
-      </properties>
-      
-      <build>
-        <plugins>   
-          <plugin>
-          	<groupId>io.fabric8</groupId>
-          	<artifactId>docker-maven-plugin</artifactId>
-          	<configuration>
-          		<images>
-          			<image>
-	                  <name>mysql:5.6</name>
-	                  <alias>test-mysql</alias>
-	                  <run>
-	                    <ports>
-	                      <port>3306:3306 </port>
-	                    </ports>
-	                    <env>
-	                      <MYSQL_ROOT_PASSWORD>rootpass</MYSQL_ROOT_PASSWORD>
-	                      <MYSQL_DATABASE>db</MYSQL_DATABASE>
-	                      <MYSQL_USER>user</MYSQL_USER>
-	                      <MYSQL_PASSWORD>rootpass</MYSQL_PASSWORD>
-	                    </env>
-	                    <wait>
-	                      <log>ready for connections.</log>
-	                    </wait>
-	                    <cmd>--lower_case_table_names=1</cmd>
-	                  </run>
-	                </image>
-	                <image>
-	                  <name>jboss/keycloak:${keycloak.version}</name>
-	                  <alias>test-keycloak</alias>
-	                  <run>
-	                    <env>
-	                      <KEYCLOAK_USER>api-admin</KEYCLOAK_USER>
-	                      <KEYCLOAK_PASSWORD>api-admin</KEYCLOAK_PASSWORD>
-	                      <KEYCLOAK_IMPORT>/opt/docker/kc.json</KEYCLOAK_IMPORT>
-	                    </env>
-	                    <volumes>
-	                      <bind>
-	                        <volume>${project.basedir}/test-volumes/keycloak:/opt/docker</volume>
-	                      </bind>
-	                    </volumes>
-	                    <ports>
-	                      <port>8080:8080</port>
-	                    </ports>
-	                    <wait>
-	                      <log>Resuming server</log>
-	                      <time>120000</time>
-	                    </wait>
-	                  </run>
-	                </image>
-	                <image>
-	                  <name>test-api</name>
-	                  <build>
-	                    <dockerFileDir>${project.basedir}</dockerFileDir>
-	                    <filter>@</filter>
-	                  </build>
-	                  <run>
-	                    <ports>
-	                      <port>1234:8080</port>
-	                    </ports>
-	                    <links>
-	                      <link>test-mysql:test-mysql</link>
-	                      <link>test-keycloak:test-keycloak</link>
-	                    </links>
-	                    <env>
-	                     <KEYCLOAK_ADMIN_CLIENT_ID>admin-cli</KEYCLOAK_ADMIN_CLIENT_ID>
-	                     <KEYCLOAK_ADMIN_CLIENT_SECRET>cfca0d98-3aa3-4ee6-bb44-a72df4c02d1a</KEYCLOAK_ADMIN_CLIENT_SECRET>
-	                     <KEYCLOAK_ADMIN_PASSWORD>api-admin</KEYCLOAK_ADMIN_PASSWORD>
-	                     <KEYCLOAK_ADMIN_USER>api-admin</KEYCLOAK_ADMIN_USER>
-	                     <KEYCLOAK_ADMIN_REALM>test</KEYCLOAK_ADMIN_REALM>
-	                     <KEYCLOAK_ADMIN_SERVER_URL>http://localhost:8080/auth</KEYCLOAK_ADMIN_SERVER_URL>
-	                     <KEYCLOAK_REALM>test</KEYCLOAK_REALM>
-	                     <KEYCLOAK_URL>http://test-keycloak:8080/auth</KEYCLOAK_URL>
-	                     <KEYCLOAK_RESOURCE>api</KEYCLOAK_RESOURCE>
-	                     <KEYCLOAK_SECRET>041e7b11-70a1-4beb-a59a-c1de3fde1cf8</KEYCLOAK_SECRET>
-	                  	 <FAMIFARM_API_HOST>localhost</FAMIFARM_API_HOST>
-                         <FAMIFARM_API_DB_HOST>test-mysql</FAMIFARM_API_DB_HOST>
-                         <FAMIFARM_API_DB_PORT>3306</FAMIFARM_API_DB_PORT>
-                         <FAMIFARM_API_DB_NAME>db</FAMIFARM_API_DB_NAME>
-                         <FAMIFARM_API_DB_OPTS></FAMIFARM_API_DB_OPTS>
-                         <FAMIFARM_API_DB_USERNAME>root</FAMIFARM_API_DB_USERNAME>
-                         <FAMIFARM_API_DB_PASSWORD>rootpass</FAMIFARM_API_DB_PASSWORD>
-                         <FAMIFARM_API_CLUSTER_PASSWORD>clusterpass</FAMIFARM_API_CLUSTER_PASSWORD>
-                         <FAMIFARM_TX_IDENTIFIER>test</FAMIFARM_TX_IDENTIFIER>
-                         <KUBERNETES_NAMESPACE>test</KUBERNETES_NAMESPACE>
-                         <KUBERNETES_LABELS>test</KUBERNETES_LABELS>
-                         <IT_HOST>localhost</IT_HOST>
-                         <IT_PORT_HTTP>1234</IT_PORT_HTTP>
-                         <runmode>TEST</runmode>
-	                    </env>
-	                    <volumes>
-	                      <bind>
-	                        <volume>${project.basedir}/scripts:/opt/docker/scripts</volume>
-	                      </bind>
-	                    </volumes>
-	                  </run>
-	                </image>
-          		</images>
-          		<showLogs>true</showLogs>
-          	</configuration>
-          	<executions>
-              <execution>
-                <id>docker-test-api-build</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>build</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>docker-test-api-start</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>start</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>docker-test-api-stop</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
-              </execution>
-            </executions>
-          	</plugin>
-           	<plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-failsafe-plugin</artifactId>
-	            <version>3.0.0-M1</version>
-	            <configuration>
-	              <failIfNoTests>true</failIfNoTests>
-	              <skipAfterFailureCount>1</skipAfterFailureCount>
-	              <argLine>-Xmx2G</argLine>
-	              <includes>
-	                <include>${it.tests}</include>
-	              </includes>
-	              <systemPropertyVariables>
-	                <java.util.logging.config.file>${project.basedir}/src/test/resources/logging.properties</java.util.logging.config.file>
-	                <jboss.home>${wildfly.home}</jboss.home>
-	                <module.path>${wildfly.home}/modules</module.path>
-	                <it.host>${it.host}</it.host>
-	                <it.port.http>${it.port.http}</it.port.http>
-	                <it.jdbc.driver>${it.jdbc.driver}</it.jdbc.driver>
-	                <it.jdbc.url>${it.jdbc.url}</it.jdbc.url>
-	                <it.jdbc.jndi>${it.jdbc.jndi}</it.jdbc.jndi>
-	                <it.jdbc.username>${it.jdbc.username}</it.jdbc.username>
-	                <it.jdbc.password>${it.jdbc.password}</it.jdbc.password>
-	              </systemPropertyVariables>
-	            </configuration>
-	            <executions>
-	              <execution>
-	                <id>integration-test</id>
-	                <goals>
-	                  <goal>integration-test</goal>
-	                </goals>
-	              </execution>
-	              <execution>
-	                <id>verify</id>
-	                <goals>
-	                  <goal>verify</goal>
-	                </goals>
-	              </execution>
-	            </executions>
-	      </plugin>	
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>wait-maven-plugin</artifactId>
-            <version>1.0</version>
-            <executions>
-              <execution>
-                <id>wait</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>wait</goal>
-                </goals>      
-                <configuration>
-                  <protocol>http</protocol>
-                  <host>${it.host}</host>
-                  <port>${it.port.http}</port>
-                  <file>/v1/system/ping</file>
-                  <maxcount>20</maxcount>
-                  <timeout>10000</timeout>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          
-          <plugin>
-            <groupId>org.eluder.coveralls</groupId>
-            <artifactId>coveralls-maven-plugin</artifactId>
-            <version>4.3.0</version>
-          </plugin>
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <version>3.3.3</version>
+                <executions>
+                    <execution>
+                        <id>process</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <processors>
+                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+                            </processors>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-jpamodelgen</artifactId>
+                        <version>5.3.7.Final</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
-      </build>
-    </profile>  
-  </profiles>
-  
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>fi.metatavu.famifarm</groupId>
+            <artifactId>famifarm-api-spec</artifactId>
+            <version>${famifarm-api-spec.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_4.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
+            <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-clustering-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.ws.rs</groupId>
+            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.interceptor</groupId>
+            <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-ejb3</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jackson -->
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson2-provider</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Persistence -->
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.13.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-cdi</artifactId>
+            <version>${liquibase.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Keycloak -->
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-core</artifactId>
+            <version>${keycloak.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-adapter-spi</artifactId>
+            <version>${keycloak.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-adapter-core</artifactId>
+            <version>${keycloak.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>${keycloak.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.keycloak</groupId>
+                    <artifactId>keycloak-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Mailgun -->
+
+        <dependency>
+            <groupId>net.sargue</groupId>
+            <artifactId>mailgun</artifactId>
+            <version>${mailgun.version}</version>
+        </dependency>
+
+        <!-- POI -->
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+        <!-- Test -->
+
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>${mariadb-java-client.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>${wiremock.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>${jsonassert.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-library</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <artifactId>famifarm-api-client</artifactId>
+            <groupId>fi.metatavu.famifarm.client</groupId>
+            <version>${famifarm-api-client.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-wildfly-adapter-dist</artifactId>
+            <version>${keycloak.version}</version>
+            <type>zip</type>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>itests</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <properties>
+                <it.port.http>1234</it.port.http>
+                <it.host>localhost</it.host>
+                <it.jdbc.driver>org.mariadb.jdbc.MySQLDataSource</it.jdbc.driver>
+                <it.jdbc.module>com.mariadb.jdbc</it.jdbc.module>
+                <it.jdbc.dbname>fftest</it.jdbc.dbname>
+                <it.jdbc.url>jdbc:mysql://localhost:3306/${it.jdbc.dbname}</it.jdbc.url>
+                <it.jdbc.jndi>java:jboss/datasources/famifarm-api</it.jdbc.jndi>
+                <it.jdbc.username>sa</it.jdbc.username>
+                <it.jdbc.password>sa</it.jdbc.password>
+                <it.skipdatabasedrop>true</it.skipdatabasedrop>
+                <jacoco.reportPath>${project.basedir}/target/jacoco.exec</jacoco.reportPath>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>0.33.0</version>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>mysql:5.6</name>
+                                    <alias>test-mysql</alias>
+                                    <run>
+                                        <ports>
+                                            <port>3306:3306 </port>
+                                        </ports>
+                                        <env>
+                                            <MYSQL_ROOT_PASSWORD>rootpass</MYSQL_ROOT_PASSWORD>
+                                            <MYSQL_DATABASE>db</MYSQL_DATABASE>
+                                            <MYSQL_USER>user</MYSQL_USER>
+                                            <MYSQL_PASSWORD>rootpass</MYSQL_PASSWORD>
+                                        </env>
+                                        <wait>
+                                            <log>ready for connections.</log>
+                                        </wait>
+                                        <cmd>--lower_case_table_names=1</cmd>
+                                    </run>
+                                </image>
+                                <image>
+                                    <name>jboss/keycloak:${keycloak.version}</name>
+                                    <alias>test-keycloak</alias>
+                                    <run>
+                                        <env>
+                                            <KEYCLOAK_USER>api-admin</KEYCLOAK_USER>
+                                            <KEYCLOAK_PASSWORD>api-admin</KEYCLOAK_PASSWORD>
+                                            <KEYCLOAK_IMPORT>/opt/docker/kc.json</KEYCLOAK_IMPORT>
+                                        </env>
+                                        <volumes>
+                                            <bind>
+                                                <volume>${project.basedir}/test-volumes/keycloak:/opt/docker</volume>
+                                            </bind>
+                                        </volumes>
+                                        <ports>
+                                            <port>8080:8080</port>
+                                        </ports>
+                                        <wait>
+                                            <log>Resuming server</log>
+                                            <time>120000</time>
+                                        </wait>
+                                    </run>
+                                </image>
+                                <image>
+                                    <name>test-api</name>
+                                    <build>
+                                        <dockerFileDir>${project.basedir}</dockerFileDir>
+                                        <filter>@</filter>
+                                    </build>
+                                    <run>
+                                        <ports>
+                                            <port>1234:8080</port>
+                                        </ports>
+                                        <links>
+                                            <link>test-mysql:test-mysql</link>
+                                            <link>test-keycloak:test-keycloak</link>
+                                        </links>
+                                        <env>
+                                            <KEYCLOAK_ADMIN_CLIENT_ID>admin-cli</KEYCLOAK_ADMIN_CLIENT_ID>
+                                            <KEYCLOAK_ADMIN_CLIENT_SECRET>cfca0d98-3aa3-4ee6-bb44-a72df4c02d1a</KEYCLOAK_ADMIN_CLIENT_SECRET>
+                                            <KEYCLOAK_ADMIN_PASSWORD>api-admin</KEYCLOAK_ADMIN_PASSWORD>
+                                            <KEYCLOAK_ADMIN_USER>api-admin</KEYCLOAK_ADMIN_USER>
+                                            <KEYCLOAK_ADMIN_REALM>test</KEYCLOAK_ADMIN_REALM>
+                                            <KEYCLOAK_ADMIN_SERVER_URL>http://localhost:8080/auth</KEYCLOAK_ADMIN_SERVER_URL>
+                                            <KEYCLOAK_REALM>test</KEYCLOAK_REALM>
+                                            <KEYCLOAK_URL>http://test-keycloak:8080/auth</KEYCLOAK_URL>
+                                            <KEYCLOAK_RESOURCE>api</KEYCLOAK_RESOURCE>
+                                            <KEYCLOAK_SECRET>041e7b11-70a1-4beb-a59a-c1de3fde1cf8</KEYCLOAK_SECRET>
+                                            <FAMIFARM_API_HOST>localhost</FAMIFARM_API_HOST>
+                                            <FAMIFARM_API_DB_HOST>test-mysql</FAMIFARM_API_DB_HOST>
+                                            <FAMIFARM_API_DB_PORT>3306</FAMIFARM_API_DB_PORT>
+                                            <FAMIFARM_API_DB_NAME>db</FAMIFARM_API_DB_NAME>
+                                            <FAMIFARM_API_DB_OPTS></FAMIFARM_API_DB_OPTS>
+                                            <FAMIFARM_API_DB_USERNAME>root</FAMIFARM_API_DB_USERNAME>
+                                            <FAMIFARM_API_DB_PASSWORD>rootpass</FAMIFARM_API_DB_PASSWORD>
+                                            <FAMIFARM_API_CLUSTER_PASSWORD>clusterpass</FAMIFARM_API_CLUSTER_PASSWORD>
+                                            <FAMIFARM_TX_IDENTIFIER>test</FAMIFARM_TX_IDENTIFIER>
+                                            <KUBERNETES_NAMESPACE>test</KUBERNETES_NAMESPACE>
+                                            <KUBERNETES_LABELS>test</KUBERNETES_LABELS>
+                                            <IT_HOST>localhost</IT_HOST>
+                                            <IT_PORT_HTTP>1234</IT_PORT_HTTP>
+                                            <runmode>TEST</runmode>
+                                        </env>
+                                        <volumes>
+                                            <bind>
+                                                <volume>${project.basedir}/scripts:/opt/docker/scripts</volume>
+                                            </bind>
+                                        </volumes>
+                                    </run>
+                                </image>
+                            </images>
+                            <showLogs>true</showLogs>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>docker-test-api-build</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>docker-test-api-start</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>docker-test-api-stop</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>3.0.0-M1</version>
+                        <configuration>
+                            <failIfNoTests>true</failIfNoTests>
+                            <skipAfterFailureCount>1</skipAfterFailureCount>
+                            <argLine>-Xmx2G</argLine>
+                            <includes>
+                                <include>${it.tests}</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <java.util.logging.config.file>${project.basedir}/src/test/resources/logging.properties</java.util.logging.config.file>
+                                <jboss.home>${wildfly.home}</jboss.home>
+                                <module.path>${wildfly.home}/modules</module.path>
+                                <it.host>${it.host}</it.host>
+                                <it.port.http>${it.port.http}</it.port.http>
+                                <it.jdbc.driver>${it.jdbc.driver}</it.jdbc.driver>
+                                <it.jdbc.url>${it.jdbc.url}</it.jdbc.url>
+                                <it.jdbc.jndi>${it.jdbc.jndi}</it.jdbc.jndi>
+                                <it.jdbc.username>${it.jdbc.username}</it.jdbc.username>
+                                <it.jdbc.password>${it.jdbc.password}</it.jdbc.password>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>verify</id>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>wait-maven-plugin</artifactId>
+                        <version>1.0</version>
+                        <executions>
+                            <execution>
+                                <id>wait</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>wait</goal>
+                                </goals>
+                                <configuration>
+                                    <protocol>http</protocol>
+                                    <host>${it.host}</host>
+                                    <port>${it.port.http}</port>
+                                    <file>/v1/system/ping</file>
+                                    <maxcount>20</maxcount>
+                                    <timeout>10000</timeout>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>4.3.0</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

@@ -3,16 +3,7 @@ package fi.metatavu.famifarm.reporting;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.reporting.xlsx.XlsxExampleReport;
-import fi.metatavu.famifarm.reporting.xlsx.XlsxGrowthTimeReport;
-import fi.metatavu.famifarm.reporting.xlsx.XlsxHarvestedReport;
-import fi.metatavu.famifarm.reporting.xlsx.XlsxPlantedReport;
-import fi.metatavu.famifarm.reporting.xlsx.XlsxPlantingYieldReport;
-import fi.metatavu.famifarm.reporting.xlsx.XlsxProductPhaseCountReport;
-import fi.metatavu.famifarm.reporting.xlsx.XlsxSowedReport;
-import fi.metatavu.famifarm.reporting.xlsx.XlsxSpreadReport;
-import fi.metatavu.famifarm.reporting.xlsx.XlsxWastageReport;
-import fi.metatavu.famifarm.reporting.xlsx.XlsxYieldReport;
+import fi.metatavu.famifarm.reporting.xlsx.*;
 
 /**
  * Report controller
@@ -52,6 +43,9 @@ public class ReportController {
   @Inject
   private XlsxProductPhaseCountReport xlsxProductPhaseCountReport;
 
+  @Inject
+  private XlsxPackedReport xlsxPackedReport;
+
   /**
    * Returns report for given report type
    * 
@@ -81,6 +75,8 @@ public class ReportController {
         return xlsxHarvestedReport;
       case PRODUCT_PHASE_COUNT:
         return xlsxProductPhaseCountReport;
+      case PACKED:
+        return xlsxPackedReport;
     }
     
     return null;
