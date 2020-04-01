@@ -18,8 +18,8 @@ import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.reporting.EventCountController;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.reporting.ReportUtils;
 import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
@@ -38,6 +38,9 @@ public class XlsxProductPhaseCountReport extends AbstractXlsxReport {
   
   @Inject
   private LocalizedValueController localizedValueController;
+
+  @Inject
+  private EventCountController eventCountController;
 
   @Override
   public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
@@ -70,17 +73,17 @@ public class XlsxProductPhaseCountReport extends AbstractXlsxReport {
 
       // Values
 
-      List<Event> events = eventController.listByCreatedAfterAndCreatedBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
         Product product = event.getBatch().getProduct();
         if (!rowLookup.containsKey(product.getId())) {
           ReportRow row = new ReportRow(localizedValueController.getValue(product.getName(), locale));
-          row.setSowedCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.SOWING));
-          row.setSpreadCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.TABLE_SPREAD));
-          row.setPlantedCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.PLANTING));
-          row.setHarvestedCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.HARVEST));
-          row.setWastedCount(ReportUtils.countUnitsByProductAndEventType(events, product, EventType.WASTAGE));
+          row.setSowedCount(eventCountController.countUnitsByProductAndEventType(events, product, EventType.SOWING));
+          row.setSpreadCount(eventCountController.countUnitsByProductAndEventType(events, product, EventType.TABLE_SPREAD));
+          row.setPlantedCount(eventCountController.countUnitsByProductAndEventType(events, product, EventType.PLANTING));
+          row.setHarvestedCount(eventCountController.countUnitsByProductAndEventType(events, product, EventType.HARVEST));
+          row.setWastedCount(eventCountController.countUnitsByProductAndEventType(events, product, EventType.WASTAGE));
         }
       });
 
