@@ -3,20 +3,24 @@ package fi.metatavu.famifarm.reporting;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.PotType;
 
 /**
- * Utility methods for reports
+ * Utility methods for counting events
  * 
  * @author Heikki Kurhinen
  */
-public class ReportUtils {
+@ApplicationScoped
+public class EventCountController {
 
-  private ReportUtils(){
-    //Private constructor
-  }
+  @Inject
+  private EventController eventController;
 
   /**
    * Counts packed units by product
@@ -25,7 +29,7 @@ public class ReportUtils {
    * @param product product to count by
    * @return number of packed units
    */
-  public static Double countPackedUnitsByProduct(List<Packing> packings, Product product) {
+  public Double countPackedUnitsByProduct(List<Packing> packings, Product product) {
     List<Packing> productPackings = packings.stream().filter(packing -> packing.getProduct().getId().equals(product.getId())).collect(Collectors.toList());
     Double count = 0d;
     for (Packing packing : productPackings) {
@@ -42,7 +46,7 @@ public class ReportUtils {
    * @param eventType event type to count by
    * @return  number of processed units
    */
-  public static Double countUnitsByProductAndEventType(List<Event> events, Product product, EventType eventType) {
+  public Double countUnitsByProductAndEventType(List<Event> events, Product product, EventType eventType) {
     List<Event> productEvents = events.stream()
         .filter(event -> event.getBatch().getProduct().getId().equals(product.getId()))
         .collect(Collectors.toList());
@@ -57,7 +61,7 @@ public class ReportUtils {
    * @param eventType event type to count from
    * @return number of processed units
    */
-  public static Double countUnitsByEventType(List<Event> events, EventType eventType) {
+  public Double countUnitsByEventType(List<Event> events, EventType eventType) {
     switch (eventType) {
       case SOWING:
         return countSowedUnits(events);
@@ -80,7 +84,7 @@ public class ReportUtils {
    * @param events list of events to count sowed units from
    * @return number of sowed units
    */
-  public static Double countSowedUnits(List<Event> events) {
+  public Double countSowedUnits(List<Event> events) {
     Double count = 0d;
     for (Event event : events) {
       if (event.getType() == EventType.SOWING) {
@@ -98,20 +102,12 @@ public class ReportUtils {
    * @param events list of events to count spread units from
    * @return number of spread units
    */
-  public static Double countSpreadUnits(List<Event> events) {
+  public Double countSpreadUnits(List<Event> events) {
     Double count = 0d;
-    
-    SowingEvent sowingEvent = (SowingEvent) events.stream().filter(event -> event.getType() == EventType.SOWING).findFirst().orElse(null);
-    if (sowingEvent == null) {
-      return 0d;
-    }
-    
-    PotType potType = sowingEvent.getPotType();
-
     for (Event event : events) {
       if (event.getType() == EventType.TABLE_SPREAD) {
         TableSpreadEvent tableSpreadEvent = (TableSpreadEvent) event;
-        count += (tableSpreadEvent.getTrayCount() * getPotTypeAmount(potType));
+        count += (tableSpreadEvent.getTrayCount() * getPotTypeAmount(event));
       }
     }
     
@@ -124,7 +120,7 @@ public class ReportUtils {
    * @param events events to count the planted units from 
    * @return number of planted units
    */
-  public static Double countPlantedUnits(List<Event> events) {
+  public Double countPlantedUnits(List<Event> events) {
     Double count = 0d;
     for (Event event : events) {
       if (event.getType() == EventType.PLANTING) {
@@ -142,12 +138,12 @@ public class ReportUtils {
    * @param events list of events to count the harvested units from
    * @return number of harvested units
    */
-  public static Double countHarvestedUnits(List<Event> events) {
+  public Double countHarvestedUnits(List<Event> events) {
     Double count = 0d;
-    Double gutterHoleCount = getAverageGutterHoleCount(events);
 
     for (Event event : events) {
       if (event.getType() == EventType.HARVEST) {
+        Double gutterHoleCount = getAverageGutterHoleCount(event);
         HarvestEvent harvestEvent = (HarvestEvent) event;
         count += (harvestEvent.getGutterCount() * gutterHoleCount);
       }
@@ -162,7 +158,7 @@ public class ReportUtils {
    * @param events list of events to count the packed units from
    * @return number of packed events
    */
-  public static Double countWastedUnits(List<Event> events) {
+  public Double countWastedUnits(List<Event> events) {
     Double count = 0d;
     for (Event event : events) {
       if (event.getType() == EventType.WASTAGE) {
@@ -177,14 +173,15 @@ public class ReportUtils {
   /**
    * Get weighted average gutter hole count
    * 
-   * @param events
+   * @param eventParam
    * @return weighted average gutter hole count
    */
-  private static Double getAverageGutterHoleCount(List<Event> events) {
+  private Double getAverageGutterHoleCount(Event eventParam) {
     Double totalWeightedSize = 0d;
     Double totalGutterCount = 0d;
-    
-    for (Event event : events) {
+    List<Event> batchEvents = eventController.listEvents(eventParam.getBatch(), null, null);
+
+    for (Event event : batchEvents) {
       if (event.getType() == EventType.PLANTING) {
         PlantingEvent plantingEvent = (PlantingEvent) event;
         totalWeightedSize += (plantingEvent.getGutterHoleCount() * plantingEvent.getGutterCount());
@@ -205,8 +202,14 @@ public class ReportUtils {
    * @param potType, potType
    * @return amount
    */
-  private static int getPotTypeAmount(PotType potType) {
-    if (PotType.SMALL == potType) {
+  private int getPotTypeAmount(Event event) {
+    List<Event> batchEvents = eventController.listEvents(event.getBatch(), null, null);
+    SowingEvent sowingEvent = (SowingEvent) batchEvents.stream().filter(batchEvent -> batchEvent.getType() == EventType.SOWING).findFirst().orElse(null);
+    if (sowingEvent == null) {
+      return 0;
+    }
+
+    if (PotType.SMALL == sowingEvent.getPotType()) {
       return 54;
     }
     return 35;

@@ -2,11 +2,11 @@ package fi.metatavu.famifarm.reporting.xlsx;
 
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
-import fi.metatavu.famifarm.persistence.dao.PackingDAO;
+import fi.metatavu.famifarm.packing.PackingController;
 import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.reporting.EventCountController;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.reporting.ReportUtils;
 
 import javax.inject.Inject;
 import java.io.OutputStream;
@@ -16,12 +16,18 @@ import java.util.*;
  * Report for packings
  */
 public class XlsxPackedReport extends AbstractXlsxReport {
+    
     @Inject
     private LocalesController localesController;
+    
     @Inject
-    private PackingDAO packingDAO;
+    private PackingController packingController;
+    
     @Inject
     private LocalizedValueController localizedValueController;
+
+    @Inject
+    private EventCountController eventCountController;
 
     protected String getTitle(Locale locale) {
         return localesController.getString(locale, "reports.packed.title");
@@ -41,7 +47,7 @@ public class XlsxPackedReport extends AbstractXlsxReport {
             xlsxBuilder.setCellValue(sheetId, 0, 0, getTitle(locale));
             xlsxBuilder.setCellValue(sheetId, 1, 0, localesController.getString(locale, "reports.common.dateBetween", fromTime, toTime));
 
-            List<Packing> packings = packingDAO.list(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+            List<Packing> packings = packingController.listPackings(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
 
             Map<UUID, ReportRow> rowLookup = new HashMap<>();
             packings.stream().forEach(packing -> {
@@ -50,7 +56,7 @@ public class XlsxPackedReport extends AbstractXlsxReport {
                     rowLookup.put(
                             product.getId(),
                             new ReportRow(localizedValueController.getValue(product.getName(), locale),
-                                    ReportUtils.countPackedUnitsByProduct(packings, product)
+                                    eventCountController.countPackedUnitsByProduct(packings, product)
                     ));
                 }
             });

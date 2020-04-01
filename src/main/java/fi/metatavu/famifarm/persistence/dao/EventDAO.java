@@ -86,6 +86,36 @@ public class EventDAO extends AbstractEventDAO<Event> {
   }
 
   /**
+   * Lists events between dates
+   * 
+   * @param startBefore start before
+   * @param startAfter start after
+   * @return list of events
+   */
+  public List<Event> listByStartTimeAfterAndStartTimeBefore(OffsetDateTime startBefore, OffsetDateTime startAfter) {
+    EntityManager entityManager = getEntityManager();
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
+    Root<Event> root = criteria.from(Event.class);
+    criteria.select(root);
+
+    List<Predicate> restrictions = new ArrayList<>();
+
+    if (startBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Event_.startTime), startBefore));
+    }
+
+    if (startAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Event_.startTime), startAfter));
+    }
+
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
+    TypedQuery<Event> query = entityManager.createQuery(criteria);
+
+    return query.getResultList();
+  }
+
+  /**
    * Lists events by batch optionally limited by first and max results. Sorts result by descending start time 
    * 
    * @param batch batch to retrieve events from
