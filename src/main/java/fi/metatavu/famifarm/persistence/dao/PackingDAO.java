@@ -129,11 +129,11 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param maxResults
      * @param productId
      * @param state
-     * @param createdBefore
-     * @param createdAfter
+     * @param timeBefore
+     * @param timeAfter
      * @return packings
      */
-    public List<Packing> list(Integer firstResult, Integer maxResults, Product product, PackingState state, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    public List<Packing> list(Integer firstResult, Integer maxResults, Product product, PackingState state, OffsetDateTime timeBefore, OffsetDateTime timeAfter) {
       EntityManager entityManager = getEntityManager();
       
       CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -152,12 +152,12 @@ public class PackingDAO extends AbstractDAO<Packing>{
         restrictions.add(criteriaBuilder.equal(root.get(Packing_.packingState), state));
       }
       
-      if (createdBefore != null) {
-        restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Packing_.createdAt), createdBefore));
+      if (timeBefore != null) {
+        restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Packing_.time), timeBefore));
       }
 
-      if (createdAfter != null) {
-        restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Packing_.createdAt), createdAfter));
+      if (timeAfter != null) {
+        restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Packing_.time), timeAfter));
       }
       
       criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));

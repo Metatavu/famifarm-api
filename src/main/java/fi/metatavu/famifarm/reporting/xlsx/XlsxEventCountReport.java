@@ -18,8 +18,8 @@ import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.reporting.EventCountController;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.reporting.ReportUtils;
 import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
@@ -38,6 +38,9 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
   
   @Inject
   private LocalizedValueController localizedValueController;
+
+  @Inject
+  private EventCountController eventCountController;
 
   /**
    * Returns event type for each report
@@ -72,7 +75,7 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
       
       // Values
 
-      List<Event> events = eventController.listByCreatedAfterAndCreatedBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
         Product product = event.getBatch().getProduct();
@@ -80,7 +83,7 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
           rowLookup.put(
             product.getId(),
             new ReportRow(localizedValueController.getValue(product.getName(), locale),
-            ReportUtils.countUnitsByProductAndEventType(events, product, getEventType()))
+            eventCountController.countUnitsByProductAndEventType(events, product, getEventType()))
           );
         }
       });

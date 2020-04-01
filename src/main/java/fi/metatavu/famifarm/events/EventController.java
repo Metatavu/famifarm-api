@@ -74,6 +74,17 @@ public class EventController {
   }
   
   /**
+   * Lists events between dates
+   * 
+   * @param startBefore start before
+   * @param startAfter start after
+   * @return list of events
+   */
+  public List<Event> listByStartTimeAfterAndStartTimeBefore(OffsetDateTime startBefore, OffsetDateTime startAfter) {
+    return eventDAO.listByStartTimeAfterAndStartTimeBefore(startBefore, startAfter);
+  }
+
+  /**
    * Lists events
    * 
    * @param batch filter results by batch (optional)
