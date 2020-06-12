@@ -256,7 +256,6 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       Product product = builder.admin().products().create(name, createdPackageSize);
       
       Batch batch = builder.admin().batches().create(product);
-      builder.worker1().batches().assertUpdateFailStatus(403, batch);
       builder.anonymous().batches().assertUpdateFailStatus(401, batch);
       builder.invalid().batches().assertUpdateFailStatus(401, batch);
     }
