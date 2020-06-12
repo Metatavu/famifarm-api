@@ -5,20 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.test.functional.builder.impl.BatchTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.DraftTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.EventTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.PackageSizeTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.PackingTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.PerformedCultivationActionTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.PestTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.ProductTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.ProductionLineTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.ReportTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.SeedBatchTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.SeedTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.TeamTestBuilderResource;
-import fi.metatavu.famifarm.test.functional.builder.impl.WastageReasonTestBuilderResource;
+import fi.metatavu.famifarm.test.functional.builder.impl.*;
 
 /**
  * Abstract base class for all test builder authentication providers
@@ -41,8 +28,29 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private EventTestBuilderResource events;
   private DraftTestBuilderResource drafts;
   private PackingTestBuilderResource packings;
+  private PrintingTestBuilderResource printers;
   private List<AutoCloseable> closables = new ArrayList<>();
-  
+
+
+  /**
+   * Returns a test builder resource for printers
+   *
+   * @return test builder resource for printers
+   * @throws IOException thrown when authentication fails
+   */
+  public PrintingTestBuilderResource printers() throws IOException {
+    if (packings != null) {
+      return printers;
+    }
+
+    return printers = new PrintingTestBuilderResource(createClient());
+  }
+  /**
+   * Returns a test builder resource for packings
+   *
+   * @return test builder resource for packings
+   * @throws IOException thrown when autherntication fails
+   */
   public PackingTestBuilderResource packings() throws IOException {
     if (packings != null) {
       return packings;

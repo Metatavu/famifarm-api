@@ -16,11 +16,14 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.metatavu.famifarm.printing.PrintingController;
+import fi.metatavu.famifarm.rest.model.*;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.ejb3.annotation.SecurityDomain;
@@ -56,30 +59,7 @@ import fi.metatavu.famifarm.reporting.ReportController;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.reporting.ReportType;
 import fi.metatavu.famifarm.rest.api.V1Api;
-import fi.metatavu.famifarm.rest.model.Batch;
-import fi.metatavu.famifarm.rest.model.BatchPhase;
-import fi.metatavu.famifarm.rest.model.PotType;
-import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
-import fi.metatavu.famifarm.rest.model.Draft;
-import fi.metatavu.famifarm.rest.model.Event;
-import fi.metatavu.famifarm.rest.model.EventType;
-import fi.metatavu.famifarm.rest.model.HarvestEventData;
 import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
-import fi.metatavu.famifarm.rest.model.PackageSize;
-import fi.metatavu.famifarm.rest.model.Packing;
-import fi.metatavu.famifarm.rest.model.PackingState;
-import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
-import fi.metatavu.famifarm.rest.model.Pest;
-import fi.metatavu.famifarm.rest.model.PlantingEventData;
-import fi.metatavu.famifarm.rest.model.Product;
-import fi.metatavu.famifarm.rest.model.ProductionLine;
-import fi.metatavu.famifarm.rest.model.Seed;
-import fi.metatavu.famifarm.rest.model.SeedBatch;
-import fi.metatavu.famifarm.rest.model.SowingEventData;
-import fi.metatavu.famifarm.rest.model.TableSpreadEventData;
-import fi.metatavu.famifarm.rest.model.Team;
-import fi.metatavu.famifarm.rest.model.WastageEventData;
-import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.BatchTranslator;
 import fi.metatavu.famifarm.rest.translate.CultivationObservationEventTranslator;
 import fi.metatavu.famifarm.rest.translate.DraftTranslator;
@@ -234,6 +214,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
   
   @Inject
   private PackingTranslator packingTranslator;
+
+  @Inject
+  private PrintingController printingController;
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
@@ -859,6 +842,38 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
+  public Response print(@Valid PrintData printData, String printerId) {
+    UUID packingId = printData.getPackingId();
+    if (packingController.findById(packingId) == null) {
+      return createBadRequest("Packing not found!");
+    }
+
+    try {
+      List<Printer> printers = printingController.getPrinters();
+      Printer correctPrinter = null;
+      for (Printer printer : printers) {
+        if (printer.getId().equals(printerId)) {
+          correctPrinter = printer;
+        }
+      }
+
+      if (correctPrinter == null) {
+        return createNotFound("Printer not found!");
+      }
+
+      int status = printingController.printQrCode(printerId, packingId, getLocale());
+      if (status > 299) {
+        return Response.status(status).build();
+      } else {
+        return Response.status(200).build();
+      }
+    } catch (Exception e) {
+      return createInternalServerError(e.getMessage());
+    }
+  }
+
+  @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response updateBatch(Batch body, UUID batchId) {
     fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(batchId);
@@ -1150,6 +1165,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
         .collect(Collectors.toList());
 
     return createOk(result);
+  }
+
+  @Override
+  @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
+  public Response listPrinters() {
+    try {
+      return createOk(printingController.getPrinters());
+    } catch (Exception e) {
+      return createInternalServerError(e.getMessage());
+    }
+
   }
 
   @Override
