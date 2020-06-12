@@ -71,7 +71,7 @@
 
         <!-- Keycloak admin client -->
 
-        <keycloak.version>7.0.0</keycloak.version>
+        <keycloak.version>10.0.2</keycloak.version>
 
         <!-- Mailgun -->
 
