@@ -41,7 +41,7 @@ public class PrintingController {
         Packing packing = packingController.findById(packingId);
         String productName = localizedValueController.getValue(packing.getProduct().getName(), locale);
         String packageSize = localizedValueController.getValue(packing.getPackageSize().getName(), locale);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         String packingTime = formatter.format(packing.getTime());
         List<String> lines = new ArrayList<String>();
         lines.add("^XA");
