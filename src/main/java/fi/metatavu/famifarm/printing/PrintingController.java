@@ -48,7 +48,7 @@ public class PrintingController {
         lines.add(String.format("^FO30,30,2^AfN,40,30^FD%s^FS", replaceUmlauts(productName)));
         lines.add(String.format("^FO30,85,2^AfN,40,30^FD%d * %s^FS", packing.getPackedCount(), replaceUmlauts(packageSize)));
         lines.add(String.format("^FO30,155,2^AfN,40,30^FD%s^FS", packingTime));
-        lines.add(String.format("^FO480,155,2^BQN,2,10,H,0^FD%s^FS", packingId.toString()));
+        lines.add(String.format("^FO480,155,2^BQN,2,10,H,0^FD:::%s^FS", packingId.toString()));
         lines.add("^XZ");
         String command = String.format("%s%s", lines.stream().collect( Collectors.joining("\r\n" ) ), "\r\n");
         Map<String, String> commandObject = new HashMap<>();
