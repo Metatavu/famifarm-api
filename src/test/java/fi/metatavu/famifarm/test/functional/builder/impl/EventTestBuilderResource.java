@@ -175,7 +175,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param startTime start time
    * @param endTime end time
    * @param amount amount
-   * @param wastageReason wastege reason
+   * @param wastageReason wastage reason
    * @param additionalInformation additional information
    * @param phase phase
    * @return created event

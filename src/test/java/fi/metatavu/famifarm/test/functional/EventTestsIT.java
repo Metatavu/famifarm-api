@@ -443,6 +443,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
       WastageEventData updateData = new WastageEventData();
       updateData.setAmount(updateAmount);
       updateData.setReasonId(updateWastageReason.getId());
+      updateData.setProductionLineId(builder.admin().productionLines().listProductionLines().get(0).getId());
+      updateData.setPhase(EventType.HARVEST);
       
       Event updateEvent = new Event(); 
       updateEvent.setId(createdEvent.getId());
