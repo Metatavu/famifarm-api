@@ -1589,7 +1589,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     TypeEnum harvestType = eventData.getType();
     HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, batch, startTime,
-        endTime, team, harvestType, productionLine, additionalInformation, creatorId);
+        endTime, team, harvestType, productionLine, eventData.getGutterCount(), additionalInformation, creatorId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));

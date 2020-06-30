@@ -30,7 +30,7 @@ public class HarvestEventController {
   
 
   /**
-   * Creates new harves event
+   * Creates new harvest event
    * 
    * @param batch batch event is connected to
    * @param startTime start time
@@ -81,7 +81,7 @@ public class HarvestEventController {
    * @return updated harvestEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, String additionalInformation, UUID modifier) {
+  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer gutterCount, String additionalInformation, UUID modifier) {
     harvestEventDAO.updateBatch(harvestEvent, batch, modifier);
     harvestEventDAO.updateStartTime(harvestEvent, startTime, modifier);
     harvestEventDAO.updateEndTime(harvestEvent, endTime, modifier);
@@ -89,6 +89,7 @@ public class HarvestEventController {
     harvestEventDAO.updateProductionLine(harvestEvent, productionLine, modifier);
     harvestEventDAO.updateAdditionalInformation(harvestEvent, additionalInformation, modifier);
     harvestEventDAO.updateTeam(harvestEvent, team, modifier);
+    harvestEventDAO.updateGutterCount(harvestEvent, gutterCount, modifier);
     return harvestEvent;
   }
   

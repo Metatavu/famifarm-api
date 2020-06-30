@@ -93,4 +93,18 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
     return persist(harvestEvent);
   }
 
+  /**
+   * Updates gutter count
+   *
+   * @param harvestEvent harvest event to be updated
+   * @param gutterCount new gutter count
+   * @param lastModifierId modifier
+   * @return updated harvestEvent
+   */
+  public HarvestEvent updateGutterCount(HarvestEvent harvestEvent, Integer gutterCount, UUID lastModifierId) {
+    harvestEvent.setLastModifierId(lastModifierId);
+    harvestEvent.setGutterCount(gutterCount);
+    return persist(harvestEvent);
+  }
+
 }
