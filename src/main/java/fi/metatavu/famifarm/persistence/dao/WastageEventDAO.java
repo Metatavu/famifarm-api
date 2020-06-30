@@ -106,6 +106,20 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
   }
 
   /**
+   * Updates production line
+   *
+   * @param wastageEvent wastage event
+   * @param productionLine production line
+   * @param lastModifierId last modifier id
+   * @return updated wastage event
+   */
+  public WastageEvent updateProductionLine(WastageEvent wastageEvent, ProductionLine productionLine, UUID lastModifierId) {
+    wastageEvent.setProductionLine(productionLine);
+    wastageEvent.setLastModifierId(lastModifierId);
+    return persist(wastageEvent);
+  }
+
+  /**
    * Updates wastage reason
    * 
    * @param wastageEvent wastage event to update

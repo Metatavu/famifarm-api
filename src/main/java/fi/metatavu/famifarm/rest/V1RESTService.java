@@ -1798,9 +1798,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
     EventType phase = eventData.getPhase();
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(eventData.getReasonId());
+    fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = eventData.getProductionLineId() != null
+            ? productionLineController.findProductionLine(eventData.getProductionLineId())
+            : null;
+
+    if (eventData.getProductionLineId() != null && productionLine == null) {
+      return createBadRequest("Invalid production line");
+    }
 
     WastageEvent updatedEvent = wastageEventController.updateWastageEvent((WastageEvent) event, batch, startTime,
-        endTime, amount, wastageReason, phase, additionalInformation, lastModifierId);
+        endTime, amount, wastageReason, phase, additionalInformation, productionLine, lastModifierId);
     batchController.updateRemainingUnits(batch);
 
     return createOk(wastageEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));
