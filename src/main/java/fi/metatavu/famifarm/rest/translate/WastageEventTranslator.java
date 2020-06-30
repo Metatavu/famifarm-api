@@ -29,6 +29,9 @@ public class WastageEventTranslator extends AbstractEventTranslator<WastageEvent
     result.setAmount(event.getAmount());
     result.setReasonId(event.getWastageReason().getId());
     result.setPhase(event.getPhase());
+    if (event.getProductionLine() != null) {
+      result.setProductionLineId(event.getProductionLine().getId());
+    }
     
     return result;
   }
