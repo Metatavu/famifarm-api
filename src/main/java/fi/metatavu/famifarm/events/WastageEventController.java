@@ -9,10 +9,7 @@ import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.WastageEventDAO;
-import fi.metatavu.famifarm.persistence.model.Batch;
-import fi.metatavu.famifarm.persistence.model.ProductionLine;
-import fi.metatavu.famifarm.persistence.model.WastageEvent;
-import fi.metatavu.famifarm.persistence.model.WastageReason;
+import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
 
 /**
@@ -62,7 +59,7 @@ public class WastageEventController {
    * @return updated wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent updateWastageEvent(WastageEvent wastageEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, UUID lastModifierId) {
+  public WastageEvent updateWastageEvent(WastageEvent wastageEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, ProductionLine productionLine, UUID lastModifierId) {
     wastageEventDAO.updateAmount(wastageEvent, amount, lastModifierId);
     wastageEventDAO.updateBatch(wastageEvent, batch, lastModifierId);
     wastageEventDAO.updateEndTime(wastageEvent, endTime, lastModifierId);
@@ -70,6 +67,7 @@ public class WastageEventController {
     wastageEventDAO.updateWastageReason(wastageEvent, wastageReason, lastModifierId);
     wastageEventDAO.updateAdditionalInformation(wastageEvent, additionalInformation, lastModifierId);
     wastageEventDAO.updatePhase(wastageEvent, phase, lastModifierId);
+    wastageEventDAO.updateProductionLine(wastageEvent, productionLine, lastModifierId);
     return wastageEvent;
   }
 
