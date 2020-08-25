@@ -30,7 +30,6 @@ import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.client.model.SowingEventData;
 import fi.metatavu.famifarm.client.model.TableSpreadEventData;
-import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.client.model.WastageEventData;
 import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
@@ -73,7 +72,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       PackageSize createPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
       Product createProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createPackageSize);
       Batch createBatch = builder.admin().batches().create(createProduct);
-      ProductionLine createProductionLine = builder.admin().productionLines().create("5", null, 7);
+      ProductionLine createProductionLine = builder.admin().productionLines().create("5", 7);
       Event createdEvent = builder.admin().events().createSowing(createBatch, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 1, PotType.LARGE, createProductionLine, Arrays.asList(seedBatch1, seedBatch2));
 
       Map<String, Object> createdData = (Map<String, Object>) createdEvent.getData();
@@ -91,7 +90,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Integer updateAmount = 14;
       PotType updatePotType = PotType.SMALL;
-      ProductionLine updateProductionLine = builder.admin().productionLines().create("7", null, 8);
+      ProductionLine updateProductionLine = builder.admin().productionLines().create("7", 8);
       
       SowingEventData updateData = new SowingEventData();
       updateData.setAmount(updateAmount);
@@ -301,17 +300,15 @@ public class EventTestsIT extends AbstractFunctionalTest {
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
       Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
 
-      Team updateTeam = builder.admin().teams().create(builder.createLocalizedEntry("new team name", "uusi tiimi"));
 
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-      ProductionLine updateProductionLine = builder.admin().productionLines().create("7", null, 8);
+      ProductionLine updateProductionLine = builder.admin().productionLines().create("7", 8);
       
       HarvestEventData updateData = new HarvestEventData();
       updateData.setProductionLineId(updateProductionLine.getId());
       updateData.setType(fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.CUTTING);
-      updateData.setTeamId(updateTeam.getId());
       updateData.setGutterCount(createdAmount);
 
       Event updateEvent = new Event(); 
@@ -372,7 +369,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Integer updateGutterSize = 24;
-      ProductionLine updateProductionLine = builder.admin().productionLines().create("7", null, 7);
+      ProductionLine updateProductionLine = builder.admin().productionLines().create("7", 7);
       
       PlantingEventData updateData = new PlantingEventData();
       updateData.setGutterCount(6);
@@ -479,7 +476,6 @@ public class EventTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().performedCultivationActions();
       builder.admin().pests();
-      builder.admin().teams();
       
       createSowingEvent(builder);
       builder.admin().events().assertCount(1);
@@ -498,7 +494,6 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testEventListFilters() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().performedCultivationActions();
-      builder.admin().teams();
       
       createSowingEvent(builder);
       builder.admin().events().assertCount(1);
@@ -574,7 +569,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Integer amount = 12;
       PotType potType = PotType.LARGE;
-      ProductionLine productionLine = builder.admin().productionLines().create("4", null, 8);
+      ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
       
       builder.anonymous().events().assertCreateFailStatus(401, batch, startTime, endTime, amount, potType, productionLine, Arrays.asList(seedBatch));

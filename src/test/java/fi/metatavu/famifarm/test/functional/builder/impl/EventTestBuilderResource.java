@@ -20,7 +20,6 @@ import fi.metatavu.famifarm.client.model.PotType;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.EventType;
 import fi.metatavu.famifarm.client.model.HarvestEventData;
-import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.client.model.Pest;
 import fi.metatavu.famifarm.client.model.PlantingEventData;
@@ -28,7 +27,6 @@ import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.SeedBatch;
 import fi.metatavu.famifarm.client.model.SowingEventData;
 import fi.metatavu.famifarm.client.model.TableSpreadEventData;
-import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.client.model.WastageEventData;
 import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
@@ -129,8 +127,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type type
    * @return created event
    */
-  public Event createHarvest(Batch batch, Integer amount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
-    HarvestEventData data = createHarvestEventData(productionLine, amount, team, type);
+  public Event createHarvest(Batch batch, Integer amount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+    HarvestEventData data = createHarvestEventData(productionLine, amount, type);
 
     Event event = new Event();
     event.setBatchId(batch != null ? batch.getId() : null);
@@ -424,11 +422,10 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type 
    * @return harvest event data
    */
-  private HarvestEventData createHarvestEventData(ProductionLine productionLine, Integer gutterCount, Team team, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+  private HarvestEventData createHarvestEventData(ProductionLine productionLine, Integer gutterCount, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
     HarvestEventData data = new HarvestEventData();
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setGutterCount(gutterCount);
-    data.setTeamId(team != null ? team.getId() : null);
     data.setType(type);
     return data;
   }

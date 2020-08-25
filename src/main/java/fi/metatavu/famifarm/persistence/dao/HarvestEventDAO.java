@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
-import fi.metatavu.famifarm.persistence.model.Team;
 
 /**
  * DAO class for HarvestEvents
@@ -26,7 +25,6 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @param batch batch event is connected to
    * @param startTime start time
    * @param endTime end time
-   * @param team team
    * @param harvestType type
    * @param productionLine production line
    * @param remainingUnits remaining units
@@ -37,14 +35,13 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Team team, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer remainingUnits, String additionalInformation, Integer gutterCount, UUID creatorId, UUID lastModifierId) {
+  public HarvestEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer remainingUnits, String additionalInformation, Integer gutterCount, UUID creatorId, UUID lastModifierId) {
     HarvestEvent harvestEvent = new HarvestEvent();
     harvestEvent.setBatch(batch);
     harvestEvent.setRemainingUnits(remainingUnits);
     harvestEvent.setStartTime(startTime);
     harvestEvent.setEndTime(endTime);
     harvestEvent.setHarvestType(harvestType);
-    harvestEvent.setTeam(team);
     harvestEvent.setProductionLine(productionLine);
     harvestEvent.setGutterCount(gutterCount);
     harvestEvent.setId(id);
@@ -58,7 +55,7 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * Updates harvestType
    *
    * @param harvestType harvestType
-   * @param lastModifier modifier
+   * @param lastModifierId modifier
    * @return updated harvestEvent
    */
   public HarvestEvent updateHarvestType(HarvestEvent harvestEvent, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, UUID lastModifierId) {
@@ -71,25 +68,12 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * Updates productionLine
    *
    * @param productionLine productionLine
-   * @param lastModifier modifier
+   * @param lastModifierId modifier
    * @return updated harvestEvent
    */
   public HarvestEvent updateProductionLine(HarvestEvent harvestEvent, ProductionLine productionLine, UUID lastModifierId) {
     harvestEvent.setLastModifierId(lastModifierId);
     harvestEvent.setProductionLine(productionLine);
-    return persist(harvestEvent);
-  }
-
-  /**
-   * Updates team
-   *
-   * @param team team
-   * @param lastModifier modifier
-   * @return updated harvestEvent
-   */
-  public HarvestEvent updateTeam(HarvestEvent harvestEvent, Team team, UUID lastModifierId) {
-    harvestEvent.setLastModifierId(lastModifierId);
-    harvestEvent.setTeam(team);
     return persist(harvestEvent);
   }
 

@@ -34,9 +34,6 @@ public class ProductionLine {
   @NotNull
   private String lineNumber;
 
-  @ManyToOne
-  private Team defaultTeam;
-
   @Column(nullable = false)
   @NotNull
   private UUID creatorId;
@@ -68,14 +65,6 @@ public class ProductionLine {
   
   public void setLineNumber(String lineNumber) {
     this.lineNumber = lineNumber;
-  }
-  
-  public Team getDefaultTeam() {
-    return defaultTeam;
-  }
-  
-  public void setDefaultTeam(Team defaultTeam) {
-    this.defaultTeam = defaultTeam;
   }
 
   public Integer getDefaultGutterHoleCount() {

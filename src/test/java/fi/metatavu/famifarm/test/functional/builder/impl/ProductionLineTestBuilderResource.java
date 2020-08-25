@@ -8,12 +8,10 @@ import java.util.Collections;
 import java.util.UUID;
 
 import org.json.JSONException;
-
 import feign.FeignException;
 import fi.metatavu.famifarm.ApiClient;
 import fi.metatavu.famifarm.client.ProductionLinesApi;
 import fi.metatavu.famifarm.client.model.ProductionLine;
-import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 /**
@@ -34,15 +32,13 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
   
   /**
    * Creates new production line
-   * 
-   * @param name name
+   *
    * @return created production line
    */
-  public ProductionLine create(String lineNumber, Team defaultTeam, Integer defaultGutterHoleCount) {
+  public ProductionLine create(String lineNumber, Integer defaultGutterHoleCount) {
     ProductionLine productionLine = new ProductionLine();
     productionLine.setLineNumber(lineNumber);
     productionLine.setDefaultGutterHoleCount(defaultGutterHoleCount);
-    productionLine.setDefaultTeamId(defaultTeam != null ? defaultTeam.getId() : null);
     return addClosable(getApi().createProductionLine(productionLine));
   }
 

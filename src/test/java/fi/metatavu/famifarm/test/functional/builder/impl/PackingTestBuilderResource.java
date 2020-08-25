@@ -52,7 +52,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
     packing.setPackedCount(packedCount);
     packing.setState(packingState);
     packing.setPackageSizeId(packageSize.getId());
-    return addClosable(getApi().createPackaging(packing));
+    return addClosable(getApi().createPacking(packing));
   }
   
   /**
@@ -61,7 +61,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @param firstResult
    * @param maxResults
    * @param productId
-   * @param packageState
+   * @param packingState
    * @param createdAfter
    * @param createdBefore
    * @return
