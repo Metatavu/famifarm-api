@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.json.JSONException;
@@ -50,6 +51,15 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    */
   public ProductionLine findProductionLine(UUID productionLineId) {
     return getApi().findProductionLine(productionLineId);
+  }
+
+  /**
+   * Lists production lines
+   *
+   * @return production lines
+   */
+  public List<ProductionLine> listProductionLines() {
+    return getApi().listProductionLines(null, null);
   }
 
   /**
