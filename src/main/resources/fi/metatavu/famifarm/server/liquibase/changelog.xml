@@ -707,7 +707,7 @@
     <dropForeignKeyConstraint baseTableName="harvestevent" constraintName="FK_HARVESTEVENT_TEAM_ID"/>
     <dropColumn tableName="productionline" columnName="defaultteam_id"/>
     <dropColumn tableName="harvestevent" columnName="team_id"/>
-    <delete tableName="team"></delete>
+    <delete tableName="team"/>
   </changeSet>
 
 </databaseChangeLog>
