@@ -24,7 +24,6 @@ import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.client.model.SeedBatch;
-import fi.metatavu.famifarm.client.model.Team;
 import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
@@ -163,7 +162,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      ProductionLine productionLine = builder.admin().productionLines().create("4", null, 8);
+      ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC));
       WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test WastageReason", "Testi Syy"));
       
@@ -295,9 +294,8 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
-      Team team = builder.admin().teams().create(builder.createLocalizedEntry("Team"));
-      ProductionLine productionLine6a = builder.admin().productionLines().create("6a", team, 8);
-      ProductionLine productionLine7a = builder.admin().productionLines().create("7a", team, 8);
+      ProductionLine productionLine6a = builder.admin().productionLines().create("6a", 8);
+      ProductionLine productionLine7a = builder.admin().productionLines().create("7a", 8);
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Seed"));
       SeedBatch seedBatch = builder.admin().seedBatches().create("Code", seed, OffsetDateTime.now());
       Batch batch = builder.admin().batches().create(product, BatchPhase.SOWING);

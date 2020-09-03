@@ -16,9 +16,10 @@ public class PrintingTestsIT extends AbstractFunctionalTest {
     @Test
     public void testPrinters() throws Exception {
         try (TestBuilder builder = new TestBuilder()) {
+
+            List<Printer> printers = builder.admin().printers().getPrinters();
+            assertNotNull(printers);
             if (System.getenv("TEST_FAMIFARM_PRINTING") != null && System.getenv("TEST_FAMIFARM_PRINTING").equals("TRUE")) {
-                List<Printer> printers = builder.admin().printers().getPrinters();
-                assertNotNull(printers);
                 assertTrue(printers.size() > 0);
                 assertNotNull(printers.get(0).getName());
                 assertNotNull(printers.get(0).getId());
