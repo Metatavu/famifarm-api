@@ -702,4 +702,62 @@
   	</sql>
   </changeSet>
 
+  <changeSet id="removeteams" author="Simeon Platonov">
+    <dropForeignKeyConstraint baseTableName="productionline" constraintName="FK_PRODUCTIONLINE_DEFAULT_TEAM_ID"/>
+    <dropForeignKeyConstraint baseTableName="harvestevent" constraintName="FK_HARVESTEVENT_TEAM_ID"/>
+    <dropColumn tableName="productionline" columnName="defaultteam_id"/>
+    <dropColumn tableName="harvestevent" columnName="team_id"/>
+    <delete tableName="team"/>
+  </changeSet>
+
+  <changeSet id="campaigns" author="Simeon Platonov">
+    <createTable tableName="campaign">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="campaignproduct">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="campaign_id" type="binary(16)">
+        <constraints nullable="false" referencedTableName="campaign" referencedColumnNames="id" foreignKeyName="FK_CAMPAIGN_PRODUCT_CAMPAIGN_ID"/>
+      </column>
+      <column name="product_id" type="binary(16)">
+        <constraints nullable="false" referencedTableName="product" referencedColumnNames="id" foreignKeyName="FK_CAMPAIGN_PRODUCT_PRODUCT_ID"/>
+      </column>
+      <column name="count" type="INTEGER">
+        <constraints nullable="false"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

@@ -6,14 +6,19 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.campaigns.CampaignController;
+import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductDAO;
+import fi.metatavu.famifarm.persistence.model.CampaignProduct;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Product;
 
 @ApplicationScoped
 public class ProductController {
-  
+  @Inject
+  private CampaignProductDAO campaignProductDAO;
+
   @Inject
   private ProductDAO productDAO;
 
@@ -70,6 +75,12 @@ public class ProductController {
    * @param product product to be deleted
    */
   public void deleteProduct(Product product) {
+    List<CampaignProduct> campaignProducts = campaignProductDAO.listByProduct(product);
+
+    for (CampaignProduct campaignProduct : campaignProducts) {
+      campaignProductDAO.delete(campaignProduct);
+    }
+
     productDAO.delete(product);
   }
 }

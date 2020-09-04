@@ -27,7 +27,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().performedCultivationActions();
       builder.admin().pests();
-      builder.admin().teams();
       
       createSowingEvent(builder);
       Event tableSpreadEvent = createTableSpreadEvent(builder);
@@ -85,7 +84,6 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       builder.admin().performedCultivationActions();
       builder.admin().pests();
-      builder.admin().teams();
       
       createSowingEvent(builder, batch, startTime, endTime);
       createSowingEvent(builder, batch, startTime, endTime);
@@ -123,8 +121,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Batch batch = builder.admin().batches().create(product);
-      
-      builder.admin().teams();
+
       builder.admin().wastageReasons();
       
       createSowingEvent(builder, batch, 1, startTime, endTime);
@@ -164,8 +161,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, createdPackageSize);
       Batch batch = builder.admin().batches().create(product);
-      
-      builder.admin().teams();
+
       builder.admin().wastageReasons();
       
       createSowingEvent(builder, batch, 1, startTime, endTime);
@@ -294,7 +290,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       createSowingEvent(builder, batch, 10, startTime, endTime);
       createPlantingEvent(builder, batch, 10, 3);
-      createHarvestEvent(builder, TypeEnum.BOXING, batch, 3, null);
+      createHarvestEvent(builder, TypeEnum.BOXING, batch, 3);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();

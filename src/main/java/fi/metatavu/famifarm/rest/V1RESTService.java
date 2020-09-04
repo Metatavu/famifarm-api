@@ -22,8 +22,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.printing.PrintingController;
 import fi.metatavu.famifarm.rest.model.*;
+import fi.metatavu.famifarm.rest.translate.*;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.ejb3.annotation.SecurityDomain;
@@ -60,27 +62,8 @@ import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.reporting.ReportType;
 import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
-import fi.metatavu.famifarm.rest.translate.BatchTranslator;
-import fi.metatavu.famifarm.rest.translate.CultivationObservationEventTranslator;
-import fi.metatavu.famifarm.rest.translate.DraftTranslator;
-import fi.metatavu.famifarm.rest.translate.HarvestEventTranslator;
-import fi.metatavu.famifarm.rest.translate.PackageSizeTranslator;
-import fi.metatavu.famifarm.rest.translate.PackingTranslator;
-import fi.metatavu.famifarm.rest.translate.PerformedCultivationActionTranslator;
-import fi.metatavu.famifarm.rest.translate.PestsTranslator;
-import fi.metatavu.famifarm.rest.translate.PlantingEventTranslator;
-import fi.metatavu.famifarm.rest.translate.ProductionLineTranslator;
-import fi.metatavu.famifarm.rest.translate.ProductsTranslator;
-import fi.metatavu.famifarm.rest.translate.SeedBatchTranslator;
-import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
-import fi.metatavu.famifarm.rest.translate.SowingEventTranslator;
-import fi.metatavu.famifarm.rest.translate.TableSpreadEventTranslator;
-import fi.metatavu.famifarm.rest.translate.TeamsTranslator;
-import fi.metatavu.famifarm.rest.translate.WastageEventTranslator;
-import fi.metatavu.famifarm.rest.translate.WastageReasonsTranslator;
 import fi.metatavu.famifarm.seedbatches.SeedBatchesController;
 import fi.metatavu.famifarm.seeds.SeedsController;
-import fi.metatavu.famifarm.teams.TeamsController;
 import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
 
 /**
@@ -99,6 +82,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   private static final String FAILED_TO_READ_EVENT_DATA = "Failed to read event data";
 
   @Inject
+  private CampaignTranslator campaignTranslator;
+
+  @Inject
+  private CampaignController campaignController;
+
+  @Inject
   private Logger logger;
 
   @Inject
@@ -106,12 +95,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Inject
   private SeedsTranslator seedsTranslator;
-
-  @Inject
-  private TeamsController teamsController;
-
-  @Inject
-  private TeamsTranslator teamsTranslator;
 
   @Inject
   private WastageReasonsController wastageReasonsController;
@@ -220,7 +203,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
-  public Response createPackaging(Packing body) {
+  public Response createPacking(Packing body) {
     fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
     
     if (product == null) {
@@ -364,6 +347,25 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response createCampaign(@Valid Campaign campaign) {
+    HashMap<fi.metatavu.famifarm.persistence.model.Product, Integer> campaignProductsToCreate = new HashMap<>();
+    List<CampaignProducts> restCampaignProducts = campaign.getProducts();
+
+    for (CampaignProducts campaignProduct : restCampaignProducts) {
+      fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(campaignProduct.getProductId());
+      if (product == null) {
+        return createNotFound(String.format("Campaign product %s not found!", campaignProduct.getProductId()));
+      }
+
+      campaignProductsToCreate.put(product, campaignProduct.getCount());
+    }
+
+    fi.metatavu.famifarm.persistence.model.Campaign createdCampaign = campaignController.create(campaign.getName(), campaignProductsToCreate, getLoggerUserId());
+    return createOk(campaignTranslator.translate(createdCampaign));
+  }
+
+  @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response createEvent(Event body) {
     fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(body.getBatchId());
@@ -431,19 +433,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   public Response createProductionLine(ProductionLine body) {
     String lineNumber = body.getLineNumber();
-    UUID defaultTeamId = body.getDefaultTeamId();
     Integer defaultGutterHoleCount = body.getDefaultGutterHoleCount();
-    fi.metatavu.famifarm.persistence.model.Team defaultTeam = null;
-
-    if (defaultTeamId != null) {
-      defaultTeam = teamsController.findTeam(defaultTeamId);
-      if (defaultTeam == null) {
-        return createBadRequest(String.format("Invalid default team id %s", defaultTeamId));
-      }
-    }
 
     return createOk(productionLineTranslator.translateProductionLine(productionLineController
-        .createProductionLine(lineNumber, defaultTeam, defaultGutterHoleCount, getLoggerUserId())));
+        .createProductionLine(lineNumber, defaultGutterHoleCount, getLoggerUserId())));
   }
 
   @Override
@@ -460,15 +453,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     return createOk(seedBatchesTranslator
         .translateSeedBatch(seedBatchController.createSeedBatch(code, seed, time, getLoggerUserId())));
-  }
-
-  @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
-  public Response createTeam(Team body) {
-    LocalizedEntry name = createLocalizedEntry(body.getName());
-    UUID loggerUserId = getLoggerUserId();
-
-    return createOk(teamsTranslator.translateTeam(teamsController.createTeam(name, loggerUserId)));
   }
 
   @Override
@@ -491,6 +475,18 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     batchController.deleteBatch(batch);
 
+    return createNoContent();
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response deleteCampaign(UUID campaignId) {
+    fi.metatavu.famifarm.persistence.model.Campaign campaign = campaignController.find(campaignId);
+    if (campaign == null) {
+      return createNotFound(String.format("Campaign %s not found!", campaignId));
+    }
+
+    campaignController.delete(campaign);
     return createNoContent();
   }
 
@@ -587,19 +583,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
-  public Response deleteTeam(UUID teamId) {
-    fi.metatavu.famifarm.persistence.model.Team team = teamsController.findTeam(teamId);
-    if (team == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
-    }
-
-    teamsController.deleteTeam(team);
-
-    return createNoContent();
-  }
-
-  @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   public Response deleteWastageReason(UUID wastageReasonId) {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(wastageReasonId);
@@ -621,6 +604,18 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     return createOk(batchTranslator.translateBatch(batch));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response findCampaign(UUID campaignId) {
+    fi.metatavu.famifarm.persistence.model.Campaign campaign = campaignController.find(campaignId);
+
+    if (campaign == null) {
+      return createNotFound(String.format("Campaign %s not found!", campaignId));
+    }
+
+    return createOk(campaignTranslator.translate(campaign));
   }
 
   @Override
@@ -695,17 +690,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
-  public Response findTeam(UUID teamId) {
-    fi.metatavu.famifarm.persistence.model.Team team = teamsController.findTeam(teamId);
-    if (team == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
-    }
-
-    return createOk(teamsTranslator.translateTeam(team));
-  }
-
-  @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response findWastageReason(UUID wastageReasonId) {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(wastageReasonId);
@@ -761,6 +745,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
     List<Batch> result = batches.stream().map(batchTranslator::translateBatch).collect(Collectors.toList());
 
     return createOk(result);
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response listCampaigns() {
+    List<Campaign> translatedCampaigns = campaignController.list().stream().map(campaignTranslator::translate).collect(Collectors.toList());
+    return createOk(translatedCampaigns);
   }
 
   @Override
@@ -825,15 +816,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
-  public Response listTeams(Integer firstResult, Integer maxResults) {
-    List<Team> result = teamsController.listTeams(firstResult, maxResults).stream().map(teamsTranslator::translateTeam)
-        .collect(Collectors.toList());
-
-    return createOk(result);
-  }
-
-  @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response listWastageReasons(Integer firstResult, Integer maxResults) {
     List<WastageReason> result = wastageReasonsController.listWastageReasons(firstResult, maxResults).stream()
         .map(wastageReasonsTranslator::translateWastageReason).collect(Collectors.toList());
@@ -887,6 +869,30 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     fi.metatavu.famifarm.persistence.model.Batch updatedBatch = batchController.updateBatch(batch, product, body.getPhase(), getLoggerUserId());
     return createOk(batchTranslator.translateBatch(updatedBatch));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response updateCampaign(@Valid Campaign campaign, UUID campaignId) {
+    HashMap<fi.metatavu.famifarm.persistence.model.Product, Integer> campaignProductsToCreate = new HashMap<>();
+    List<CampaignProducts> restCampaignProducts = campaign.getProducts();
+
+    for (CampaignProducts campaignProduct : restCampaignProducts) {
+      fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(campaignProduct.getProductId());
+      if (product == null) {
+        return createNotFound(String.format("Campaign product %s not found!", campaignProduct.getProductId()));
+      }
+
+      campaignProductsToCreate.put(product, campaignProduct.getCount());
+    }
+
+    fi.metatavu.famifarm.persistence.model.Campaign campaignToUpdate = campaignController.find(campaignId);
+    if (campaignToUpdate == null) {
+      return createNotFound(String.format("Campaign %s not found!", campaignId));
+    }
+
+    fi.metatavu.famifarm.persistence.model.Campaign updatedCampaign = campaignController.update(campaignToUpdate, campaign.getName(), campaignProductsToCreate, getLoggerUserId());
+    return createOk(campaignTranslator.translate(updatedCampaign));
   }
 
   @Override
@@ -987,18 +993,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     Integer defaultGutterHoleCount = body.getDefaultGutterHoleCount();
     String lineNumber = body.getLineNumber();
-    UUID defaultTeamId = body.getDefaultTeamId();
-    fi.metatavu.famifarm.persistence.model.Team defaultTeam = null;
-
-    if (defaultTeamId != null) {
-      defaultTeam = teamsController.findTeam(defaultTeamId);
-      if (defaultTeam == null) {
-        return createBadRequest(String.format("Invalid default team id %s", defaultTeamId));
-      }
-    }
 
     return createOk(productionLineTranslator.translateProductionLine(productionLineController
-        .updateProductionLine(productionLine, lineNumber, defaultTeam, defaultGutterHoleCount, getLoggerUserId())));
+        .updateProductionLine(productionLine, lineNumber, defaultGutterHoleCount, getLoggerUserId())));
   }
 
   @Override
@@ -1016,20 +1013,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
     boolean active = body.isisActive() != null ? body.isisActive() : Boolean.FALSE;
 
     return createOk(seedBatchController.updateSeedBatch(seedBatch, code, seed, time, active, getLoggerUserId()));
-  }
-
-  @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
-  public Response updateTeam(Team body, UUID teamId) {
-    fi.metatavu.famifarm.persistence.model.Team team = teamsController.findTeam(teamId);
-    if (team == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
-    }
-
-    LocalizedEntry name = createLocalizedEntry(body.getName());
-    UUID loggerUserId = getLoggerUserId();
-
-    return createOk(teamsTranslator.translateTeam(teamsController.updateTeam(team, name, loggerUserId)));
   }
 
   @Override
@@ -1526,18 +1509,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
 
-    fi.metatavu.famifarm.persistence.model.Team team = null;
-    if (eventData.getTeamId() != null) {
-      team = teamsController.findTeam(eventData.getTeamId());
-      if (team == null) {
-        return createBadRequest("Invalid team");
-      }
-    }
-
     Integer amount = eventData.getGutterCount();
 
     TypeEnum harvestType = eventData.getType();
-    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, team, harvestType,
+    HarvestEvent event = harvestEventController.createHarvestEvent(batch, startTime, endTime, harvestType,
         productionLine, additionalInformation, amount, creatorId);
     batchController.updateRemainingUnits(batch);
 
@@ -1579,17 +1554,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
 
-    fi.metatavu.famifarm.persistence.model.Team team = null;
-    if (eventData.getTeamId() != null) {
-      team = teamsController.findTeam(eventData.getTeamId());
-      if (team == null) {
-        return createBadRequest("Invalid team");
-      }
-    }
-
     TypeEnum harvestType = eventData.getType();
     HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, batch, startTime,
-        endTime, team, harvestType, productionLine, eventData.getGutterCount(), additionalInformation, creatorId);
+        endTime, harvestType, productionLine, eventData.getGutterCount(), additionalInformation, creatorId);
+
     batchController.updateRemainingUnits(batch);
 
     return createOk(harvestEventTranslator.translateEvent(updateBatchActiveEvent(updatedEvent)));

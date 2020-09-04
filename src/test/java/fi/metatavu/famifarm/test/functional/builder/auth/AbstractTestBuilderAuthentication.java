@@ -16,7 +16,6 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
 
   private ReportTestBuilderResource reports;
   private SeedTestBuilderResource seeds;
-  private TeamTestBuilderResource teams;
   private SeedBatchTestBuilderResource seedBatches;
   private WastageReasonTestBuilderResource wastageReasons;
   private ProductTestBuilderResource products;
@@ -29,8 +28,22 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private DraftTestBuilderResource drafts;
   private PackingTestBuilderResource packings;
   private PrintingTestBuilderResource printers;
+  private CampaignTestBuilderResource campaigns;
   private List<AutoCloseable> closables = new ArrayList<>();
 
+  /**
+   * Returns a test builder resource for campaigns
+   *
+   * @return test builder resource for campaigns
+   * @throws IOException thrown when authentication fails
+   */
+  public CampaignTestBuilderResource campaigns() throws IOException {
+    if (campaigns != null) {
+      return campaigns;
+    }
+
+    return campaigns = this.addClosable(new CampaignTestBuilderResource(createClient()));
+  }
 
   /**
    * Returns a test builder resource for printers
@@ -84,20 +97,6 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
     
     return seeds = this.addClosable(new SeedTestBuilderResource(createClient()));
-  }
-  
-  /**
-   * Returns test builder resource for teams
-   * 
-   * @return test builder resource for teams
-   * @throws IOException thrown when authentication fails
-   */
-  public TeamTestBuilderResource teams() throws IOException {
-    if (teams != null) {
-      return teams;
-    }
-    
-    return teams = this.addClosable(new TeamTestBuilderResource(createClient()));
   }
   
   /**
