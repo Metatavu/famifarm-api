@@ -59,4 +59,25 @@ public class CampaignProductDAO extends AbstractDAO<CampaignProduct> {
 
     return query.getResultList();
   }
+
+  /**
+   * Lists campaign products belonging to a specified product
+   *
+   * @param product product to filter by
+   *
+   * @return campaign products belonging to a specified product
+   */
+  public List<CampaignProduct> listByProduct(Product product) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<CampaignProduct> criteria = criteriaBuilder.createQuery(CampaignProduct.class);
+    Root<CampaignProduct> root = criteria.from(CampaignProduct.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(CampaignProduct_.product), product));
+
+    TypedQuery<CampaignProduct> query = entityManager.createQuery(criteria);
+
+    return query.getResultList();
+  }
 }

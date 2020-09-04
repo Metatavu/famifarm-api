@@ -19,7 +19,7 @@ import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 /**
- * Test builder resource for batchs
+ * Test builder resource for batches
  * 
  * @author Ville Koivukangas
  */

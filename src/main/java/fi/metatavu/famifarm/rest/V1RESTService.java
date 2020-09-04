@@ -361,7 +361,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
       campaignProductsToCreate.put(product, campaignProduct.getCount());
     }
 
-    return createOk(campaignTranslator.translate(campaignController.create(campaign.getName(), campaignProductsToCreate, getLoggerUserId())));
+    fi.metatavu.famifarm.persistence.model.Campaign createdCampaign = campaignController.create(campaign.getName(), campaignProductsToCreate, getLoggerUserId());
+    return createOk(campaignTranslator.translate(createdCampaign));
   }
 
   @Override
@@ -485,7 +486,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(String.format("Campaign %s not found!", campaignId));
     }
 
-    return createOk(campaignTranslator.translate(campaign));
+    campaignController.delete(campaign);
+    return createNoContent();
   }
 
   @Override
@@ -748,7 +750,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   public Response listCampaigns() {
-    return createOk(campaignController.list().stream().map(campaignTranslator::translate).collect(Collectors.toList()));
+    List<Campaign> translatedCampaigns = campaignController.list().stream().map(campaignTranslator::translate).collect(Collectors.toList());
+    return createOk(translatedCampaigns);
   }
 
   @Override
@@ -888,7 +891,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(String.format("Campaign %s not found!", campaignId));
     }
 
-    return createOk(campaignTranslator.translate(campaignController.update(campaignToUpdate, campaign.getName(), campaignProductsToCreate, getLoggerUserId())));
+    fi.metatavu.famifarm.persistence.model.Campaign updatedCampaign = campaignController.update(campaignToUpdate, campaign.getName(), campaignProductsToCreate, getLoggerUserId());
+    return createOk(campaignTranslator.translate(updatedCampaign));
   }
 
   @Override
