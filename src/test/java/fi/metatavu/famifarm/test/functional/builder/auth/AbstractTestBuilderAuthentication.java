@@ -28,8 +28,22 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private DraftTestBuilderResource drafts;
   private PackingTestBuilderResource packings;
   private PrintingTestBuilderResource printers;
+  private CampaignTestBuilderResource campaigns;
   private List<AutoCloseable> closables = new ArrayList<>();
 
+  /**
+   * Returns a test builder resource for campaigns
+   *
+   * @return test builder resource for campaigns
+   * @throws IOException thrown when authentication fails
+   */
+  public CampaignTestBuilderResource campaigns() throws IOException {
+    if (campaigns != null) {
+      return campaigns;
+    }
+
+    return campaigns = this.addClosable(new CampaignTestBuilderResource(createClient()));
+  }
 
   /**
    * Returns a test builder resource for printers

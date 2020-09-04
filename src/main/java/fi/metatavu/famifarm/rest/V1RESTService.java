@@ -22,8 +22,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.printing.PrintingController;
 import fi.metatavu.famifarm.rest.model.*;
+import fi.metatavu.famifarm.rest.translate.*;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.ejb3.annotation.SecurityDomain;
@@ -60,23 +62,6 @@ import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.reporting.ReportType;
 import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
-import fi.metatavu.famifarm.rest.translate.BatchTranslator;
-import fi.metatavu.famifarm.rest.translate.CultivationObservationEventTranslator;
-import fi.metatavu.famifarm.rest.translate.DraftTranslator;
-import fi.metatavu.famifarm.rest.translate.HarvestEventTranslator;
-import fi.metatavu.famifarm.rest.translate.PackageSizeTranslator;
-import fi.metatavu.famifarm.rest.translate.PackingTranslator;
-import fi.metatavu.famifarm.rest.translate.PerformedCultivationActionTranslator;
-import fi.metatavu.famifarm.rest.translate.PestsTranslator;
-import fi.metatavu.famifarm.rest.translate.PlantingEventTranslator;
-import fi.metatavu.famifarm.rest.translate.ProductionLineTranslator;
-import fi.metatavu.famifarm.rest.translate.ProductsTranslator;
-import fi.metatavu.famifarm.rest.translate.SeedBatchTranslator;
-import fi.metatavu.famifarm.rest.translate.SeedsTranslator;
-import fi.metatavu.famifarm.rest.translate.SowingEventTranslator;
-import fi.metatavu.famifarm.rest.translate.TableSpreadEventTranslator;
-import fi.metatavu.famifarm.rest.translate.WastageEventTranslator;
-import fi.metatavu.famifarm.rest.translate.WastageReasonsTranslator;
 import fi.metatavu.famifarm.seedbatches.SeedBatchesController;
 import fi.metatavu.famifarm.seeds.SeedsController;
 import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
@@ -95,6 +80,12 @@ import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
 public class V1RESTService extends AbstractApi implements V1Api {
 
   private static final String FAILED_TO_READ_EVENT_DATA = "Failed to read event data";
+
+  @Inject
+  private CampaignTranslator campaignTranslator;
+
+  @Inject
+  private CampaignController campaignController;
 
   @Inject
   private Logger logger;
@@ -356,6 +347,25 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response createCampaign(@Valid Campaign campaign) {
+    HashMap<fi.metatavu.famifarm.persistence.model.Product, Integer> campaignProductsToCreate = new HashMap<>();
+    List<CampaignProducts> restCampaignProducts = campaign.getProducts();
+
+    for (CampaignProducts campaignProduct : restCampaignProducts) {
+      fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(campaignProduct.getProductId());
+      if (product == null) {
+        return createNotFound(String.format("Campaign product %s not found!", campaignProduct.getProductId()));
+      }
+
+      campaignProductsToCreate.put(product, campaignProduct.getCount());
+    }
+
+    fi.metatavu.famifarm.persistence.model.Campaign createdCampaign = campaignController.create(campaign.getName(), campaignProductsToCreate, getLoggerUserId());
+    return createOk(campaignTranslator.translate(createdCampaign));
+  }
+
+  @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response createEvent(Event body) {
     fi.metatavu.famifarm.persistence.model.Batch batch = batchController.findBatch(body.getBatchId());
@@ -465,6 +475,18 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     batchController.deleteBatch(batch);
 
+    return createNoContent();
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response deleteCampaign(UUID campaignId) {
+    fi.metatavu.famifarm.persistence.model.Campaign campaign = campaignController.find(campaignId);
+    if (campaign == null) {
+      return createNotFound(String.format("Campaign %s not found!", campaignId));
+    }
+
+    campaignController.delete(campaign);
     return createNoContent();
   }
 
@@ -582,6 +604,18 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     return createOk(batchTranslator.translateBatch(batch));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response findCampaign(UUID campaignId) {
+    fi.metatavu.famifarm.persistence.model.Campaign campaign = campaignController.find(campaignId);
+
+    if (campaign == null) {
+      return createNotFound(String.format("Campaign %s not found!", campaignId));
+    }
+
+    return createOk(campaignTranslator.translate(campaign));
   }
 
   @Override
@@ -714,6 +748,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response listCampaigns() {
+    List<Campaign> translatedCampaigns = campaignController.list().stream().map(campaignTranslator::translate).collect(Collectors.toList());
+    return createOk(translatedCampaigns);
+  }
+
+  @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response listEvents(Integer firstResult, Integer maxResults, UUID batchId) {
     fi.metatavu.famifarm.persistence.model.Batch batch = batchId != null ? batchController.findBatch(batchId) : null;
@@ -828,6 +869,30 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
     fi.metatavu.famifarm.persistence.model.Batch updatedBatch = batchController.updateBatch(batch, product, body.getPhase(), getLoggerUserId());
     return createOk(batchTranslator.translateBatch(updatedBatch));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  public Response updateCampaign(@Valid Campaign campaign, UUID campaignId) {
+    HashMap<fi.metatavu.famifarm.persistence.model.Product, Integer> campaignProductsToCreate = new HashMap<>();
+    List<CampaignProducts> restCampaignProducts = campaign.getProducts();
+
+    for (CampaignProducts campaignProduct : restCampaignProducts) {
+      fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(campaignProduct.getProductId());
+      if (product == null) {
+        return createNotFound(String.format("Campaign product %s not found!", campaignProduct.getProductId()));
+      }
+
+      campaignProductsToCreate.put(product, campaignProduct.getCount());
+    }
+
+    fi.metatavu.famifarm.persistence.model.Campaign campaignToUpdate = campaignController.find(campaignId);
+    if (campaignToUpdate == null) {
+      return createNotFound(String.format("Campaign %s not found!", campaignId));
+    }
+
+    fi.metatavu.famifarm.persistence.model.Campaign updatedCampaign = campaignController.update(campaignToUpdate, campaign.getName(), campaignProductsToCreate, getLoggerUserId());
+    return createOk(campaignTranslator.translate(updatedCampaign));
   }
 
   @Override
