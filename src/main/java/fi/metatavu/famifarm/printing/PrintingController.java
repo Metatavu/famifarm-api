@@ -32,13 +32,12 @@ public class PrintingController {
     @Inject
     private LocalizedValueController localizedValueController;
 
-    public int printQrCode(String printerId, UUID packingId, Locale locale) throws IOException {
+    public int printQrCode(String printerId, Packing packing, Locale locale) throws IOException {
         URL url = new URL("https://famifarm-print.metatavu.io/rest/v1/printers/"+printerId+"/raw");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setDoOutput(true);
 
-        Packing packing = packingController.findById(packingId);
         String productName = localizedValueController.getValue(packing.getProduct().getName(), locale);
         String packageSize = localizedValueController.getValue(packing.getPackageSize().getName(), locale);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -48,7 +47,7 @@ public class PrintingController {
         lines.add(String.format("^FO30,30,2^AfN,40,30^FD%s^FS", replaceUmlauts(productName)));
         lines.add(String.format("^FO30,85,2^AfN,40,30^FD%d * %s^FS", packing.getPackedCount(), replaceUmlauts(packageSize)));
         lines.add(String.format("^FO30,155,2^AfN,40,30^FD%s^FS", packingTime));
-        lines.add(String.format("^FO480,155,2^BQN,2,10,H,0^FD:::%s^FS", packingId.toString()));
+        lines.add(String.format("^FO480,155,2^BQN,2,10,H,0^FD:::%s^FS", packing.getId().toString()));
         lines.add("^XZ");
         String command = String.format("%s%s", lines.stream().collect( Collectors.joining("\r\n" ) ), "\r\n");
         Map<String, String> commandObject = new HashMap<>();

@@ -12,6 +12,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
 
+import fi.metatavu.famifarm.rest.model.PackingType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -29,18 +30,24 @@ import fi.metatavu.famifarm.rest.model.PackingState;
 public class Packing {
   @ManyToOne
   private PackageSize packageSize;
-  
-  @NotNull
-  @Column(nullable = false)
+
+  @Column
   private Integer packedCount;
   
   @Id
   @Column(nullable = false)
   @NotNull
   private UUID id;
-  
-  @ManyToOne(optional = false)
+
+  @ManyToOne
   private Product product;
+
+  @ManyToOne
+  private Campaign campaign;
+
+  @Column(nullable = false)
+  @NotNull
+  private PackingType type;
   
   @Column(nullable = false)
   @NotNull
@@ -142,7 +149,23 @@ public class Packing {
   public void setTime(OffsetDateTime time) {
     this.time = time;
   }
-  
+
+  public Campaign getCampaign() {
+    return this.campaign;
+  }
+
+  public void setCampaign(Campaign campaign) {
+    this.campaign = campaign;
+  }
+
+  public PackingType getType() {
+    return this.type;
+  }
+
+  public void setType(PackingType type) {
+    this.type = type;
+  }
+
   @PrePersist
   public void onCreate() {
     setCreatedAt(OffsetDateTime.now());
