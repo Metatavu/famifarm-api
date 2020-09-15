@@ -807,7 +807,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response listCampaigns() {
     List<Campaign> translatedCampaigns = campaignController.list().stream().map(campaignTranslator::translate).collect(Collectors.toList());
     return createOk(translatedCampaigns);
