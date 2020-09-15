@@ -3,13 +3,7 @@ package fi.metatavu.famifarm.persistence.model;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import fi.metatavu.famifarm.rest.model.PackingType;
@@ -45,6 +39,7 @@ public class Packing {
   @ManyToOne
   private Campaign campaign;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   @NotNull
   private PackingType type;
