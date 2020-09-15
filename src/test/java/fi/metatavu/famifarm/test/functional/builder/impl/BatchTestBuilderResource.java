@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.json.JSONException;
@@ -59,6 +60,16 @@ public class BatchTestBuilderResource extends AbstractTestBuilderResource<Batch,
     batch.setProductId(product.getId());
     batch.setPhase(phase);
     return addClosable(getApi().createBatch(batch));
+  }
+
+  /**
+   * List batches
+   *
+   * @param status batch status
+   * @return batches
+   */
+  public List<Batch> list(String status) {
+    return getApi().listBatches(status, null, null, null, null, null, null);
   }
 
   /**
