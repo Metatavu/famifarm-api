@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import fi.metatavu.famifarm.client.model.PackingType;
 import org.json.JSONException;
 
 import feign.FeignException;
@@ -38,20 +39,29 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
   /**
    * Creates a new packing for testing purposes
    * 
-   * @param productId
-   * @param time
-   * @param packedCount
-   * @param packageState
-   * @param packageSize
-   * @return
+   * @param productId product id
+   * @param campaignId campaign id
+   * @param packingType packing type
+   * @param time packing time
+   * @param packedCount packed count
+   * @param packingState packing state
+   * @param packageSize package size
+   *
+   * @return created packing
    */
-  public Packing create(UUID productId, OffsetDateTime time, Integer packedCount, PackingState packingState, PackageSize packageSize) {
+  public Packing create(UUID productId, UUID campaignId, PackingType packingType, OffsetDateTime time, Integer packedCount, PackingState packingState, PackageSize packageSize) {
     Packing packing = new Packing();
     packing.setProductId(productId);
+    packing.setCampaignId(campaignId);
+    packing.setType(packingType);
     packing.setTime(time);
     packing.setPackedCount(packedCount);
     packing.setState(packingState);
-    packing.setPackageSizeId(packageSize.getId());
+
+    if (packageSize != null) {
+      packing.setPackageSizeId(packageSize.getId());
+    }
+
     return addClosable(getApi().createPacking(packing));
   }
   

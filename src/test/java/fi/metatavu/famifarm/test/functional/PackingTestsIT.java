@@ -6,14 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import fi.metatavu.famifarm.client.model.*;
 import org.junit.Test;
 
-import fi.metatavu.famifarm.client.model.Product;
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
-import fi.metatavu.famifarm.client.model.LocalizedValue;
-import fi.metatavu.famifarm.client.model.PackageSize;
-import fi.metatavu.famifarm.client.model.Packing;
-import fi.metatavu.famifarm.client.model.PackingState;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 public class PackingTestsIT extends AbstractFunctionalTest {
@@ -29,7 +24,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       
       PackageSize size = builder.admin().packageSizes().create(testEntry, 100);
       Product product = builder.admin().products().create(testEntry, size);
-      Packing packing = builder.admin().packings().create(product.getId(), OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
+      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
       
       assertNotNull(packing);
       builder.admin().packings().assertPackingsEqual(packing, builder.admin().packings().find(packing.getId()));
@@ -50,11 +45,11 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       Product product = builder.admin().products().create(testEntry, size);
       Product product2 = builder.admin().products().create(testEntry, size);
       
-      builder.admin().packings().create(product.getId(), OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
-      builder.admin().packings().create(product.getId(), OffsetDateTime.now(), 0, PackingState.REMOVED, size);
+      builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
+      builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.REMOVED, size);
       
-      builder.admin().packings().create(product2.getId(), OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
-      builder.admin().packings().create(product2.getId(), OffsetDateTime.now(), 0, PackingState.REMOVED, size);
+      builder.admin().packings().create(product2.getId(),null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
+      builder.admin().packings().create(product2.getId(), null, PackingType.BASIC,OffsetDateTime.now(), 0, PackingState.REMOVED, size);
       List<Packing> packings = builder.admin().packings().list(null, null, null, null, null, null);
       assertNotNull(packings);
       assertEquals(4, packings.size());
@@ -85,7 +80,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       
       PackageSize size = builder.admin().packageSizes().create(testEntry, 100);
       Product product = builder.admin().products().create(testEntry, size);
-      Packing packing = builder.admin().packings().create(product.getId(), OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
+      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
       
       packing.setState(PackingState.REMOVED);
       assertNotNull(builder.admin().packings().update(packing));
@@ -106,10 +101,43 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       
       PackageSize size = builder.admin().packageSizes().create(testEntry, 100);
       Product product = builder.admin().products().create(testEntry, size);
-      Packing packing = builder.admin().packings().create(product.getId(), OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
+      Packing packing = builder.admin().packings().create(product.getId(),null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
       
       builder.admin().packings().delete(packing);
       builder.admin().packings().assertFindFailStatus(404, packing.getId());
+    }
+  }
+
+  @Test
+  public void testCreateAndUpdateCampaignPacking() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      LocalizedEntry testEntry = new LocalizedEntry();
+      LocalizedValue testValue = new LocalizedValue();
+
+      testValue.setLanguage("en");
+      testValue.setValue("apples");
+      testEntry.add(testValue);
+
+      PackageSize size = builder.admin().packageSizes().create(testEntry, 100);
+      Product product = builder.admin().products().create(testEntry, size);
+
+      Campaign campaignToCreate = new Campaign();
+      campaignToCreate.setName("Autumn campaign for apples");
+
+      CampaignProducts campaignProduct = new CampaignProducts();
+      campaignProduct.setCount(100);
+      campaignProduct.setProductId(product.getId());
+      campaignToCreate.addProductsItem(campaignProduct);
+
+      Campaign campaign = builder.admin().campaigns().create(campaignToCreate);
+
+      Packing packing = builder.admin().packings().create(null, campaign.getId(), PackingType.CAMPAIGN, OffsetDateTime.now(), null, PackingState.IN_STORE, null);
+      assertNotNull(packing);
+      assertEquals(PackingType.CAMPAIGN, packing.getType());
+      packing.setState(PackingState.REMOVED);
+      Packing updatedPacking = builder.admin().packings().update(packing);
+      assertNotNull(updatedPacking);
+      assertEquals(PackingState.REMOVED, updatedPacking.getState());
     }
   }
   
