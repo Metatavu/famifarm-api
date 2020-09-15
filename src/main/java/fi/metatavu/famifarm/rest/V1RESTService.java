@@ -891,10 +891,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createBadRequest("Packing not found!");
     }
 
-    if (packing.getType() == PackingType.CAMPAIGN) {
-      return createBadRequest("Printing campaign packings not supported currently");
-    }
-
     try {
       List<Printer> printers = printingController.getPrinters();
       Printer correctPrinter = null;
