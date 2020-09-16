@@ -8,10 +8,12 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.PackingDAO;
+import fi.metatavu.famifarm.persistence.model.Campaign;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.rest.model.PackingState;
+import fi.metatavu.famifarm.rest.model.PackingType;
 
 /**
  * Controller for packing
@@ -27,18 +29,20 @@ public class PackingController {
   private PackingDAO packingDAO;
   
   /**
-   * Creates new packing
+   * Creates a new packing
    * 
-   * @param creatorId
-   * @param productId
-   * @param packageSize
-   * @param packedCount
-   * @param packingState
-   * @param time
+   * @param creatorId creator id
+   * @param product product
+   * @param packageSize package size
+   * @param packedCount packed count
+   * @param packingState packing status
+   * @param time packing time
+   * @param campaign campaign
+   * @param type packing type
    * @return packing
    */
-  public Packing create(UUID creatorId, Product product, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time) {
-    return packingDAO.create(creatorId, product, UUID.randomUUID(), creatorId, packageSize, packedCount, packingState, time);
+  public Packing create(UUID creatorId, Product product, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, PackingType type) {
+    return packingDAO.create(creatorId, product, UUID.randomUUID(), packageSize, packedCount, packingState, time, campaign, type);
   }
   
   /**
@@ -56,7 +60,7 @@ public class PackingController {
    * 
    * @param firstResult
    * @param maxResults
-   * @param productId
+   * @param product
    * @param state
    * @param createdBefore
    * @param createdAfter
@@ -69,18 +73,21 @@ public class PackingController {
   /**
    * Updates packing
    * 
-   * @param packing
-   * @param packageSize
-   * @param packedCount
-   * @param modifier
+   * @param packing packing
+   * @param packageSize package size
+   * @param packedCount packed count
+   * @param modifier modifier
+   * @param type type
    * @return updated packing
    */
-  public Packing updatePacking(Packing packing, PackageSize packageSize, PackingState packingState, Integer packedCount, Product product, OffsetDateTime time, UUID modifier) {
+  public Packing updatePacking(Packing packing, PackageSize packageSize, PackingState packingState, Integer packedCount, Product product, OffsetDateTime time, Campaign campaign, PackingType type, UUID modifier) {
     packingDAO.updatePackageSize(packing, packageSize, modifier);
     packingDAO.updatePackedCount(packing, packedCount, modifier);
     packingDAO.updatePackingState(packing, packingState, modifier);
     packingDAO.updateProduct(packing, product, modifier);
     packingDAO.updateTime(packing, time, modifier);
+    packingDAO.updateCampaign(packing, campaign, modifier);
+    packingDAO.updateType(packing, type, modifier);
     return packing;
   }
   
