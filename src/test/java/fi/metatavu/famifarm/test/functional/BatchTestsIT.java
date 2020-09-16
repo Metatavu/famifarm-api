@@ -245,7 +245,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
   }
   
   @Test
-  public void testDeletebatches() throws Exception {
+  public void testDeleteBatches() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
@@ -319,13 +319,14 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
 
       builder.admin().events().createSowing(batch, startTime, endTime, 80, PotType.LARGE, productionLine, Collections.singletonList(seedBatch));
-      builder.admin().events().createPlanting(batch, startTime, endTime, 28, 100, productionLine, 80, 1);
-      builder.admin().events().createHarvest(batch, 29, startTime, endTime, productionLine, HarvestEventData.TypeEnum.BAGGING);
+      builder.admin().events().createPlanting(batch, startTime.plusDays(1), endTime, 28, 100, productionLine, 80, 1);
+      builder.admin().events().createHarvest(batch, 29, startTime.plusDays(2), endTime, productionLine, HarvestEventData.TypeEnum.BAGGING);
+
       assertEquals(1, builder.admin().batches().list("CLOSED").size());
       assertEquals(0, builder.admin().batches().list("NEGATIVE").size());
       assertEquals(0, builder.admin().batches().list("OPEN").size());
 
-      builder.admin().events().createHarvest(batch, 30, startTime, endTime, productionLine, HarvestEventData.TypeEnum.BAGGING);
+      builder.admin().events().createHarvest(batch, 30, startTime.plusDays(3), endTime, productionLine, HarvestEventData.TypeEnum.BAGGING);
 
       assertEquals(0, builder.admin().batches().list("CLOSED").size());
       assertEquals(1, builder.admin().batches().list("NEGATIVE").size());

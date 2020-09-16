@@ -8,17 +8,14 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Batch_;
 import fi.metatavu.famifarm.persistence.model.Event_;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.rest.BatchListStatus;
 import fi.metatavu.famifarm.rest.model.BatchPhase;
 
 /**
@@ -46,15 +43,13 @@ public class BatchDAO extends AbstractDAO<Batch> {
     batch.setPhase(phase);
     batch.setCreatorId(creatorId);
     batch.setLastModifierId(lastModifierId);
+    batch.setTotalSowed(0);
     return persist(batch);
   }
   
   /**
    * Lists batches
-   * 
-   * @param remainingUnitsGreaterThan remaining units greater than (optional)
-   * @param remainingUnitsLessThan remaining units less than (optional)
-   * @param remainingUnitsEqual remaining units equals (optional)
+   *
    * @param createdBefore created before (optional)
    * @param createdAfter created after (optional)
    * @param firstResult first result (optional)
@@ -62,7 +57,7 @@ public class BatchDAO extends AbstractDAO<Batch> {
    * @return List of batches
    */
   @SuppressWarnings ("squid:S00107")
-  public List<Batch> list(Product product, BatchPhase phase, Integer remainingUnitsGreaterThan, Integer remainingUnitsLessThan, Integer remainingUnitsEqual, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Integer firstResult, Integer maxResults) {
+  public List<Batch> list(Product product, BatchPhase phase, BatchListStatus status, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -89,19 +84,24 @@ public class BatchDAO extends AbstractDAO<Batch> {
       restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Batch_.createdAt), createdAfter));
     }
 
-    if (remainingUnitsEqual != null || remainingUnitsLessThan != null || remainingUnitsGreaterThan != null) {
+    if (status != null) {
       Join<Batch, Event> activeEventJoin = root.join(Batch_.activeEvent);
+      if (status == BatchListStatus.CLOSED || status == BatchListStatus.NEGATIVE) {
+        Expression<Integer> totalSowed = root.get(Batch_.totalSowed);
+        Expression<Integer> borderValue = criteriaBuilder.toInteger(criteriaBuilder.neg(criteriaBuilder.abs(criteriaBuilder.prod(totalSowed, 0.05))));
 
-      if (remainingUnitsEqual != null) {
-        restrictions.add(criteriaBuilder.equal(activeEventJoin.get(Event_.remainingUnits), remainingUnitsEqual));
+        if (status == BatchListStatus.CLOSED) {
+          restrictions.add(criteriaBuilder.lessThanOrEqualTo(activeEventJoin.get(Event_.remainingUnits), 0));
+          restrictions.add(criteriaBuilder.greaterThanOrEqualTo(activeEventJoin.get(Event_.remainingUnits), borderValue));
+        }
+
+        if (status == BatchListStatus.NEGATIVE) {
+          restrictions.add(criteriaBuilder.lessThan(activeEventJoin.get(Event_.remainingUnits), borderValue));
+        }
       }
-      
-      if (remainingUnitsLessThan != null) {
-        restrictions.add(criteriaBuilder.lessThan(activeEventJoin.get(Event_.remainingUnits), remainingUnitsLessThan));
-      }
-      
-      if (remainingUnitsGreaterThan != null) {
-        restrictions.add(criteriaBuilder.greaterThan(activeEventJoin.get(Event_.remainingUnits), remainingUnitsGreaterThan));
+
+      if (status == BatchListStatus.OPEN) {
+        restrictions.add(criteriaBuilder.greaterThan(activeEventJoin.get(Event_.remainingUnits), 0));
       }
     }
     
@@ -188,6 +188,19 @@ public class BatchDAO extends AbstractDAO<Batch> {
    */
   public Batch updateCreatedAt(Batch batch, OffsetDateTime createdAt) {
     batch.setCreatedAt(createdAt);
+    return persist(batch);
+  }
+
+  /**
+   * Updates total sowed amount of the batch
+   *
+   * @param batch batch to update
+   * @param totalSowed new amount of sowed seeds
+   *
+   * @return updated batch
+   */
+  public Batch updateTotalSowed(Batch batch, int totalSowed) {
+    batch.setTotalSowed(totalSowed);
     return persist(batch);
   }
 

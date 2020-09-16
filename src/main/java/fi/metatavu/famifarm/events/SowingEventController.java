@@ -48,14 +48,29 @@ public class SowingEventController {
    * @param potType pot type
    * @param amount amount
    * @param additionalInformation additional information
-   * @param modifier modifier
+   * @param creatorId creator id
    * @return updated sowingEvent
    */
   @SuppressWarnings ("squid:S00107")
   public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Collection<SeedBatch> seedBatches, PotType potType, Integer amount, String additionalInformation, UUID creatorId) {
     SowingEvent sowingEvent = sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, potType, amount, 0, additionalInformation, creatorId, creatorId);
+    int scaledDifference = getPotTypeAmount(potType) * amount;
+    batchDAO.updateTotalSowed(batch, batch.getTotalSowed() + scaledDifference);
     setSowingEventSeedBatches(sowingEvent, seedBatches);
     return sowingEvent;
+  }
+
+  /**
+   * Get number of plants in tray depending on pot type
+   *
+   * @param potType, potType
+   * @return amount
+   */
+  private int getPotTypeAmount(PotType potType) {
+    if (PotType.SMALL == potType) {
+      return 54;
+    }
+    return 35;
   }
   
   /**
@@ -97,7 +112,7 @@ public class SowingEventController {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param seedBatch seedBatch
+   * @param seedBatches seedBatches
    * @param potType pot type
    * @param amount amount
    * @param additionalInformation additional information
@@ -113,7 +128,11 @@ public class SowingEventController {
     sowingEventDAO.updatePotType(sowingEvent, potType, modifier);
     sowingEventDAO.updateAmount(sowingEvent, amount, modifier);
     sowingEventDAO.updateAdditionalInformation(sowingEvent, additionalInformation, modifier);
-    
+
+    int difference = amount - sowingEvent.getAmount();
+    int scaledDifference = getPotTypeAmount(potType) * difference;
+    batchDAO.updateTotalSowed(batch, batch.getTotalSowed() + scaledDifference);
+
     setSowingEventSeedBatches(sowingEvent, seedBatches);
     
     return sowingEvent;

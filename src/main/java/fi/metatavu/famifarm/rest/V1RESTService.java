@@ -720,26 +720,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createBadRequest("Invalid product id");
     }
 
-    Integer remainingUnitsGreaterThan = null;
-    Integer remainingUnitsLessThan = null;
-    Integer remainingUnitsEqual = null;
-
-    if (status != null) {
-      switch (status) {
-      case CLOSED:
-        remainingUnitsEqual = 0;
-        break;
-      case NEGATIVE:
-        remainingUnitsLessThan = 0;
-        break;
-      case OPEN:
-        remainingUnitsGreaterThan = 0;
-        break;
-      }
-    }
-
-    List<fi.metatavu.famifarm.persistence.model.Batch> batches = batchController.listBatches(product, phase,
-        remainingUnitsGreaterThan, remainingUnitsLessThan, remainingUnitsEqual, parseTime(createdBefore),
+    List<fi.metatavu.famifarm.persistence.model.Batch> batches = batchController.listBatches(product, phase, status, parseTime(createdBefore),
         parseTime(createdAfter), firstResult, maxResult);
 
     List<Batch> result = batches.stream().map(batchTranslator::translateBatch).collect(Collectors.toList());
