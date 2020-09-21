@@ -760,12 +760,26 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="campaignpackings" author="Simeon Platonov">
+    <dropNotNullConstraint tableName="packing" columnName="product_id" columnDataType="binary(16)"/>
+    <dropNotNullConstraint tableName="packing" columnName="packagesize_id" columnDataType="binary(16)"/>
+    <dropNotNullConstraint tableName="packing" columnName="packedcount" columnDataType="int(32)"/>
+    <addColumn tableName="packing">
+      <column name="type" type="varchar(30)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="campaign_id" type="binary(16)">
+        <constraints referencedTableName="campaign" referencedColumnNames="id" foreignKeyName="FK_PACKING_CAMPAIGN_ID"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
   <changeSet id="remainingunitserrors" author="Simeon Platonov">
     <addColumn tableName="batch">
       <column name="totalsowed" type="INTEGER">
         <constraints nullable="false"/>
       </column>
     </addColumn>
-  </changeSet>
+  </changeSet>  
 
 </databaseChangeLog>

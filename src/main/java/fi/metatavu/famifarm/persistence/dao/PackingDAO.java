@@ -13,11 +13,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import fi.metatavu.famifarm.persistence.model.PackageSize;
-import fi.metatavu.famifarm.persistence.model.Packing;
-import fi.metatavu.famifarm.persistence.model.Packing_;
-import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.PackingState;
+import fi.metatavu.famifarm.rest.model.PackingType;
 
 /**
  * DAO class for Packing
@@ -31,28 +29,60 @@ public class PackingDAO extends AbstractDAO<Packing>{
     /**
      * Creates new packing
      * 
-     * @param creatorId
-     * @param productId
-     * @param id
-     * @param lastModifierId
-     * @param packageSize
-     * @param packedCount
-     * @param packingState
-     * @param startTime
+     * @param creatorId creator id
+     * @param product product
+     * @param id id
+     * @param packageSize package size
+     * @param packedCount packed count
+     * @param packingState packing status
+     * @param time time of packing
      * @return packing
      */
-    public Packing create(UUID creatorId, Product product, UUID id, UUID lastModifierId, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time) {
+    public Packing create(UUID creatorId, Product product, UUID id, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, PackingType type) {
       Packing packing = new Packing();
       packing.setCreatorId(creatorId);
       packing.setId(id);
       packing.setProduct(product);
       packing.setPackingState(packingState);
-      packing.setLastModifierId(lastModifierId);
+      packing.setCreatorId(creatorId);
+      packing.setLastModifierId(creatorId);
       packing.setPackageSize(packageSize);
       packing.setPackedCount(packedCount);
       packing.setTime(time);
+      packing.setCampaign(campaign);
+      packing.setType(type);
       return persist(packing);
     }
+
+  /**
+   * Updates packing campaign
+   *
+   * @param packing packing to be updated
+   * @param campaign new campaign
+   * @param lastModifierId modifier id
+   *
+   * @return update packing
+   */
+    public Packing updateCampaign(Packing packing, Campaign campaign, UUID lastModifierId) {
+      packing.setLastModifierId(lastModifierId);
+      packing.setCampaign(campaign);
+      return persist(packing);
+    }
+
+  /**
+   * Updates packing type
+   *
+   * @param packing packing to be updated
+   * @param type packing type
+   * @param lastModifierId modifier id
+   *
+   * @return update packing
+   */
+  public Packing updateType(Packing packing, PackingType type, UUID lastModifierId) {
+    packing.setLastModifierId(lastModifierId);
+    packing.setType(type);
+    return persist(packing);
+  }
     
     /**
      * Updates package size
