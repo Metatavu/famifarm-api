@@ -774,4 +774,12 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="remainingunitserrors" author="Simeon Platonov">
+    <addColumn tableName="batch">
+      <column name="totalsowed" type="INTEGER">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>  
+
 </databaseChangeLog>

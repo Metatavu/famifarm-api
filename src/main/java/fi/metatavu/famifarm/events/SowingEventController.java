@@ -48,14 +48,45 @@ public class SowingEventController {
    * @param potType pot type
    * @param amount amount
    * @param additionalInformation additional information
-   * @param modifier modifier
+   * @param creatorId creator id
    * @return updated sowingEvent
    */
   @SuppressWarnings ("squid:S00107")
   public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Collection<SeedBatch> seedBatches, PotType potType, Integer amount, String additionalInformation, UUID creatorId) {
     SowingEvent sowingEvent = sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, potType, amount, 0, additionalInformation, creatorId, creatorId);
+    batchDAO.updateTotalSowed(batch, getTotalSowed(batch));
     setSowingEventSeedBatches(sowingEvent, seedBatches);
     return sowingEvent;
+  }
+
+  /**
+   * Gets the amount of sowed seeds in a given batch
+   *
+   * @param batch batch to calculate from
+   * @return amount of sowed seeds in the given batch
+   */
+  public int getTotalSowed(Batch batch) {
+    List<SowingEvent> events = listBatchSowingEvents(batch);
+    int totalSowed = 0;
+    for (SowingEvent event : events) {
+      int eventTotal = getPotTypeAmount(event.getPotType()) * event.getAmount();
+      totalSowed += eventTotal;
+    }
+
+    return totalSowed;
+  }
+
+  /**
+   * Get number of plants in tray depending on pot type
+   *
+   * @param potType, potType
+   * @return amount
+   */
+  private int getPotTypeAmount(PotType potType) {
+    if (PotType.SMALL == potType) {
+      return 54;
+    }
+    return 35;
   }
   
   /**
@@ -97,7 +128,7 @@ public class SowingEventController {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
-   * @param seedBatch seedBatch
+   * @param seedBatches seedBatches
    * @param potType pot type
    * @param amount amount
    * @param additionalInformation additional information
@@ -113,7 +144,9 @@ public class SowingEventController {
     sowingEventDAO.updatePotType(sowingEvent, potType, modifier);
     sowingEventDAO.updateAmount(sowingEvent, amount, modifier);
     sowingEventDAO.updateAdditionalInformation(sowingEvent, additionalInformation, modifier);
-    
+
+    batchDAO.updateTotalSowed(batch, getTotalSowed(batch));
+
     setSowingEventSeedBatches(sowingEvent, seedBatches);
     
     return sowingEvent;
@@ -128,6 +161,8 @@ public class SowingEventController {
     batchDAO.listByActiveBatch(sowingEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     sowingEventSeedBatchDAO.listBySowingEvent(sowingEvent).forEach(sowingEventSeedBatchDAO::delete);
     sowingEventDAO.delete(sowingEvent);
+    Batch batch = sowingEvent.getBatch();
+    batchDAO.updateTotalSowed(batch, getTotalSowed(batch));
   }
 
   /**

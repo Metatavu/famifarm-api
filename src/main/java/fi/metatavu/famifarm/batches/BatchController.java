@@ -18,6 +18,7 @@ import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
+import fi.metatavu.famifarm.rest.BatchListStatus;
 import fi.metatavu.famifarm.rest.model.BatchPhase;
 import fi.metatavu.famifarm.rest.model.PotType;
 
@@ -65,9 +66,7 @@ public class BatchController {
    * 
    * @param product filter by product
    * @param batchPhase phase
-   * @param remainingUnitsGreaterThan remaining units greater than (optional)
-   * @param remainingUnitsLessThan remaining units less than (optional)
-   * @param remainingUnitsEqual remaining units equals (optional)
+   * @param status status
    * @param createdBefore created before (optional)
    * @param createdAfter created after (optional)
    * @param firstResult first result (optional)
@@ -75,8 +74,8 @@ public class BatchController {
    * @return List of batches
    */
   @SuppressWarnings ("squid:S00107")
-  public List<Batch> listBatches(Product product, BatchPhase batchPhase, Integer remainingUnitsGreaterThan, Integer remainingUnitsLessThan, Integer remainingUnitsEqual, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Integer firstResult, Integer maxResults) {
-    return batchDAO.list(product, batchPhase, remainingUnitsGreaterThan, remainingUnitsLessThan, remainingUnitsEqual, createdBefore, createdAfter, firstResult, maxResults);
+  public List<Batch> listBatches(Product product, BatchPhase batchPhase, BatchListStatus status, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Integer firstResult, Integer maxResults) {
+    return batchDAO.list(product, batchPhase, status, createdBefore, createdAfter, firstResult, maxResults);
   }
   
   /**
