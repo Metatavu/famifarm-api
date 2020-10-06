@@ -204,14 +204,42 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response createPacking(Packing body) {
-    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
-    
-    if (product == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+    PackingType packingType = body.getType();
+
+    UUID productId = body.getProductId();
+    fi.metatavu.famifarm.persistence.model.Product product = null;
+    if (productId != null) {
+      product = productController.findProduct(body.getProductId());
+
+      if (product == null) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
+    } else {
+      if (packingType == PackingType.BASIC) {
+        return createBadRequest("When type is BASIC, a productId is required.");
+      }
     }
-    
-    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getPackageSizeId());
-    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), product, packageSize, body.getPackedCount(), body.getState(), body.getTime())));
+
+    UUID campaignId = body.getCampaignId();
+    fi.metatavu.famifarm.persistence.model.Campaign campaign = null;
+    if (campaignId != null) {
+      campaign = campaignController.find(campaignId);
+      if (campaign == null) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
+    } else {
+      if (packingType == PackingType.CAMPAIGN) {
+        return createBadRequest("When type is CAMPAIGN, a campaignId is required.");
+      }
+    }
+
+    UUID packageSizeId = body.getPackageSizeId();
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = null;
+    if (packageSizeId != null) {
+      packageSize = packageSizeController.findPackageSize(packageSizeId);
+    }
+
+    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), product, packageSize, body.getPackedCount(), body.getState(), body.getTime(), campaign, packingType)));
   }
 
   @Override
@@ -268,15 +296,46 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response updatePacking(Packing body, UUID packingId) {
-    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(body.getId());
-    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
-    
-    if (packing == null || product == null) {
+    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
+
+    if (packing == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
-    
-    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(body.getPackageSizeId());
-    return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), product, body.getTime(), getLoggerUserId())));
+
+    PackingType packingType = body.getType();
+    UUID productId = body.getProductId();
+    fi.metatavu.famifarm.persistence.model.Product product = null;
+    if (productId != null) {
+      product = productController.findProduct(body.getProductId());
+
+      if (product == null) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
+    } else {
+      if (packingType == PackingType.BASIC) {
+        return createBadRequest("When type is BASIC, a productId is required.");
+      }
+    }
+
+    UUID campaignId = body.getCampaignId();
+    fi.metatavu.famifarm.persistence.model.Campaign campaign = null;
+    if (campaignId != null) {
+      campaign = campaignController.find(campaignId);
+      if (campaign == null) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
+    } else {
+      if (packingType == PackingType.CAMPAIGN) {
+        return createBadRequest("When type is CAMPAIGN, a campaignId is required.");
+      }
+    }
+
+    UUID packageSizeId = body.getPackageSizeId();
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = null;
+    if (packageSizeId != null) {
+      packageSize = packageSizeController.findPackageSize(packageSizeId);
+    }
+    return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), product, body.getTime(), campaign, packingType, getLoggerUserId())));
   }
   
   @Override
@@ -720,26 +779,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createBadRequest("Invalid product id");
     }
 
-    Integer remainingUnitsGreaterThan = null;
-    Integer remainingUnitsLessThan = null;
-    Integer remainingUnitsEqual = null;
-
-    if (status != null) {
-      switch (status) {
-      case CLOSED:
-        remainingUnitsEqual = 0;
-        break;
-      case NEGATIVE:
-        remainingUnitsLessThan = 0;
-        break;
-      case OPEN:
-        remainingUnitsGreaterThan = 0;
-        break;
-      }
-    }
-
-    List<fi.metatavu.famifarm.persistence.model.Batch> batches = batchController.listBatches(product, phase,
-        remainingUnitsGreaterThan, remainingUnitsLessThan, remainingUnitsEqual, parseTime(createdBefore),
+    List<fi.metatavu.famifarm.persistence.model.Batch> batches = batchController.listBatches(product, phase, status, parseTime(createdBefore),
         parseTime(createdAfter), firstResult, maxResult);
 
     List<Batch> result = batches.stream().map(batchTranslator::translateBatch).collect(Collectors.toList());
@@ -748,7 +788,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response listCampaigns() {
     List<Campaign> translatedCampaigns = campaignController.list().stream().map(campaignTranslator::translate).collect(Collectors.toList());
     return createOk(translatedCampaigns);
@@ -827,7 +867,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response print(@Valid PrintData printData, String printerId) {
     UUID packingId = printData.getPackingId();
-    if (packingController.findById(packingId) == null) {
+    fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
+    if (packing == null) {
       return createBadRequest("Packing not found!");
     }
 
@@ -844,7 +885,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createNotFound("Printer not found!");
       }
 
-      int status = printingController.printQrCode(printerId, packingId, getLocale());
+      int status = printingController.printQrCode(printerId, packing, getLocale());
       if (status > 299) {
         return Response.status(status).build();
       } else {

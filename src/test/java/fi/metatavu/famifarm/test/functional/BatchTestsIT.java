@@ -9,22 +9,12 @@ import java.time.OffsetDateTime;
 import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
+import fi.metatavu.famifarm.client.model.*;
 import org.junit.Test;
 
-import fi.metatavu.famifarm.client.model.Batch;
-import fi.metatavu.famifarm.client.model.BatchPhase;
-import fi.metatavu.famifarm.client.model.PotType;
-import fi.metatavu.famifarm.client.model.Event;
-import fi.metatavu.famifarm.client.model.EventType;
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
-import fi.metatavu.famifarm.client.model.PackageSize;
-import fi.metatavu.famifarm.client.model.Product;
-import fi.metatavu.famifarm.client.model.ProductionLine;
-import fi.metatavu.famifarm.client.model.Seed;
-import fi.metatavu.famifarm.client.model.SeedBatch;
-import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 /**
@@ -194,17 +184,11 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       builder.admin().events().createWastage(openBatch2, OffsetDateTime.of(2020, 2, 6, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 4, 4, 5, 6, 0, ZoneOffset.UTC), 3, wastageReason, null, EventType.HARVEST, productionLine.getId());
 
       builder.admin().batches().assertCount(2);
-      builder.admin().batches().assertCountByStatus(1, "OPEN");
-      builder.admin().batches().assertCountByStatus(0, "CLOSED");
-      builder.admin().batches().assertCountByStatus(1, "NEGATIVE");
       
       updateWasteage.setData(builder.admin().events().createWastageEventData(2, wastageReason, EventType.HARVEST, productionLine.getId()));
       builder.admin().events().updateEvent(updateWasteage);
-      
       builder.admin().batches().assertCount(2);
-      builder.admin().batches().assertCountByStatus(1, "OPEN");
-      builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
-      builder.admin().batches().assertCountByStatus(1, "CLOSED");
+
     }
   }
   
@@ -261,7 +245,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
   }
   
   @Test
-  public void testDeletebatches() throws Exception {
+  public void testDeleteBatches() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
@@ -315,6 +299,38 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       batch = builder.admin().batches().findBatch(batch.getId());
       assertEquals(2, batch.getSowingLineNumbers().size());
       assertThat(batch.getSowingLineNumbers(), containsInAnyOrder("6a", "7a"));
+    }
+  }
+
+
+  @Test
+  public void testBatchErrors() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+      Product product = builder.admin().products().create(name, createdPackageSize);
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+
+      Batch batch = builder.admin().batches().create(product);
+
+      OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+      ProductionLine productionLine = builder.admin().productionLines().create("4", 70);
+      SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
+
+      builder.admin().events().createSowing(batch, startTime, endTime, 80, PotType.LARGE, productionLine, Collections.singletonList(seedBatch));
+      builder.admin().events().createPlanting(batch, startTime.plusDays(1), endTime, 28, 100, productionLine, 80, 1);
+      builder.admin().events().createHarvest(batch, 29, startTime.plusDays(2), endTime, productionLine, HarvestEventData.TypeEnum.BAGGING);
+
+      assertEquals(1, builder.admin().batches().list("CLOSED").size());
+      assertEquals(0, builder.admin().batches().list("NEGATIVE").size());
+      assertEquals(0, builder.admin().batches().list("OPEN").size());
+
+      builder.admin().events().createHarvest(batch, 30, startTime.plusDays(3), endTime, productionLine, HarvestEventData.TypeEnum.BAGGING);
+
+      assertEquals(0, builder.admin().batches().list("CLOSED").size());
+      assertEquals(1, builder.admin().batches().list("NEGATIVE").size());
+      assertEquals(0, builder.admin().batches().list("OPEN").size());
     }
   }
   

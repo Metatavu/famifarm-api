@@ -27,12 +27,25 @@ public class PackingTranslator {
     
     Packing result = new Packing();
     result.setId(packing.getId());
-    result.setPackageSizeId(packing.getPackageSize().getId());
+
+    if (packing.getPackageSize() != null) {
+      result.setPackageSizeId(packing.getPackageSize().getId());
+    }
+
     result.setPackedCount(packing.getPackedCount());
-    result.setProductId(packing.getProduct().getId());
+
+    if (packing.getProduct() != null) {
+      result.setProductId(packing.getProduct().getId());
+    }
+
+    if (packing.getCampaign() != null) {
+      result.setCampaignId(packing.getCampaign().getId());
+    }
+
     result.setState(packing.getPackingState());
     result.setTime(packing.getTime());
-    
+    result.setType(packing.getType());
+
     return result;
   }
 }

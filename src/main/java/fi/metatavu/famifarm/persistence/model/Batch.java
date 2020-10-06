@@ -47,6 +47,10 @@ public class Batch {
 
   @Column(nullable = false)
   @NotNull
+  private int totalSowed;
+
+  @Column(nullable = false)
+  @NotNull
   private UUID creatorId;
 
   @Column(nullable = false)
@@ -121,6 +125,14 @@ public class Batch {
   
   public void setActiveEvent(Event activeEvent) {
     this.activeEvent = activeEvent;
+  }
+
+  public int getTotalSowed() {
+    return this.totalSowed;
+  }
+
+  public void setTotalSowed(int totalSowed) {
+    this.totalSowed = totalSowed;
   }
 
   @PrePersist
