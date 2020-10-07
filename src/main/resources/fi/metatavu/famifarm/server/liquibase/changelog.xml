@@ -780,6 +780,57 @@
         <constraints nullable="false"/>
       </column>
     </addColumn>
-  </changeSet>  
+  </changeSet>
+
+  <changeSet id="timestamptodatetime" author="Simeon Platonov">
+    <modifyDataType tableName="batch" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="batch" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="campaign" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="campaign" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="campaignproduct" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="campaignproduct" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="draft" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="draft" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="event" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="event" columnName="modifiedat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="event" columnName="starttime" newDataType="datetime(6)"/>
+    <modifyDataType tableName="event" columnName="endtime" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="packagesize" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="packagesize" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="packing" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="packing" columnName="modifiedat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="packing" columnName="time" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="performedcultivationaction" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="performedcultivationaction" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="pest" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="pest" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="product" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="product" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="productionline" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="productionline" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="seed" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="seed" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="seedbatch" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="seedbatch" columnName="modifiedat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="seedbatch" columnName="time" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="team" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="team" columnName="modifiedat" newDataType="datetime(6)"/>
+
+    <modifyDataType tableName="wastagereason" columnName="createdat" newDataType="datetime(6)"/>
+    <modifyDataType tableName="wastagereason" columnName="modifiedat" newDataType="datetime(6)"/>
+  </changeSet>
 
 </databaseChangeLog>
