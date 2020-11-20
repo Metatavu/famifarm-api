@@ -26,7 +26,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       testEntry.add(testValue);
 
       PackageSize size = builder.admin().packageSizes().create(testEntry, 10);
-      Product product = builder.admin().products().create(testEntry, size);
+      Product product = builder.admin().products().create(testEntry, size, false);
 
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
@@ -71,7 +71,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       testEntry.add(testValue);
 
       PackageSize size = builder.admin().packageSizes().create(testEntry, 10);
-      Product product = builder.admin().products().create(testEntry, size);
+      Product product = builder.admin().products().create(testEntry, size, false);
 
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
@@ -102,7 +102,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       testEntry.add(testValue);
 
       PackageSize size = builder.admin().packageSizes().create(testEntry, 10);
-      Product product = builder.admin().products().create(testEntry, size);
+      Product product = builder.admin().products().create(testEntry, size, false);
 
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Summer");

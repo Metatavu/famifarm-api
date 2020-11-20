@@ -79,7 +79,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       Batch batch = builder.admin().batches().create(product);
       
       builder.admin().performedCultivationActions();
@@ -119,7 +119,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       Batch batch = builder.admin().batches().create(product);
 
       builder.admin().wastageReasons();
@@ -159,7 +159,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       Batch batch = builder.admin().batches().create(product);
 
       builder.admin().wastageReasons();
@@ -195,7 +195,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
       Batch batch = builder.admin().batches().create(product);
       
       createSowingEvent(builder, batch, 10, startTime, endTime);
@@ -204,7 +204,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       Batch batch2 = builder.admin().batches().create(product);
       createSowingEvent(builder, batch2, 10, startTime, endTime);
 
-      Product product2 = builder.admin().products().create(builder.createLocalizedEntry("B - product", "B - tuote"), createdPackageSize);
+      Product product2 = builder.admin().products().create(builder.createLocalizedEntry("B - product", "B - tuote"), createdPackageSize, false);
       Batch batch3 = builder.admin().batches().create(product2);
       createSowingEvent(builder, batch3, 25, startTime, endTime);
       
@@ -233,7 +233,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
       Batch batch = builder.admin().batches().create(product);
       
       createSowingEvent(builder, batch, 10, startTime, endTime);
@@ -259,7 +259,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
       Batch batch = builder.admin().batches().create(product);
       
       createSowingEvent(builder, batch, 10, startTime, endTime);
@@ -285,7 +285,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
       Batch batch = builder.admin().batches().create(product);
       
       createSowingEvent(builder, batch, 10, startTime, endTime);
@@ -312,7 +312,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
 
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
       builder.admin().packings().create(product.getId(), null, PackingType.BASIC, startTime, 10, PackingState.IN_STORE, createdPackageSize);
 
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();

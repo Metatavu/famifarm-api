@@ -70,7 +70,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       SeedBatch seedBatch3 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now());
       
       PackageSize createPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
-      Product createProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createPackageSize);
+      Product createProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createPackageSize, false);
       Batch createBatch = builder.admin().batches().create(createProduct);
       ProductionLine createProductionLine = builder.admin().productionLines().create("5", 7);
       Event createdEvent = builder.admin().events().createSowing(createBatch, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 1, PotType.LARGE, createProductionLine, Arrays.asList(seedBatch1, seedBatch2));
@@ -83,7 +83,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
       
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
-      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize, false);
      
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -156,7 +156,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
       
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 7);
-      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize, false);
      
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -220,7 +220,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
       
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 6);
-      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize, false);
      
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -295,7 +295,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
       
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
-      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize, false);
 
 
       Batch updateBatch = builder.admin().batches().create(updateProduct);
@@ -360,7 +360,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
       
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 7);
-      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize, false);
      
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -428,7 +428,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
 
       PackageSize updatePackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
-      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize);
+      Product updateProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name new", "Tuotteen nimi uusi"), updatePackageSize, false);
 
       Batch updateBatch = builder.admin().batches().create(updateProduct);
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -501,7 +501,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
 
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       Batch batch = builder.admin().batches().create(product);
       createSowingEvent(builder, batch);
       createTableSpreadEvent(builder, batch);
@@ -560,7 +560,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       
       Batch batch = builder.admin().batches().create(product);

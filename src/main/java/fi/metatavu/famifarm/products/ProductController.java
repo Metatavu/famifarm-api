@@ -27,11 +27,12 @@ public class ProductController {
    * 
    * @param name name
    * @param defaultPackageSize defaultPackageSize
+   * @param isSubcontractorProduct is subcontractor product
    * @param creatorId creatorId
    * @return created product
    */
-  public Product createProduct(LocalizedEntry name, PackageSize defaultPackageSize, UUID creatorId) {
-    return productDAO.create(UUID.randomUUID(), name, defaultPackageSize, creatorId, creatorId);
+  public Product createProduct(LocalizedEntry name, PackageSize defaultPackageSize, boolean isSubcontractorProduct, UUID creatorId) {
+    return productDAO.create(UUID.randomUUID(), name, defaultPackageSize, isSubcontractorProduct, creatorId, creatorId);
   }
 
   /**
@@ -49,10 +50,11 @@ public class ProductController {
    * 
    * @param firstResult first result
    * @param maxResults max results
+   * @param includeSubcontractorProducts include subcontractor products
    * @return list of products
    */
-  public List<Product> listProducts(Integer firstResult, Integer maxResults) {
-    return productDAO.listAll(firstResult, maxResults);
+  public List<Product> listProducts(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts) {
+    return productDAO.list(firstResult, maxResults, includeSubcontractorProducts);
   }
 
   /**
@@ -60,12 +62,15 @@ public class ProductController {
    * 
    * @param product product
    * @param name name
+   * @param packageSize new default package size
+   * @param isSubcontractorProduct is subcontractor product
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public Product updateProduct(Product product, LocalizedEntry name, PackageSize packageSize, UUID lastModifierId) {
+  public Product updateProduct(Product product, LocalizedEntry name, PackageSize packageSize, boolean isSubcontractorProduct, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
     productDAO.updateDefaultPackageSize(product, packageSize, lastModifierId);
+    productDAO.updateIsSubcontractorProduct(product, isSubcontractorProduct, lastModifierId);
     return product;
   }
 
