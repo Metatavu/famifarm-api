@@ -37,6 +37,9 @@ public class Product {
   private PackageSize defaultPackageSize;
 
   @Column(nullable = false)
+  private boolean isSubcontractorProduct;
+
+  @Column(nullable = false)
   @NotNull
   private UUID creatorId;
 
@@ -72,6 +75,14 @@ public class Product {
 
   public PackageSize getDefaultPackageSize() {
     return defaultPackageSize;
+  }
+
+  public void setIsSubcontractorProduct(boolean isSubcontractorProduct) {
+    this.isSubcontractorProduct = isSubcontractorProduct;
+  }
+
+  public boolean isSubcontractorProduct() {
+    return this.isSubcontractorProduct;
   }
 
   public void setDefaultPackageSize(PackageSize defaultPackageSize) {

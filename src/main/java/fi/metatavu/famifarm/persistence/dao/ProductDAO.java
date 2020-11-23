@@ -1,12 +1,16 @@
 package fi.metatavu.famifarm.persistence.dao;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
-import fi.metatavu.famifarm.persistence.model.PackageSize;
-import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.persistence.model.*;
 
 /**
  * DAO class for package sizes
@@ -22,14 +26,18 @@ public class ProductDAO extends AbstractDAO<Product> {
    * @param id id
    * @param name name
    * @param defaultPackageSize defaultPackageSize
+   * @param isSubcontractorProduct is subcontractor product
+   * @param creatorId creator
+   * @param lastModifierId modifier
+   *
    * @return created seed
-   * @param lastModifier modifier
    */
-  public Product create(UUID id, LocalizedEntry name, PackageSize defaultPackageSize, UUID creatorId, UUID lastModifierId) {
+  public Product create(UUID id, LocalizedEntry name, PackageSize defaultPackageSize, boolean isSubcontractorProduct, UUID creatorId, UUID lastModifierId) {
     Product product = new Product();
     product.setId(id);
     product.setName(name);
     product.setDefaultPackageSize(defaultPackageSize);
+    product.setIsSubcontractorProduct(isSubcontractorProduct);
     product.setCreatorId(creatorId);
     product.setLastModifierId(lastModifierId);
     return persist(product);
@@ -40,12 +48,27 @@ public class ProductDAO extends AbstractDAO<Product> {
    *
    * @param product product
    * @param name name
-   * @param lastModifier modifier
+   * @param lastModifierId modifier
    * @return updated product
    */
   public Product updateName(Product product, LocalizedEntry name, UUID lastModifierId) {
     product.setLastModifierId(lastModifierId);
     product.setName(name);
+    return persist(product);
+  }
+
+  /**
+   * Updates isSubcontractorProduct-field
+   *
+   * @param product a product to update
+   * @param isSubcontractorProduct a new value
+   * @param lastModifierId an id of an user who is modifying this product
+   *
+   * @return updated product
+   */
+  public Product updateIsSubcontractorProduct(Product product, boolean isSubcontractorProduct, UUID lastModifierId) {
+    product.setLastModifierId(lastModifierId);
+    product.setIsSubcontractorProduct(isSubcontractorProduct);
     return persist(product);
   }
 
@@ -61,6 +84,32 @@ public class ProductDAO extends AbstractDAO<Product> {
     product.setLastModifierId(lastModifierId);
     product.setDefaultPackageSize(packageSize);
     return persist(product);
+  }
+
+
+  public List<Product> list(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Product> criteria = criteriaBuilder.createQuery(Product.class);
+    Root<Product> root = criteria.from(Product.class);
+    criteria.select(root);
+
+    if (includeSubcontractorProducts == null || !includeSubcontractorProducts) {
+      criteria.where(criteriaBuilder.equal(root.get(Product_.isSubcontractorProduct), false));
+    }
+
+    TypedQuery<Product> query = entityManager.createQuery(criteria);
+
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
   }
 
 }

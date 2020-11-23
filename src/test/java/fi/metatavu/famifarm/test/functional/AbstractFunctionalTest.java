@@ -28,7 +28,7 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createSowingEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize);
+    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize, false);
     Batch batch = builder.admin().batches().create(product);
     return createSowingEvent(builder, batch);
   }
@@ -94,7 +94,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createTableSpreadEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, createdPackageSize);
+    Product product = builder.admin().products().create(name, createdPackageSize, false);
 
     Batch batch = builder.admin().batches().create(product);
     return createTableSpreadEvent(builder, batch);
@@ -126,7 +126,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createCultivationObservationEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, createdPackageSize);
+    Product product = builder.admin().products().create(name, createdPackageSize, false);
 
     Batch batch = builder.admin().batches().create(product);
 
@@ -210,7 +210,7 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize);
+    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize, false);
 
     Batch batch = builder.admin().batches().create(product);
     return createHarvestEvent(builder, harvestType, batch);
@@ -259,7 +259,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createPlantingEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 12);
     LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, createdPackageSize);
+    Product product = builder.admin().products().create(name, createdPackageSize, false);
     
     Batch batch = builder.admin().batches().create(product);
     
@@ -310,7 +310,7 @@ public abstract class AbstractFunctionalTest {
     WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, createdPackageSize);
+    Product product = builder.admin().products().create(name, createdPackageSize, false);
     ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
     Batch batch = builder.admin().batches().create(product);
     
