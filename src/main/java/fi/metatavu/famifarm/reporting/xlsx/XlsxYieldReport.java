@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
-import fi.metatavu.famifarm.packing.PackingController;
+import fi.metatavu.famifarm.packings.PackingController;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.persistence.model.Product;

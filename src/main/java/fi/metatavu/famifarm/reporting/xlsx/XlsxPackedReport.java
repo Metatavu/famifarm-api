@@ -2,7 +2,7 @@ package fi.metatavu.famifarm.reporting.xlsx;
 
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
-import fi.metatavu.famifarm.packing.PackingController;
+import fi.metatavu.famifarm.packings.PackingController;
 import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.EventCountController;
