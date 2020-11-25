@@ -31,6 +31,7 @@ public class CutPackingDAO extends AbstractDAO<CutPacking> {
      * @param contactInformation contact information
      * @param gutterCount gutter count
      * @param gutterHoleCount gutter hole count
+     * @param storageCondition storage condition
      * @param creatorId the id of the user who is creating this cut packing
      *
      * @return a created cut packing
@@ -46,6 +47,7 @@ public class CutPackingDAO extends AbstractDAO<CutPacking> {
             String contactInformation,
             int gutterCount,
             int gutterHoleCount,
+            String storageCondition,
             UUID creatorId) {
 
         CutPacking cutPacking = new CutPacking();
@@ -61,6 +63,7 @@ public class CutPackingDAO extends AbstractDAO<CutPacking> {
         cutPacking.setGutterHoleCount(gutterHoleCount);
         cutPacking.setCreatorId(creatorId);
         cutPacking.setLastModifierId(creatorId);
+        cutPacking.setStorageCondition(storageCondition);
 
         return persist(cutPacking);
     }
@@ -204,6 +207,22 @@ public class CutPackingDAO extends AbstractDAO<CutPacking> {
      */
     public CutPacking updateGutterHoleCount(CutPacking cutPacking, int gutterHoleCount, UUID modifierId) {
         cutPacking.setGutterHoleCount(gutterHoleCount);
+        cutPacking.setLastModifierId(modifierId);
+
+        return persist(cutPacking);
+    }
+
+    /**
+     * Updates a cut packing storage condition
+     *
+     * @param cutPacking a cut packing to update
+     * @param storageCondition a new storage condition
+     * @param modifierId the id of the user who is modifying this cut packing
+     *
+     * @return updated cut packing
+     */
+    public CutPacking updateStorageCondition(CutPacking cutPacking, String storageCondition, UUID modifierId) {
+        cutPacking.setStorageCondition(storageCondition);
         cutPacking.setLastModifierId(modifierId);
 
         return persist(cutPacking);

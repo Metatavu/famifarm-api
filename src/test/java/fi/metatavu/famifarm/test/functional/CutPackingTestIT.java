@@ -40,6 +40,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     sowingDay,
                     "Producer",
                     "Contact information",
+                    "Storage condition",
                     10,
                     100);
 
@@ -51,6 +52,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             assertEquals(getTestableDateTimeString(cuttingDay), getTestableDateTimeString(cutPacking.getCuttingDay()));
             assertEquals("Producer", cutPacking.getProducer());
             assertEquals("Contact information", cutPacking.getContactInformation());
+            assertEquals("Storage condition", cutPacking.getStorageCondition());
             assertEquals(10, (int) cutPacking.getGutterCount());
             assertEquals(100, (int) cutPacking.getGutterHoleCount());
         }
@@ -84,6 +86,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     sowingDay,
                     "Producer",
                     "Contact information",
+                    "Storage condition",
                     10,
                     100);
 
@@ -96,6 +99,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             createdCutPacking.setContactInformation("Contact information 2");
             createdCutPacking.setGutterCount(20);
             createdCutPacking.setGutterHoleCount(200);
+            createdCutPacking.setStorageCondition("New storage condition");
 
             CutPacking updatedCutPacking = testBuilder.admin().cutPackings().update(createdCutPacking);
 
@@ -109,6 +113,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             assertEquals("Contact information 2", updatedCutPacking.getContactInformation());
             assertEquals(20, (int) updatedCutPacking.getGutterCount());
             assertEquals(200, (int) updatedCutPacking.getGutterHoleCount());
+            assertEquals("New storage condition", updatedCutPacking.getStorageCondition());
 
             CutPacking cutPacking2 = updatedCutPacking;
             cutPacking2.setProductId(UUID.randomUUID());
@@ -152,6 +157,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     sowingDay,
                     "Producer",
                     "Contact information",
+                    "Storage information",
                     10,
                     100);
 
@@ -163,6 +169,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     sowingDay,
                     "Producer",
                     "Contact information",
+                    "Storage information",
                     10,
                     100);
 
@@ -174,6 +181,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     sowingDay,
                     "Producer",
                     "Contact information",
+                    "Storage information",
                     10,
                     100);
 
@@ -185,6 +193,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     sowingDay,
                     "Producer",
                     "Contact information",
+                    "Storage information",
                     10,
                     100);
 
@@ -222,6 +231,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     sowingDay,
                     "Producer",
                     "Contact information",
+                    "Storage information",
                     10,
                     100).getId();
 
@@ -258,6 +268,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     sowingDay,
                     "Producer",
                     "Contact information",
+                    "Storage information",
                     10,
                     100).getId();
 

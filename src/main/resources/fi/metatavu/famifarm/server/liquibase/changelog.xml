@@ -885,6 +885,9 @@
       <column name="gutterholecount" type="integer">
         <constraints nullable="false"/>
       </column>
+      <column name="storagecondition" type="longtext">
+        <constraints nullable="false"/>
+      </column>
     </createTable>
   </changeSet>
 </databaseChangeLog>

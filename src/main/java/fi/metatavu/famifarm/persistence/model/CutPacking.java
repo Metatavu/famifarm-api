@@ -40,6 +40,9 @@ public class CutPacking {
     private int gutterHoleCount;
 
     @Column(nullable = false)
+    private String storageCondition;
+
+    @Column(nullable = false)
     private OffsetDateTime createdAt;
 
     @Column(nullable = false)
@@ -52,6 +55,14 @@ public class CutPacking {
     @Column(nullable = false)
     @NotNull
     private UUID lastModifierId;
+
+    public String getStorageCondition() {
+        return this.storageCondition;
+    }
+
+    public void setStorageCondition(String storageCondition) {
+        this.storageCondition = storageCondition;
+    }
 
     public int getGutterCount() {
         return this.gutterCount;

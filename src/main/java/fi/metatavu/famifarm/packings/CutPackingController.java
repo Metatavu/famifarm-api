@@ -36,6 +36,7 @@ public class CutPackingController {
      * @param contactInformation contact information
      * @param gutterCount gutter count
      * @param gutterHoleCount gutter hole count
+     * @param storageCondition storage condition
      * @param creatorId the id of the user who is creating this cut packing
      */
     public CutPacking create (
@@ -48,6 +49,7 @@ public class CutPackingController {
             String contactInformation,
             int gutterCount,
             int gutterHoleCount,
+            String storageCondition,
             UUID creatorId) throws CutPackingInvalidParametersException {
 
         Product product = productDAO.findById(productId);
@@ -61,7 +63,7 @@ public class CutPackingController {
             throw new CutPackingInvalidParametersException("Production line with id " + productionLineId + " not found!");
         }
 
-        return cutPackingDAO.create(UUID.randomUUID(), product, productionLine, weight, sowingDay, cuttingDay, producer, contactInformation, gutterCount, gutterHoleCount, creatorId);
+        return cutPackingDAO.create(UUID.randomUUID(), product, productionLine, weight, sowingDay, cuttingDay, producer, contactInformation, gutterCount, gutterHoleCount, storageCondition, creatorId);
     }
 
     /**
@@ -77,6 +79,7 @@ public class CutPackingController {
      * @param contactInformation a new contact information
      * @param gutterCount a new gutter count
      * @param gutterHoleCount a new gutter count
+     * @param storageCondition a new storage condition
      * @param modifierId the id of the user who is modifying this cut packing
      *
      * @return a cut packing to update
@@ -92,6 +95,7 @@ public class CutPackingController {
             String contactInformation,
             int gutterCount,
             int gutterHoleCount,
+            String storageCondition,
             UUID modifierId) throws CutPackingInvalidParametersException {
 
         Product product = productDAO.findById(productId);
@@ -114,6 +118,7 @@ public class CutPackingController {
         cutPackingDAO.updateContactInformation(cutPacking, contactInformation, modifierId);
         cutPackingDAO.updateGutterCount(cutPacking, gutterCount, modifierId);
         cutPackingDAO.updateGutterHoleCount(cutPacking, gutterHoleCount, modifierId);
+        cutPackingDAO.updateStorageCondition(cutPacking, storageCondition, modifierId);
 
         return cutPacking;
     }

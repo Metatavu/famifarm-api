@@ -446,6 +446,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
               cutPacking.getContactInformation(),
               cutPacking.getGutterCount(),
               cutPacking.getGutterHoleCount(),
+              cutPacking.getStorageCondition(),
               getLoggerUserId()
       );
 
@@ -1058,6 +1059,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
               cutPacking.getContactInformation(),
               cutPacking.getGutterCount(),
               cutPacking.getGutterHoleCount(),
+              cutPacking.getStorageCondition(),
               getLoggerUserId()
       );
 

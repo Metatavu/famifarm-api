@@ -25,6 +25,7 @@ public class CutPackingTranslator extends AbstractTranslator  {
         cutPacking.setProductionLineId(entity.getProductionLine().getId());
         cutPacking.setSowingDay(entity.getSowingDay());
         cutPacking.setWeight(entity.getWeight());
+        cutPacking.setStorageCondition(entity.getStorageCondition());
 
         return cutPacking;
     }

@@ -46,6 +46,7 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
             OffsetDateTime sowingDay,
             String producer,
             String contactInformation,
+            String storageCondition,
             int gutterCount,
             int gutterHoleCount
     ) {
@@ -59,6 +60,7 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
         cutPacking.setProducer(producer);
         cutPacking.setGutterCount(gutterCount);
         cutPacking.setGutterHoleCount(gutterHoleCount);
+        cutPacking.setStorageCondition(storageCondition);
         CutPacking created = getApi().createCutPacking(cutPacking);
         return addClosable(created);
     }
