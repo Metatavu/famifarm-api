@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
@@ -18,6 +19,17 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
  * @author Antti Leppä
  */
 public abstract class AbstractFunctionalTest {
+  /**
+   * Returns a testable datetime string
+   *
+   * @param dateTime date time to convert
+   * @return a testable datetime string
+   */
+  protected String getTestableDateTimeString (OffsetDateTime dateTime) {
+    String dateTimeString = dateTime.toString();
+    int dotPosition = dateTimeString.lastIndexOf("T");
+    return dateTimeString.substring(0, dotPosition);
+  }
 
   /**
    * Creates test event

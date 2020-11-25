@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 
 import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.packings.CutPackingController;
+import fi.metatavu.famifarm.packings.CutPackingInvalidParametersException;
 import fi.metatavu.famifarm.printing.PrintingController;
 import fi.metatavu.famifarm.rest.model.*;
 import fi.metatavu.famifarm.rest.translate.*;
@@ -434,23 +435,26 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response createCutPacking(@Valid CutPacking cutPacking) {
+    try {
+      fi.metatavu.famifarm.persistence.model.CutPacking createdCutPacking = cutPackingController.create(
+              cutPacking.getProductId(),
+              cutPacking.getProductionLineId(),
+              cutPacking.getWeight(),
+              cutPacking.getSowingDay(),
+              cutPacking.getCuttingDay(),
+              cutPacking.getProducer(),
+              cutPacking.getContactInformation(),
+              cutPacking.getGutterCount(),
+              cutPacking.getGutterHoleCount(),
+              getLoggerUserId()
+      );
 
-    fi.metatavu.famifarm.persistence.model.CutPacking createdCutPacking = cutPackingController.create(
-            cutPacking.getProductId(),
-            cutPacking.getProductionLineId(),
-            cutPacking.getWeight(),
-            cutPacking.getSowingDay(),
-            cutPacking.getCuttingDay(),
-            cutPacking.getProducer(),
-            cutPacking.getContactInformation(),
-            cutPacking.getGutterCount(),
-            cutPacking.getGutterHoleCount(),
-            getLoggerUserId()
-    );
+      CutPacking translatedCutPacking = cutPackingTranslator.translate(createdCutPacking);
 
-    CutPacking translatedCutPacking = cutPackingTranslator.translate(createdCutPacking);
-
-    return createOk(translatedCutPacking);
+      return createOk(translatedCutPacking);
+    } catch (CutPackingInvalidParametersException exception) {
+      return createBadRequest(exception.getMessage());
+    }
   }
 
   @Override
@@ -579,8 +583,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  public Response deleteCutPacking(UUID uuid) {
-    return null;
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response deleteCutPacking(UUID cutPackingId) {
+    fi.metatavu.famifarm.persistence.model.CutPacking existingCutPacking = cutPackingController.find(cutPackingId);
+
+    if (existingCutPacking == null) {
+      return createNotFound("Cut packing with id " + cutPackingId + " not found!");
+    }
+
+    cutPackingController.delete(existingCutPacking);
+
+    return createNoContent();
   }
 
   @Override
@@ -712,8 +725,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  public Response findCutPacking(UUID uuid) {
-    return null;
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response findCutPacking(UUID cutPackingId) {
+    fi.metatavu.famifarm.persistence.model.CutPacking foundCutPacking = cutPackingController.find(cutPackingId);
+
+    if (foundCutPacking == null) {
+      return createNotFound("Cut packing with id " + cutPackingId + " not found!");
+    }
+
+    CutPacking translatedCutPacking = cutPackingTranslator.translate(foundCutPacking);
+    return createOk(translatedCutPacking);
   }
 
   @Override
@@ -834,20 +855,31 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
-  public Response listCutPackings(Integer firstResult, Integer maxResults, UUID productId, String createdBefore, String createdAfter) {
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response listCutPackings(Integer firstResult, Integer maxResults, UUID productId, String createdBeforeString, String createdAfterString) {
     fi.metatavu.famifarm.persistence.model.Product productToFilterBy = null;
 
     if (productId != null) {
       fi.metatavu.famifarm.persistence.model.Product existingProduct = productController.findProduct(productId);
 
       if (existingProduct == null) {
-        return createNotFound("Product with id " + productId + " not found!");
+        return createBadRequest("Product with id " + productId + " not found!");
       }
 
       productToFilterBy = existingProduct;
     }
 
-    List<fi.metatavu.famifarm.persistence.model.CutPacking> cutPackings = cutPackingController.list(firstResult, maxResults, productToFilterBy, null, OffsetDateTime.parse(createdBefore), OffsetDateTime.parse(createdAfter));
+    OffsetDateTime createdBefore = null;
+    if (createdBeforeString != null) {
+      createdBefore = OffsetDateTime.parse(createdBeforeString);
+    }
+
+    OffsetDateTime createdAfter = null;
+    if (createdAfterString != null) {
+      createdAfter = OffsetDateTime.parse(createdAfterString);
+    }
+
+    List<fi.metatavu.famifarm.persistence.model.CutPacking> cutPackings = cutPackingController.list(firstResult, maxResults, productToFilterBy, null, createdBefore, createdAfter);
     List<CutPacking> translatedCutPackings = cutPackings.stream().map(cutPackingTranslator::translate).collect(Collectors.toList());
     return createOk(translatedCutPackings);
   }
@@ -926,9 +958,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response print(@Valid PrintData printData, String printerId) {
     UUID packingId = printData.getPackingId();
     fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
-    if (packing == null) {
-      return createBadRequest("Packing not found!");
-    }
+    fi.metatavu.famifarm.persistence.model.CutPacking cutPacking = cutPackingController.find(packingId);
 
     try {
       List<Printer> printers = printingController.getPrinters();
@@ -943,7 +973,20 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createNotFound("Printer not found!");
       }
 
-      int status = printingController.printQrCode(printerId, packing, getLocale());
+      Integer status = null;
+
+      if (packing == null && cutPacking == null) {
+        return createBadRequest("Packing not found!");
+      }
+
+      if (packing != null) {
+        status = printingController.printQrCode(printerId, packing, getLocale());
+      }
+
+      if (cutPacking != null) {
+        status = printingController.printQrCode(printerId, cutPacking, getLocale());
+      }
+
       if (status > 299) {
         return Response.status(status).build();
       } else {
@@ -995,6 +1038,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response updateCutPacking(@Valid CutPacking cutPacking, UUID cutPackingId) {
     fi.metatavu.famifarm.persistence.model.CutPacking existingCutPacking = cutPackingController.find(cutPackingId);
 
@@ -1002,23 +1046,27 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound("Cut packing with id " + cutPackingId + " not found!");
     }
 
-    fi.metatavu.famifarm.persistence.model.CutPacking updatedCutPacking = cutPackingController.update(
-            existingCutPacking,
-            cutPacking.getProductId(),
-            cutPacking.getProductionLineId(),
-            cutPacking.getWeight(),
-            cutPacking.getSowingDay(),
-            cutPacking.getCuttingDay(),
-            cutPacking.getProducer(),
-            cutPacking.getContactInformation(),
-            cutPacking.getGutterCount(),
-            cutPacking.getGutterHoleCount(),
-            getLoggerUserId()
-    );
+    try {
+      fi.metatavu.famifarm.persistence.model.CutPacking updatedCutPacking = cutPackingController.update(
+              existingCutPacking,
+              cutPacking.getProductId(),
+              cutPacking.getProductionLineId(),
+              cutPacking.getWeight(),
+              cutPacking.getSowingDay(),
+              cutPacking.getCuttingDay(),
+              cutPacking.getProducer(),
+              cutPacking.getContactInformation(),
+              cutPacking.getGutterCount(),
+              cutPacking.getGutterHoleCount(),
+              getLoggerUserId()
+      );
 
-    CutPacking translatedCutPacking = cutPackingTranslator.translate();
+      CutPacking translatedCutPacking = cutPackingTranslator.translate(updatedCutPacking);
 
-    return createOk(translatedCutPacking);
+      return createOk(translatedCutPacking);
+    } catch (CutPackingInvalidParametersException exception) {
+      return createBadRequest(exception.getMessage());
+    }
   }
 
   @Override

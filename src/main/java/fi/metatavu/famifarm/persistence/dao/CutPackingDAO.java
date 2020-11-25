@@ -139,7 +139,7 @@ public class CutPackingDAO extends AbstractDAO<CutPacking> {
      * @return updated cut packing
      */
     public CutPacking updateCuttingDay(CutPacking cutPacking, OffsetDateTime cuttingDay, UUID modifierId) {
-        cutPacking.setSowingDay(cuttingDay);
+        cutPacking.setCuttingDay(cuttingDay);
         cutPacking.setLastModifierId(modifierId);
 
         return persist(cutPacking);

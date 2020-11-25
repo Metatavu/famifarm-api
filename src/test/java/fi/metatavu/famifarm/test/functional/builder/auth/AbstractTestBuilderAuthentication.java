@@ -29,6 +29,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private PackingTestBuilderResource packings;
   private PrintingTestBuilderResource printers;
   private CampaignTestBuilderResource campaigns;
+  private CutPackingTestBuilderResource cutPackings;
   private List<AutoCloseable> closables = new ArrayList<>();
 
   /**
@@ -237,6 +238,20 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
     
     return drafts = this.addClosable(new DraftTestBuilderResource(createClient()));
+  }
+
+  /**
+   * Returns a test builder resource for cut packings
+   *
+   * @return a test builder resource for cut packings
+   * @throws IOException thrown when authentication fails
+   */
+  public CutPackingTestBuilderResource cutPackings() throws IOException {
+    if (cutPackings != null) {
+      return cutPackings;
+    }
+
+    return cutPackings = this.addClosable(new CutPackingTestBuilderResource(createClient()));
   }
   
   /**
