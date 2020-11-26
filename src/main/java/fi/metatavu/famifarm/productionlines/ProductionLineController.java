@@ -6,7 +6,9 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductionLineDAO;
+import fi.metatavu.famifarm.persistence.model.CutPacking;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 
 @ApplicationScoped
@@ -14,6 +16,9 @@ public class ProductionLineController {
   
   @Inject
   private ProductionLineDAO productionLineDAO;
+
+  @Inject
+  private CutPackingDAO cutPackingDAO;
 
   /**
    * Creates new production line
@@ -69,6 +74,12 @@ public class ProductionLineController {
    * @param productionLine productionLine to be deleted
    */
   public void deleteProductionLine(ProductionLine productionLine) {
+    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, null, productionLine, null, null);
+
+    for (CutPacking cutPacking : cutPackings) {
+      cutPackingDAO.delete(cutPacking);
+    }
+
     productionLineDAO.delete(productionLine);
   }
 }

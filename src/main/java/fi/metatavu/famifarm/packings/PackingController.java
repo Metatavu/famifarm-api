@@ -1,4 +1,4 @@
-package fi.metatavu.famifarm.packing;
+package fi.metatavu.famifarm.packings;
 
 import java.time.OffsetDateTime;
 import java.util.List;

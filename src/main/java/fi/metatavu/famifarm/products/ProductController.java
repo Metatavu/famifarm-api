@@ -8,11 +8,9 @@ import javax.inject.Inject;
 
 import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
+import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductDAO;
-import fi.metatavu.famifarm.persistence.model.CampaignProduct;
-import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
-import fi.metatavu.famifarm.persistence.model.PackageSize;
-import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.persistence.model.*;
 
 @ApplicationScoped
 public class ProductController {
@@ -21,6 +19,9 @@ public class ProductController {
 
   @Inject
   private ProductDAO productDAO;
+
+  @Inject
+  private CutPackingDAO cutPackingDAO;
 
   /**
    * Creates new product
@@ -84,6 +85,12 @@ public class ProductController {
 
     for (CampaignProduct campaignProduct : campaignProducts) {
       campaignProductDAO.delete(campaignProduct);
+    }
+
+    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, product, null, null, null);
+
+    for (CutPacking cutPacking : cutPackings) {
+      cutPackingDAO.delete(cutPacking);
     }
 
     productDAO.delete(product);
