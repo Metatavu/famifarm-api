@@ -56,11 +56,11 @@ public class CutPackingController {
         ProductionLine productionLine = productionLineDAO.findById(productionLineId);
 
         if (product == null) {
-            throw new CutPackingInvalidParametersException("Product with id " + productId + " not found!");
+            throw new CutPackingInvalidParametersException(String.format("Product with id %s not found!", productId));
         }
 
         if (productionLine == null) {
-            throw new CutPackingInvalidParametersException("Production line with id " + productionLineId + " not found!");
+            throw new CutPackingInvalidParametersException(String.format("Production line with id %s not found!", productionLineId));
         }
 
         return cutPackingDAO.create(UUID.randomUUID(), product, productionLine, weight, sowingDay, cuttingDay, producer, contactInformation, gutterCount, gutterHoleCount, storageCondition, creatorId);
@@ -102,11 +102,11 @@ public class CutPackingController {
         ProductionLine productionLine = productionLineDAO.findById(productionLineId);
 
         if (product == null) {
-            throw new CutPackingInvalidParametersException("Product with id " + productId + " not found!");
+            throw new CutPackingInvalidParametersException(String.format("Product with id %s not found!", productId));
         }
 
         if (productionLine == null) {
-            throw new CutPackingInvalidParametersException("Production line with id " + productionLineId + " not found!");
+            throw new CutPackingInvalidParametersException(String.format("Production line with id %s not found!", productionLineId));
         }
 
         cutPackingDAO.updateProduct(cutPacking, product, modifierId);
