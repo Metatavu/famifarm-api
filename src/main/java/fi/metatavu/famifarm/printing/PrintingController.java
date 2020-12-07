@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,16 +85,29 @@ public class PrintingController {
      */
     public int printQrCode(String printerId, CutPacking cutPacking, Locale locale) throws IOException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String packingTime = formatter.format(cutPacking.getCuttingDay());
-
+        String sowingTime = formatter.format(cutPacking.getSowingDay());
+        String cuttingTime = formatter.format(cutPacking.getCuttingDay());
+        DecimalFormat df2 = new DecimalFormat("#.##");
+        String kilos = df2.format(cutPacking.getWeight());
         String productName = localizedValueController.getValue(cutPacking.getProduct().getName(), locale);
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         lines.add("^XA");
-        lines.add(String.format("^FO30,30,2^AfN,40,30^FD%s^FS", replaceUmlauts(productName)));
-        lines.add("^FO30,85,2^AfN,40,30^FD^FS");
-        lines.add(String.format("^FO30,155,2^AfN,40,30^FD%s^FS", packingTime));
-        lines.add(String.format("^FO480,155,2^BQN,2,10,H,0^FD:::%s^FS", cutPacking.getId().toString()));
+        lines.add("^CF0,80");
+        lines.add(String.format("^FO15,30^FD%s^FS", replaceUmlauts(productName)));
+        lines.add("^CF0,60");
+        lines.add(String.format("^FO15,170^FDWeight: %s kg^FS", kilos));
+        lines.add(String.format("^FO15,240^FDSowed: %s^FS", sowingTime));
+        lines.add(String.format("^FO15,310^FDCut: %s^FS", cuttingTime));
+        lines.add("^CF0,30");
+        lines.add(String.format("^FO15,500^FDStorage conditions: %s^FS", replaceUmlauts(cutPacking.getStorageCondition())));
+        lines.add(String.format("^FO15,550^FDManufacturer: %s^FS", replaceUmlauts(cutPacking.getProducer())));
+        lines.add(String.format("^FO15,600^FDContact: %s^FS", replaceUmlauts(cutPacking.getContactInformation())));
+        lines.add("^FO50,700^GB700,1,2,B,0^FS");
+        lines.add(String.format("^FO250,800^BQN,2,10,H^FD:::%s^FS", cutPacking.getId().toString()));
+        lines.add("^CF0,30");
+        lines.add(String.format("^FO100,1130^FD%s^FS", cutPacking.getId().toString()));
         lines.add("^XZ");
+
         return executePrintCommands(lines, printerId);
     }
 
