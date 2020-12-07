@@ -27,6 +27,7 @@ public class ProductsTranslator extends AbstractTranslator {
     result.setId(product.getId());
     result.setName(translatelocalizedValue(product.getName()));
     result.setDefaultPackageSizeId(product.getDefaultPackageSize() != null ? product.getDefaultPackageSize().getId() : null);
+    result.setIsSubcontractorProduct(product.isSubcontractorProduct());
 
     return result;
   }

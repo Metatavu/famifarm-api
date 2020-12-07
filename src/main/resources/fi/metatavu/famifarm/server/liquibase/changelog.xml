@@ -833,4 +833,61 @@
     <modifyDataType tableName="wastagereason" columnName="modifiedat" newDataType="datetime(6)"/>
   </changeSet>
 
+  <changeSet id="Subcontractor products" author="Simeon Platonov">
+    <addColumn tableName="product">
+      <column name="issubcontractorproduct" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="Cut packing" author="Simeon Platonov">
+    <createTable tableName="cutpacking">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="createdat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modifiedat" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="product_id" type="binary(16)">
+        <constraints nullable="false" referencedTableName="product" referencedColumnNames="id" foreignKeyName="FK_CUT_PACKING_PRODUCT_ID"/>
+      </column>
+      <column name="productionline_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_CUT_PACKING_PRODUCTIONLINE_ID" referencedColumnNames="id" referencedTableName="productionline"/>
+      </column>
+      <column name="weight" type="double">
+        <constraints nullable="false"/>
+      </column>
+      <column name="cuttingday" type="datetime(6)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sowingday" type="datetime(6)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="producer" type="longtext">
+        <constraints nullable="false"/>
+      </column>
+      <column name="contactinformation" type="longtext">
+        <constraints nullable="false"/>
+      </column>
+      <column name="guttercount" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="gutterholecount" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="storagecondition" type="longtext">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
 </databaseChangeLog>

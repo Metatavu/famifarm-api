@@ -8,11 +8,9 @@ import javax.inject.Inject;
 
 import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
+import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductDAO;
-import fi.metatavu.famifarm.persistence.model.CampaignProduct;
-import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
-import fi.metatavu.famifarm.persistence.model.PackageSize;
-import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.persistence.model.*;
 
 @ApplicationScoped
 public class ProductController {
@@ -22,16 +20,20 @@ public class ProductController {
   @Inject
   private ProductDAO productDAO;
 
+  @Inject
+  private CutPackingDAO cutPackingDAO;
+
   /**
    * Creates new product
    * 
    * @param name name
    * @param defaultPackageSize defaultPackageSize
+   * @param isSubcontractorProduct is subcontractor product
    * @param creatorId creatorId
    * @return created product
    */
-  public Product createProduct(LocalizedEntry name, PackageSize defaultPackageSize, UUID creatorId) {
-    return productDAO.create(UUID.randomUUID(), name, defaultPackageSize, creatorId, creatorId);
+  public Product createProduct(LocalizedEntry name, PackageSize defaultPackageSize, boolean isSubcontractorProduct, UUID creatorId) {
+    return productDAO.create(UUID.randomUUID(), name, defaultPackageSize, isSubcontractorProduct, creatorId, creatorId);
   }
 
   /**
@@ -49,10 +51,11 @@ public class ProductController {
    * 
    * @param firstResult first result
    * @param maxResults max results
+   * @param includeSubcontractorProducts include subcontractor products
    * @return list of products
    */
-  public List<Product> listProducts(Integer firstResult, Integer maxResults) {
-    return productDAO.listAll(firstResult, maxResults);
+  public List<Product> listProducts(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts) {
+    return productDAO.list(firstResult, maxResults, includeSubcontractorProducts);
   }
 
   /**
@@ -60,12 +63,15 @@ public class ProductController {
    * 
    * @param product product
    * @param name name
+   * @param packageSize new default package size
+   * @param isSubcontractorProduct is subcontractor product
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public Product updateProduct(Product product, LocalizedEntry name, PackageSize packageSize, UUID lastModifierId) {
+  public Product updateProduct(Product product, LocalizedEntry name, PackageSize packageSize, boolean isSubcontractorProduct, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
     productDAO.updateDefaultPackageSize(product, packageSize, lastModifierId);
+    productDAO.updateIsSubcontractorProduct(product, isSubcontractorProduct, lastModifierId);
     return product;
   }
 
@@ -79,6 +85,12 @@ public class ProductController {
 
     for (CampaignProduct campaignProduct : campaignProducts) {
       campaignProductDAO.delete(campaignProduct);
+    }
+
+    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, product, null, null, null);
+
+    for (CutPacking cutPacking : cutPackings) {
+      cutPackingDAO.delete(cutPacking);
     }
 
     productDAO.delete(product);

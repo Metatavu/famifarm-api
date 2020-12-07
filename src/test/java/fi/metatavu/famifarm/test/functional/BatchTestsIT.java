@@ -29,7 +29,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       assertNotNull(builder.admin().batches().create(product));
     }
   }
@@ -39,7 +39,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       
       builder.anonymous().batches().assertCreateFailStatus(401, product);
       builder.invalid().batches().assertCreateFailStatus(401, product);
@@ -51,7 +51,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       
       builder.admin().batches().assertFindFailStatus(404, UUID.randomUUID());
       Batch createdBatch = builder.admin().batches().create(product);
@@ -65,7 +65,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       
       Batch packageSize = builder.admin().batches().create(product);
       assertNotNull(builder.admin().batches().findBatch(packageSize.getId()));
@@ -81,7 +81,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       
       builder.admin().batches().create(product);
       builder.admin().batches().assertCount(1);
@@ -100,9 +100,9 @@ public class BatchTestsIT extends AbstractFunctionalTest {
   public void testListBatchesByProduct() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product1 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
-      Product product2 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
-      Product product3 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Product product1 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize, false);
+      Product product2 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize, false);
+      Product product3 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize, false);
       
       builder.admin().batches().create(product1);
       builder.admin().batches().create(product2);
@@ -118,7 +118,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
   public void testListBatchesByPhase() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize, false);
       
       Batch sowingPhaseBatch = builder.admin().batches().create(product, BatchPhase.SOWING);
       builder.admin().batches().create(product, BatchPhase.HARVEST);
@@ -150,7 +150,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       builder.admin().batches().assertCountByStatus(0, "NEGATIVE");
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize, false);
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC));
@@ -197,7 +197,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize,false);
       
       Batch packageSize = builder.admin().batches().create(product);
       builder.worker1().batches().assertCount(1);
@@ -213,7 +213,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       
       Batch createdBatch = builder.admin().batches().create(product);
       
@@ -222,7 +222,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
       updateBatch.setId(createdBatch.getId());
       
       name = builder.createLocalizedEntry("Updated name", "Tuotteen nimi");
-      Product updatedProduct = builder.admin().products().create(name, createdPackageSize);
+      Product updatedProduct = builder.admin().products().create(name, createdPackageSize, false);
       
       updateBatch.setProductId(updatedProduct.getId());
      
@@ -236,7 +236,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       
       Batch batch = builder.admin().batches().create(product);
       builder.anonymous().batches().assertUpdateFailStatus(401, batch);
@@ -249,7 +249,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       
       Batch createdBatch = builder.admin().batches().create(product);
       Batch foundBatch = builder.admin().batches().findBatch(createdBatch.getId());
@@ -264,7 +264,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       
       Batch packageSize = builder.admin().batches().create(product);
       builder.worker1().batches().assertDeleteFailStatus(403, packageSize);
@@ -277,7 +277,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
   public void testBatchSowingLineNumbers() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), createdPackageSize, false);
       ProductionLine productionLine6a = builder.admin().productionLines().create("6a", 8);
       ProductionLine productionLine7a = builder.admin().productionLines().create("7a", 8);
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Seed"));
@@ -308,7 +308,7 @@ public class BatchTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize);
+      Product product = builder.admin().products().create(name, createdPackageSize, false);
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
 
       Batch batch = builder.admin().batches().create(product);

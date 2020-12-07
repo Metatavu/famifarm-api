@@ -26,10 +26,10 @@ import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
  *
  */
 public class PackingTestBuilderResource extends AbstractTestBuilderResource<Packing, PackingsApi> {
-  
+
   /**
    * Constructor
-   * 
+   *
    * @param apiClient initialized API client
    */
   public PackingTestBuilderResource(ApiClient apiClient) {

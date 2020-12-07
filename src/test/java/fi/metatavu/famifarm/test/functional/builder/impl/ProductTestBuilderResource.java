@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.json.JSONException;
@@ -37,12 +38,15 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * Creates new product
    * 
    * @param name name
+   * @param packageSize package size
+   * @param isSubcontractorProduct is subcontractor product
    * @return created product
    */
-  public Product create(LocalizedEntry name, PackageSize packageSize) {
+  public Product create(LocalizedEntry name, PackageSize packageSize, boolean isSubcontractorProduct) {
     Product product = new Product();
     product.setName(name);
     product.setDefaultPackageSizeId(packageSize.getId());
+    product.setIsSubcontractorProduct(isSubcontractorProduct);
     return addClosable(getApi().createProduct(product));
   }
 
@@ -76,12 +80,23 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
   }
   
   /**
-   * Asserts product count within the system
+   * Asserts product count within the system (with subcontractor products excluded)
    * 
    * @param expected expected count
    */
   public void assertCount(int expected) {
     assertEquals(expected, getApi().listProducts(Collections.emptyMap()).size());
+  }
+
+  /**
+   * Asserts product count within the system (with subcontractor products included)
+   *
+   * @param expected expected count
+   */
+  public void assertCountWithSubcontractors(int expected) {
+    HashMap<String, Object> queryParameters = new HashMap<>();
+    queryParameters.put("includeSubcontractorProducts", true);
+    assertEquals(expected, getApi().listProducts(queryParameters).size());
   }
   
   /**
