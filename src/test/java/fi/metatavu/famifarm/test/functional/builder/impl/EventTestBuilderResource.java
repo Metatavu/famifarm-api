@@ -1,7 +1,7 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 import org.json.JSONException;
 
 import feign.FeignException;
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.EventsApi;
-import fi.metatavu.famifarm.client.model.Batch;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.EventsApi;
+import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.client.model.PotType;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.EventType;
@@ -46,7 +46,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   /**
    * Creates new event
    * 
-   * @param batch batch
+   * @param product product
    * @param startTime event start time
    * @param endTime event end time
    * @param amount amount
@@ -55,11 +55,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param seedBatches seed batch
    * @return created event
    */
-  public Event createSowing(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
+  public Event createSowing(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
     SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatches);
     
     Event event = new Event();
-    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setProductId(product != null ? product.getId() : null);
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
@@ -71,18 +71,18 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   /**
    * Creates new event
    * 
-   * @param batch batch
+   * @param product product
    * @param startTime event start time
    * @param endTime event end time
    * @param location 
    * @param tableCount 
    * @return created event
    */
-  public Event createTableSpread(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer tableCount) {
+  public Event createTableSpread(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer tableCount) {
     TableSpreadEventData data = createTableSpreadEventData(tableCount);
     
     Event event = new Event();
-    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setProductId(product != null ? product.getId() : null);
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
@@ -94,7 +94,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   /**
    * Creates new event
    * 
-   * @param batch batch
+   * @param product product
    * @param startTime event start time
    * @param endTime event end time
    * @param luminance luminance 
@@ -103,11 +103,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param performedActions performedActions 
    * @return created event
    */
-  public Event createCultivationObservation(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double luminance, List<Pest> pests, Double weight, List<PerformedCultivationAction> performedActions) {
+  public Event createCultivationObservation(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Double luminance, List<Pest> pests, Double weight, List<PerformedCultivationAction> performedActions) {
     CultivationObservationEventData data = createCultivationObservationEventData(luminance, pests, weight, performedActions);
 
     Event event = new Event();
-    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setProductId(product != null ? product.getId() : null);
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
@@ -119,7 +119,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   /**
    * Creates new event
    * 
-   * @param batch batch
+   * @param product product
    * @param startTime event start time
    * @param endTime event end time
    * @param productionLine production line
@@ -127,11 +127,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type type
    * @return created event
    */
-  public Event createHarvest(Batch batch, Integer amount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+  public Event createHarvest(Product product, Integer amount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
     HarvestEventData data = createHarvestEventData(productionLine, amount, type);
 
     Event event = new Event();
-    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setProductId(product != null ? product.getId() : null);
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
@@ -143,7 +143,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   /**
    * Creates new event
    * 
-   * @param batch batch
+   * @param product product
    * @param startTime start time
    * @param endTime end time
    * @param gutterCount gutter count
@@ -153,11 +153,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param workerCount worker count
    * @return created event
    */
-  public Event createPlanting(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, Integer cellCount, Integer workerCount) {
+  public Event createPlanting(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, Integer cellCount, Integer workerCount) {
     PlantingEventData data = createPlantingEventData(gutterCount, gutterNumber, productionLine, cellCount, workerCount);
     
     Event event = new Event();
-    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setProductId(product != null ? product.getId() : null);
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
@@ -169,7 +169,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   /**
    * Creates new event
    * 
-   * @param batch batch
+   * @param product product
    * @param startTime start time
    * @param endTime end time
    * @param amount amount
@@ -178,12 +178,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param phase phase
    * @return created event
    */
-  public Event createWastage(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, EventType phase, UUID productionLineId) {
+  public Event createWastage(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, EventType phase, UUID productionLineId) {
     
     WastageEventData data = createWastageEventData(amount, wastageReason, phase, productionLineId);
     
     Event event = new Event();
-    event.setBatchId(batch != null ? batch.getId() : null);
+    event.setProductId(product != null ? product.getId() : null);
     event.setData(data);
     event.setEndTime(endTime);
     event.setStartTime(startTime);
@@ -234,17 +234,17 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   /**
    * Asserts Event count within the system
    *
-   * @param batchId batch id to filter list with
+   * @param productId batch id to filter list with
    * @param expected expected count
    */
-  public void assertCount(UUID batchId, int expected) {
-    assertEquals(expected, getApi().listEvents(null, null, batchId).size());
+  public void assertCount(UUID productId, int expected) {
+    assertEquals(expected, getApi().listEvents(null, null, productId, null, null).size());
   }
   
   /**
    * Asserts create status fails with given status code
    * 
-   * @param batch batch
+   * @param product product
    * @param startTime event start time
    * @param endTime event end time
    * @param amount amount
@@ -252,12 +252,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param productionLine production line
    * @param seedBatch seed batch
    */
-  public void assertCreateFailStatus(int expectedStatus, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
+  public void assertCreateFailStatus(int expectedStatus, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
     try {
       SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatches);
       
       Event event = new Event();
-      event.setBatchId(batch != null ? batch.getId() : null);
+      event.setProductId(product != null ? product.getId() : null);
       event.setData(data);
       event.setEndTime(endTime);
       event.setStartTime(startTime);

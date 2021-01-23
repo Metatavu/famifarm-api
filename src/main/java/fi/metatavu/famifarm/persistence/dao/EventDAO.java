@@ -12,7 +12,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Event_;
 
@@ -26,24 +26,70 @@ import fi.metatavu.famifarm.persistence.model.Event_;
 public class EventDAO extends AbstractEventDAO<Event> {
 
   /**
-   * Lists events by batch optionally limited by first and max results
+   * Lists events by product optionally limited by first and max results
    * 
-   * @param batch batch to retrieve events from
+   * @param product product to retrieve events from
    * @param firstResult first result (optional)
    * @param maxResults max results (optional)
-   * @return List of events filtered by batch
+   * @return List of events filtered by product
    */
-  public List<Event> listByBatch(Batch batch, Integer firstResult, Integer maxResults) {
+  public List<Event> listByProduct(Product product, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
     Root<Event> root = criteria.from(Event.class);
     criteria.select(root);
-    criteria.where(criteriaBuilder.equal(root.get(Event_.batch), batch));
+    criteria.where(criteriaBuilder.equal(root.get(Event_.product), product));
     
     TypedQuery<Event> query = entityManager.createQuery(criteria);
     
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+    
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
+
+  /**
+   * Lists for rest api
+   * 
+   * @param product product
+   * @param createdBefore created before
+   * @param createdAfter created after
+   * @param firstResult first result
+   * @param maxResults max results
+   * 
+   * @return list of events
+   */
+  public List<Event> listForRestApi(Product product, OffsetDateTime createdAfter, OffsetDateTime createdBefore, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
+    Root<Event> root = criteria.from(Event.class);
+    criteria.select(root);
+
+    List<Predicate> restrictions = new ArrayList<>();
+
+    if (product != null) {
+      restrictions.add(criteriaBuilder.equal(root.get(Event_.product), product));
+    }
+
+    if (createdBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Event_.createdAt), createdBefore));
+    }
+
+    if (createdAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Event_.createdAt), createdAfter));
+    }
+
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
+    TypedQuery<Event> query = entityManager.createQuery(criteria);
+
     if (firstResult != null) {
       query.setFirstResult(firstResult);
     }
@@ -116,21 +162,21 @@ public class EventDAO extends AbstractEventDAO<Event> {
   }
 
   /**
-   * Lists events by batch optionally limited by first and max results. Sorts result by descending start time 
+   * Lists events by product optionally limited by first and max results. Sorts result by descending start time 
    * 
-   * @param batch batch to retrieve events from
+   * @param product product to retrieve events from
    * @param firstResult first result (optional)
    * @param maxResults max results (optional)
-   * @return List of events filtered by batch
+   * @return List of events filtered by product
    */
-  public List<Event> listByBatchSortByStartTimeDesc(Batch batch, Integer firstResult, Integer maxResults) {
+  public List<Event> listByProductSortByStartTimeDesc(Product product, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
     Root<Event> root = criteria.from(Event.class);
     criteria.select(root);
-    criteria.where(criteriaBuilder.equal(root.get(Event_.batch), batch));
+    criteria.where(criteriaBuilder.equal(root.get(Event_.product), product));
     criteria.orderBy(criteriaBuilder.desc(root.get(Event_.startTime)));
     
     TypedQuery<Event> query = entityManager.createQuery(criteria);
@@ -149,21 +195,21 @@ public class EventDAO extends AbstractEventDAO<Event> {
   }
 
   /**
-   * Lists events by batch optionally limited by first and max results. Sorts result by ascending start time 
+   * Lists events by product optionally limited by first and max results. Sorts result by ascending start time 
    * 
-   * @param batch batch to retrieve events from
+   * @param product product to retrieve events from
    * @param firstResult first result (optional)
    * @param maxResults max results (optional)
-   * @return List of events filtered by batch
+   * @return List of events filtered by product
    */
-  public List<Event> listByBatchSortByStartTimeAsc(Batch batch, Integer firstResult, Integer maxResults) {
+  public List<Event> listByProductSortByStartTimeAsc(Product product, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
     Root<Event> root = criteria.from(Event.class);
     criteria.select(root);
-    criteria.where(criteriaBuilder.equal(root.get(Event_.batch), batch));
+    criteria.where(criteriaBuilder.equal(root.get(Event_.product), product));
     criteria.orderBy(criteriaBuilder.asc(root.get(Event_.startTime)));
     
     TypedQuery<Event> query = entityManager.createQuery(criteria);

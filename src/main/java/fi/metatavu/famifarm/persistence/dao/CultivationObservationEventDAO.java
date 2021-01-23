@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 
 /**
@@ -22,7 +22,7 @@ public class CultivationObservationEventDAO extends AbstractEventDAO<Cultivation
    * @param id id
    * @param weight weight
    * @param luminance luminance
-   * @param batch batch
+   * @param product product
    * @param startTime start time
    * @param endTime end time
    * @param remainingUnits remaining units
@@ -31,13 +31,13 @@ public class CultivationObservationEventDAO extends AbstractEventDAO<Cultivation
    * @return
    */
   @SuppressWarnings ("squid:S00107")
-  public CultivationObservationEvent create(UUID id, Double weight, Double luminance, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime,  Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public CultivationObservationEvent create(UUID id, Double weight, Double luminance, Product product, OffsetDateTime startTime, OffsetDateTime endTime,  Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     CultivationObservationEvent cultivationActionEvent = new CultivationObservationEvent();
     cultivationActionEvent.setId(id);
     cultivationActionEvent.setRemainingUnits(remainingUnits);
     cultivationActionEvent.setWeight(weight);
     cultivationActionEvent.setLuminance(luminance);
-    cultivationActionEvent.setBatch(batch);
+    cultivationActionEvent.setProduct(product);
     cultivationActionEvent.setStartTime(startTime);
     cultivationActionEvent.setEndTime(endTime);
     cultivationActionEvent.setId(id);

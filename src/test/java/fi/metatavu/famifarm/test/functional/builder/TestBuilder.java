@@ -3,7 +3,6 @@ package fi.metatavu.famifarm.test.functional.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
 import fi.metatavu.famifarm.client.model.LocalizedValue;
 import fi.metatavu.famifarm.test.functional.builder.auth.DefaultAccessTokenProvider;
 import fi.metatavu.famifarm.test.functional.builder.auth.InvalidAccessTokenProvider;
@@ -103,7 +102,7 @@ public class TestBuilder implements AutoCloseable {
    * @param en text in english
    * @return initialized localized entry
    */
-  public LocalizedEntry createLocalizedEntry(String en) {
+  public List<LocalizedValue> createLocalizedEntry(String en) {
     return createLocalizedEntry(en, null);
   }
 
@@ -114,8 +113,8 @@ public class TestBuilder implements AutoCloseable {
    * @param fi text in Finnish
    * @return initialized localized entry
    */
-  public LocalizedEntry createLocalizedEntry(String en, String fi) {
-    LocalizedEntry result = new LocalizedEntry();
+  public List<LocalizedValue> createLocalizedEntry(String en, String fi) {
+    List<LocalizedValue> result = new ArrayList<>();
 
     LocalizedValue fiValue = createLocalizedValue("fi", fi);
     if (fiValue != null) {

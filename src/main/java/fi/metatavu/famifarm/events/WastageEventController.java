@@ -7,7 +7,6 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.WastageEventDAO;
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
@@ -21,15 +20,12 @@ import fi.metatavu.famifarm.rest.model.EventType;
 public class WastageEventController {
 
   @Inject
-  private BatchDAO batchDAO;
-  
-  @Inject
   private WastageEventDAO wastageEventDAO;
 
   /**
    * Creates new wastage event
    * 
-   * @param batch batch
+   * @param product product
    * @param startTime start time
    * @param endTime end time
    * @param amount amount
@@ -40,15 +36,15 @@ public class WastageEventController {
    * @return created wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent createWastageEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, ProductionLine productionLine, UUID creatorId) {
-    return wastageEventDAO.create(UUID.randomUUID(), amount, batch, wastageReason, startTime, endTime, 0, phase, additionalInformation,  productionLine, creatorId, creatorId);
+  public WastageEvent createWastageEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, ProductionLine productionLine, UUID creatorId) {
+    return wastageEventDAO.create(UUID.randomUUID(), amount, product, wastageReason, startTime, endTime, 0, phase, additionalInformation,  productionLine, creatorId, creatorId);
   }
 
   /**
    * Updates wastage event
    * 
    * @param wastageEvent wastage event to update
-   * @param batch batch
+   * @param product product
    * @param startTime start time
    * @param endTime end time
    * @param amount amount
@@ -59,9 +55,9 @@ public class WastageEventController {
    * @return updated wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent updateWastageEvent(WastageEvent wastageEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, ProductionLine productionLine, UUID lastModifierId) {
+  public WastageEvent updateWastageEvent(WastageEvent wastageEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, EventType phase, String additionalInformation, ProductionLine productionLine, UUID lastModifierId) {
     wastageEventDAO.updateAmount(wastageEvent, amount, lastModifierId);
-    wastageEventDAO.updateBatch(wastageEvent, batch, lastModifierId);
+    wastageEventDAO.updateProduct(wastageEvent, product, lastModifierId);
     wastageEventDAO.updateEndTime(wastageEvent, endTime, lastModifierId);
     wastageEventDAO.updateStartTime(wastageEvent, startTime, lastModifierId);
     wastageEventDAO.updateWastageReason(wastageEvent, wastageReason, lastModifierId);
@@ -98,7 +94,6 @@ public class WastageEventController {
    * @param wastageEvent wastage event to delete
    */
   public void deleteWastageEvent(WastageEvent wastageEvent) {
-    batchDAO.listByActiveBatch(wastageEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     wastageEventDAO.delete(wastageEvent);
   }
 

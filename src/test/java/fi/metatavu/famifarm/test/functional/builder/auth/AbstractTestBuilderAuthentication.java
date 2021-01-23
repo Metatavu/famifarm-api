@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.metatavu.famifarm.ApiClient;
+import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.test.functional.builder.impl.*;
 
 /**
@@ -20,7 +20,6 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private WastageReasonTestBuilderResource wastageReasons;
   private ProductTestBuilderResource products;
   private PackageSizeTestBuilderResource packageSizes;
-  private BatchTestBuilderResource batches;
   private ProductionLineTestBuilderResource productionLines;
   private PerformedCultivationActionTestBuilderResource performedCultivationActions;
   private PestTestBuilderResource pests;
@@ -154,20 +153,6 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
     
     return packageSizes = this.addClosable(new PackageSizeTestBuilderResource(createClient()));
-  }
-  
-  /**
-   * Returns test builder resource for batches
-   * 
-   * @return test builder resource for products
-   * @throws IOException thrown when authentication fails
-   */
-  public BatchTestBuilderResource batches() throws IOException {
-    if (batches != null) {
-      return batches;
-    }
-    
-    return batches = this.addClosable(new BatchTestBuilderResource(createClient()));
   }
   
   /**

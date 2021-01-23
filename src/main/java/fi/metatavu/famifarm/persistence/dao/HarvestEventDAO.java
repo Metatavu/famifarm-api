@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 
@@ -22,7 +22,7 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * Creates new harvest event
    * 
    * @param id event id
-   * @param batch batch event is connected to
+   * @param product product event is connected to
    * @param startTime start time
    * @param endTime end time
    * @param harvestType type
@@ -35,9 +35,9 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer remainingUnits, String additionalInformation, Integer gutterCount, UUID creatorId, UUID lastModifierId) {
+  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer remainingUnits, String additionalInformation, Integer gutterCount, UUID creatorId, UUID lastModifierId) {
     HarvestEvent harvestEvent = new HarvestEvent();
-    harvestEvent.setBatch(batch);
+    harvestEvent.setProduct(product);
     harvestEvent.setRemainingUnits(remainingUnits);
     harvestEvent.setStartTime(startTime);
     harvestEvent.setEndTime(endTime);

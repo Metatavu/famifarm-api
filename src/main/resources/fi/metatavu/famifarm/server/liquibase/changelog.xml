@@ -890,4 +890,16 @@
       </column>
     </createTable>
   </changeSet>
+
+  <changeSet id="removebatch" author="Heikki Kurhinen">
+    <addColumn tableName="event">
+      <column name="product_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_EVENT_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
+      </column>
+    </addColumn>
+    <sql>UPDATE event SET product_id=(SELECT batch.product_id FROM batch WHERE batch.id=event.batch_id);</sql>
+    <dropForeignKeyConstraint baseTableName="event" constraintName="FK_EVENT_BATCH_ID"/>
+    <dropColumn tableName="event" columnName="batch_id" />
+  </changeSet>
+
 </databaseChangeLog>

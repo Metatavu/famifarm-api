@@ -1,18 +1,19 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.json.JSONException;
 
 import feign.FeignException;
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.WastageReasonsApi;
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.WastageReasonsApi;
+import fi.metatavu.famifarm.client.model.LocalizedValue;
 import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -38,7 +39,7 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
    * @param reason reason
    * @return created wastageReason
    */
-  public WastageReason create(LocalizedEntry reason) {
+  public WastageReason create(List<LocalizedValue> reason) {
     WastageReason wastageReason = new WastageReason();
     wastageReason.setReason(reason);
     return addClosable(getApi().createWastageReason(wastageReason));
@@ -101,7 +102,7 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
    * 
    * @param expectedStatus expected status code
    */
-  public void assertCreateFailStatus(int expectedStatus, LocalizedEntry reason) {
+  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> reason) {
     try {
       WastageReason wastageReason = new WastageReason();
       wastageReason.setReason(reason);

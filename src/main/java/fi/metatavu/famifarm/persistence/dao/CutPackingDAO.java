@@ -1,7 +1,6 @@
 package fi.metatavu.famifarm.persistence.dao;
 
 import fi.metatavu.famifarm.persistence.model.*;
-import fi.metatavu.famifarm.rest.model.PackingState;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;

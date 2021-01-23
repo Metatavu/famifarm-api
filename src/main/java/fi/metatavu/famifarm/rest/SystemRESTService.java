@@ -1,14 +1,13 @@
 package fi.metatavu.famifarm.rest;
 
+import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -36,7 +35,8 @@ public class SystemRESTService {
   @GET
   @Path ("/ping")
   @Produces (MediaType.TEXT_PLAIN)
-  public Response getPing(@Context HttpServletRequest request) {
+  @PermitAll
+  public Response getPing() {
     return Response.ok("pong").build();
   }
 

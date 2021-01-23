@@ -1,17 +1,17 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import feign.FeignException;
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.CutPackingsApi;
-import fi.metatavu.famifarm.client.model.CutPacking;
-import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import feign.FeignException;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.CutPackingsApi;
+import fi.metatavu.famifarm.client.model.CutPacking;
+import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<CutPacking, CutPackingsApi> {
     /**

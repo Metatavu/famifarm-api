@@ -7,9 +7,8 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.TableSpreadEventDAO;
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
 
 /**
@@ -21,15 +20,12 @@ import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
 public class TableSpreadEventController {
 
   @Inject
-  private BatchDAO batchDAO;
-  
-  @Inject
   private TableSpreadEventDAO tableSpreadEventDAO;  
   
   /**
    * Update tableSpreadEvent
    *
-   * @param batch batch
+   * @param product product
    * @param startTime startTime
    * @param endTime endTime
    * @param trayCount trayCount
@@ -38,8 +34,8 @@ public class TableSpreadEventController {
    * @return updated tableSpreadEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public TableSpreadEvent createTableSpreadEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer trayCount, String additionalInformation, UUID creatorId) {
-    return tableSpreadEventDAO.create(UUID.randomUUID(), trayCount, batch, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
+  public TableSpreadEvent createTableSpreadEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer trayCount, String additionalInformation, UUID creatorId) {
+    return tableSpreadEventDAO.create(UUID.randomUUID(), trayCount, product, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -67,7 +63,7 @@ public class TableSpreadEventController {
    * Update tableSpreadEvent
    *
    * @param tableSpreadEvent sowing event
-   * @param batch batch
+   * @param product product
    * @param startTime startTime
    * @param endTime endTime
    * @param trayCount trayCount
@@ -76,8 +72,8 @@ public class TableSpreadEventController {
    * @return updated tableSpreadEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public TableSpreadEvent updateTableSpreadEvent(TableSpreadEvent tableSpreadEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer trayCount, String additionalInformation, UUID modifier) {
-    tableSpreadEventDAO.updateBatch(tableSpreadEvent, batch, modifier);
+  public TableSpreadEvent updateTableSpreadEvent(TableSpreadEvent tableSpreadEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer trayCount, String additionalInformation, UUID modifier) {
+    tableSpreadEventDAO.updateProduct(tableSpreadEvent, product, modifier);
     tableSpreadEventDAO.updateStartTime(tableSpreadEvent, startTime, modifier);
     tableSpreadEventDAO.updateEndTime(tableSpreadEvent, endTime, modifier);
     tableSpreadEventDAO.updateTrayCount(tableSpreadEvent, trayCount, modifier);
@@ -91,7 +87,6 @@ public class TableSpreadEventController {
    * @param tableSpreadEvent sowing event to be deleted
    */
   public void deleteTableSpreadEvent(TableSpreadEvent tableSpreadEvent) {
-    batchDAO.listByActiveBatch(tableSpreadEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     tableSpreadEventDAO.delete(tableSpreadEvent);
   }
 

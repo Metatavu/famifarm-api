@@ -1,7 +1,7 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -10,8 +10,8 @@ import java.util.UUID;
 
 import org.json.JSONException;
 import feign.FeignException;
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.ProductionLinesApi;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.ProductionLinesApi;
 import fi.metatavu.famifarm.client.model.ProductionLine;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 

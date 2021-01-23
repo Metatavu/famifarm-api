@@ -6,6 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -23,6 +24,24 @@ import org.slf4j.Logger;
 @ApplicationScoped
 public class UserController {
   
+  @ConfigProperty(name = "famifarm.keycloak.admin.secret") 
+  private String keycloakAdminClientSecret;
+
+  @ConfigProperty(name = "famifarm.keycloak.admin.client") 
+  private String keycloakAdminClientId;
+
+  @ConfigProperty(name = "famifarm.keycloak.admin.password") 
+  private String keycloakAdminPassword;
+
+  @ConfigProperty(name = "famifarm.keycloak.admin.user") 
+  private String keycloakAdminUser;
+
+  @ConfigProperty(name = "famifarm.keycloak.admin.realm") 
+  private String keycloakAdminRealm;
+
+  @ConfigProperty(name = "famifarm.keycloak.admin.url") 
+  private String keycloakAdminUrl;
+
   @Inject
   private Logger logger;
 
@@ -110,7 +129,7 @@ public class UserController {
    * @return Keycloak client secret setting
    */
   private String getClientSecret() {
-    return System.getenv("KEYCLOAK_ADMIN_CLIENT_SECRET");
+    return keycloakAdminClientSecret;
   }
 
   /**
@@ -119,7 +138,7 @@ public class UserController {
    * @return Keycloak client id setting
    */
   private String getClientId() {
-    return System.getenv("KEYCLOAK_ADMIN_CLIENT_ID");
+    return keycloakAdminClientId;
   }
 
   /**
@@ -128,7 +147,7 @@ public class UserController {
    * @return Keycloak admin password setting
    */
   private String getAdminPassword() {
-    return System.getenv("KEYCLOAK_ADMIN_PASSWORD");
+    return keycloakAdminPassword;
   }
 
   /**
@@ -137,7 +156,7 @@ public class UserController {
    * @return Keycloak admin user setting
    */
   private String getAdminUser() {
-    return System.getenv("KEYCLOAK_ADMIN_USER");
+    return keycloakAdminUser;
   }
 
   /**
@@ -146,7 +165,7 @@ public class UserController {
    * @return Keycloak realm  setting
    */
   private String getRealm() {
-    return System.getenv("KEYCLOAK_ADMIN_REALM");
+    return keycloakAdminRealm;
   }
 
   /**
@@ -155,7 +174,7 @@ public class UserController {
    * @return Keycloak server URL setting
    */
   private String getServerUrl() {
-    return System.getenv("KEYCLOAK_URL");
+    return keycloakAdminUrl;
   }
   
 }

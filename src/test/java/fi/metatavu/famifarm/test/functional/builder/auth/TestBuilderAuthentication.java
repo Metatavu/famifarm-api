@@ -2,7 +2,7 @@ package fi.metatavu.famifarm.test.functional.builder.auth;
 
 import java.io.IOException;
 
-import fi.metatavu.famifarm.ApiClient;
+import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.test.functional.settings.TestSettings;
 
 /**
@@ -32,8 +32,10 @@ public class TestBuilderAuthentication extends AbstractTestBuilderAuthentication
   @Override
   protected ApiClient createClient() throws IOException {
     String accessToken = accessTokenProvider.getAccessToken();
-    String authorization = accessToken != null ? String.format("Bearer %s", accessToken) : null;
-    ApiClient apiClient = authorization != null ? new ApiClient("BearerAuth", authorization) : new ApiClient();
+    ApiClient apiClient = accessToken != null ? new ApiClient("BearerAuth") : new ApiClient();
+    if (accessToken != null) {
+      apiClient.setBearerToken(accessToken);
+    }
     String basePath = String.format("http://%s:%d", TestSettings.getHost(), TestSettings.getPort());
     apiClient.setBasePath(basePath);
     return apiClient;

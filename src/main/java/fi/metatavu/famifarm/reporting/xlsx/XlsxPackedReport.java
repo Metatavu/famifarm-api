@@ -8,6 +8,7 @@ import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.EventCountController;
 import fi.metatavu.famifarm.reporting.ReportException;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.io.OutputStream;
 import java.util.*;
@@ -15,6 +16,7 @@ import java.util.*;
 /**
  * Report for packings
  */
+@ApplicationScoped
 public class XlsxPackedReport extends AbstractXlsxReport {
     
     @Inject

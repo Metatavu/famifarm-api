@@ -2,16 +2,25 @@ package fi.metatavu.famifarm.test.functional;
 
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
-import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import io.quarkus.test.junit.QuarkusTest;
+import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import io.quarkus.test.common.QuarkusTestResource;
+import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 
 /**
  * Test class for printing
  */
+@QuarkusTest
+@QuarkusTestResource(MysqlResource.class)
+@QuarkusTestResource(KeycloakResource.class)
 public class PrintingTestsIT extends AbstractFunctionalTest {
     @Test
     public void testPrinters() throws Exception {

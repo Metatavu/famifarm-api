@@ -3,7 +3,7 @@ package fi.metatavu.famifarm.persistence.dao;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.Event;
 
 /**
@@ -16,15 +16,15 @@ import fi.metatavu.famifarm.persistence.model.Event;
 public abstract class AbstractEventDAO <T extends Event> extends AbstractDAO<T> {
 
   /**
-   * Updates batch
+   * Updates product
    *
-   * @param batch batch
+   * @param product product
    * @param lastModifier modifier
    * @return updated event
    */
-  public T updateBatch(T event, Batch batch, UUID lastModifierId) {
+  public T updateProduct(T event, Product product, UUID lastModifierId) {
     event.setLastModifierId(lastModifierId);
-    event.setBatch(batch);
+    event.setProduct(product);
     return persist(event);
   }
 

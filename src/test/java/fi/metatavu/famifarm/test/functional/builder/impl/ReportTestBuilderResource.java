@@ -1,7 +1,7 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,8 +15,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.ReportsApi;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.ReportsApi;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 /**

@@ -2,23 +2,32 @@ package fi.metatavu.famifarm.test.functional;
 
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
-import org.junit.Test;
+import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
+
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Campaign tests
  */
+@QuarkusTest
+@QuarkusTestResource(MysqlResource.class)
+@QuarkusTestResource(KeycloakResource.class)
 public class CampaignTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateAndUpdateCampaign() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      LocalizedEntry testEntry = new LocalizedEntry();
+      List<LocalizedValue> testEntry = new ArrayList<>();
       LocalizedValue testValue = new LocalizedValue();
 
       testValue.setLanguage("en");
@@ -63,7 +72,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
   @Test
   public void testListCampaigns() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      LocalizedEntry testEntry = new LocalizedEntry();
+      List<LocalizedValue> testEntry = new ArrayList<>();
       LocalizedValue testValue = new LocalizedValue();
 
       testValue.setLanguage("en");
@@ -94,7 +103,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
   @Test
   public void testFindCampaign() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      LocalizedEntry testEntry = new LocalizedEntry();
+      List<LocalizedValue> testEntry = new ArrayList<>();
       LocalizedValue testValue = new LocalizedValue();
 
       testValue.setLanguage("en");
