@@ -263,6 +263,9 @@
               <goal>generate-code</goal>
               <goal>generate-code-tests</goal>
             </goals>
+            <configuration>
+              <additionalBuildArgs>-J-Xmx1G</additionalBuildArgs>
+            </configuration>
           </execution>
         </executions>
       </plugin>
