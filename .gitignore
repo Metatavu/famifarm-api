@@ -1,26 +1,39 @@
-/target/
-/keycloak-3.4.3.Final/
-/keycloak-4.0.0.Final/
-/keycloak-4.1.0.Final/
-/keycloak-4.3.0.Final/
-/.settings/
-/config/
-/.project
-/.classpath
-/.factorypath
-/keycloak.log
-/.cargo
-.DS_Store
-wildfly/target
+#Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# IntelliJ
+.idea
+*.ipr
+*.iml
+*.iws
+
+# NetBeans
+nb-configuration.xml
+
+# Visual Studio Code
 .vscode
-/keycloak.json
-/keycloak-4.2.1.Final/
-/keycloak-4.4.0.Final/
-/keycloak-4.5.0.Final/
-/keycloak-4.6.0.Final/
-/keycloak-4.7.0.Final/
-/keycloak-4.8.0.Final/
-/keycloak-4.8.1.Final/
-/keycloak-4.8.3.Final/
-/.idea/
-famifarm-api.iml
+.factorypath
+
+# OSX
+.DS_Store
+
+# Vim
+*.swp
+*.swo
+
+# patch
+*.orig
+*.rej
+
+# Local environment
+.env

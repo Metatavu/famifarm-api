@@ -69,7 +69,7 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
       List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
-        Product product = event.getBatch().getProduct();
+        Product product = event.getProduct();
         if (!rowLookup.containsKey(product.getId())) {
           rowLookup.put(
             product.getId(),
@@ -151,18 +151,9 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
       return spreadAmount;
     }
 
-    public void setSpreadAmount(Double spreadAmount) {
-      this.spreadAmount = spreadAmount;
-    }
-
     public Double getAmountInGutters() {
       return amountInGutters;
     }
-
-    public void setAmountInGutters(Double amountInGutters) {
-      this.amountInGutters = amountInGutters;
-    }
-
   }
 
 }

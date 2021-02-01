@@ -12,14 +12,10 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-
-import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
-import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.Event;
-import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.rest.model.EventType;
@@ -36,9 +32,6 @@ public class XlsxWastageReport extends AbstractXlsxReport {
   
   @Inject
   private EventController eventController;
-  
-  @Inject
-  private BatchController batchController;
   
   @Inject
   private LocalizedValueController localizedValueController;
@@ -76,34 +69,29 @@ public class XlsxWastageReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Batch> batches = batchController.listBatches(null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
       int rowIndex = 4;
       
-      for (int i = 0; i < batches.size(); i++) {
-        Batch batch = batches.get(i);
-        List<Event> events = eventController.listEvents(batch, null, null);
-        Product product = batch.getProduct();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"); 
+      List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"); 
+      
+      for (int j = 0; j < events.size(); j++) {
+        Event event = events.get(j);
         
-        for (int j = 0; j < events.size(); j++) {
-          Event event = events.get(j);
+        if (event.getType() == EventType.WASTAGE) {
+          WastageEvent wastageEvent = (WastageEvent) event;
+          OffsetDateTime endTime = wastageEvent.getEndTime();
           
-          if (event.getType() == EventType.WASTAGE) {
-            WastageEvent wastageEvent = (WastageEvent) event;
-            OffsetDateTime endTime = wastageEvent.getEndTime();
-            
-            xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, wastageEvent.getProductionLine() != null ? wastageEvent.getProductionLine().getLineNumber() : "");
-            xlsxBuilder.setCellValue(sheetId, rowIndex, dateIndex, endTime.format(formatter));
-            xlsxBuilder.setCellValue(sheetId, rowIndex, workerIndex, getFormattedUser(event.getCreatorId(), userCache));
-            xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
-            xlsxBuilder.setCellValue(sheetId, rowIndex, phaseIndex, wastageEvent.getPhase() != null ? wastageEvent.getPhase().toString() : "");
-            xlsxBuilder.setCellValue(sheetId, rowIndex, reasonIndex, wastageEvent.getWastageReason() != null ? localizedValueController.getValue(wastageEvent.getWastageReason().getReason(), locale) : "");
-            xlsxBuilder.setCellValue(sheetId, rowIndex, additionalInformationIndex, wastageEvent.getAdditionalInformation());
-            xlsxBuilder.setCellValue(sheetId, rowIndex, amountIndex, wastageEvent.getAmount() != null ? wastageEvent.getAmount().toString() : "");
-            rowIndex++;
-          }
-          
+          xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, wastageEvent.getProductionLine() != null ? wastageEvent.getProductionLine().getLineNumber() : "");
+          xlsxBuilder.setCellValue(sheetId, rowIndex, dateIndex, endTime.format(formatter));
+          xlsxBuilder.setCellValue(sheetId, rowIndex, workerIndex, getFormattedUser(event.getCreatorId(), userCache));
+          xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(event.getProduct().getName(), locale));
+          xlsxBuilder.setCellValue(sheetId, rowIndex, phaseIndex, wastageEvent.getPhase() != null ? wastageEvent.getPhase().toString() : "");
+          xlsxBuilder.setCellValue(sheetId, rowIndex, reasonIndex, wastageEvent.getWastageReason() != null ? localizedValueController.getValue(wastageEvent.getWastageReason().getReason(), locale) : "");
+          xlsxBuilder.setCellValue(sheetId, rowIndex, additionalInformationIndex, wastageEvent.getAdditionalInformation());
+          xlsxBuilder.setCellValue(sheetId, rowIndex, amountIndex, wastageEvent.getAmount() != null ? wastageEvent.getAmount().toString() : "");
+          rowIndex++;
         }
+        
       }
       
       xlsxBuilder.write(output);

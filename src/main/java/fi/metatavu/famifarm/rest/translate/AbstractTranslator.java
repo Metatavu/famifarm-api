@@ -1,5 +1,8 @@
 package fi.metatavu.famifarm.rest.translate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.localization.LocalizedValueController;
@@ -22,8 +25,8 @@ public abstract class AbstractTranslator {
    * @param entry JPA localized entry
    * @return list of REST localized values
    */
-  protected fi.metatavu.famifarm.rest.model.LocalizedEntry translatelocalizedValue(LocalizedEntry entry) {
-    fi.metatavu.famifarm.rest.model.LocalizedEntry result = new fi.metatavu.famifarm.rest.model.LocalizedEntry();
+  protected List<LocalizedValue> translatelocalizedValue(LocalizedEntry entry) {
+    List<LocalizedValue> result = new ArrayList<>();
     
     localizedValueController.listLocalizedValues(entry).stream().map(localizedValue -> {
       LocalizedValue restItem = new LocalizedValue();

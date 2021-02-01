@@ -1,7 +1,7 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.PrintersApi;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.PrintersApi;
 
 import fi.metatavu.famifarm.client.model.PrintData;
 import fi.metatavu.famifarm.client.model.Printer;

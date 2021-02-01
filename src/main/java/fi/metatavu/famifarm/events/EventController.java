@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 
 import fi.metatavu.famifarm.persistence.dao.EventDAO;
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
@@ -87,27 +87,42 @@ public class EventController {
   /**
    * Lists events
    * 
-   * @param batch filter results by batch (optional)
+   * @param product filter results by product (optional)
    * @param firstResult first result
    * @param maxResults max results
    * @return list events
    */
-  public List<Event> listEvents(Batch batch, Integer firstResult, Integer maxResults) {
-    if (batch != null) {
-      return eventDAO.listByBatch(batch, firstResult, maxResults);
+  public List<Event> listEvents(Product product, Integer firstResult, Integer maxResults) {
+    if (product != null) {
+      return eventDAO.listByProduct(product, firstResult, maxResults);
     }
 
     return eventDAO.listAll(firstResult, maxResults);
   }
-  
+
   /**
-   * List by batch and order by start time
+   * Lists events for rest api
    * 
-   * @param batch batch
+   * @param product product
+   * @param createdBefore created before
+   * @param createdAfter created after
+   * @param firstResult first result
+   * @param maxResults max results
+   * 
    * @return list of events
    */
-  public List<Event> listByBatchSortByStartTimeAsc(Batch batch, Integer firstResult, Integer maxResults) {
-    return eventDAO.listByBatchSortByStartTimeAsc(batch, firstResult, maxResults);
+  public List<Event> listEventsRest(Product product, OffsetDateTime createdAfter, OffsetDateTime createdBefore, Integer firstResult, Integer maxResults) {
+    return eventDAO.listForRestApi(product, createdAfter, createdBefore, firstResult, maxResults);
+  }
+  
+  /**
+   * List by product and order by start time
+   * 
+   * @param product product
+   * @return list of events
+   */
+  public List<Event> listByProductSortByStartTimeAsc(Product product, Integer firstResult, Integer maxResults) {
+    return eventDAO.listByProductSortByStartTimeAsc(product, firstResult, maxResults);
   }
 
   /**
@@ -122,13 +137,13 @@ public class EventController {
   }
   
   /**
-   * Finds last event in a batch
+   * Finds last event in a product
    * 
-   * @param batch batch
+   * @param product product
    * @return found event or null if not found
    */
-  public Event findLastEventByBatch(Batch batch) {
-    List<Event> events = eventDAO.listByBatchSortByStartTimeDesc(batch, null, 1);
+  public Event findLastEventByProduct(Product product) {
+    List<Event> events = eventDAO.listByProductSortByStartTimeDesc(product, null, 1);
     if (events.isEmpty()) {
       return null;
     }

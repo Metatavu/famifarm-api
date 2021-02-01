@@ -1,19 +1,20 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.json.JSONException;
 
 import feign.FeignException;
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.ProductsApi;
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.ProductsApi;
+import fi.metatavu.famifarm.client.model.LocalizedValue;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
@@ -42,7 +43,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @param isSubcontractorProduct is subcontractor product
    * @return created product
    */
-  public Product create(LocalizedEntry name, PackageSize packageSize, boolean isSubcontractorProduct) {
+  public Product create(List<LocalizedValue> name, PackageSize packageSize, boolean isSubcontractorProduct) {
     Product product = new Product();
     product.setName(name);
     product.setDefaultPackageSizeId(packageSize.getId());
@@ -118,7 +119,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param expectedStatus expected status code
    */
-  public void assertCreateFailStatus(int expectedStatus, LocalizedEntry name, PackageSize packageSize) {
+  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name, PackageSize packageSize) {
     try {
       Product product = new Product();
       product.setName(name);

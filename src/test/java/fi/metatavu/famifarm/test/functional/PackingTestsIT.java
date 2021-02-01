@@ -1,21 +1,30 @@
 package fi.metatavu.famifarm.test.functional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import fi.metatavu.famifarm.client.model.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
+import io.quarkus.test.junit.QuarkusTest;
+import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
+import io.quarkus.test.common.QuarkusTestResource;
+import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
+
+@QuarkusTest
+@QuarkusTestResource(MysqlResource.class)
+@QuarkusTestResource(KeycloakResource.class)
 public class PackingTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreatePacking() throws Exception{
     try (TestBuilder builder = new TestBuilder()) {
-      LocalizedEntry testEntry = new LocalizedEntry();
+      List<LocalizedValue> testEntry = new ArrayList<>();
       LocalizedValue testValue = new LocalizedValue();
       
       testValue.setLanguage("en");
@@ -34,7 +43,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
   @Test
   public void testListPackings() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      LocalizedEntry testEntry = new LocalizedEntry();
+      List<LocalizedValue> testEntry = new ArrayList<>();
       LocalizedValue testValue = new LocalizedValue();
       
       testValue.setLanguage("en");
@@ -71,7 +80,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
   @Test
   public void testUpdatePacking() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      LocalizedEntry testEntry = new LocalizedEntry();
+      List<LocalizedValue> testEntry = new ArrayList<>();
       LocalizedValue testValue = new LocalizedValue();
       
       testValue.setLanguage("en");
@@ -92,7 +101,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
   @Test
   public void testDeletePacking() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      LocalizedEntry testEntry = new LocalizedEntry();
+      List<LocalizedValue> testEntry = new ArrayList<>();
       LocalizedValue testValue = new LocalizedValue();
       
       testValue.setLanguage("en");
@@ -111,7 +120,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateAndUpdateCampaignPacking() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      LocalizedEntry testEntry = new LocalizedEntry();
+      List<LocalizedValue> testEntry = new ArrayList<>();
       LocalizedValue testValue = new LocalizedValue();
 
       testValue.setLanguage("en");

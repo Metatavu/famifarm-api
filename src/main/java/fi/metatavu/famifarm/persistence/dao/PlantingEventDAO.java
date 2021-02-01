@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 
@@ -20,7 +20,7 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
   /**
    * Creates new plantingEvent
    *
-   * @param batch batch
+   * @param product product
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
@@ -33,9 +33,9 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public PlantingEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     PlantingEvent plantingEvent = new PlantingEvent();
-    plantingEvent.setBatch(batch);
+    plantingEvent.setProduct(product);
     plantingEvent.setRemainingUnits(remainingUnits);
     plantingEvent.setStartTime(startTime);
     plantingEvent.setEndTime(endTime);

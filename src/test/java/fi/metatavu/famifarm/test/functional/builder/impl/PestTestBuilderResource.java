@@ -1,18 +1,19 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.json.JSONException;
 
 import feign.FeignException;
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.PestsApi;
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.PestsApi;
+import fi.metatavu.famifarm.client.model.LocalizedValue;
 import fi.metatavu.famifarm.client.model.Pest;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -38,7 +39,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    * @param name name
    * @return created performedCultivationAction
    */
-  public Pest create(LocalizedEntry name) {
+  public Pest create(List<LocalizedValue> name) {
     Pest performedCultivationAction = new Pest();
     performedCultivationAction.setName(name);
     return addClosable(getApi().createPest(performedCultivationAction));
@@ -101,7 +102,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    * 
    * @param expectedStatus expected status code
    */
-  public void assertCreateFailStatus(int expectedStatus, LocalizedEntry name) {
+  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name) {
     try {
       Pest performedCultivationAction = new Pest();
       performedCultivationAction.setName(name);

@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
 
 /**
@@ -21,7 +21,7 @@ public class TableSpreadEventDAO extends AbstractEventDAO<TableSpreadEvent> {
    * 
    * @param id id
    * @param trayCount trayCount
-   * @param batch batch
+   * @param product product
    * @param startTime event start time
    * @param endTime event end time
    * @param remainingUnits remaining units
@@ -30,12 +30,12 @@ public class TableSpreadEventDAO extends AbstractEventDAO<TableSpreadEvent> {
    * @return
    */
   @SuppressWarnings ("squid:S00107")
-  public TableSpreadEvent create(UUID id, Integer trayCount, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public TableSpreadEvent create(UUID id, Integer trayCount, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     TableSpreadEvent tableSpreadEvent = new TableSpreadEvent();
     tableSpreadEvent.setTrayCount(trayCount);
     tableSpreadEvent.setRemainingUnits(remainingUnits);
     tableSpreadEvent.setId(id);
-    tableSpreadEvent.setBatch(batch);
+    tableSpreadEvent.setProduct(product);
     tableSpreadEvent.setStartTime(startTime);
     tableSpreadEvent.setEndTime(endTime);
     tableSpreadEvent.setId(id);

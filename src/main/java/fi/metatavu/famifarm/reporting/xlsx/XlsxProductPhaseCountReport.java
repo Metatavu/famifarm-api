@@ -76,7 +76,7 @@ public class XlsxProductPhaseCountReport extends AbstractXlsxReport {
       List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
-        Product product = event.getBatch().getProduct();
+        Product product = event.getProduct();
         if (!rowLookup.containsKey(product.getId())) {
           ReportRow row = new ReportRow(localizedValueController.getValue(product.getName(), locale));
           row.setSowedCount(eventCountController.countUnitsByProductAndEventType(events, product, EventType.SOWING));
@@ -169,10 +169,6 @@ public class XlsxProductPhaseCountReport extends AbstractXlsxReport {
 
     public Double getPackedCount() {
       return packedCount;
-    }
-
-    public void setPackedCount(Double packedCount) {
-      this.packedCount = packedCount;
     }
 
     public Double getWastedCount() {

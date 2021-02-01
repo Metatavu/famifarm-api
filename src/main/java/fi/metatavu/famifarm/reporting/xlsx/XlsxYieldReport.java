@@ -74,7 +74,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       List<Packing> packings = packingController.listPackings(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
-        Product product = event.getBatch().getProduct();
+        Product product = event.getProduct();
         if (!rowLookup.containsKey(product.getId())) {
           rowLookup.put(
             product.getId(),
@@ -156,16 +156,8 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       return harvestedCount;
     }
 
-    public void setHarvestedCount(Double harvestedCount) {
-      this.harvestedCount = harvestedCount;
-    }
-
     public Double getPackedCount() {
       return packedCount;
-    }
-
-    public void setPackedCount(Double packedCount) {
-      this.packedCount = packedCount;
     }
   }
 }

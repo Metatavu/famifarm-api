@@ -38,7 +38,7 @@ public class Event {
   private UUID id;
 
   @ManyToOne(optional = false)
-  private Batch batch;
+  private Product product;
 
   @Column(nullable = false)
   @NotNull  
@@ -91,12 +91,12 @@ public class Event {
     this.additionalInformation = additionalInformation;
   }
 
-  public Batch getBatch() {
-    return batch;
+  public Product getProduct() {
+    return product;
   }
 
-  public void setBatch(Batch batch) {
-    this.batch = batch;
+  public void setProduct(Product product) {
+    this.product = product;
   }
 
   public OffsetDateTime getStartTime() {

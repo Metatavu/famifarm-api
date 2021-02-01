@@ -78,7 +78,7 @@ public abstract class XlsxEventCountReport extends AbstractXlsxReport {
       List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
-        Product product = event.getBatch().getProduct();
+        Product product = event.getProduct();
         if (!rowLookup.containsKey(product.getId())) {
           rowLookup.put(
             product.getId(),

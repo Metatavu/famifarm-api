@@ -10,7 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.WastageEvent_;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
@@ -30,7 +30,7 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    * 
    * @param id id
    * @param amount amount
-   * @param batch batch
+   * @param product product
    * @param wastageReason wastage reason
    * @param description description
    * @param startTime start time
@@ -41,11 +41,11 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
    * @return created wastage event
    */
   @SuppressWarnings ("squid:S00107")
-  public WastageEvent create(UUID id, Integer amount, Batch batch, WastageReason wastageReason, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, EventType phase, String additionalInformation, ProductionLine productionLine, UUID creatorId, UUID lastModifierId) {
+  public WastageEvent create(UUID id, Integer amount, Product product, WastageReason wastageReason, OffsetDateTime startTime, OffsetDateTime endTime, Integer remainingUnits, EventType phase, String additionalInformation, ProductionLine productionLine, UUID creatorId, UUID lastModifierId) {
     WastageEvent wastageEvent = new WastageEvent();
     wastageEvent.setRemainingUnits(remainingUnits);
     wastageEvent.setAmount(amount);
-    wastageEvent.setBatch(batch);
+    wastageEvent.setProduct(product);
     wastageEvent.setWastageReason(wastageReason);
     wastageEvent.setId(id);
     wastageEvent.setStartTime(startTime);
@@ -59,12 +59,12 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
   }
   
   /**
-   * Lists events by batch
+   * Lists events by product
    * 
-   * @param batch batch
+   * @param product product
    * @return List of events
    */
-  public List<WastageEvent> listByBatch(Batch batch) {
+  public List<WastageEvent> listByProduct(Product product) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -72,7 +72,7 @@ public class WastageEventDAO extends AbstractEventDAO<WastageEvent> {
     Root<WastageEvent> root = criteria.from(WastageEvent.class);
     
     criteria.select(root);
-    criteria.where(criteriaBuilder.equal(root.get(WastageEvent_.batch), batch));
+    criteria.where(criteriaBuilder.equal(root.get(WastageEvent_.product), product));
     
     return entityManager.createQuery(criteria).getResultList();
   }
