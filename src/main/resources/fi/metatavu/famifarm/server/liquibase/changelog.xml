@@ -898,8 +898,7 @@
       </column>
     </addColumn>
     <dropForeignKeyConstraint baseTableName="event" constraintName="FK_EVENT_BATCH_ID"/>
-    <sql>UPDATE event SET product_id=(SELECT batch.product_id FROM batch WHERE batch.id=event.batch_id);</sql>
-    <dropColumn tableName="event" columnName="batch_id" />
+
   </changeSet>
 
 </databaseChangeLog>
