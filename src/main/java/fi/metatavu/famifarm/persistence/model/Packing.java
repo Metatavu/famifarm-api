@@ -43,7 +43,8 @@ public class Packing {
   @Column(nullable = false)
   @NotNull
   private PackingType type;
-  
+
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   @NotNull
   private PackingState packingState;
