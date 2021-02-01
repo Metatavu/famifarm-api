@@ -203,6 +203,55 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>5.0.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/src/main/resources/swagger.yaml</inputSpec>
+              <generatorName>jaxrs-spec</generatorName>
+              <configOptions>
+                <sourceFolder>src/gen/java/main</sourceFolder>
+                <dateLibrary>java8</dateLibrary>
+                <java8>true</java8>
+                <interfaceOnly>true</interfaceOnly>
+                <apiPackage>fi.metatavu.famifarm.rest.api</apiPackage>
+                <modelPackage>fi.metatavu.famifarm.rest.model</modelPackage>
+                <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                <prependFormOrBodyParameters>true</prependFormOrBodyParameters>
+                <returnResponse>true</returnResponse>
+              </configOptions>
+            </configuration>
+          </execution>
+          <execution>
+            <id>openapi-generate-client</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/src/main/resources/swagger.yaml</inputSpec>
+              <generatorName>java</generatorName>
+              <configOptions>
+                <sourceFolder>src/gen/java/main</sourceFolder>
+                <library>feign</library>
+                <dateLibrary>java8</dateLibrary>
+                <java8>true</java8>
+                <apiPackage>fi.metatavu.famifarm.client.api</apiPackage>
+                <modelPackage>fi.metatavu.famifarm.client.model</modelPackage>
+                <groupId>fi.metatavu.famifarm.client</groupId>
+                <invokerPackage>fi.metatavu.famifarm.client</invokerPackage>
+                <prependFormOrBodyParameters>true</prependFormOrBodyParameters>
+              </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
         <version>${quarkus-plugin.version}</version>
@@ -261,55 +310,6 @@
                 <version>${annotation-api.version}</version>
             </dependency>
         </dependencies>
-      </plugin>
-      <plugin>
-        <groupId>org.openapitools</groupId>
-        <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>5.0.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <inputSpec>${project.basedir}/src/main/resources/swagger.yaml</inputSpec>
-              <generatorName>jaxrs-spec</generatorName>
-              <configOptions>
-                <sourceFolder>src/gen/java/main</sourceFolder>
-                <dateLibrary>java8</dateLibrary>
-                <java8>true</java8>
-                <interfaceOnly>true</interfaceOnly>
-                <apiPackage>fi.metatavu.famifarm.rest.api</apiPackage>
-                <modelPackage>fi.metatavu.famifarm.rest.model</modelPackage>
-                <useSwaggerAnnotations>false</useSwaggerAnnotations>
-                <prependFormOrBodyParameters>true</prependFormOrBodyParameters>
-                <returnResponse>true</returnResponse>
-              </configOptions>
-            </configuration>
-          </execution>
-          <execution>
-            <id>openapi-generate-client</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <inputSpec>${project.basedir}/src/main/resources/swagger.yaml</inputSpec>
-              <generatorName>java</generatorName>
-              <configOptions>
-                <sourceFolder>src/gen/java/main</sourceFolder>
-                <library>feign</library>
-                <dateLibrary>java8</dateLibrary>
-                <java8>true</java8>
-                <apiPackage>fi.metatavu.famifarm.client.api</apiPackage>
-                <modelPackage>fi.metatavu.famifarm.client.model</modelPackage>
-                <groupId>fi.metatavu.famifarm.client</groupId>
-                <invokerPackage>fi.metatavu.famifarm.client</invokerPackage>
-                <prependFormOrBodyParameters>true</prependFormOrBodyParameters>
-              </configOptions>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
