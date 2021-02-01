@@ -11,10 +11,9 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.SowingEventDAO;
 import fi.metatavu.famifarm.persistence.dao.SowingEventSeedBatchDAO;
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
@@ -28,9 +27,6 @@ import fi.metatavu.famifarm.rest.model.PotType;
  */
 @ApplicationScoped
 public class SowingEventController {
-
-  @Inject
-  private BatchDAO batchDAO;
   
   @Inject
   private SowingEventDAO sowingEventDAO;
@@ -41,7 +37,7 @@ public class SowingEventController {
   /**
    * Update sowingEvent
    *
-   * @param batch batch
+   * @param product product
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
@@ -52,41 +48,10 @@ public class SowingEventController {
    * @return updated sowingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent createSowingEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Collection<SeedBatch> seedBatches, PotType potType, Integer amount, String additionalInformation, UUID creatorId) {
-    SowingEvent sowingEvent = sowingEventDAO.create(UUID.randomUUID(), batch, startTime, endTime, productionLine, potType, amount, 0, additionalInformation, creatorId, creatorId);
-    batchDAO.updateTotalSowed(batch, getTotalSowed(batch));
+  public SowingEvent createSowingEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Collection<SeedBatch> seedBatches, PotType potType, Integer amount, String additionalInformation, UUID creatorId) {
+    SowingEvent sowingEvent = sowingEventDAO.create(UUID.randomUUID(), product, startTime, endTime, productionLine, potType, amount, 0, additionalInformation, creatorId, creatorId);
     setSowingEventSeedBatches(sowingEvent, seedBatches);
     return sowingEvent;
-  }
-
-  /**
-   * Gets the amount of sowed seeds in a given batch
-   *
-   * @param batch batch to calculate from
-   * @return amount of sowed seeds in the given batch
-   */
-  public int getTotalSowed(Batch batch) {
-    List<SowingEvent> events = listBatchSowingEvents(batch);
-    int totalSowed = 0;
-    for (SowingEvent event : events) {
-      int eventTotal = getPotTypeAmount(event.getPotType()) * event.getAmount();
-      totalSowed += eventTotal;
-    }
-
-    return totalSowed;
-  }
-
-  /**
-   * Get number of plants in tray depending on pot type
-   *
-   * @param potType, potType
-   * @return amount
-   */
-  private int getPotTypeAmount(PotType potType) {
-    if (PotType.SMALL == potType) {
-      return 54;
-    }
-    return 35;
   }
   
   /**
@@ -111,20 +76,20 @@ public class SowingEventController {
   }
   
   /**
-   * Lists sowing events by batch 
+   * Lists sowing events by product 
    * 
-   * @param batch batch
+   * @param product product
    * @return sowing events by batch 
    */
-  public List<SowingEvent> listBatchSowingEvents(Batch batch) {
-    return sowingEventDAO.listByBatch(batch);
+  public List<SowingEvent> listProductSowingEvents(Product product) {
+    return sowingEventDAO.listByProduct(product);
   }
 
   /**
    * Update sowingEvent
    *
    * @param sowingEvent sowing event
-   * @param batch batch
+   * @param product product
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
@@ -136,16 +101,14 @@ public class SowingEventController {
    * @return updated sowingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent updateSowingEvent(SowingEvent sowingEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Collection<SeedBatch> seedBatches, PotType potType, Integer amount, String additionalInformation, UUID modifier) {
-    sowingEventDAO.updateBatch(sowingEvent, batch, modifier);
+  public SowingEvent updateSowingEvent(SowingEvent sowingEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Collection<SeedBatch> seedBatches, PotType potType, Integer amount, String additionalInformation, UUID modifier) {
+    sowingEventDAO.updateProduct(sowingEvent, product, modifier);
     sowingEventDAO.updateStartTime(sowingEvent, startTime, modifier);
     sowingEventDAO.updateEndTime(sowingEvent, endTime, modifier);
     sowingEventDAO.updateProductionLine(sowingEvent, productionLine, modifier);
     sowingEventDAO.updatePotType(sowingEvent, potType, modifier);
     sowingEventDAO.updateAmount(sowingEvent, amount, modifier);
     sowingEventDAO.updateAdditionalInformation(sowingEvent, additionalInformation, modifier);
-
-    batchDAO.updateTotalSowed(batch, getTotalSowed(batch));
 
     setSowingEventSeedBatches(sowingEvent, seedBatches);
     
@@ -158,11 +121,8 @@ public class SowingEventController {
    * @param sowingEvent sowing event to be deleted
    */
   public void deleteSowingEvent(SowingEvent sowingEvent) {
-    batchDAO.listByActiveBatch(sowingEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
     sowingEventSeedBatchDAO.listBySowingEvent(sowingEvent).forEach(sowingEventSeedBatchDAO::delete);
     sowingEventDAO.delete(sowingEvent);
-    Batch batch = sowingEvent.getBatch();
-    batchDAO.updateTotalSowed(batch, getTotalSowed(batch));
   }
 
   /**

@@ -2,23 +2,33 @@ package fi.metatavu.famifarm.test.functional;
 
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
-import org.junit.Test;
+
+import io.quarkus.test.common.QuarkusTestResource;
+import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
+import io.quarkus.test.junit.QuarkusTest;
+import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
+
+import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests for cut packings
  */
+@QuarkusTest
+@QuarkusTestResource(MysqlResource.class)
+@QuarkusTestResource(KeycloakResource.class)
 public class CutPackingTestIT extends AbstractFunctionalTest {
     @Test
     public void testCreateCutPacking() throws Exception {
         try (TestBuilder testBuilder = new TestBuilder()) {
-            LocalizedEntry testEntry = new LocalizedEntry();
+            List<LocalizedValue> testEntry = new ArrayList<>();
             LocalizedValue testValue = new LocalizedValue();
 
             testValue.setLanguage("en");
@@ -29,8 +39,8 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             Product product = testBuilder.admin().products().create(testEntry, size, false);
             ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
 
-            OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30);
-            OffsetDateTime cuttingDay = OffsetDateTime.now();
+            OffsetDateTime sowingDay = OffsetDateTime.now().withYear(2019);
+            OffsetDateTime cuttingDay = OffsetDateTime.now().withYear(2020);
 
             CutPacking cutPacking = testBuilder.admin().cutPackings().create(
                     10,
@@ -48,8 +58,8 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             assertEquals(10, cutPacking.getWeight(), 0.00001);
             assertEquals(product.getId(), cutPacking.getProductId());
             assertEquals(productionLine.getId(), cutPacking.getProductionLineId());
-            assertEquals(getTestableDateTimeString(sowingDay), getTestableDateTimeString(cutPacking.getSowingDay()));
-            assertEquals(getTestableDateTimeString(cuttingDay), getTestableDateTimeString(cutPacking.getCuttingDay()));
+            assertEquals(2019, cutPacking.getSowingDay().getYear());
+            assertEquals(2020, cutPacking.getCuttingDay().getYear());
             assertEquals("Producer", cutPacking.getProducer());
             assertEquals("Contact information", cutPacking.getContactInformation());
             assertEquals("Storage condition", cutPacking.getStorageCondition());
@@ -61,7 +71,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
     @Test
     public void testUpdateCutPacking() throws Exception {
         try (TestBuilder testBuilder = new TestBuilder()) {
-            LocalizedEntry testEntry = new LocalizedEntry();
+            List<LocalizedValue> testEntry = new ArrayList<>();
             LocalizedValue testValue = new LocalizedValue();
 
             testValue.setLanguage("en");
@@ -75,8 +85,8 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             Product product2 = testBuilder.admin().products().create(testEntry, size, false);
             ProductionLine productionLine2 = testBuilder.admin().productionLines().create("1", 100);
 
-            OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30);
-            OffsetDateTime cuttingDay = OffsetDateTime.now();
+            OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30).withYear(2019);
+            OffsetDateTime cuttingDay = OffsetDateTime.now().withYear(2019);
 
             CutPacking createdCutPacking = testBuilder.admin().cutPackings().create(
                     10,
@@ -90,11 +100,14 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     10,
                     100);
 
+            assertEquals(2019, createdCutPacking.getSowingDay().getYear());
+            assertEquals(2019, createdCutPacking.getCuttingDay().getYear());
+
             createdCutPacking.setWeight(100.0);
             createdCutPacking.setProductionLineId(productionLine2.getId());
             createdCutPacking.setProductId(product2.getId());
-            createdCutPacking.setSowingDay(sowingDay.plusDays(1));
-            createdCutPacking.setCuttingDay(cuttingDay.plusDays(1));
+            createdCutPacking.setSowingDay(sowingDay.withYear(2020));
+            createdCutPacking.setCuttingDay(cuttingDay.withYear(2020));
             createdCutPacking.setProducer("Producer 2");
             createdCutPacking.setContactInformation("Contact information 2");
             createdCutPacking.setGutterCount(20);
@@ -107,8 +120,8 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             assertEquals(100, updatedCutPacking.getWeight(), 0.00001);
             assertEquals(product2.getId(), updatedCutPacking.getProductId());
             assertEquals(productionLine2.getId(), updatedCutPacking.getProductionLineId());
-            assertEquals(getTestableDateTimeString(sowingDay.plusDays(1)), getTestableDateTimeString(updatedCutPacking.getSowingDay()));
-            assertEquals(getTestableDateTimeString(cuttingDay.plusDays(1)), getTestableDateTimeString(updatedCutPacking.getCuttingDay()));
+            assertEquals(2020, updatedCutPacking.getSowingDay().getYear());
+            assertEquals(2020, updatedCutPacking.getCuttingDay().getYear());
             assertEquals("Producer 2", updatedCutPacking.getProducer());
             assertEquals("Contact information 2", updatedCutPacking.getContactInformation());
             assertEquals(20, (int) updatedCutPacking.getGutterCount());
@@ -132,7 +145,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
     @Test
     public void testListCutPackings() throws Exception {
         try (TestBuilder testBuilder = new TestBuilder()) {
-            LocalizedEntry testEntry = new LocalizedEntry();
+            List<LocalizedValue> testEntry = new ArrayList<>();
             LocalizedValue testValue = new LocalizedValue();
 
             testValue.setLanguage("en");
@@ -209,7 +222,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
     @Test
     public void testFindCutPacking() throws Exception {
         try (TestBuilder testBuilder = new TestBuilder()) {
-            LocalizedEntry testEntry = new LocalizedEntry();
+            List<LocalizedValue> testEntry = new ArrayList<>();
             LocalizedValue testValue = new LocalizedValue();
 
             testValue.setLanguage("en");
@@ -246,7 +259,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
     @Test
     public void testDeleteCutPacking() throws Exception {
         try (TestBuilder testBuilder = new TestBuilder()) {
-            LocalizedEntry testEntry = new LocalizedEntry();
+            List<LocalizedValue> testEntry = new ArrayList<>();
             LocalizedValue testValue = new LocalizedValue();
 
             testValue.setLanguage("en");

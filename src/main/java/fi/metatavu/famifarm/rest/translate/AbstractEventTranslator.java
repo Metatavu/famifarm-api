@@ -26,15 +26,14 @@ public abstract class AbstractEventTranslator <R, J extends fi.metatavu.famifarm
     
     Event result = new Event();
     result.setId(event.getId());
-    result.setBatchId(event.getBatch() != null ? event.getBatch().getId() : null);
+    result.setProductId(event.getProduct().getId());
     result.setData(translateEventData(event));
     result.setEndTime(event.getEndTime());
     result.setStartTime(event.getStartTime());
     result.setType(getType());
     result.setUserId(event.getCreatorId());
     result.setAdditionalInformation(event.getAdditionalInformation());
-    result.setRemainingUnits(event.getRemainingUnits());
-    
+
     return result;
   }
   

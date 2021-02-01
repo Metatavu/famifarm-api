@@ -1,18 +1,19 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.json.JSONException;
 
 import feign.FeignException;
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.SeedsApi;
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.SeedsApi;
+import fi.metatavu.famifarm.client.model.LocalizedValue;
 import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -38,7 +39,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    * @param name name
    * @return created seed
    */
-  public Seed create(LocalizedEntry name) {
+  public Seed create(List<LocalizedValue> name) {
     Seed seed = new Seed();
     seed.setName(name);
     return addClosable(getApi().createSeed(seed));
@@ -101,7 +102,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    * 
    * @param expectedStatus expected status code
    */
-  public void assertCreateFailStatus(int expectedStatus, LocalizedEntry name) {
+  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name) {
     try {
       Seed seed = new Seed();
       seed.setName(name);

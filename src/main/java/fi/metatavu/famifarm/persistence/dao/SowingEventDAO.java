@@ -10,7 +10,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import fi.metatavu.famifarm.persistence.model.Batch;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.SowingEvent_;
@@ -27,7 +27,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
   /**
    * Creates new sowingEvent
    *
-   * @param batch batch
+   * @param product product
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
@@ -38,9 +38,9 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public SowingEvent create(UUID id, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, PotType potType, Integer amount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public SowingEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, PotType potType, Integer amount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     SowingEvent sowingEvent = new SowingEvent();
-    sowingEvent.setBatch(batch);
+    sowingEvent.setProduct(product);
     sowingEvent.setRemainingUnits(remainingUnits);
     sowingEvent.setStartTime(startTime);
     sowingEvent.setEndTime(endTime);
@@ -55,12 +55,12 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
   }
   
   /**
-   * Lists events by batch
+   * Lists events by product
    * 
-   * @param batch batch
+   * @param product product
    * @return List of events
    */
-  public List<SowingEvent> listByBatch(Batch batch) {
+  public List<SowingEvent> listByProduct(Product product) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -68,7 +68,7 @@ public class SowingEventDAO extends AbstractEventDAO<SowingEvent> {
     Root<SowingEvent> root = criteria.from(SowingEvent.class);
     
     criteria.select(root);
-    criteria.where(criteriaBuilder.equal(root.get(SowingEvent_.batch), batch));
+    criteria.where(criteriaBuilder.equal(root.get(SowingEvent_.product), product));
     
     return entityManager.createQuery(criteria).getResultList();
   }

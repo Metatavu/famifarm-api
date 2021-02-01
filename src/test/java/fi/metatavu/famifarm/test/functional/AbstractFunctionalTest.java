@@ -1,14 +1,11 @@
 package fi.metatavu.famifarm.test.functional;
 
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
@@ -41,41 +38,41 @@ public abstract class AbstractFunctionalTest {
   protected Event createSowingEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize, false);
-    Batch batch = builder.admin().batches().create(product);
-    return createSowingEvent(builder, batch);
+    return createSowingEvent(builder, product);
   }
 
     /**
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch to attach the event to
+   * @param product product to attach the event to
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createSowingEvent(TestBuilder builder, Batch batch) throws IOException {
+  protected Event createSowingEvent(TestBuilder builder, Product product) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     
-    return createSowingEvent(builder, batch, startTime, endTime);
+    return createSowingEvent(builder, product, startTime, endTime);
   }
   
   /**
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch to attach the event to
+   * @param product product to attach the event to
    * @param startTime startTime
    * @param endTime endTime
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createSowingEvent(TestBuilder builder, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
+  protected Event createSowingEvent(TestBuilder builder, Product product, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     Integer amount = 12;
     
-    return createSowingEvent(builder, batch, amount, startTime, endTime);
+    return createSowingEvent(builder, product, amount, startTime, endTime);
   }
   
+
   /**
    * Creates test event
    * 
@@ -87,13 +84,13 @@ public abstract class AbstractFunctionalTest {
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createSowingEvent(TestBuilder builder, Batch batch, int amount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
+  protected Event createSowingEvent(TestBuilder builder, Product product, int amount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
     PotType potType = PotType.LARGE;
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
     SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
     
-    return builder.admin().events().createSowing(batch, startTime, endTime, amount, potType, productionLine, Arrays.asList(seedBatch));
+    return builder.admin().events().createSowing(product, startTime, endTime, amount, potType, productionLine, Arrays.asList(seedBatch));
   }
 
   /**
@@ -105,27 +102,25 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createTableSpreadEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-    LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+    List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, createdPackageSize, false);
-
-    Batch batch = builder.admin().batches().create(product);
-    return createTableSpreadEvent(builder, batch);
+    return createTableSpreadEvent(builder, product);
   }
 
   /**
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch to attach the event to
+   * @param product product to attach the event to
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createTableSpreadEvent(TestBuilder builder, Batch batch) throws IOException {
+  protected Event createTableSpreadEvent(TestBuilder builder, Product product) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     Integer tableCount = 15;
     
-    return builder.admin().events().createTableSpread(batch, startTime, endTime, tableCount);
+    return builder.admin().events().createTableSpread(product, startTime, endTime, tableCount);
   }
 
   /**
@@ -137,23 +132,20 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createCultivationObservationEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-    LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+    List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, createdPackageSize, false);
-
-    Batch batch = builder.admin().batches().create(product);
-
-    return createCultivationObservationEvent(builder, batch);
+    return createCultivationObservationEvent(builder, product);
   }
   
   /**
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch
+   * @param product product
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createCultivationObservationEvent(TestBuilder builder, Batch batch) throws IOException {
+  protected Event createCultivationObservationEvent(TestBuilder builder, Product product) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
@@ -169,19 +161,19 @@ public abstract class AbstractFunctionalTest {
       builder.admin().pests().create(builder.createLocalizedEntry("Pest 2"))   
     );
     
-    return builder.admin().events().createCultivationObservation(batch, startTime, endTime, luminance, pests, weight, performedActions);
+    return builder.admin().events().createCultivationObservation(product, startTime, endTime, luminance, pests, weight, performedActions);
   }
   
   /**
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch
+   * @param product product
    * @param weight weight
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createCultivationObservationEvent(TestBuilder builder, Batch batch, Double weight) throws IOException {
+  protected Event createCultivationObservationEvent(TestBuilder builder, Product product, Double weight) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
@@ -196,7 +188,7 @@ public abstract class AbstractFunctionalTest {
       builder.admin().pests().create(builder.createLocalizedEntry("Pest 2"))   
     );
     
-    return builder.admin().events().createCultivationObservation(batch, startTime, endTime, luminance, pests, weight, performedActions);
+    return builder.admin().events().createCultivationObservation(product, startTime, endTime, luminance, pests, weight, performedActions);
   }
 
   /**
@@ -223,9 +215,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize, false);
-
-    Batch batch = builder.admin().batches().create(product);
-    return createHarvestEvent(builder, harvestType, batch);
+    return createHarvestEvent(builder, harvestType, product);
   }
   
   /**
@@ -233,14 +223,14 @@ public abstract class AbstractFunctionalTest {
    * 
    * @param builder test builder
    * @param harvestType harvestType
-   * @param batch batch
+   * @param product product
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Batch batch) throws IOException {
+  protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Product product) throws IOException {
     Integer amount = 50;
     
-    return createHarvestEvent(builder, harvestType, batch, amount);
+    return createHarvestEvent(builder, harvestType, product, amount);
   }
   
   /**
@@ -248,17 +238,17 @@ public abstract class AbstractFunctionalTest {
    * 
    * @param builder test builder
    * @param harvestType harvestType
-   * @param batch batch
+   * @param product product
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Batch batch, Integer amount) throws IOException {
+  protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Product product, Integer amount) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
     
-    return builder.admin().events().createHarvest(batch, amount, startTime, endTime, productionLine , harvestType);
+    return builder.admin().events().createHarvest(product, amount, startTime, endTime, productionLine , harvestType);
   }
 
   /**
@@ -270,45 +260,42 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createPlantingEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 12);
-    LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+    List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, createdPackageSize, false);
-    
-    Batch batch = builder.admin().batches().create(product);
-    
-    return createPlantingEvent(builder, batch);
+    return createPlantingEvent(builder, product);
   }
   
   /**
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch
+   * @param product product
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createPlantingEvent(TestBuilder builder, Batch batch) throws IOException {
+  protected Event createPlantingEvent(TestBuilder builder, Product product) throws IOException {
     Integer gutterSize = 2;
     Integer gutterCount = 2;
     
-    return createPlantingEvent(builder, batch, gutterSize, gutterCount);
+    return createPlantingEvent(builder, product, gutterSize, gutterCount);
   }
   
   /**
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch
+   * @param product product
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createPlantingEvent(TestBuilder builder, Batch batch, Integer gutterSize, Integer gutterCount) throws IOException {
+  protected Event createPlantingEvent(TestBuilder builder, Product product, Integer gutterSize, Integer gutterCount) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     ProductionLine productionLine = builder.admin().productionLines().create("4" , 8);
     Integer trayCount = 50;
     Integer workerCount = 2;
     
-    return builder.admin().events().createPlanting(batch, startTime, endTime, gutterCount, gutterSize, productionLine, trayCount, workerCount);
+    return builder.admin().events().createPlanting(product, startTime, endTime, gutterCount, gutterSize, productionLine, trayCount, workerCount);
   }
 
   /**
@@ -321,28 +308,27 @@ public abstract class AbstractFunctionalTest {
   protected Event createWastageEvent(TestBuilder builder) throws IOException {
     WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-    LocalizedEntry name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+    List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, createdPackageSize, false);
     ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
-    Batch batch = builder.admin().batches().create(product);
     
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
     Integer amount = 150;
     String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";
-    return builder.admin().events().createWastage(batch, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
+    return builder.admin().events().createWastage(product, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
   }
   
   /**
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch
+   * @param product product
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createWastageEvent(TestBuilder builder, Batch batch) throws IOException {
+  protected Event createWastageEvent(TestBuilder builder, Product product) throws IOException {
     WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
     ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
     
@@ -352,43 +338,27 @@ public abstract class AbstractFunctionalTest {
     Integer amount = 150;
     String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";
 
-    return builder.admin().events().createWastage(batch, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
+    return builder.admin().events().createWastage(product, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
   }
   
   /**
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch
+   * @param product product
    * @param startTime startTime
    * @param endTime endTime
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createWastageEvent(TestBuilder builder, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
+  protected Event createWastageEvent(TestBuilder builder, Product product, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
     ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
 
     Integer amount = 20;
     String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";
 
-    return builder.admin().events().createWastage(batch, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
-  }
-  
-  /**
-   * Sets remaining units field value for event
-   * 
-   * @param event event
-   * @param remainingUnits value
-   */
-  protected void setEventRemainingUnits(Event event, Integer remainingUnits) {
-    try {
-      Field field = Event.class.getDeclaredField("remainingUnits");
-      field.setAccessible(true);
-      field.set(event, remainingUnits);
-    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-      fail(e.getMessage());
-    }
+    return builder.admin().events().createWastage(product, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
   }
 
   /**

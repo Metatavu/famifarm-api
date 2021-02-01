@@ -1,6 +1,6 @@
 package fi.metatavu.famifarm.test.functional.builder;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,9 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.ApiClient.Api;
-import fi.metatavu.famifarm.auth.ApiKeyAuth;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.ApiClient.Api;
+import fi.metatavu.famifarm.client.auth.HttpBearerAuth;
 
 /**
  * Abstract base class for test builder resources
@@ -111,7 +111,7 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
    */
   protected void assertJsonsEqual(Object expected, Object actual) throws IOException, JSONException {
     JSONCompareResult compareResult = jsonCompare(expected, actual);
-    assertTrue(compareResult.getMessage(), compareResult.passed());    
+    assertTrue(compareResult.passed(), compareResult.getMessage());    
   }
   
   /**
@@ -137,9 +137,9 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
    * @throws IOException thrown when downloading fails
    */
   protected byte[] getBinaryData(ApiClient apiClient, URL url) throws IOException {
-    ApiKeyAuth bearerAuth = (ApiKeyAuth) apiClient.getAuthorization("BearerAuth");
-    String authorization = bearerAuth.getApiKey();
-    return getBinaryData(authorization, url);
+    HttpBearerAuth bearerAuth = (HttpBearerAuth) apiClient.getAuthorization("BearerAuth");
+    String token = bearerAuth.getBearerToken();
+    return getBinaryData(String.format("Bearer %s", token), url);
   }  
   
   /**

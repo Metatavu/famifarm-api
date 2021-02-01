@@ -3,9 +3,7 @@ package fi.metatavu.famifarm.printing;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
-import fi.metatavu.famifarm.packings.PackingController;
 import fi.metatavu.famifarm.persistence.model.CutPacking;
 import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.rest.model.PackingType;
@@ -29,10 +27,7 @@ import java.util.stream.Collectors;
  */
 @ApplicationScoped
 public class PrintingController {
-    @Inject
-    private PackingController packingController;
-    @Inject
-    private CampaignController campaignController;
+
     @Inject
     private LocalizedValueController localizedValueController;
 

@@ -10,15 +10,12 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.batches.BatchController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
-import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
-import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
 
@@ -34,9 +31,6 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
   
   @Inject
   private EventController eventController;
-  
-  @Inject
-  private BatchController batchController;
   
   @Inject
   private LocalizedValueController localizedValueController;
@@ -69,46 +63,43 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
       xlsxBuilder.setCellValue(sheetId, 3, growthTimeIndex, localesController.getString(locale, "reports.growth_time.growthTimeHeader"));
       
       // Values
-      
-      List<Batch> batches = batchController.listBatches(null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")), null, null);
+
       int rowIndex = 4;
       
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); 
+
+      List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       
-      for (Batch batch : batches) {
-        List<Event> events = eventController.listEvents(batch, null, null);
-        Product product = batch.getProduct();
-        
-        float totalWeight = 0;    
-        int amountOfCultivationObservations = 0;    
-        HarvestEvent lastHarvestEvent = null;
-        SowingEvent firstSowingEvent = null;
-        
-        double averageWeight = 0;
-        
-        for (Event event: events) {
-          switch (event.getType()) {
-            case CULTIVATION_OBSERVATION:
-              CultivationObservationEvent cultivationObservationEvent = (CultivationObservationEvent) event;
-              amountOfCultivationObservations++;              
-              if (cultivationObservationEvent.getWeight() != null) {
-                totalWeight += cultivationObservationEvent.getWeight();
-              }
-            break;
-            case HARVEST:
-              if ((lastHarvestEvent == null) || (lastHarvestEvent != null && event.getEndTime() != null && event.getEndTime().isAfter(lastHarvestEvent.getEndTime()))) {
-                lastHarvestEvent = (HarvestEvent) event; 
-              }
-            break;
-            case SOWING:
-              if ((firstSowingEvent == null) || (firstSowingEvent != null && event.getStartTime().isBefore(firstSowingEvent.getStartTime()))) {
-                firstSowingEvent = (SowingEvent) event; 
-              }
-            break;
-            default:
-            break;
-          }
+      float totalWeight = 0;    
+      int amountOfCultivationObservations = 0;    
+      HarvestEvent lastHarvestEvent = null;
+      SowingEvent firstSowingEvent = null;
+      
+      double averageWeight = 0;
+      
+      for (Event event: events) {
+        switch (event.getType()) {
+          case CULTIVATION_OBSERVATION:
+            CultivationObservationEvent cultivationObservationEvent = (CultivationObservationEvent) event;
+            amountOfCultivationObservations++;              
+            if (cultivationObservationEvent.getWeight() != null) {
+              totalWeight += cultivationObservationEvent.getWeight();
+            }
+          break;
+          case HARVEST:
+            if ((lastHarvestEvent == null) || (lastHarvestEvent != null && event.getEndTime() != null && event.getEndTime().isAfter(lastHarvestEvent.getEndTime()))) {
+              lastHarvestEvent = (HarvestEvent) event; 
+            }
+          break;
+          case SOWING:
+            if ((firstSowingEvent == null) || (firstSowingEvent != null && event.getStartTime().isBefore(firstSowingEvent.getStartTime()))) {
+              firstSowingEvent = (SowingEvent) event; 
+            }
+          break;
+          default:
+          break;
         }
+        
         
         if (totalWeight > 0 && amountOfCultivationObservations > 0) {
           averageWeight = totalWeight / amountOfCultivationObservations;
@@ -120,7 +111,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
           int days = (int) (packingDate.getTime() - sowingDate.getTime()) / (1000*60*60*24);
 
           xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, firstSowingEvent.getProductionLine().getLineNumber());
-          xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
+          xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(event.getProduct().getName(), locale));
           xlsxBuilder.setCellValue(sheetId, rowIndex, packingDateIndex, lastHarvestEvent.getEndTime().format(formatter));
           xlsxBuilder.setCellValue(sheetId, rowIndex, sowingDateIndex, firstSowingEvent.getStartTime().format(formatter));
           xlsxBuilder.setCellValue(sheetId, rowIndex, averageWeightIndex, Double.toString(averageWeight));

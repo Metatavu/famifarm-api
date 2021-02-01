@@ -1,18 +1,19 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.json.JSONException;
 
 import feign.FeignException;
-import fi.metatavu.famifarm.ApiClient;
-import fi.metatavu.famifarm.client.PerformedCultivationActionsApi;
-import fi.metatavu.famifarm.client.model.LocalizedEntry;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.PerformedCultivationActionsApi;
+import fi.metatavu.famifarm.client.model.LocalizedValue;
 import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -38,7 +39,7 @@ public class PerformedCultivationActionTestBuilderResource extends AbstractTestB
    * @param name name
    * @return created performedCultivationAction
    */
-  public PerformedCultivationAction create(LocalizedEntry name) {
+  public PerformedCultivationAction create(List<LocalizedValue> name) {
     PerformedCultivationAction performedCultivationAction = new PerformedCultivationAction();
     performedCultivationAction.setName(name);
     return addClosable(getApi().createPerformedCultivationAction(performedCultivationAction));
@@ -101,7 +102,7 @@ public class PerformedCultivationActionTestBuilderResource extends AbstractTestB
    * 
    * @param expectedStatus expected status code
    */
-  public void assertCreateFailStatus(int expectedStatus, LocalizedEntry name) {
+  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name) {
     try {
       PerformedCultivationAction performedCultivationAction = new PerformedCultivationAction();
       performedCultivationAction.setName(name);

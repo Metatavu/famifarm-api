@@ -8,19 +8,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Locale.LanguageRange;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.LocaleUtils;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.slf4j.Logger;
 
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.rest.model.ErrorResponse;
 import fi.metatavu.famifarm.rest.model.LocalizedValue;
+import io.vertx.core.http.HttpServerRequest;
 
 /**
  * Abstract base class for all API services
@@ -30,6 +32,12 @@ import fi.metatavu.famifarm.rest.model.LocalizedValue;
 public abstract class AbstractApi {
   
   protected static final String NOT_FOUND_MESSAGE = "Not found";
+
+  @Inject
+  JsonWebToken jwt;
+
+  @Context
+  HttpServerRequest httpServerRequest;
 
   @Inject
   private Logger logger;
@@ -173,8 +181,7 @@ public abstract class AbstractApi {
    * @return logged user id
    */
   protected UUID getLoggerUserId() {
-    HttpServletRequest httpServletRequest = getHttpServletRequest();
-    String remoteUser = httpServletRequest.getRemoteUser();
+    String remoteUser = jwt.getSubject();
     if (remoteUser == null) {
       return null;
     }
@@ -188,16 +195,16 @@ public abstract class AbstractApi {
    * @return request locale
    */
   protected Locale getLocale() {
-    return getHttpServletRequest().getLocale();
-  }
-  
-  /**
-   * Return current HttpServletRequest
-   * 
-   * @return current http servlet request
-   */
-  protected HttpServletRequest getHttpServletRequest() {
-    return ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+    String languageHeader = httpServerRequest.getHeader("Accept-language");
+    if (languageHeader == null) {
+      return Locale.ENGLISH;
+    }
+    List<LanguageRange> langs = Locale.LanguageRange.parse(languageHeader);
+    LanguageRange lang = langs.stream().findFirst().orElse(null);
+    if (lang != null) {
+      return Locale.forLanguageTag(lang.getRange());
+    }
+    return Locale.ENGLISH;
   }
   
   /**

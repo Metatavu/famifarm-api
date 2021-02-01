@@ -1,2 +1,0 @@
-embed-server --server-config=standalone-full-ha.xml
-/subsystem=undertow/server=default-server/host=famifarm-api:add(alias=["${env.FAMIFARM_API_HOST}"],default-web-module="famifarm-api.war")

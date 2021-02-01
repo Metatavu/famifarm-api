@@ -1,20 +1,28 @@
 package fi.metatavu.famifarm.test.functional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import fi.metatavu.famifarm.client.model.Seed;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
+
+import io.quarkus.test.junit.QuarkusTest;
+import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
+import io.quarkus.test.common.QuarkusTestResource;
+import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 
 /**
  * Tests for seeds
  * 
  * @author Antti Leppä
  */
+@QuarkusTest
+@QuarkusTestResource(MysqlResource.class)
+@QuarkusTestResource(KeycloakResource.class)
 public class SeedTestsIT extends AbstractFunctionalTest {
 
   @Test

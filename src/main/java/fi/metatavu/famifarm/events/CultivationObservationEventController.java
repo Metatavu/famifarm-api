@@ -11,16 +11,15 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.persistence.dao.BatchDAO;
 import fi.metatavu.famifarm.persistence.dao.CultivationObservationEventActionDAO;
 import fi.metatavu.famifarm.persistence.dao.CultivationObservationEventDAO;
 import fi.metatavu.famifarm.persistence.dao.CultivationObservationEventPestDAO;
-import fi.metatavu.famifarm.persistence.model.Batch;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEventAction;
 import fi.metatavu.famifarm.persistence.model.CultivationObservationEventPest;
 import fi.metatavu.famifarm.persistence.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.persistence.model.Pest;
+import fi.metatavu.famifarm.persistence.model.Product;
 
 /**
  * Controller for cultivation observation events
@@ -29,9 +28,6 @@ import fi.metatavu.famifarm.persistence.model.Pest;
  */
 @ApplicationScoped
 public class CultivationObservationEventController {
-
-  @Inject
-  private BatchDAO batchDAO;
   
   @Inject
   private CultivationObservationEventDAO cultivationObservationEventDAO;  
@@ -45,7 +41,7 @@ public class CultivationObservationEventController {
   /**
    * Create cultivationActionEvent
    *
-   * @param batch batch
+   * @param product product
    * @param startTime startTime
    * @param endTime endTime
    * @param weight weight
@@ -56,8 +52,8 @@ public class CultivationObservationEventController {
    * @return created cultivationActionEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public CultivationObservationEvent createCultivationActionEvent(Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, List<Pest> pests, List<PerformedCultivationAction> actions, String additionalInformation, UUID creatorId) {
-    CultivationObservationEvent event = cultivationObservationEventDAO.create(UUID.randomUUID(), weight, luminance, batch, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
+  public CultivationObservationEvent createCultivationActionEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, List<Pest> pests, List<PerformedCultivationAction> actions, String additionalInformation, UUID creatorId) {
+    CultivationObservationEvent event = cultivationObservationEventDAO.create(UUID.randomUUID(), weight, luminance, product, startTime, endTime, 0, additionalInformation, creatorId, creatorId);
     
     if (actions != null) {
       actions.stream().forEach(action -> cultivationObservationEventActionDAO.create(UUID.randomUUID(), event, action));
@@ -95,7 +91,7 @@ public class CultivationObservationEventController {
    * Update cultivationActionEvent
    *
    * @param cultivationActionEvent event
-   * @param batch batch
+   * @param product product
    * @param startTime startTime
    * @param endTime endTime
    * @param weight weight
@@ -106,8 +102,8 @@ public class CultivationObservationEventController {
    * @return updated cultivationActionEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public CultivationObservationEvent updateCultivationActionEvent(CultivationObservationEvent cultivationActionEvent, Batch batch, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, List<Pest> pests, List<PerformedCultivationAction> actions, String additionalInformation, UUID modifier) {
-    cultivationObservationEventDAO.updateBatch(cultivationActionEvent, batch, modifier);
+  public CultivationObservationEvent updateCultivationActionEvent(CultivationObservationEvent cultivationActionEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Double weight, Double luminance, List<Pest> pests, List<PerformedCultivationAction> actions, String additionalInformation, UUID modifier) {
+    cultivationObservationEventDAO.updateProduct(cultivationActionEvent, product, modifier);
     cultivationObservationEventDAO.updateStartTime(cultivationActionEvent, startTime, modifier);
     cultivationObservationEventDAO.updateEndTime(cultivationActionEvent, endTime, modifier);
     cultivationObservationEventDAO.updateWeight(cultivationActionEvent, weight, modifier);
@@ -164,8 +160,6 @@ public class CultivationObservationEventController {
    * @param cultivationActionEvent event to be deleted
    */
   public void deleteCultivationActionEvent(CultivationObservationEvent cultivationActionEvent) {
-    batchDAO.listByActiveBatch(cultivationActionEvent).stream().forEach(batch -> batchDAO.updateActiveEvent(batch, null));
-    
     cultivationObservationEventActionDAO.listByEvent(cultivationActionEvent).stream()
       .forEach(cultivationObservationEventActionDAO::delete);    
     

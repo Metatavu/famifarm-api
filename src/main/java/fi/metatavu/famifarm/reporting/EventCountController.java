@@ -48,7 +48,7 @@ public class EventCountController {
    */
   public Double countUnitsByProductAndEventType(List<Event> events, Product product, EventType eventType) {
     List<Event> productEvents = events.stream()
-        .filter(event -> event.getBatch().getProduct().getId().equals(product.getId()))
+        .filter(event -> event.getProduct().getId().equals(product.getId()))
         .collect(Collectors.toList());
     
     return countUnitsByEventType(productEvents, eventType);
@@ -179,7 +179,7 @@ public class EventCountController {
   private Double getAverageGutterHoleCount(Event eventParam) {
     Double totalWeightedSize = 0d;
     Double totalGutterCount = 0d;
-    List<Event> batchEvents = eventController.listEvents(eventParam.getBatch(), null, null);
+    List<Event> batchEvents = eventController.listEvents(eventParam.getProduct(), null, null);
 
     for (Event event : batchEvents) {
       if (event.getType() == EventType.PLANTING) {
@@ -203,7 +203,7 @@ public class EventCountController {
    * @return amount
    */
   private int getPotTypeAmount(Event event) {
-    List<Event> batchEvents = eventController.listEvents(event.getBatch(), null, null);
+    List<Event> batchEvents = eventController.listEvents(event.getProduct(), null, null);
     SowingEvent sowingEvent = (SowingEvent) batchEvents.stream().filter(batchEvent -> batchEvent.getType() == EventType.SOWING).findFirst().orElse(null);
     if (sowingEvent == null) {
       return 0;
