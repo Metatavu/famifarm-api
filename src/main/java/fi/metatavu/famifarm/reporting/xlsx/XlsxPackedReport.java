@@ -54,7 +54,7 @@ public class XlsxPackedReport extends AbstractXlsxReport {
             Map<UUID, ReportRow> rowLookup = new HashMap<>();
             packings.stream().forEach(packing -> {
                 Product product = packing.getProduct();
-                if (!rowLookup.containsKey(product.getId())) {
+                if (product != null && !rowLookup.containsKey(product.getId())) {
                     rowLookup.put(
                             product.getId(),
                             new ReportRow(localizedValueController.getValue(product.getName(), locale),
