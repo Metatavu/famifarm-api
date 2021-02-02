@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.PackingType;
 import fi.metatavu.famifarm.rest.model.PotType;
 
 /**
@@ -30,7 +31,7 @@ public class EventCountController {
    * @return number of packed units
    */
   public Double countPackedUnitsByProduct(List<Packing> packings, Product product) {
-    List<Packing> productPackings = packings.stream().filter(packing -> packing.getProduct().getId().equals(product.getId())).collect(Collectors.toList());
+    List<Packing> productPackings = packings.stream().filter(packing -> packing.getType() == PackingType.BASIC && packing.getProduct().getId().equals(product.getId())).collect(Collectors.toList());
     Double count = 0d;
     for (Packing packing : productPackings) {
       count+= packing.getPackedCount() * packing.getPackageSize().getSize();;
