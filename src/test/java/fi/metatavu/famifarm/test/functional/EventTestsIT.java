@@ -299,12 +299,14 @@ public class EventTestsIT extends AbstractFunctionalTest {
 
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime updateSowingTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       ProductionLine updateProductionLine = builder.admin().productionLines().create("7", 8);
       
       HarvestEventData updateData = new HarvestEventData();
       updateData.setProductionLineId(updateProductionLine.getId());
       updateData.setType(fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.CUTTING);
       updateData.setGutterCount(100);
+      updateData.setSowingDate(updateSowingTime);
 
       Event updateEvent = new Event(); 
       updateEvent.setId(createdEvent.getId());
@@ -361,6 +363,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
 
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+      OffsetDateTime updateSowingTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Integer updateGutterSize = 24;
       ProductionLine updateProductionLine = builder.admin().productionLines().create("7", 7);
       
@@ -370,6 +373,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateData.setProductionLineId(updateProductionLine.getId());
       updateData.setTrayCount(7);
       updateData.setWorkerCount(8);
+      updateData.setSowingDate(updateSowingTime);
       
       Event updateEvent = new Event(); 
       updateEvent.setId(createdEvent.getId());

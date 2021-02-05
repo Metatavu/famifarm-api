@@ -127,8 +127,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type type
    * @return created event
    */
-  public Event createHarvest(Product product, Integer amount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
-    HarvestEventData data = createHarvestEventData(productionLine, amount, type);
+  public Event createHarvest(Product product, Integer amount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, type);
 
     Event event = new Event();
     event.setProductId(product != null ? product.getId() : null);
@@ -153,8 +153,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param workerCount worker count
    * @return created event
    */
-  public Event createPlanting(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, Integer cellCount, Integer workerCount) {
-    PlantingEventData data = createPlantingEventData(gutterCount, gutterNumber, productionLine, cellCount, workerCount);
+  public Event createPlanting(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, OffsetDateTime sowingDate, Integer cellCount, Integer workerCount) {
+    PlantingEventData data = createPlantingEventData(gutterCount, gutterNumber, productionLine, sowingDate, cellCount, workerCount);
     
     Event event = new Event();
     event.setProductId(product != null ? product.getId() : null);
@@ -422,10 +422,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type 
    * @return harvest event data
    */
-  private HarvestEventData createHarvestEventData(ProductionLine productionLine, Integer gutterCount, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+  private HarvestEventData createHarvestEventData(ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
     HarvestEventData data = new HarvestEventData();
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setGutterCount(gutterCount);
+    data.setSowingDate(sowingDate);
     data.setType(type);
     return data;
   }
@@ -440,10 +441,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param workerCount worker count
    * @return
    */
-  private PlantingEventData createPlantingEventData(Integer gutterCount, Integer gutterSize, ProductionLine productionLine, Integer cellCount, Integer workerCount) {
+  private PlantingEventData createPlantingEventData(Integer gutterCount, Integer gutterSize, ProductionLine productionLine, OffsetDateTime sowingDate, Integer cellCount, Integer workerCount) {
     PlantingEventData data = new PlantingEventData();
     data.setGutterCount(gutterCount);
     data.setGutterHoleCount(gutterSize);
+    data.setSowingDate(sowingDate);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setTrayCount(cellCount);
     data.setWorkerCount(workerCount);

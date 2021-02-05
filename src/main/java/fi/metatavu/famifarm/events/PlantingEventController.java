@@ -39,8 +39,8 @@ public class PlantingEventController {
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent createPlantingEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, String additionalInformation, UUID creatorId) {
-    return plantingEventDAO.create(UUID.randomUUID(), product, startTime, endTime, productionLine, gutterHoleCount, gutterCount, trayCount, workerCount, 0, additionalInformation, creatorId, creatorId);
+  public PlantingEvent createPlantingEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, String additionalInformation, UUID creatorId) {
+    return plantingEventDAO.create(UUID.randomUUID(), product, startTime, endTime, productionLine, sowingDate, gutterHoleCount, gutterCount, trayCount, workerCount, 0, additionalInformation, creatorId, creatorId);
   }
   
   /**
@@ -82,7 +82,7 @@ public class PlantingEventController {
    * @return updated plantingEvent
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent updatePlantingEvent(PlantingEvent plantingEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, String additionalInformation, UUID modifier) {
+  public PlantingEvent updatePlantingEvent(PlantingEvent plantingEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, String additionalInformation, UUID modifier) {
     plantingEventDAO.updateProduct(plantingEvent, product, modifier);
     plantingEventDAO.updateStartTime(plantingEvent, startTime, modifier);
     plantingEventDAO.updateEndTime(plantingEvent, endTime, modifier);
@@ -92,6 +92,7 @@ public class PlantingEventController {
     plantingEventDAO.updateTrayCount(plantingEvent, trayCount, modifier);
     plantingEventDAO.updateWorkerCount(plantingEvent, workerCount, modifier);
     plantingEventDAO.updateAdditionalInformation(plantingEvent, additionalInformation, modifier);
+    plantingEventDAO.updateSowingDate(plantingEvent, sowingDate, modifier);
     return plantingEvent;
   }
   

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.ParameterizedType;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -14,9 +15,11 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
+import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.JSONCompareResult;
+import org.skyscreamer.jsonassert.ValueMatcher;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -124,7 +127,17 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
    * @throws JsonProcessingException
    */
   protected JSONCompareResult jsonCompare(Object expected, Object actual) throws JSONException, JsonProcessingException {
-    CustomComparator customComparator = new CustomComparator(JSONCompareMode.LENIENT);
+    Customization sowingDateCustomization = new Customization("data.sowingDate", new ValueMatcher<Object>(){
+
+      @Override
+      public boolean equal(Object o1, Object o2) {
+        OffsetDateTime date = OffsetDateTime.parse((String) o1);
+        OffsetDateTime date2 = OffsetDateTime.parse((String) o2);
+        return date.isEqual(date2);
+      }
+
+    });
+    CustomComparator customComparator = new CustomComparator(JSONCompareMode.LENIENT, sowingDateCustomization);
     return JSONCompare.compareJSON(toJSONString(expected), toJSONString(actual), customComparator);
   }  
   

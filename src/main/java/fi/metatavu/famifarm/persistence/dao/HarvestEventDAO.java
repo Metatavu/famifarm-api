@@ -27,6 +27,7 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @param endTime end time
    * @param harvestType type
    * @param productionLine production line
+   * @param sowingDate sowing date
    * @param remainingUnits remaining units
    * @param additionalInformation additional information
    * @param gutterCount gutterCount
@@ -35,7 +36,7 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer remainingUnits, String additionalInformation, Integer gutterCount, UUID creatorId, UUID lastModifierId) {
+  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer remainingUnits, String additionalInformation, Integer gutterCount, UUID creatorId, UUID lastModifierId) {
     HarvestEvent harvestEvent = new HarvestEvent();
     harvestEvent.setProduct(product);
     harvestEvent.setRemainingUnits(remainingUnits);
@@ -48,6 +49,18 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
     harvestEvent.setCreatorId(creatorId);
     harvestEvent.setLastModifierId(lastModifierId);
     harvestEvent.setAdditionalInformation(additionalInformation);
+    harvestEvent.setSowingDate(sowingDate);
+    return persist(harvestEvent);
+  }
+
+  /**
+   * Updates sowingTime
+   *
+   * @return updated harvestEvent
+   */
+  public HarvestEvent updateSowingDate(HarvestEvent harvestEvent, OffsetDateTime sowingDate, UUID lastModifierId) {
+    harvestEvent.setLastModifierId(lastModifierId);
+    harvestEvent.setSowingDate(sowingDate);
     return persist(harvestEvent);
   }
 

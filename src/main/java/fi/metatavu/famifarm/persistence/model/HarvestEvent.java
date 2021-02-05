@@ -1,6 +1,7 @@
 package fi.metatavu.famifarm.persistence.model;
 
 import java.beans.Transient;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -35,6 +36,9 @@ public class HarvestEvent extends Event {
   @Column (nullable = false)
   private Integer gutterCount;
 
+  @Column(nullable = false)
+  private OffsetDateTime sowingDate;
+
   public fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum getHarvestType() {
     return harvestType;
   }
@@ -57,6 +61,14 @@ public class HarvestEvent extends Event {
 
   public void setGutterCount(Integer gutterCount) {
     this.gutterCount = gutterCount;
+  }
+
+  public OffsetDateTime getSowingDate() {
+    return sowingDate;
+  }
+
+  public void setSowingDate(OffsetDateTime sowingDate) {
+    this.sowingDate = sowingDate;
   }
 
   @Transient
