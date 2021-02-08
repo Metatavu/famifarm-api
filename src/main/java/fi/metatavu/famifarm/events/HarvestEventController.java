@@ -38,8 +38,8 @@ public class HarvestEventController {
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent createHarvestEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, String additionalInformation, Integer gutterCount, UUID creatorId) {
-    return harvestEventDAO.create(UUID.randomUUID(), product, startTime, endTime, harvestType, productionLine, 0, additionalInformation, gutterCount, creatorId, creatorId);
+  public HarvestEvent createHarvestEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, String additionalInformation, Integer gutterCount, UUID creatorId) {
+    return harvestEventDAO.create(UUID.randomUUID(), product, startTime, endTime, harvestType, productionLine, sowingDate, 0, additionalInformation, gutterCount, creatorId, creatorId);
   }
   
   /**
@@ -78,7 +78,7 @@ public class HarvestEventController {
    */
   @SuppressWarnings ("squid:S00107")
 
-  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, Integer gutterCount, String additionalInformation, UUID modifier) {
+  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, String additionalInformation, UUID modifier) {
 
     harvestEventDAO.updateProduct(harvestEvent, product, modifier);
     harvestEventDAO.updateStartTime(harvestEvent, startTime, modifier);
@@ -87,6 +87,7 @@ public class HarvestEventController {
     harvestEventDAO.updateProductionLine(harvestEvent, productionLine, modifier);
     harvestEventDAO.updateAdditionalInformation(harvestEvent, additionalInformation, modifier);
     harvestEventDAO.updateGutterCount(harvestEvent, gutterCount, modifier);
+    harvestEventDAO.updateSowingDate(harvestEvent, sowingDate, modifier);
 
     return harvestEvent;
   }

@@ -245,10 +245,11 @@ public abstract class AbstractFunctionalTest {
   protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Product product, Integer amount) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime sowingTime = OffsetDateTime.of(2020, 1, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
     
-    return builder.admin().events().createHarvest(product, amount, startTime, endTime, productionLine , harvestType);
+    return builder.admin().events().createHarvest(product, amount, startTime, endTime, productionLine, sowingTime, harvestType);
   }
 
   /**
@@ -291,11 +292,12 @@ public abstract class AbstractFunctionalTest {
   protected Event createPlantingEvent(TestBuilder builder, Product product, Integer gutterSize, Integer gutterCount) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
+    OffsetDateTime sowingTime = OffsetDateTime.of(2020, 1, 3, 4, 10, 6, 0, ZoneOffset.ofHours(2));
     ProductionLine productionLine = builder.admin().productionLines().create("4" , 8);
     Integer trayCount = 50;
     Integer workerCount = 2;
     
-    return builder.admin().events().createPlanting(product, startTime, endTime, gutterCount, gutterSize, productionLine, trayCount, workerCount);
+    return builder.admin().events().createPlanting(product, startTime, endTime, gutterCount, gutterSize, productionLine, sowingTime, trayCount, workerCount);
   }
 
   /**

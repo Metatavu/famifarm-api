@@ -904,4 +904,17 @@
     <addForeignKeyConstraint baseTableName="event" baseColumnNames="product_id" constraintName="FK_EVENT_PRODUCT_ID" referencedTableName="product" referencedColumnNames="id" />
   </changeSet>
 
+  <changeSet id="addharvestandplantingsowingdate" author="Heikki Kurhinen">
+    <addColumn tableName="harvestevent">
+      <column name="sowingdate" type="datetime(6)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="plantingevent">
+      <column name="sowingdate" type="datetime(6)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

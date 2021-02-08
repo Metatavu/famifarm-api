@@ -1,6 +1,7 @@
 package fi.metatavu.famifarm.persistence.model;
 
 import java.beans.Transient;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -42,6 +43,9 @@ public class PlantingEvent extends Event {
   @Column (nullable = false)
   private Integer workerCount;
 
+  @Column(nullable = false)
+  private OffsetDateTime sowingDate;
+
   public ProductionLine getProductionLine() {
     return productionLine;
   }
@@ -80,6 +84,14 @@ public class PlantingEvent extends Event {
 
   public void setWorkerCount(Integer workerCount) {
     this.workerCount = workerCount;
+  }
+
+  public OffsetDateTime getSowingDate() {
+    return sowingDate;
+  }
+
+  public void setSowingDate(OffsetDateTime sowingDate) {
+    this.sowingDate = sowingDate;
   }
 
   @Transient
