@@ -29,10 +29,10 @@ import fi.metatavu.famifarm.printing.PrintingController;
 import fi.metatavu.famifarm.rest.model.*;
 import fi.metatavu.famifarm.rest.translate.*;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.metatavu.famifarm.authentication.Roles;
 import fi.metatavu.famifarm.drafts.DraftController;
@@ -1302,20 +1302,6 @@ public class V1RESTService extends AbstractApi implements V1Api {
     return createOk(pestsTranslator.translatePest(pestsController.updatePest(pest, name, loggerUserId)));
   }
 
-  /**
-   * Parse time
-   * 
-   * @param timeString
-   * @return time
-   */
-  private OffsetDateTime parseTime(String timeString) {
-    if (StringUtils.isEmpty(timeString)) {
-      return null;
-    }
-
-    return OffsetDateTime.parse(timeString);
-  }
-
   private Event translateEvent(fi.metatavu.famifarm.persistence.model.Event event) {
     switch (event.getType()) {
     case SOWING:
@@ -1629,10 +1615,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     Integer amount = eventData.getGutterCount();
+    OffsetDateTime sowingTime = eventData.getSowingDate();
 
     TypeEnum harvestType = eventData.getType();
     HarvestEvent event = harvestEventController.createHarvestEvent(product, startTime, endTime, harvestType,
-        productionLine, additionalInformation, amount, creatorId);
+        productionLine, sowingTime, additionalInformation, amount, creatorId);
 
     return createOk(harvestEventTranslator.translateEvent(event));
   }
@@ -1673,8 +1660,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     TypeEnum harvestType = eventData.getType();
+    OffsetDateTime sowingTime = eventData.getSowingDate();
     HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, product, startTime,
-        endTime, harvestType, productionLine, eventData.getGutterCount(), additionalInformation, creatorId);
+        endTime, harvestType, productionLine, sowingTime, eventData.getGutterCount(), additionalInformation, creatorId);
 
 
     return createOk(harvestEventTranslator.translateEvent(updatedEvent));
@@ -1710,8 +1698,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer gutterCount = eventData.getGutterCount();
     Integer trayCount = eventData.getTrayCount();
     Integer workerCount = eventData.getWorkerCount();
+    OffsetDateTime sowingTime = eventData.getSowingDate();
 
-    PlantingEvent event = plantingEventController.createPlantingEvent(product, startTime, endTime, productionLine,
+    PlantingEvent event = plantingEventController.createPlantingEvent(product, startTime, endTime, productionLine, sowingTime,
         gutterHoleCount, gutterCount, trayCount, workerCount, additionalInformation, creatorId);
 
     return createOk(plantingEventTranslator.translateEvent(event));
@@ -1749,9 +1738,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer gutterCount = eventData.getGutterCount();
     Integer trayCount = eventData.getTrayCount();
     Integer workerCount = eventData.getWorkerCount();
+    OffsetDateTime sowingTime = eventData.getSowingDate();
 
     PlantingEvent updatedEvent = plantingEventController.updatePlantingEvent((PlantingEvent) event, product, startTime,
-        endTime, productionLine, gutterHoleCount, gutterCount, trayCount, workerCount, additionalInformation,
+        endTime, productionLine, sowingTime, gutterHoleCount, gutterCount, trayCount, workerCount, additionalInformation,
         creatorId);
 
     return createOk(plantingEventTranslator.translateEvent(updatedEvent));
@@ -1901,6 +1891,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
     return objectMapper.readValue(objectMapper.writeValueAsBytes(object), targetClass);
   }
 

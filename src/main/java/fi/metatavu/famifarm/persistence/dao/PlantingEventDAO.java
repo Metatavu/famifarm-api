@@ -24,6 +24,7 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
    * @param startTime startTime
    * @param endTime endTime
    * @param productionLine productionLine
+   * @param sowingDate sowing date
    * @param gutterHoleCount gutterHoleCount
    * @param gutterCount gutterCount
    * @param trayCount trayCount
@@ -33,7 +34,7 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
    * @param lastModifier modifier
    */
   @SuppressWarnings ("squid:S00107")
-  public PlantingEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
+  public PlantingEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterHoleCount, Integer gutterCount, Integer trayCount, Integer workerCount, Integer remainingUnits, String additionalInformation, UUID creatorId, UUID lastModifierId) {
     PlantingEvent plantingEvent = new PlantingEvent();
     plantingEvent.setProduct(product);
     plantingEvent.setRemainingUnits(remainingUnits);
@@ -48,6 +49,7 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
     plantingEvent.setCreatorId(creatorId);
     plantingEvent.setLastModifierId(lastModifierId);
     plantingEvent.setAdditionalInformation(additionalInformation);
+    plantingEvent.setSowingDate(sowingDate);
     return persist(plantingEvent);
   }
 
@@ -87,6 +89,19 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
   public PlantingEvent updateGutterCount(PlantingEvent plantingEvent, Integer gutterCount, UUID lastModifierId) {
     plantingEvent.setLastModifierId(lastModifierId);
     plantingEvent.setGutterCount(gutterCount);
+    return persist(plantingEvent);
+  }
+
+  /**
+   * Updates sowingDate
+   *
+   * @param sowingDate sowingDate
+   * @param lastModifier modifier
+   * @return updated plantingEvent
+   */
+  public PlantingEvent updateSowingDate(PlantingEvent plantingEvent, OffsetDateTime sowingDate, UUID lastModifierId) {
+    plantingEvent.setLastModifierId(lastModifierId);
+    plantingEvent.setSowingDate(sowingDate);
     return persist(plantingEvent);
   }
 
