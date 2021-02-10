@@ -65,6 +65,17 @@ public class PlantingEventController {
   }
 
   /**
+   * Lists latest event by product and production line. Sorts result by descending start time 
+   * 
+   * @param product product to retrieve events from
+   * @param productionLine production line
+   * @return List of single event filtered by product and production line
+   */
+  public List<PlantingEvent> listLatestPlatingEventByProductAndProductionLine(Product product, ProductionLine productionLine, OffsetDateTime startBefore) {
+    return plantingEventDAO.listLatestByProductAndProductionLine(product, productionLine, startBefore);
+  }
+
+  /**
    * Update plantingEvent
    *
    * @param plantingEvent plantingEvent

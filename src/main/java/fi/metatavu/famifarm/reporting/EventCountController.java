@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.events.EventController;
+import fi.metatavu.famifarm.events.PlantingEventController;
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.PackingType;
@@ -22,6 +23,9 @@ public class EventCountController {
 
   @Inject
   private EventController eventController;
+
+  @Inject
+  private PlantingEventController plantingEventController;
 
   /**
    * Counts packed units by product
@@ -144,8 +148,8 @@ public class EventCountController {
 
     for (Event event : events) {
       if (event.getType() == EventType.HARVEST) {
-        Double gutterHoleCount = getAverageGutterHoleCount(event);
         HarvestEvent harvestEvent = (HarvestEvent) event;
+        Integer gutterHoleCount = getGutterHoleCount(harvestEvent);
         count += (harvestEvent.getGutterCount() * gutterHoleCount);
       }
     }
@@ -172,30 +176,22 @@ public class EventCountController {
   }
 
   /**
-   * Get weighted average gutter hole count
+   * Gets gutter hole count for harvest event
    * 
-   * @param eventParam
-   * @return weighted average gutter hole count
+   * @param event harvest event
+   * @return gutter hole count
    */
-  private Double getAverageGutterHoleCount(Event eventParam) {
-    Double totalWeightedSize = 0d;
-    Double totalGutterCount = 0d;
-    List<Event> batchEvents = eventController.listEvents(eventParam.getProduct(), null, null);
-
-    for (Event event : batchEvents) {
-      if (event.getType() == EventType.PLANTING) {
-        PlantingEvent plantingEvent = (PlantingEvent) event;
-        totalWeightedSize += (plantingEvent.getGutterHoleCount() * plantingEvent.getGutterCount());
-        totalGutterCount += plantingEvent.getGutterCount();
-      }
+  private Integer getGutterHoleCount(HarvestEvent event) {
+    List<PlantingEvent> latestPlantings = plantingEventController.listLatestPlatingEventByProductAndProductionLine(event.getProduct(), event.getProductionLine(), event.getStartTime());
+    if (latestPlantings.isEmpty()) {
+      Integer defaultGutterHoleCount = event.getProductionLine().getDefaultGutterHoleCount();
+      return defaultGutterHoleCount != null ? defaultGutterHoleCount : 0;
     }
 
-    if (totalWeightedSize == 0 || totalGutterCount == 0) {
-      return 0d;
-    }
-
-    return totalWeightedSize / totalGutterCount;
-  }
+    PlantingEvent latestPlanting = latestPlantings.get(0);
+    Integer gutterHoleCount = latestPlanting.getGutterHoleCount();
+    return gutterHoleCount != null ? gutterHoleCount : 0;
+  } 
 
   /**
    * Get tray type as int

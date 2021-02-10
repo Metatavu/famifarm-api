@@ -1,12 +1,19 @@
 package fi.metatavu.famifarm.persistence.dao;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
+import fi.metatavu.famifarm.persistence.model.PlantingEvent_;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 
 /**
@@ -51,6 +58,33 @@ public class PlantingEventDAO extends AbstractEventDAO<PlantingEvent> {
     plantingEvent.setAdditionalInformation(additionalInformation);
     plantingEvent.setSowingDate(sowingDate);
     return persist(plantingEvent);
+  }
+
+  /**
+   * Lists latest event by product and production line. Sorts result by descending start time 
+   * 
+   * @param product product to retrieve events from
+   * @param productionLine production line
+   * @param startBefore start before
+   * @return List of single event filtered by product and production line
+   */
+  public List<PlantingEvent> listLatestByProductAndProductionLine(Product product, ProductionLine productionLine, OffsetDateTime startBefore) {
+    EntityManager entityManager = getEntityManager();
+    
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<PlantingEvent> criteria = criteriaBuilder.createQuery(PlantingEvent.class);
+    Root<PlantingEvent> root = criteria.from(PlantingEvent.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(PlantingEvent_.product), product));
+    criteria.where(criteriaBuilder.equal(root.get(PlantingEvent_.productionLine), productionLine));
+    criteria.where(criteriaBuilder.lessThanOrEqualTo(root.get(PlantingEvent_.startTime), startBefore));
+    criteria.orderBy(criteriaBuilder.desc(root.get(PlantingEvent_.startTime)));
+    
+    TypedQuery<PlantingEvent> query = entityManager.createQuery(criteria);
+    query.setFirstResult(0);
+    query.setMaxResults(1);
+
+    return query.getResultList();
   }
 
   /**
