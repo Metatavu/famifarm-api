@@ -1615,11 +1615,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     Integer amount = eventData.getGutterCount();
+    Integer gutterHoleCount = eventData.getGutterHoleCount();
     OffsetDateTime sowingTime = eventData.getSowingDate();
 
     TypeEnum harvestType = eventData.getType();
     HarvestEvent event = harvestEventController.createHarvestEvent(product, startTime, endTime, harvestType,
-        productionLine, sowingTime, additionalInformation, amount, creatorId);
+        productionLine, sowingTime, additionalInformation, amount, gutterHoleCount, creatorId);
 
     return createOk(harvestEventTranslator.translateEvent(event));
   }
@@ -1662,7 +1663,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     TypeEnum harvestType = eventData.getType();
     OffsetDateTime sowingTime = eventData.getSowingDate();
     HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, product, startTime,
-        endTime, harvestType, productionLine, sowingTime, eventData.getGutterCount(), additionalInformation, creatorId);
+        endTime, harvestType, productionLine, sowingTime, eventData.getGutterCount(), eventData.getGutterHoleCount(), additionalInformation, creatorId);
 
 
     return createOk(harvestEventTranslator.translateEvent(updatedEvent));
