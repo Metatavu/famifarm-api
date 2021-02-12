@@ -917,4 +917,12 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="addharvesteventgutterholecount" author="Heikki Kurhinen">
+    <addColumn tableName="harvestevent">
+      <column name="gutterholecount" type="integer">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

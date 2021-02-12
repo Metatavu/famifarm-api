@@ -306,6 +306,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateData.setProductionLineId(updateProductionLine.getId());
       updateData.setType(fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.CUTTING);
       updateData.setGutterCount(100);
+      updateData.setGutterHoleCount(150);
       updateData.setSowingDate(updateSowingTime);
 
       Event updateEvent = new Event(); 
