@@ -31,12 +31,13 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @param remainingUnits remaining units
    * @param additionalInformation additional information
    * @param gutterCount gutterCount
+   * @param gutterHoleCount gutter hole count
    * @param creatorId creator
    * @param lastModifierId last modifier
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer remainingUnits, String additionalInformation, Integer gutterCount, UUID creatorId, UUID lastModifierId) {
+  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer remainingUnits, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, UUID creatorId, UUID lastModifierId) {
     HarvestEvent harvestEvent = new HarvestEvent();
     harvestEvent.setProduct(product);
     harvestEvent.setRemainingUnits(remainingUnits);
@@ -45,6 +46,7 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
     harvestEvent.setHarvestType(harvestType);
     harvestEvent.setProductionLine(productionLine);
     harvestEvent.setGutterCount(gutterCount);
+    harvestEvent.setGutterHoleCount(gutterHoleCount);
     harvestEvent.setId(id);
     harvestEvent.setCreatorId(creatorId);
     harvestEvent.setLastModifierId(lastModifierId);
@@ -101,6 +103,20 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
   public HarvestEvent updateGutterCount(HarvestEvent harvestEvent, Integer gutterCount, UUID lastModifierId) {
     harvestEvent.setLastModifierId(lastModifierId);
     harvestEvent.setGutterCount(gutterCount);
+    return persist(harvestEvent);
+  }
+
+  /**
+   * Updates gutter hole count
+   *
+   * @param harvestEvent harvest event to be updated
+   * @param gutterHoleCount new gutter hole count
+   * @param lastModifierId modifier
+   * @return updated harvestEvent
+   */
+  public HarvestEvent updateGutterHoleCount(HarvestEvent harvestEvent, Integer gutterHoleCount, UUID lastModifierId) {
+    harvestEvent.setLastModifierId(lastModifierId);
+    harvestEvent.setGutterHoleCount(gutterHoleCount);
     return persist(harvestEvent);
   }
 

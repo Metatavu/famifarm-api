@@ -243,13 +243,28 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Product product, Integer amount) throws IOException {
+    Integer gutterHoleCount = 50;
+    
+    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount);
+  }
+
+  /**
+   * Creates test event
+   * 
+   * @param builder test builder
+   * @param harvestType harvestType
+   * @param product product
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType, Product product, Integer amount, Integer gutterHoleCount) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     OffsetDateTime sowingTime = OffsetDateTime.of(2020, 1, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
     
-    return builder.admin().events().createHarvest(product, amount, startTime, endTime, productionLine, sowingTime, harvestType);
+    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, startTime, endTime, productionLine, sowingTime, harvestType);
   }
 
   /**

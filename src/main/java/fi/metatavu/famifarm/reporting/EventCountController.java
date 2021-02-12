@@ -177,11 +177,26 @@ public class EventCountController {
 
   /**
    * Gets gutter hole count for harvest event
+   * if it is not available, tries to make quess by checking last planting event
    * 
    * @param event harvest event
    * @return gutter hole count
    */
   private Integer getGutterHoleCount(HarvestEvent event) {
+    if (event.getGutterHoleCount() != null && event.getGutterHoleCount() > 0) {
+      return event.getGutterHoleCount();
+    }
+
+    return guessGutterHoleCount(event);
+  } 
+
+  /**
+   * Tries to guess gutter hole count for harvest event
+   * 
+   * @param event harvest event
+   * @return gutter hole count
+   */
+  private Integer guessGutterHoleCount(HarvestEvent event) {
     List<PlantingEvent> latestPlantings = plantingEventController.listLatestPlatingEventByProductAndProductionLine(event.getProduct(), event.getProductionLine(), event.getStartTime());
     if (latestPlantings.isEmpty()) {
       Integer defaultGutterHoleCount = event.getProductionLine().getDefaultGutterHoleCount();

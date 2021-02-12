@@ -36,6 +36,10 @@ public class HarvestEvent extends Event {
   @Column (nullable = false)
   private Integer gutterCount;
 
+  @NotNull
+  @Column (nullable = false)
+  private Integer gutterHoleCount;
+
   @Column(nullable = false)
   private OffsetDateTime sowingDate;
 
@@ -69,6 +73,14 @@ public class HarvestEvent extends Event {
 
   public void setSowingDate(OffsetDateTime sowingDate) {
     this.sowingDate = sowingDate;
+  }
+
+  public Integer getGutterHoleCount() {
+    return gutterHoleCount;
+  }
+
+  public void setGutterHoleCount(Integer gutterHoleCount) {
+    this.gutterHoleCount = gutterHoleCount;
   }
 
   @Transient
