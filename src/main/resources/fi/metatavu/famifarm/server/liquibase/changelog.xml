@@ -925,4 +925,12 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="addactivetoproduct" author="Heikki Kurhinen">
+    <addColumn tableName="product">
+      <column name="isactive" type="boolean" defaultValue="true">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

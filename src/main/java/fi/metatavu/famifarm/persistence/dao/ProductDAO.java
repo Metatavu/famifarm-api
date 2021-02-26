@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.persistence.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.*;
@@ -32,12 +34,13 @@ public class ProductDAO extends AbstractDAO<Product> {
    *
    * @return created seed
    */
-  public Product create(UUID id, LocalizedEntry name, PackageSize defaultPackageSize, boolean isSubcontractorProduct, UUID creatorId, UUID lastModifierId) {
+  public Product create(UUID id, LocalizedEntry name, PackageSize defaultPackageSize, boolean isSubcontractorProduct, boolean active, UUID creatorId, UUID lastModifierId) {
     Product product = new Product();
     product.setId(id);
     product.setName(name);
     product.setDefaultPackageSize(defaultPackageSize);
     product.setIsSubcontractorProduct(isSubcontractorProduct);
+    product.setIsActive(active);
     product.setCreatorId(creatorId);
     product.setLastModifierId(lastModifierId);
     return persist(product);
@@ -56,6 +59,21 @@ public class ProductDAO extends AbstractDAO<Product> {
     product.setName(name);
     return persist(product);
   }
+
+  /**
+   * Updates is active
+   *
+   * @param product product
+   * @param isActive is active
+   * @param lastModifierId modifier
+   * @return updated product
+   */
+  public Product updateIsActive(Product product, Boolean isActive, UUID lastModifierId) {
+    product.setIsActive(isActive);
+    product.setLastModifierId(lastModifierId);
+    return persist(product);
+  }
+
 
   /**
    * Updates isSubcontractorProduct-field
@@ -87,7 +105,7 @@ public class ProductDAO extends AbstractDAO<Product> {
   }
 
 
-  public List<Product> list(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts) {
+  public List<Product> list(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -95,10 +113,17 @@ public class ProductDAO extends AbstractDAO<Product> {
     Root<Product> root = criteria.from(Product.class);
     criteria.select(root);
 
+    List<Predicate> restrictions = new ArrayList<>();
+
     if (includeSubcontractorProducts == null || !includeSubcontractorProducts) {
-      criteria.where(criteriaBuilder.equal(root.get(Product_.isSubcontractorProduct), false));
+      restrictions.add(criteriaBuilder.equal(root.get(Product_.isSubcontractorProduct), false));
     }
 
+    if (includeInActiveProducts == null || !includeInActiveProducts) {
+      restrictions.add(criteriaBuilder.equal(root.get(Product_.isActive), true));
+    }
+
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
     TypedQuery<Product> query = entityManager.createQuery(criteria);
 
     if (firstResult != null) {

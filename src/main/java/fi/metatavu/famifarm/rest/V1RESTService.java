@@ -511,7 +511,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     LocalizedEntry name = createLocalizedEntry(body.getName());
 
     return createOk(
-        productsTranslator.translateProduct(productController.createProduct(name, packageSize, body.getIsSubcontractorProduct(), getLoggerUserId())));
+        productsTranslator.translateProduct(productController.createProduct(name, packageSize, body.getIsSubcontractorProduct(), body.getActive(), getLoggerUserId())));
   }
 
   @Override
@@ -878,8 +878,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
-  public Response listProducts(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts) {
-    List<Product> result = productController.listProducts(firstResult, maxResults, includeSubcontractorProducts).stream()
+  public Response listProducts(Integer firstResult, Integer maxResults, Boolean includeInActiveProducts, Boolean includeSubcontractorProducts) {
+    List<Product> result = productController.listProducts(firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts).stream()
         .map(productsTranslator::translateProduct).collect(Collectors.toList());
 
     return createOk(result);
@@ -1098,7 +1098,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     LocalizedEntry name = createLocalizedEntry(body.getName());
 
     return createOk(productsTranslator
-        .translateProduct(productController.updateProduct(product, name, packageSize, body.getIsSubcontractorProduct(), getLoggerUserId())));
+        .translateProduct(productController.updateProduct(product, name, packageSize, body.getIsSubcontractorProduct(), body.getActive(), getLoggerUserId())));
   }
 
   @Override

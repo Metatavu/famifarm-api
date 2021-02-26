@@ -6,7 +6,6 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
 import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductDAO;
@@ -32,8 +31,8 @@ public class ProductController {
    * @param creatorId creatorId
    * @return created product
    */
-  public Product createProduct(LocalizedEntry name, PackageSize defaultPackageSize, boolean isSubcontractorProduct, UUID creatorId) {
-    return productDAO.create(UUID.randomUUID(), name, defaultPackageSize, isSubcontractorProduct, creatorId, creatorId);
+  public Product createProduct(LocalizedEntry name, PackageSize defaultPackageSize, boolean isSubcontractorProduct, boolean active, UUID creatorId) {
+    return productDAO.create(UUID.randomUUID(), name, defaultPackageSize, isSubcontractorProduct, active, creatorId, creatorId);
   }
 
   /**
@@ -54,8 +53,8 @@ public class ProductController {
    * @param includeSubcontractorProducts include subcontractor products
    * @return list of products
    */
-  public List<Product> listProducts(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts) {
-    return productDAO.list(firstResult, maxResults, includeSubcontractorProducts);
+  public List<Product> listProducts(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts) {
+    return productDAO.list(firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts);
   }
 
   /**
@@ -68,10 +67,11 @@ public class ProductController {
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public Product updateProduct(Product product, LocalizedEntry name, PackageSize packageSize, boolean isSubcontractorProduct, UUID lastModifierId) {
+  public Product updateProduct(Product product, LocalizedEntry name, PackageSize packageSize, boolean isSubcontractorProduct, Boolean isActive, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
     productDAO.updateDefaultPackageSize(product, packageSize, lastModifierId);
     productDAO.updateIsSubcontractorProduct(product, isSubcontractorProduct, lastModifierId);
+    productDAO.updateIsActive(product, isActive, lastModifierId);
     return product;
   }
 

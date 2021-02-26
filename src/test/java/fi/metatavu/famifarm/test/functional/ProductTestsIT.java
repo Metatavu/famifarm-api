@@ -92,6 +92,10 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       builder.admin().products().create(name, createdPackageSize, true);
       builder.admin().products().assertCount(2);
       builder.admin().products().assertCountWithSubcontractors(3);
+      builder.admin().products().create(name, createdPackageSize, false, false);
+      builder.admin().products().assertCount(2);
+      builder.admin().products().assertCountWithInactive(3);
+      builder.admin().products().assertCountWithInactiveAndSubcontractors(4);
     }
   }
   
@@ -125,6 +129,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       name = builder.createLocalizedEntry("Updated name", "Tuotteen nimi");
       updateProduct.setName(name);
       updateProduct.setDefaultPackageSizeId(createdPackageSize.getId());
+      updateProduct.setActive(true);
      
       Product updatedProduct = builder.admin().products().updateProduct(updateProduct);
       assertEquals(updateProduct.getId(), builder.admin().products().findProduct(createdProduct.getId()).getId());
