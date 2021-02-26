@@ -40,6 +40,9 @@ public class Product {
   private boolean isSubcontractorProduct;
 
   @Column(nullable = false)
+  private boolean isActive;
+
+  @Column(nullable = false)
   @NotNull
   private UUID creatorId;
 
@@ -83,6 +86,14 @@ public class Product {
 
   public boolean isSubcontractorProduct() {
     return this.isSubcontractorProduct;
+  }
+
+  public void setIsActive(boolean isActive) {
+    this.isActive = isActive;
+  }
+
+  public boolean isActive() {
+    return isActive;
   }
 
   public void setDefaultPackageSize(PackageSize defaultPackageSize) {

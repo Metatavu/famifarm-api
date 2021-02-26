@@ -44,12 +44,26 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @return created product
    */
   public Product create(List<LocalizedValue> name, PackageSize packageSize, boolean isSubcontractorProduct) {
+    return create(name, packageSize, isSubcontractorProduct, true);
+  }
+
+  /**
+   * Creates new product
+   * 
+   * @param name name
+   * @param packageSize package size
+   * @param isSubcontractorProduct is subcontractor product
+   * @return created product
+   */
+  public Product create(List<LocalizedValue> name, PackageSize packageSize, boolean isSubcontractorProduct,  boolean isActive) {
     Product product = new Product();
     product.setName(name);
     product.setDefaultPackageSizeId(packageSize.getId());
     product.setIsSubcontractorProduct(isSubcontractorProduct);
+    product.setActive(isActive);
     return addClosable(getApi().createProduct(product));
   }
+
 
   /**
    * Finds a product
@@ -99,6 +113,29 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
     queryParameters.put("includeSubcontractorProducts", true);
     assertEquals(expected, getApi().listProducts(queryParameters).size());
   }
+
+  /**
+   * Asserts product count within the system (with inactive products included)
+   *
+   * @param expected expected count
+   */
+  public void assertCountWithInactive(int expected) {
+    HashMap<String, Object> queryParameters = new HashMap<>();
+    queryParameters.put("includeInActiveProducts", true);
+    assertEquals(expected, getApi().listProducts(queryParameters).size());
+  }
+
+  /**
+   * Asserts product count within the system (with inactive and sub contractor products included)
+   *
+   * @param expected expected count
+   */
+  public void assertCountWithInactiveAndSubcontractors(int expected) {
+    HashMap<String, Object> queryParameters = new HashMap<>();
+    queryParameters.put("includeInActiveProducts", true);
+    queryParameters.put("includeSubcontractorProducts", true);
+    assertEquals(expected, getApi().listProducts(queryParameters).size());
+  }
   
   /**
    * Asserts find status fails with given status code
@@ -124,6 +161,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
       Product product = new Product();
       product.setName(name);
       product.setDefaultPackageSizeId(packageSize.getId());
+      product.setActive(true);
       getApi().createProduct(product);
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
