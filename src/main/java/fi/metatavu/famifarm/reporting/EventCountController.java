@@ -38,7 +38,11 @@ public class EventCountController {
     List<Packing> productPackings = packings.stream().filter(packing -> packing.getType() == PackingType.BASIC && packing.getProduct().getId().equals(product.getId())).collect(Collectors.toList());
     Double count = 0d;
     for (Packing packing : productPackings) {
-      count+= packing.getPackedCount() * packing.getPackageSize().getSize();;
+      if (packing.getPackedCount() != null &&
+          packing.getPackageSize() != null &&
+          packing.getPackageSize().getSize() != null) {
+            count+= packing.getPackedCount() * packing.getPackageSize().getSize();
+          }
     }
     return count;
   }
