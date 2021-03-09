@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
@@ -83,7 +85,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize, false);
+      Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
       
       builder.admin().performedCultivationActions();
       builder.admin().pests();
@@ -122,7 +124,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize, false);
+      Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
 
       builder.admin().wastageReasons();
       
@@ -161,7 +163,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, createdPackageSize, false);
+      Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
 
       builder.admin().wastageReasons();
       
@@ -196,15 +198,16 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
+      ArrayList<PackageSize> packageSizes = Lists.newArrayList(createdPackageSize);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), packageSizes, false);
       
       createSowingEvent(builder, product, 10, startTime, endTime);
       createSowingEvent(builder, product, 10, startTime, endTime);
 
-      Product product2 = builder.admin().products().create(builder.createLocalizedEntry("B - product", "B - tuote"), createdPackageSize, false);
+      Product product2 = builder.admin().products().create(builder.createLocalizedEntry("B - product", "B - tuote"), packageSizes, false);
       createSowingEvent(builder, product2, 10, startTime, endTime);
 
-      Product product3 = builder.admin().products().create(builder.createLocalizedEntry("C - product", "C - tuote"), createdPackageSize, false);
+      Product product3 = builder.admin().products().create(builder.createLocalizedEntry("C - product", "C - tuote"), packageSizes, false);
       createSowingEvent(builder, product3, 25, startTime, endTime);
       
       startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -232,7 +235,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSize), false);
       
       createSowingEvent(builder, product, 10, startTime, endTime);
       createPlantingEvent(builder, product, 10, 3);
@@ -257,7 +260,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSize), false);
       
       createSowingEvent(builder, product, 10, startTime, endTime);
       createTableSpreadEvent(builder, product);
@@ -282,7 +285,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSize), false);
       
       createSowingEvent(builder, product, 10, startTime, endTime);
       createPlantingEvent(builder, product, 10, 3);
@@ -308,7 +311,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2022, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
 
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), createdPackageSize, false);
+      Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSize), false);
       builder.admin().packings().create(product.getId(), null, PackingType.BASIC, startTime, 10, PackingState.IN_STORE, createdPackageSize);
 
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();

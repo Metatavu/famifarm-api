@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 
@@ -39,26 +40,26 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * Creates new product
    * 
    * @param name name
-   * @param packageSize package size
+   * @param packageSizes package size list
    * @param isSubcontractorProduct is subcontractor product
    * @return created product
    */
-  public Product create(List<LocalizedValue> name, PackageSize packageSize, boolean isSubcontractorProduct) {
-    return create(name, packageSize, isSubcontractorProduct, true);
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct) {
+    return create(name, packageSizes, isSubcontractorProduct, true);
   }
 
   /**
    * Creates new product
    * 
    * @param name name
-   * @param packageSize package size
+   * @param packageSizes package size list
    * @param isSubcontractorProduct is subcontractor product
    * @return created product
    */
-  public Product create(List<LocalizedValue> name, PackageSize packageSize, boolean isSubcontractorProduct,  boolean isActive) {
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct,  boolean isActive) {
     Product product = new Product();
     product.setName(name);
-    product.setDefaultPackageSizeId(packageSize.getId());
+    product.setDefaultPackageSizeIds(packageSizes.stream().map(PackageSize::getId).collect(Collectors.toList()));
     product.setIsSubcontractorProduct(isSubcontractorProduct);
     product.setActive(isActive);
     return addClosable(getApi().createProduct(product));
@@ -156,11 +157,11 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param expectedStatus expected status code
    */
-  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name, PackageSize packageSize) {
+  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name, List<PackageSize> packageSizes) {
     try {
       Product product = new Product();
       product.setName(name);
-      product.setDefaultPackageSizeId(packageSize.getId());
+      product.setDefaultPackageSizeIds(packageSizes.stream().map(PackageSize::getId).collect(Collectors.toList()));
       product.setActive(true);
       getApi().createProduct(product);
       fail(String.format("Expected create to fail with status %d", expectedStatus));
@@ -225,7 +226,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
 
   @Override
   public void clean(Product product) {
-    getApi().deleteProduct(product.getId());  
+    getApi().deleteProduct(product.getId());
   }
 
 }

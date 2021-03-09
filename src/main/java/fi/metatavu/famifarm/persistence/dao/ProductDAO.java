@@ -27,18 +27,16 @@ public class ProductDAO extends AbstractDAO<Product> {
    *
    * @param id id
    * @param name name
-   * @param defaultPackageSize defaultPackageSize
    * @param isSubcontractorProduct is subcontractor product
    * @param creatorId creator
    * @param lastModifierId modifier
    *
    * @return created seed
    */
-  public Product create(UUID id, LocalizedEntry name, PackageSize defaultPackageSize, boolean isSubcontractorProduct, boolean active, UUID creatorId, UUID lastModifierId) {
+  public Product create(UUID id, LocalizedEntry name, boolean isSubcontractorProduct, boolean active, UUID creatorId, UUID lastModifierId) {
     Product product = new Product();
     product.setId(id);
     product.setName(name);
-    product.setDefaultPackageSize(defaultPackageSize);
     product.setIsSubcontractorProduct(isSubcontractorProduct);
     product.setIsActive(active);
     product.setCreatorId(creatorId);
@@ -89,21 +87,6 @@ public class ProductDAO extends AbstractDAO<Product> {
     product.setIsSubcontractorProduct(isSubcontractorProduct);
     return persist(product);
   }
-
-  /**
-   * Updates default package size
-   *
-   * @param product product
-   * @param packageSize packageSize
-   * @param lastModifier modifier
-   * @return updated product
-   */
-  public Product updateDefaultPackageSize(Product product, PackageSize packageSize, UUID lastModifierId) {
-    product.setLastModifierId(lastModifierId);
-    product.setDefaultPackageSize(packageSize);
-    return persist(product);
-  }
-
 
   public List<Product> list(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts) {
     EntityManager entityManager = getEntityManager();
