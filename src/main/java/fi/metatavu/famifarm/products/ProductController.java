@@ -78,7 +78,7 @@ public class ProductController {
   public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
 
-    if (packageSizes != null && !packageSizes.isEmpty()) {
+    if (packageSizes != null) {
       List<ProductPackageSize> existingPackageSizes = productPackageSizeDAO.listByProduct(product);
       for (ProductPackageSize productPackageSize : existingPackageSizes) {
         productPackageSizeDAO.delete(productPackageSize);

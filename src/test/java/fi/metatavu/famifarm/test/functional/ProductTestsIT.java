@@ -38,6 +38,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
       assertNotNull(product);
+      assertNotNull(product.getDefaultPackageSizeIds());
       assertEquals(1, product.getDefaultPackageSizeIds().size());
       assertEquals(false, product.getIsSubcontractorProduct());
     }
@@ -139,7 +140,6 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   public void testUpdateProduct() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize8 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize8"), 8);
-      PackageSize createdPackageSize16 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize16"), 16);
 
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
@@ -152,11 +152,12 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       name = builder.createLocalizedEntry("Updated name", "Tuotteen nimi");
       updateProduct.setName(name);
       updateProduct.setActive(true);
+      updateProduct.setDefaultPackageSizeIds(Lists.newArrayList());
 
       Product updatedProduct = builder.admin().products().updateProduct(updateProduct);
       assertEquals(updateProduct.getId(), builder.admin().products().findProduct(createdProduct.getId()).getId());
       assertNotNull(updatedProduct.getDefaultPackageSizeIds());
-      assertEquals(1, updatedProduct.getDefaultPackageSizeIds().size());
+      assertEquals(0, updatedProduct.getDefaultPackageSizeIds().size());
       assertEquals(true, updatedProduct.getIsSubcontractorProduct());
     }
   }
