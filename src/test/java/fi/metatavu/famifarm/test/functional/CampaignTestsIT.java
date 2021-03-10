@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.test.functional;
 
+import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
@@ -35,7 +36,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       testEntry.add(testValue);
 
       PackageSize size = builder.admin().packageSizes().create(testEntry, 10);
-      Product product = builder.admin().products().create(testEntry, size, false);
+      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false);
 
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
@@ -80,7 +81,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       testEntry.add(testValue);
 
       PackageSize size = builder.admin().packageSizes().create(testEntry, 10);
-      Product product = builder.admin().products().create(testEntry, size, false);
+      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false);
 
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
@@ -111,7 +112,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       testEntry.add(testValue);
 
       PackageSize size = builder.admin().packageSizes().create(testEntry, 10);
-      Product product = builder.admin().products().create(testEntry, size, false);
+      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false);
 
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Summer");
