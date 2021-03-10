@@ -38,7 +38,7 @@ public class ProductPackageSizeDAO extends AbstractDAO<ProductPackageSize> {
     /**
      * Lists by package size
      *
-     * @param packageSize
+     * @param packageSize packageSize
      * @return list of product package size entries
      */
     public List<ProductPackageSize> listByPackageSize(PackageSize packageSize) {
@@ -55,7 +55,7 @@ public class ProductPackageSizeDAO extends AbstractDAO<ProductPackageSize> {
     /**
      * Lists by product
      *
-     * @param product
+     * @param product product
      * @return list of product package size entries
      */
     public List<ProductPackageSize> listByProduct(Product product) {
@@ -71,10 +71,10 @@ public class ProductPackageSizeDAO extends AbstractDAO<ProductPackageSize> {
 
     /**
      * Updates product package size
-     * todo check how updates happen with other graph
-     * @param productPackageSize
-     * @param packageSize
-     * @return
+     *
+     * @param productPackageSize productPackageSize
+     * @param packageSize new packageSize
+     * @return updated productPackageSize
      */
     public ProductPackageSize updatePackageSize(ProductPackageSize productPackageSize, PackageSize packageSize) {
         productPackageSize.setPackageSize(packageSize);

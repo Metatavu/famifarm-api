@@ -38,6 +38,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
       assertNotNull(product);
+      assertEquals(1, product.getDefaultPackageSizeIds().size());
       assertEquals(false, product.getIsSubcontractorProduct());
     }
   }

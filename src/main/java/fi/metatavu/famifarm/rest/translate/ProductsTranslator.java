@@ -22,7 +22,7 @@ public class ProductsTranslator extends AbstractTranslator {
    * Translates JPA product object into REST product object
    * 
    * @param product JPA product object
-   * @return REST WastageReason
+   * @return REST Product
    */
   public Product translateProduct(fi.metatavu.famifarm.persistence.model.Product product) {
     if (product == null) {
