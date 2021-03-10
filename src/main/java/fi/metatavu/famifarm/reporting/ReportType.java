@@ -17,5 +17,6 @@ public enum ReportType {
   SPREAD,
   HARVESTED,
   PACKED,
+  PACKED_CAMPAINGS,
   PRODUCT_PHASE_COUNT
 }
