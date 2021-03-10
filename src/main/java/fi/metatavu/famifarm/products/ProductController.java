@@ -78,13 +78,15 @@ public class ProductController {
   public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
 
-    List<ProductPackageSize> existingPackageSizes = productPackageSizeDAO.listByProduct(product);
-    for(ProductPackageSize productPackageSize: existingPackageSizes) {
-      productPackageSizeDAO.delete(productPackageSize);
-    }
+    if (packageSizes != null && !packageSizes.isEmpty()) {
+      List<ProductPackageSize> existingPackageSizes = productPackageSizeDAO.listByProduct(product);
+      for (ProductPackageSize productPackageSize : existingPackageSizes) {
+        productPackageSizeDAO.delete(productPackageSize);
+      }
 
-    for (PackageSize packageSize : packageSizes) {
+      for (PackageSize packageSize : packageSizes) {
         productPackageSizeDAO.create(UUID.randomUUID(), product, packageSize);
+      }
     }
 
     productDAO.updateIsSubcontractorProduct(product, isSubcontractorProduct, lastModifierId);

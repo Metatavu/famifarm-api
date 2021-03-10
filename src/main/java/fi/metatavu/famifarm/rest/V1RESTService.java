@@ -503,14 +503,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response createProduct(Product body) {
     List<fi.metatavu.famifarm.persistence.model.PackageSize> packageSizes = new ArrayList<>();
-    body.getDefaultPackageSizeIds().forEach(uuid -> {
-      fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(uuid);
-      if (packageSize != null)
-        packageSizes.add(packageSize);
-    });
 
-    if (packageSizes.isEmpty()) {
-      createNotFound("Package size not found");
+    if (body.getDefaultPackageSizeIds() != null) {
+      body.getDefaultPackageSizeIds().forEach(uuid -> {
+        fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(uuid);
+        if (packageSize != null)
+          packageSizes.add(packageSize);
+      });
     }
 
     LocalizedEntry name = createLocalizedEntry(body.getName());
@@ -1094,11 +1093,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound("Product not found");
     }
 
-    List<fi.metatavu.famifarm.persistence.model.PackageSize> packageSizeList =
-            body.getDefaultPackageSizeIds().stream().map(id -> packageSizeController.findPackageSize(id)).collect(Collectors.toList());
-
-    if (packageSizeList.isEmpty()) {
-      createNotFound("Package size not found");
+    List<fi.metatavu.famifarm.persistence.model.PackageSize> packageSizeList = new ArrayList<>();
+    if (body.getDefaultPackageSizeIds() != null && !body.getDefaultPackageSizeIds().isEmpty()) {
+      packageSizeList = body.getDefaultPackageSizeIds().stream().map(id -> packageSizeController.findPackageSize(id)).collect(Collectors.toList());
     }
 
     LocalizedEntry name = createLocalizedEntry(body.getName());

@@ -59,7 +59,10 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
   public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct,  boolean isActive) {
     Product product = new Product();
     product.setName(name);
-    product.setDefaultPackageSizeIds(packageSizes.stream().map(PackageSize::getId).collect(Collectors.toList()));
+    if (packageSizes != null) {
+      product.setDefaultPackageSizeIds(packageSizes.stream().map(PackageSize::getId).collect(Collectors.toList()));
+    }
+
     product.setIsSubcontractorProduct(isSubcontractorProduct);
     product.setActive(isActive);
     return addClosable(getApi().createProduct(product));
