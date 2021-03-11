@@ -7,6 +7,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
@@ -37,7 +38,7 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createSowingEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize, false);
+    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), Lists.newArrayList(createdPackageSize), false);
     return createSowingEvent(builder, product);
   }
 
@@ -77,7 +78,7 @@ public abstract class AbstractFunctionalTest {
    * Creates test event
    * 
    * @param builder test builder
-   * @param batch batch to attach the event to
+   * @param product product
    * @param amount amount
    * @param startTime startTime
    * @param endTime endTime
@@ -103,7 +104,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createTableSpreadEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, createdPackageSize, false);
+    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
     return createTableSpreadEvent(builder, product);
   }
 
@@ -133,7 +134,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createCultivationObservationEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, createdPackageSize, false);
+    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
     return createCultivationObservationEvent(builder, product);
   }
   
@@ -214,7 +215,7 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createHarvestEvent(TestBuilder builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum harvestType) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), createdPackageSize, false);
+    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), Lists.newArrayList(createdPackageSize), false);
     return createHarvestEvent(builder, harvestType, product);
   }
   
@@ -277,7 +278,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createPlantingEvent(TestBuilder builder) throws IOException {
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 12);
     List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, createdPackageSize, false);
+    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
     return createPlantingEvent(builder, product);
   }
   
@@ -326,7 +327,7 @@ public abstract class AbstractFunctionalTest {
     WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, createdPackageSize, false);
+    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
     ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
     
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);

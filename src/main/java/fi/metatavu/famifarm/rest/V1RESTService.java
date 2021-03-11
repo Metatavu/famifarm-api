@@ -502,16 +502,20 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   @Transactional
   public Response createProduct(Product body) {
-    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController
-        .findPackageSize(body.getDefaultPackageSizeId());
-    if (packageSize == null) {
-      createNotFound("Package size not found");
+    List<fi.metatavu.famifarm.persistence.model.PackageSize> packageSizes = new ArrayList<>();
+
+    if (body.getDefaultPackageSizeIds() != null) {
+      body.getDefaultPackageSizeIds().forEach(uuid -> {
+        fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(uuid);
+        if (packageSize != null)
+          packageSizes.add(packageSize);
+      });
     }
 
     LocalizedEntry name = createLocalizedEntry(body.getName());
 
     return createOk(
-        productsTranslator.translateProduct(productController.createProduct(name, packageSize, body.getIsSubcontractorProduct(), body.getActive(), getLoggerUserId())));
+        productsTranslator.translateProduct(productController.createProduct(name, packageSizes, body.getIsSubcontractorProduct(), body.getActive(), getLoggerUserId())));
   }
 
   @Override
@@ -1089,16 +1093,15 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound("Product not found");
     }
 
-    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController
-        .findPackageSize(body.getDefaultPackageSizeId());
-    if (packageSize == null) {
-      createNotFound("Package size not found");
+    List<fi.metatavu.famifarm.persistence.model.PackageSize> packageSizeList = new ArrayList<>();
+    if (body.getDefaultPackageSizeIds() != null && !body.getDefaultPackageSizeIds().isEmpty()) {
+      packageSizeList = body.getDefaultPackageSizeIds().stream().map(id -> packageSizeController.findPackageSize(id)).collect(Collectors.toList());
     }
 
     LocalizedEntry name = createLocalizedEntry(body.getName());
 
     return createOk(productsTranslator
-        .translateProduct(productController.updateProduct(product, name, packageSize, body.getIsSubcontractorProduct(), body.getActive(), getLoggerUserId())));
+        .translateProduct(productController.updateProduct(product, name, packageSizeList, body.getIsSubcontractorProduct(), body.getActive(), getLoggerUserId())));
   }
 
   @Override

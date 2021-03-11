@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.PackageSizeDAO;
+import fi.metatavu.famifarm.persistence.dao.ProductPackageSizeDAO;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 
@@ -17,6 +18,9 @@ import fi.metatavu.famifarm.persistence.model.PackageSize;
  */
 @ApplicationScoped
 public class PackageSizeController {
+
+  @Inject
+  private ProductPackageSizeDAO productPackageSizeDAO;
 
   @Inject
   private PackageSizeDAO packageSizeDAO;
@@ -75,6 +79,9 @@ public class PackageSizeController {
    * @param packageSize packageSize to be deleted
    */
   public void deletePackageSize(PackageSize packageSize) {
+    productPackageSizeDAO.listByPackageSize(packageSize).forEach(
+            productPackageSize -> productPackageSizeDAO.delete(productPackageSize)
+    );
     packageSizeDAO.delete(packageSize);
   }
 

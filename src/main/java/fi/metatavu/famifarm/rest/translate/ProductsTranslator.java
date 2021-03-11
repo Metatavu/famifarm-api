@@ -1,7 +1,10 @@
 package fi.metatavu.famifarm.rest.translate;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
+import fi.metatavu.famifarm.events.CultivationObservationEventController;
+import fi.metatavu.famifarm.products.ProductController;
 import fi.metatavu.famifarm.rest.model.Product;
 
 /**
@@ -11,12 +14,15 @@ import fi.metatavu.famifarm.rest.model.Product;
  */
 @ApplicationScoped
 public class ProductsTranslator extends AbstractTranslator {
-  
+
+  @Inject
+  private ProductController productController;
+
   /**
    * Translates JPA product object into REST product object
    * 
    * @param product JPA product object
-   * @return REST WastageReason
+   * @return REST Product
    */
   public Product translateProduct(fi.metatavu.famifarm.persistence.model.Product product) {
     if (product == null) {
@@ -26,7 +32,7 @@ public class ProductsTranslator extends AbstractTranslator {
     Product result = new Product();
     result.setId(product.getId());
     result.setName(translatelocalizedValue(product.getName()));
-    result.setDefaultPackageSizeId(product.getDefaultPackageSize() != null ? product.getDefaultPackageSize().getId() : null);
+    result.setDefaultPackageSizeIds(productController.listPackageSizesForProduct(product));
     result.setIsSubcontractorProduct(product.isSubcontractorProduct());
     result.setActive(product.isActive());
 
