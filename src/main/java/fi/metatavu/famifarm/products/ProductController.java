@@ -133,7 +133,7 @@ public class ProductController {
     List<UUID> productPackageSizeIds = new ArrayList<>(productPackageSizes.size());
 
     for (ProductPackageSize productPackageSize : productPackageSizes) {
-      productPackageSizeIds.add(productPackageSize.getId());
+      productPackageSizeIds.add(productPackageSize.getPackageSize().getId());
     }
     return productPackageSizeIds;
   }
