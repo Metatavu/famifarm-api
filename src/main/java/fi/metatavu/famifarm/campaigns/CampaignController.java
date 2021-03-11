@@ -18,11 +18,12 @@ import java.util.UUID;
  */
 @ApplicationScoped
 public class CampaignController {
+
   @Inject
   private CampaignDAO campaignDAO;
 
   @Inject
-  CampaignProductDAO campaignProductDAO;
+  private CampaignProductDAO campaignProductDAO;
 
   /**
    * Adds a new campaign to the database
@@ -97,5 +98,15 @@ public class CampaignController {
       campaignProductDAO.delete(campaignProduct);
     }
     campaignDAO.delete(campaign);
+  }
+
+  /**
+   * Lists campaing products by campaing
+   * 
+   * @param campaign campaing to list the products from
+   * @return list of campaing products
+   */
+  public List<CampaignProduct> listCampaingProductsByCampaign(Campaign campaign) {
+    return campaignProductDAO.listByCampaign(campaign);
   }
 }

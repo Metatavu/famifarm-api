@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.PlantingEventController;
 import fi.metatavu.famifarm.persistence.model.*;
@@ -27,6 +28,9 @@ public class EventCountController {
   @Inject
   private PlantingEventController plantingEventController;
 
+  @Inject
+  private CampaignController campaingController;
+
   /**
    * Counts packed units by product
    *
@@ -43,6 +47,19 @@ public class EventCountController {
           packing.getPackageSize().getSize() != null) {
             count+= packing.getPackedCount() * packing.getPackageSize().getSize();
           }
+    }
+    List<Packing> campaingPackings = packings.stream().filter(packing -> packing.getType() == PackingType.CAMPAIGN).collect(Collectors.toList());
+    for (Packing campaingPacking : campaingPackings) {
+      Campaign campaing = campaingPacking.getCampaign();
+      if (campaing != null) {
+        List<CampaignProduct> campaignProducts = campaingController.listCampaingProductsByCampaign(campaing);
+        Integer campaingProductCount = campaignProducts
+          .stream()
+          .filter(campaingProduct -> campaingProduct.getProduct() != null && campaingProduct.getProduct().getId().equals(product.getId()))
+          .mapToInt(CampaignProduct::getCount)
+          .sum();
+          count += campaingProductCount;
+      }
     }
     return count;
   }
