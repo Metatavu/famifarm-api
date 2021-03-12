@@ -839,14 +839,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response listEvents(Integer firstResult, Integer maxResults, UUID productId, String createdAfter,
-  String createdBefore) {
+  String createdBefore, EventType eventType) {
     fi.metatavu.famifarm.persistence.model.Product product = productId != null ? productController.findProduct(productId) : null;
 
     OffsetDateTime createdBeforeTime = createdBefore != null ? OffsetDateTime.parse(createdBefore) : null;
     
     OffsetDateTime createdAfterTime = createdAfter != null ? OffsetDateTime.parse(createdAfter) : null;
 
-    List<Event> result = eventController.listEventsRest(product, createdAfterTime, createdBeforeTime, firstResult, maxResults).stream().map(this::translateEvent)
+    List<Event> result = eventController.listEventsRest(product, createdAfterTime, createdBeforeTime, firstResult, eventType, maxResults).stream().map(this::translateEvent)
         .collect(Collectors.toList());
 
     return createOk(result);
