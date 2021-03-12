@@ -468,7 +468,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
     }
   }
-  
+
   @Test
   public void testListEvents() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
@@ -476,15 +476,22 @@ public class EventTestsIT extends AbstractFunctionalTest {
       builder.admin().pests();
       
       createSowingEvent(builder);
-      builder.admin().events().assertCount(1);
-      createTableSpreadEvent(builder);
+      createSowingEvent(builder);
       builder.admin().events().assertCount(2);
-      createCultivationObservationEvent(builder);
+      createTableSpreadEvent(builder);
       builder.admin().events().assertCount(3);
-      createHarvestEvent(builder);
+      createCultivationObservationEvent(builder);
       builder.admin().events().assertCount(4);
-      createPlantingEvent(builder);
+      createHarvestEvent(builder);
       builder.admin().events().assertCount(5);
+      createPlantingEvent(builder);
+      builder.admin().events().assertCount(6);
+
+      builder.admin().events().assertCount(null,EventType.SOWING, 2);
+      builder.admin().events().assertCount(null, EventType.TABLE_SPREAD, 1);
+      builder.admin().events().assertCount(null, EventType.CULTIVATION_OBSERVATION, 1);
+      builder.admin().events().assertCount(null, EventType.HARVEST, 1);
+      builder.admin().events().assertCount(null, EventType.PLANTING, 1);
     }
   }
 
@@ -505,10 +512,10 @@ public class EventTestsIT extends AbstractFunctionalTest {
       createTableSpreadEvent(builder, product);
 
       builder.admin().events().assertCount(4);
-      builder.admin().events().assertCount(product.getId(), 2);
+      builder.admin().events().assertCount(product.getId(), null, 2);
     }
   }
-  
+
   @Test
   public void testDeleteSeedPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {

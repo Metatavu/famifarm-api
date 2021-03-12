@@ -12,9 +12,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import fi.metatavu.famifarm.persistence.model.Product;
-import fi.metatavu.famifarm.persistence.model.Event;
-import fi.metatavu.famifarm.persistence.model.Event_;
+import fi.metatavu.famifarm.persistence.model.*;
+import fi.metatavu.famifarm.rest.model.EventType;
+import org.hibernate.Criteria;
 
 /**
  * Generic DAO class for events
@@ -59,18 +59,19 @@ public class EventDAO extends AbstractEventDAO<Event> {
    * Lists for rest api
    * 
    * @param product product
-   * @param createdBefore created before
    * @param createdAfter created after
+   * @param createdBefore created before
    * @param firstResult first result
+   * @param eventType event type
    * @param maxResults max results
-   * 
+   *
    * @return list of events
    */
-  public List<Event> listForRestApi(Product product, OffsetDateTime createdAfter, OffsetDateTime createdBefore, Integer firstResult, Integer maxResults) {
+  public List<Event> listForRestApi(Product product, OffsetDateTime createdAfter, OffsetDateTime createdBefore, Integer firstResult, EventType eventType, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
-    Root<Event> root = criteria.from(Event.class);
+    Root root = getRoot(criteria, eventType);
     criteria.select(root);
 
     List<Predicate> restrictions = new ArrayList<>();
@@ -99,6 +100,33 @@ public class EventDAO extends AbstractEventDAO<Event> {
     }
 
     return query.getResultList();
+  }
+
+  /**
+   * Gets root based on the required event type
+   *
+   * @param criteria criteria
+   * @param eventType eventType
+   * @return root of correct event object
+   */
+  private Root getRoot(CriteriaQuery<Event> criteria, EventType eventType){
+    if (eventType != null) {
+      if (eventType.equals(EventType.HARVEST)) {
+        return criteria.from(HarvestEvent.class);
+      } else if (eventType.equals(EventType.SOWING)) {
+        return criteria.from(SowingEvent.class);
+      } else if (eventType.equals(EventType.CULTIVATION_OBSERVATION)) {
+        return criteria.from(CultivationObservationEvent.class);
+      } else if (eventType.equals(EventType.PLANTING)) {
+        return criteria.from(PlantingEvent.class);
+      } else if (eventType.equals(EventType.TABLE_SPREAD)) {
+        return criteria.from(TableSpreadEvent.class);
+      } else if (eventType.equals(EventType.WASTAGE)) {
+        return criteria.from(WastageEvent.class);
+      }
+    }
+
+    return criteria.from(Event.class);
   }
 
   /**
