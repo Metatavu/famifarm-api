@@ -1,7 +1,9 @@
 package fi.metatavu.famifarm.products;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -9,6 +11,7 @@ import javax.inject.Inject;
 import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
 import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductDAO;
+import fi.metatavu.famifarm.persistence.dao.ProductPackageSizeDAO;
 import fi.metatavu.famifarm.persistence.model.*;
 
 @ApplicationScoped
@@ -22,17 +25,22 @@ public class ProductController {
   @Inject
   private CutPackingDAO cutPackingDAO;
 
+  @Inject
+  private ProductPackageSizeDAO productPackageSizeDAO;
+
   /**
    * Creates new product
    * 
    * @param name name
-   * @param defaultPackageSize defaultPackageSize
+   * @param packageSizes package sizes
    * @param isSubcontractorProduct is subcontractor product
    * @param creatorId creatorId
    * @return created product
    */
-  public Product createProduct(LocalizedEntry name, PackageSize defaultPackageSize, boolean isSubcontractorProduct, boolean active, UUID creatorId) {
-    return productDAO.create(UUID.randomUUID(), name, defaultPackageSize, isSubcontractorProduct, active, creatorId, creatorId);
+  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, UUID creatorId) {
+    Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, creatorId, creatorId);
+    packageSizes.forEach(packageSize -> productPackageSizeDAO.create(UUID.randomUUID(), product, packageSize));
+    return product;
   }
 
   /**
@@ -62,14 +70,25 @@ public class ProductController {
    * 
    * @param product product
    * @param name name
-   * @param packageSize new default package size
+   * @param packageSizes new default package sizes
    * @param isSubcontractorProduct is subcontractor product
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public Product updateProduct(Product product, LocalizedEntry name, PackageSize packageSize, boolean isSubcontractorProduct, Boolean isActive, UUID lastModifierId) {
+  public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
-    productDAO.updateDefaultPackageSize(product, packageSize, lastModifierId);
+
+    if (packageSizes != null) {
+      List<ProductPackageSize> existingPackageSizes = productPackageSizeDAO.listByProduct(product);
+      for (ProductPackageSize productPackageSize : existingPackageSizes) {
+        productPackageSizeDAO.delete(productPackageSize);
+      }
+
+      for (PackageSize packageSize : packageSizes) {
+        productPackageSizeDAO.create(UUID.randomUUID(), product, packageSize);
+      }
+    }
+
     productDAO.updateIsSubcontractorProduct(product, isSubcontractorProduct, lastModifierId);
     productDAO.updateIsActive(product, isActive, lastModifierId);
     return product;
@@ -93,6 +112,29 @@ public class ProductController {
       cutPackingDAO.delete(cutPacking);
     }
 
+    List<ProductPackageSize> productPackageSizes = productPackageSizeDAO.listByProduct(product);
+
+    for (ProductPackageSize productPackageSize: productPackageSizes) {
+      productPackageSizeDAO.delete(productPackageSize);
+    }
+
     productDAO.delete(product);
+  }
+
+  /**
+   * Lists product package size ids by product
+   *
+   * @param product product
+   * @return product package sizes ids
+   */
+  public List<UUID> listPackageSizesForProduct(Product product) {
+    List<ProductPackageSize> productPackageSizes = productPackageSizeDAO.listByProduct(product);
+
+    List<UUID> productPackageSizeIds = new ArrayList<>(productPackageSizes.size());
+
+    for (ProductPackageSize productPackageSize : productPackageSizes) {
+      productPackageSizeIds.add(productPackageSize.getPackageSize().getId());
+    }
+    return productPackageSizeIds;
   }
 }

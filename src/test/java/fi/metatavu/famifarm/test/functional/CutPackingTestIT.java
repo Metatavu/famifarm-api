@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.test.functional;
 
+import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
@@ -36,7 +37,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testEntry.add(testValue);
 
             PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
-            Product product = testBuilder.admin().products().create(testEntry, size, false);
+            Product product = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false);
             ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().withYear(2019);
@@ -79,10 +80,11 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testEntry.add(testValue);
 
             PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
-            Product product = testBuilder.admin().products().create(testEntry, size, false);
+            ArrayList<PackageSize> packageSizes = Lists.newArrayList(size);
+            Product product = testBuilder.admin().products().create(testEntry, packageSizes, false);
             ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
 
-            Product product2 = testBuilder.admin().products().create(testEntry, size, false);
+            Product product2 = testBuilder.admin().products().create(testEntry, packageSizes, false);
             ProductionLine productionLine2 = testBuilder.admin().productionLines().create("1", 100);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30).withYear(2019);
@@ -153,13 +155,15 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testEntry.add(testValue);
 
             PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
-            Product product = testBuilder.admin().products().create(testEntry, size, false);
+            ArrayList<PackageSize> packageSizes = Lists.newArrayList(size);
+
+            Product product = testBuilder.admin().products().create(testEntry, packageSizes, false);
             ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30);
             OffsetDateTime cuttingDay = OffsetDateTime.now();
 
-            Product product2 = testBuilder.admin().products().create(testEntry, size, false);
+            Product product2 = testBuilder.admin().products().create(testEntry, packageSizes, false);
             ProductionLine productionLine2 = testBuilder.admin().productionLines().create("1", 100);
 
             testBuilder.admin().cutPackings().create(
@@ -230,7 +234,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testEntry.add(testValue);
 
             PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
-            Product product = testBuilder.admin().products().create(testEntry, size, false);
+            Product product = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false);
             ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30);
@@ -267,7 +271,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testEntry.add(testValue);
 
             PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
-            Product product = testBuilder.admin().products().create(testEntry, size, false);
+            Product product = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false);
             ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30);

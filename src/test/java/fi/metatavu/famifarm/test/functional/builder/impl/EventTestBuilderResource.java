@@ -221,7 +221,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     getApi().deleteEvent(event.getId());  
     removeClosable(closable -> !closable.getId().equals(event.getId()));
   }
-  
+
   /**
    * Asserts Event count within the system
    * 
@@ -235,12 +235,13 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Asserts Event count within the system
    *
    * @param productId batch id to filter list with
+   * @param eventType event type
    * @param expected expected count
    */
-  public void assertCount(UUID productId, int expected) {
-    assertEquals(expected, getApi().listEvents(null, null, productId, null, null).size());
+  public void assertCount(UUID productId, EventType eventType, int expected) {
+    assertEquals(expected, getApi().listEvents(null, null, productId, null, null, eventType).size());
   }
-  
+
   /**
    * Asserts create status fails with given status code
    * 

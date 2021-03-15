@@ -228,6 +228,14 @@ paths:
           required: false
           schema:
             type: string
+        - name: eventType
+          in: query
+          description: Filter results by event type
+          required: false
+          schema:
+            type: object
+            $ref: "#/components/schemas/EventType"
+
       responses:
         '200':
           description: A paged array of events
@@ -2061,9 +2069,11 @@ components:
           format: "uuid"
         name:
           $ref: '#/components/schemas/LocalizedEntry'
-        defaultPackageSizeId:
-          type: "string"
-          format: "uuid"
+        defaultPackageSizeIds:
+          type: array
+          items:
+            type: "string"
+            format: "uuid"
         isSubcontractorProduct:
           type: "boolean"
         active:

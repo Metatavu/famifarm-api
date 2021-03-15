@@ -33,9 +33,6 @@ public class Product {
   @ManyToOne(optional = false)
   private LocalizedEntry name;
 
-  @ManyToOne(optional = false)
-  private PackageSize defaultPackageSize;
-
   @Column(nullable = false)
   private boolean isSubcontractorProduct;
 
@@ -76,10 +73,6 @@ public class Product {
     this.name = name;
   }
 
-  public PackageSize getDefaultPackageSize() {
-    return defaultPackageSize;
-  }
-
   public void setIsSubcontractorProduct(boolean isSubcontractorProduct) {
     this.isSubcontractorProduct = isSubcontractorProduct;
   }
@@ -94,10 +87,6 @@ public class Product {
 
   public boolean isActive() {
     return isActive;
-  }
-
-  public void setDefaultPackageSize(PackageSize defaultPackageSize) {
-    this.defaultPackageSize = defaultPackageSize;
   }
 
   public void setCreatorId(UUID creatorId) {

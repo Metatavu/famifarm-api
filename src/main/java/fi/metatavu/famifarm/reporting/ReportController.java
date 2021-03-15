@@ -46,6 +46,9 @@ public class ReportController {
   @Inject
   private XlsxPackedReport xlsxPackedReport;
 
+  @Inject
+  private XlsxPackedCampaingsReport xlsxPackedCampaingsReport;
+
   /**
    * Returns report for given report type
    * 
@@ -77,6 +80,8 @@ public class ReportController {
         return xlsxProductPhaseCountReport;
       case PACKED:
         return xlsxPackedReport;
+      case PACKED_CAMPAINGS:
+        return xlsxPackedCampaingsReport;
     }
     
     return null;

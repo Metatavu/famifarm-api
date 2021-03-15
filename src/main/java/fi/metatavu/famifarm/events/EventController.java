@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.rest.model.EventType;
 import org.slf4j.Logger;
 
 import fi.metatavu.famifarm.persistence.dao.EventDAO;
@@ -104,15 +105,16 @@ public class EventController {
    * Lists events for rest api
    * 
    * @param product product
-   * @param createdBefore created before
    * @param createdAfter created after
+   * @param createdBefore created before
    * @param firstResult first result
+   * @param eventType event type
    * @param maxResults max results
-   * 
+   *
    * @return list of events
    */
-  public List<Event> listEventsRest(Product product, OffsetDateTime createdAfter, OffsetDateTime createdBefore, Integer firstResult, Integer maxResults) {
-    return eventDAO.listForRestApi(product, createdAfter, createdBefore, firstResult, maxResults);
+  public List<Event> listEventsRest(Product product, OffsetDateTime createdAfter, OffsetDateTime createdBefore, Integer firstResult, EventType eventType, Integer maxResults) {
+    return eventDAO.listForRestApi(product, createdAfter, createdBefore, firstResult, eventType, maxResults);
   }
   
   /**
