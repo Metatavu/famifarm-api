@@ -113,8 +113,8 @@ public class EventController {
    *
    * @return list of events
    */
-  public List<Event> listEventsRest(Product product, OffsetDateTime createdAfter, OffsetDateTime createdBefore, Integer firstResult, EventType eventType, Integer maxResults) {
-    return eventDAO.listForRestApi(product, createdAfter, createdBefore, firstResult, eventType, maxResults);
+  public List<Event> listEventsRest(Product product, OffsetDateTime startTimeAfter, OffsetDateTime startTimeBefore, Integer firstResult, EventType eventType, Integer maxResults) {
+    return eventDAO.listForRestApi(product, startTimeAfter, startTimeBefore, firstResult, eventType, maxResults);
   }
   
   /**

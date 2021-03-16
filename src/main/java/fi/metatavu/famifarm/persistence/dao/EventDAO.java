@@ -14,7 +14,6 @@ import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
-import org.hibernate.Criteria;
 
 /**
  * Generic DAO class for events
@@ -67,11 +66,11 @@ public class EventDAO extends AbstractEventDAO<Event> {
    *
    * @return list of events
    */
-  public List<Event> listForRestApi(Product product, OffsetDateTime createdAfter, OffsetDateTime createdBefore, Integer firstResult, EventType eventType, Integer maxResults) {
+  public List<Event> listForRestApi(Product product, OffsetDateTime startAfter, OffsetDateTime startBefore, Integer firstResult, EventType eventType, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
-    Root root = getRoot(criteria, eventType);
+    Root<? extends Event>root = getRoot(criteria, eventType);
     criteria.select(root);
 
     List<Predicate> restrictions = new ArrayList<>();
@@ -80,12 +79,12 @@ public class EventDAO extends AbstractEventDAO<Event> {
       restrictions.add(criteriaBuilder.equal(root.get(Event_.product), product));
     }
 
-    if (createdBefore != null) {
-      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Event_.createdAt), createdBefore));
+    if (startBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Event_.startTime), startBefore));
     }
 
-    if (createdAfter != null) {
-      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Event_.createdAt), createdAfter));
+    if (startAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Event_.startTime), startAfter));
     }
 
     criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
@@ -109,7 +108,7 @@ public class EventDAO extends AbstractEventDAO<Event> {
    * @param eventType eventType
    * @return root of correct event object
    */
-  private Root getRoot(CriteriaQuery<Event> criteria, EventType eventType){
+  private Root<? extends Event> getRoot(CriteriaQuery<Event> criteria, EventType eventType){
     if (eventType != null) {
       if (eventType.equals(EventType.HARVEST)) {
         return criteria.from(HarvestEvent.class);
