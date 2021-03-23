@@ -95,9 +95,9 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         double yield = getYield(totalHarvestedAmount, totalAmountInBoxes);
         
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, row.getProductName());
-        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestedIndex, Double.toString(totalHarvestedAmount));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, inBoxesIndex, Double.toString(totalAmountInBoxes));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  Double.toString(yield));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestedIndex, totalHarvestedAmount);
+        xlsxBuilder.setCellValue(sheetId, rowIndex, inBoxesIndex, totalAmountInBoxes);
+        xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  yield);
         rowIndex++;
       }
 

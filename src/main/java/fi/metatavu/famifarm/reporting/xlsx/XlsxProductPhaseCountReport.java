@@ -93,12 +93,12 @@ public class XlsxProductPhaseCountReport extends AbstractXlsxReport {
 
       for (ReportRow row : rows) {
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, row.getProductName());
-        xlsxBuilder.setCellValue(sheetId, rowIndex, sowingIndex, Double.toString(row.getSowedCount()));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, spreadIndex, Double.toString(row.getSpreadCount()));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, plantingIndex, Double.toString(row.getPlantedCount()));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestIndex, Double.toString(row.getHarvestedCount()));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, packingIndex, Double.toString(row.getPackedCount()));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, wastageIndex, Double.toString(row.getWastedCount()));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, sowingIndex, row.getSowedCount());
+        xlsxBuilder.setCellValue(sheetId, rowIndex, spreadIndex, row.getSpreadCount());
+        xlsxBuilder.setCellValue(sheetId, rowIndex, plantingIndex, row.getPlantedCount());
+        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestIndex, row.getHarvestedCount());
+        xlsxBuilder.setCellValue(sheetId, rowIndex, packingIndex, row.getPackedCount());
+        xlsxBuilder.setCellValue(sheetId, rowIndex, wastageIndex, row.getWastedCount());
         rowIndex++;
       } 
 

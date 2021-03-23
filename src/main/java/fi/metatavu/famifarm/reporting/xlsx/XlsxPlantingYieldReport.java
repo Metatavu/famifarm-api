@@ -91,9 +91,9 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
         Double yield = getYield(totalPlantedAmount, totalAmountInGutters);
 
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, row.getProductName());
-        xlsxBuilder.setCellValue(sheetId, rowIndex, inGuttersIndex, Double.toString(totalAmountInGutters));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, fromCellsIndex, Double.toString(totalPlantedAmount));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  Double.toString(yield));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, inGuttersIndex, totalAmountInGutters);
+        xlsxBuilder.setCellValue(sheetId, rowIndex, fromCellsIndex, totalPlantedAmount);
+        xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  yield);
         rowIndex++;
       }
       
