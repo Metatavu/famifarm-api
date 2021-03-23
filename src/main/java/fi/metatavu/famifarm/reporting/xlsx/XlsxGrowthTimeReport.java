@@ -83,8 +83,8 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(event.getProduct().getName(), locale));
         xlsxBuilder.setCellValue(sheetId, rowIndex, packingDateIndex, harvestDateString);
         xlsxBuilder.setCellValue(sheetId, rowIndex, sowingDateIndex, sowingDateString);
-        xlsxBuilder.setCellValue(sheetId, rowIndex, averageWeightIndex, Double.toString(getAverageWeight(events, event.getProduct())));
-        xlsxBuilder.setCellValue(sheetId, rowIndex, growthTimeIndex, Long.toString(getGrowthTime(event)));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, averageWeightIndex, getAverageWeight(events, event.getProduct()));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, growthTimeIndex, getGrowthTime(event));
         rowIndex++;
       }
       
