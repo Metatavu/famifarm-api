@@ -7,6 +7,12 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
@@ -390,6 +396,20 @@ public abstract class AbstractFunctionalTest {
       return 54;
     }
     return 35;
+  }
+
+  /**
+   * Gets object mapper with parameters
+   *
+   * @return object mapper
+   */
+  public ObjectMapper getObjectMapper() {
+    return JsonMapper.builder()
+      .addModule(new ParameterNamesModule())
+      .addModule(new Jdk8Module())
+      .addModule(new JavaTimeModule())
+      .configure(SerializationFeature.FLUSH_AFTER_WRITE_VALUE, true)
+      .build();
   }
   
 }

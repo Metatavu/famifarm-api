@@ -1966,6 +1966,12 @@ paths:
           required: false
           schema:
             type: "string"
+        - name: format
+          in: query
+          description: Format of the report
+          required: false
+          schema:
+            type: "string"
       responses:
         '200':
           description: Excel report
