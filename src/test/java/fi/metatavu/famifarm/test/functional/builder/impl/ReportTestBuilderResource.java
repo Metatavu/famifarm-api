@@ -9,6 +9,7 @@ import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
+import fi.metatavu.famifarm.client.model.ReportFormat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -42,11 +43,11 @@ public class ReportTestBuilderResource extends AbstractTestBuilderResource<Objec
    * @return report data
    * @throws IOException thrown when request fails
    */
-  public byte[] createReport(String type, String fromTime, String toTime) throws IOException {
+  public byte[] createReport(String type, String fromTime, String toTime, ReportFormat reportFormat) throws IOException {
     ApiClient apiClient = getApiClient();
-    return getBinaryData(apiClient, new URL(String.format("%s/v1/reports/%s?fromTime=%s&toTime=%s", apiClient.getBasePath(), type, fromTime, toTime)));
+    return getBinaryData(apiClient, new URL(String.format("%s/v1/reports/%s?fromTime=%s&toTime=%s&format=%s", apiClient.getBasePath(), type, fromTime, toTime, reportFormat)));
   }
-  
+
   /**
    * Asserts that cell's value is expected
    * 
