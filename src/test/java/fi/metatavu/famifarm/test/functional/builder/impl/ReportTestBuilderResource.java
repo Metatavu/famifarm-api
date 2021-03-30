@@ -9,7 +9,7 @@ import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-import fi.metatavu.famifarm.client.model.ReportFormat;
+import fi.metatavu.famifarm.reporting.ReportFormat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
