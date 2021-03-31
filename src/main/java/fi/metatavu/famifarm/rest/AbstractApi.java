@@ -12,6 +12,7 @@ import java.util.Locale.LanguageRange;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.LocaleUtils;
@@ -67,10 +68,11 @@ public abstract class AbstractApi {
   protected Response createNotFound(String message) {
     ErrorResponse entity = new ErrorResponse();
     entity.setMessage(message);
-    return Response
-      .status(Response.Status.NOT_FOUND)
-      .entity(entity)
-      .build();
+    Response.ResponseBuilder rb = Response.noContent();
+    rb = rb.type(MediaType.APPLICATION_JSON);
+    rb = rb.status(Response.Status.NOT_FOUND);
+    rb = rb.entity(entity);
+    return rb.build();
   }
   
   /**
@@ -82,10 +84,11 @@ public abstract class AbstractApi {
   protected Response createForbidden(String message) {
     ErrorResponse entity = new ErrorResponse();
     entity.setMessage(message);
-    return Response
-      .status(Response.Status.FORBIDDEN)
-      .entity(entity)
-      .build();
+    Response.ResponseBuilder rb = Response.noContent();
+    rb = rb.type(MediaType.APPLICATION_JSON);
+    rb = rb.status(Response.Status.FORBIDDEN);
+    rb = rb.entity(entity);
+    return rb.build();
   }
   
   /**
@@ -97,10 +100,11 @@ public abstract class AbstractApi {
   protected Response createBadRequest(String message) {
     ErrorResponse entity = new ErrorResponse();
     entity.setMessage(message);
-    return Response
-      .status(Response.Status.BAD_REQUEST)
-      .entity(entity)
-      .build();
+    Response.ResponseBuilder rb = Response.noContent();
+    rb = rb.type(MediaType.APPLICATION_JSON);
+    rb = rb.status(Response.Status.BAD_REQUEST);
+    rb = rb.entity(entity);
+    return rb.build();
   }
   
   /**
@@ -111,11 +115,11 @@ public abstract class AbstractApi {
    */
   protected Response createInternalServerError(String message) {
     ErrorResponse entity = new ErrorResponse();
-    entity.setMessage(message);
-    return Response
-      .status(Response.Status.INTERNAL_SERVER_ERROR)
-      .entity(entity)
-      .build();
+    Response.ResponseBuilder rb = Response.noContent();
+    rb = rb.type(MediaType.APPLICATION_JSON);
+    rb = rb.status(Response.Status.INTERNAL_SERVER_ERROR);
+    rb = rb.entity(entity);
+    return rb.build();
   }
   
   
