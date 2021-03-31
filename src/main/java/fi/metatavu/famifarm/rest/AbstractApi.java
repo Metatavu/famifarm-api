@@ -115,6 +115,7 @@ public abstract class AbstractApi {
    */
   protected Response createInternalServerError(String message) {
     ErrorResponse entity = new ErrorResponse();
+    entity.setMessage(message);
     Response.ResponseBuilder rb = Response.noContent();
     rb = rb.type(MediaType.APPLICATION_JSON);
     rb = rb.status(Response.Status.INTERNAL_SERVER_ERROR);
