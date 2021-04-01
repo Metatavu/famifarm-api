@@ -54,7 +54,7 @@ public class JsonWastageReport extends AbstractJsonReport {
 
   private List<fi.metatavu.famifarm.reporting.json.models.Event> translateEvents(List<Event> events, Locale locale) {
     List<fi.metatavu.famifarm.reporting.json.models.Event> translatedEvents = new ArrayList<>(events.size());
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     Map<UUID, String> userCache = new HashMap<>();
 
     for (Event original : events) {
