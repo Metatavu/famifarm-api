@@ -54,7 +54,7 @@ public class JsonWastageReport extends AbstractJsonReport {
 
   private List<fi.metatavu.famifarm.reporting.json.models.Event> translateEvents(List<Event> events, Locale locale) {
     List<fi.metatavu.famifarm.reporting.json.models.Event> translatedEvents = new ArrayList<>(events.size());
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     Map<UUID, String> userCache = new HashMap<>();
 
     for (Event original : events) {
@@ -63,11 +63,22 @@ public class JsonWastageReport extends AbstractJsonReport {
         OffsetDateTime endTime = wastageEvent.getEndTime();
 
         fi.metatavu.famifarm.reporting.json.models.Event translated = new fi.metatavu.famifarm.reporting.json.models.Event();
-        translated.setLineNumber(wastageEvent.getProductionLine().getLineNumber());
-        translated.setEndTime(endTime.format(formatter));
+        translated.setStartTime(wastageEvent.getStartTime().format(formatter));
+
+        if (wastageEvent.getProductionLine() != null) {
+          translated.setLineNumber(wastageEvent.getProductionLine().getLineNumber());
+        }
+
+        if (endTime != null) {
+          translated.setEndTime(endTime.format(formatter));
+        }
+
+        if (wastageEvent.getPhase() != null) {
+          translated.setEventPhase(wastageEvent.getPhase().toString());
+        }
+
         translated.setUser(getFormattedUser(wastageEvent.getCreatorId(), userCache));
         translated.setProductName(localizedValueController.getValue(wastageEvent.getProduct().getName(), locale));
-        translated.setEventPhase(wastageEvent.getPhase().toString());
         translated.setWastageReason(localizedValueController.getValue(wastageEvent.getWastageReason().getReason(), locale));
         translated.setAdditionalInformation(wastageEvent.getAdditionalInformation());
         translated.setAmount(wastageEvent.getAmount());
