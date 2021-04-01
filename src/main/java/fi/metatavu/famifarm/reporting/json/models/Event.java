@@ -5,6 +5,7 @@ package fi.metatavu.famifarm.reporting.json.models;
  */
 public class Event {
   private String lineNumber;
+  private String startTime;
   private String endTime;
   private String user;
   private String productName;
@@ -71,6 +72,14 @@ public class Event {
 
   public Integer getAmount() {
     return amount;
+  }
+
+  public String getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(String startTime) {
+    this.startTime = startTime;
   }
 
   public void setAmount(Integer amount) {
