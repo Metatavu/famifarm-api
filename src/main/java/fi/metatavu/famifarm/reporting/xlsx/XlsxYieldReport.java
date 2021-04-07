@@ -102,8 +102,8 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       for (ReportRow row : rows) {
         double totalHarvestedAmount = row.getHarvestedCount();
         double totalAmountInBoxes = row.getPackedCount();
-        double wastageFromProductionLine = row.getWastageFromProductionLine();
-        double wastageFromStorage = row.getWastageFromStorage();
+        double wastageFromProductionLine = -1 * row.getWastageFromProductionLine();
+        double wastageFromStorage = -1 * row.getWastageFromStorage();
 
         String harvestedCellAdress = xlsxBuilder.getCellAddress(sheetId, rowIndex, harvestedIndex);
         String inBoxesCellAdress = xlsxBuilder.getCellAddress(sheetId, rowIndex, inBoxesIndex);
@@ -118,7 +118,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         xlsxBuilder.setCellValue(sheetId, rowIndex, wastageFromStorageIndex,  wastageFromStorage);
         xlsxBuilder.setCellFormula(sheetId, rowIndex, totalYieldIndex,  
           String.format(
-            "(%s-%s)/(%s+%s)",
+            "(%s+%s)/(%s-%s)",
             inBoxesCellAdress,
             wastageFromStorageCellAdress,
             harvestedCellAdress,
