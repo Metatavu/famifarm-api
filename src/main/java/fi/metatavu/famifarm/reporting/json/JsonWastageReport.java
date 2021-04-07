@@ -1,17 +1,11 @@
 package fi.metatavu.famifarm.reporting.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import fi.metatavu.famifarm.events.EventController;
-import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.rest.model.EventType;
-import liquibase.pro.packaged.A;
-import liquibase.pro.packaged.I;
-import liquibase.pro.packaged.O;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

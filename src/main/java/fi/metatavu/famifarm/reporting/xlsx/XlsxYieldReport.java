@@ -55,6 +55,9 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       int harvestedIndex = 1;
       int inBoxesIndex = 2;
       int yieldIndex = 3;
+      int wastageFromProductionLineIndex = 4;
+      int wastageFromStorageIndex = 5;
+      int totalYieldIndex = 6;
       
       Date fromTime = Date.from(parseDate(parameters.get("fromTime")).toInstant());
       Date toTime = Date.from(parseDate(parameters.get("toTime")).toInstant());
@@ -67,6 +70,9 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       xlsxBuilder.setCellValue(sheetId, 3, harvestedIndex, localesController.getString(locale, "reports.yield.yieldHarvested"));
       xlsxBuilder.setCellValue(sheetId, 3, inBoxesIndex, localesController.getString(locale, "reports.yield.yieldInBoxes")); 
       xlsxBuilder.setCellValue(sheetId, 3, yieldIndex, localesController.getString(locale, "reports.yield.yieldPercentage"));
+      xlsxBuilder.setCellValue(sheetId, 3, wastageFromProductionLineIndex, localesController.getString(locale, "reports.yield.yieldWastageFromProductionLine"));
+      xlsxBuilder.setCellValue(sheetId, 3, wastageFromStorageIndex, localesController.getString(locale, "reports.yield.yieldWastageFromStorage"));
+      xlsxBuilder.setCellValue(sheetId, 3, totalYieldIndex, localesController.getString(locale, "reports.yield.yieldTotalPercentage"));
       
       // Values
       
@@ -78,9 +84,13 @@ public class XlsxYieldReport extends AbstractXlsxReport {
         if (!rowLookup.containsKey(product.getId())) {
           rowLookup.put(
             product.getId(),
-            new ReportRow(localizedValueController.getValue(product.getName(), locale),
-            eventCountController.countUnitsByProductAndEventType(events, product, EventType.HARVEST),
-            eventCountController.countPackedUnitsByProduct(packings, product))
+            new ReportRow(
+              localizedValueController.getValue(product.getName(), locale),
+              eventCountController.countUnitsByProductAndEventType(events, product, EventType.HARVEST),
+              eventCountController.countPackedUnitsByProduct(packings, product),
+              eventCountController.countUnitsByProductAndEventType(events, product, EventType.WASTAGE),
+              eventCountController.countWastedPackedUnitsByProduct(packings, product)
+            )
           );
         }
       });
@@ -92,12 +102,28 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       for (ReportRow row : rows) {
         double totalHarvestedAmount = row.getHarvestedCount();
         double totalAmountInBoxes = row.getPackedCount();
-        double yield = getYield(totalHarvestedAmount, totalAmountInBoxes);
+        double wastageFromProductionLine = row.getWastageFromProductionLine();
+        double wastageFromStorage = row.getWastageFromStorage();
+
+        String harvestedCellAdress = xlsxBuilder.getCellAddress(sheetId, rowIndex, harvestedIndex);
+        String inBoxesCellAdress = xlsxBuilder.getCellAddress(sheetId, rowIndex, inBoxesIndex);
+        String wastageFromStorageCellAdress = xlsxBuilder.getCellAddress(sheetId, rowIndex, wastageFromStorageIndex);
+        String wastageFromProductionLineCellAdress = xlsxBuilder.getCellAddress(sheetId, rowIndex, wastageFromProductionLineIndex);
         
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, row.getProductName());
         xlsxBuilder.setCellValue(sheetId, rowIndex, harvestedIndex, totalHarvestedAmount);
         xlsxBuilder.setCellValue(sheetId, rowIndex, inBoxesIndex, totalAmountInBoxes);
-        xlsxBuilder.setCellValue(sheetId, rowIndex, yieldIndex,  yield);
+        xlsxBuilder.setCellFormula(sheetId, rowIndex, yieldIndex,  String.format("%s/%s", inBoxesCellAdress, harvestedCellAdress));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, wastageFromProductionLineIndex,  wastageFromProductionLine);
+        xlsxBuilder.setCellValue(sheetId, rowIndex, wastageFromStorageIndex,  wastageFromStorage);
+        xlsxBuilder.setCellFormula(sheetId, rowIndex, totalYieldIndex,  
+          String.format(
+            "(%s-%s)/(%s+%s)",
+            inBoxesCellAdress,
+            wastageFromStorageCellAdress,
+            harvestedCellAdress,
+            wastageFromProductionLineCellAdress));
+
         rowIndex++;
       }
 
@@ -107,36 +133,32 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       throw new ReportException(e);
     }
   }
-  
-  /**
-   * Get yield percentage
-   * 
-   * @param totalHarvestedAmount totalHarvestedAmount
-   * @param totalAmountInBoxes totalAmountInBoxes
-   * @return yield
-   */
-  private double getYield(double totalHarvestedAmount, double totalAmountInBoxes) {
-    if (totalHarvestedAmount == 0 || totalAmountInBoxes == 0) {
-      return 0d;
-    }
-    
-    return (totalAmountInBoxes * 100) / totalHarvestedAmount; 
-  }
 
   /**
    * Inner class representing single row in report
    */
   private class ReportRow implements Comparable<ReportRow>{
 
-    public ReportRow(String productName, Double harvestedCount, Double packedCount) {
+    public ReportRow(String productName,
+      Double harvestedCount,
+      Double packedCount,
+      Double wastageFromProductionLine,
+      Double wastageFromStorage) {
+
       this.productName = productName;
       this.harvestedCount = harvestedCount;
       this.packedCount = packedCount;
+      this.wastageFromProductionLine = wastageFromProductionLine;
+      this.wastageFromStorage = wastageFromStorage;
     }
 
     private Double harvestedCount;
 
     private Double packedCount;
+
+    private Double wastageFromProductionLine;
+
+    private Double wastageFromStorage;
 
     private String productName;
 
@@ -158,6 +180,14 @@ public class XlsxYieldReport extends AbstractXlsxReport {
 
     public Double getPackedCount() {
       return packedCount;
+    }
+
+    public Double getWastageFromProductionLine() {
+      return wastageFromProductionLine;
+    }
+
+    public Double getWastageFromStorage() {
+      return wastageFromStorage;
     }
   }
 }
