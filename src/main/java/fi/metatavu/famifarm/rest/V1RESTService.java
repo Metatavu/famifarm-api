@@ -3,13 +3,7 @@ package fi.metatavu.famifarm.rest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -26,6 +20,7 @@ import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.packings.CutPackingController;
 import fi.metatavu.famifarm.packings.CutPackingInvalidParametersException;
 import fi.metatavu.famifarm.printing.PrintingController;
+import fi.metatavu.famifarm.reporting.ReportFormat;
 import fi.metatavu.famifarm.rest.model.*;
 import fi.metatavu.famifarm.rest.translate.*;
 import org.apache.commons.lang3.EnumUtils;
@@ -1158,7 +1153,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
-  public Response getReport(String typeParam, String fromTime, String toTime) {
+  public Response getReport(String typeParam, String fromTime, String toTime, String reportFormat) {
     ReportType reportType = EnumUtils.getEnum(ReportType.class, typeParam);
 
     if (reportType == null) {
@@ -1175,7 +1170,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
       parameters.put("toTime", toTime);
     }
 
-    Report report = reportController.getReport(reportType);
+    ReportFormat format = EnumUtils.getEnum(ReportFormat.class, reportFormat);
+    if (format ==  null) {
+      format = fi.metatavu.famifarm.reporting.ReportFormat.XLS;
+    }
+
+    Report report = reportController.getReport(reportType, format);
+
     if (report == null) {
       return createInternalServerError("Failed construct report");
     }

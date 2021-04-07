@@ -70,7 +70,7 @@ public class XlsxPackedCampaingsReport extends AbstractXlsxReport {
 
             for (ReportRow row : rows) {
                 xlsxBuilder.setCellValue(sheetId, rowIndex, campaingNameIndex, row.getName());
-                xlsxBuilder.setCellValue(sheetId, rowIndex, countIndex, Long.toString(row.getCount()));
+                xlsxBuilder.setCellValue(sheetId, rowIndex, countIndex, row.getCount());
                 rowIndex++;
             }
 

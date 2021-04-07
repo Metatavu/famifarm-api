@@ -3,6 +3,7 @@ package fi.metatavu.famifarm.reporting;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.reporting.json.JsonWastageReport;
 import fi.metatavu.famifarm.reporting.xlsx.*;
 
 /**
@@ -49,19 +50,26 @@ public class ReportController {
   @Inject
   private XlsxPackedCampaingsReport xlsxPackedCampaingsReport;
 
+  @Inject
+  private JsonWastageReport jsonWastageReport;
+
   /**
    * Returns report for given report type
    * 
    * @param reportType report to
+   * @param format format
    * @return report instance
    */
   @SuppressWarnings ("squid:S1301")
-  public Report getReport(ReportType reportType) {
+  public Report getReport(ReportType reportType, ReportFormat format) {
     switch (reportType) {
       case XLS_EXAMPLE:
         return xlsxExampleReport;
       case WASTAGE:
-        return xlsxWastageReport;
+        if (format.equals(ReportFormat.JSON)) {
+          return jsonWastageReport;
+        }
+        else return xlsxWastageReport;
       case GROWTH_TIME:
         return xlsxGrowthTimeReport;
       case YIELD:

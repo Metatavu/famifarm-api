@@ -88,7 +88,7 @@ public class XlsxWastageReport extends AbstractXlsxReport {
           xlsxBuilder.setCellValue(sheetId, rowIndex, phaseIndex, wastageEvent.getPhase() != null ? wastageEvent.getPhase().toString() : "");
           xlsxBuilder.setCellValue(sheetId, rowIndex, reasonIndex, wastageEvent.getWastageReason() != null ? localizedValueController.getValue(wastageEvent.getWastageReason().getReason(), locale) : "");
           xlsxBuilder.setCellValue(sheetId, rowIndex, additionalInformationIndex, wastageEvent.getAdditionalInformation());
-          xlsxBuilder.setCellValue(sheetId, rowIndex, amountIndex, wastageEvent.getAmount() != null ? wastageEvent.getAmount().toString() : "");
+          xlsxBuilder.setCellValue(sheetId, rowIndex, amountIndex, wastageEvent.getAmount() != null ? wastageEvent.getAmount() : 0);
           rowIndex++;
         }
         
