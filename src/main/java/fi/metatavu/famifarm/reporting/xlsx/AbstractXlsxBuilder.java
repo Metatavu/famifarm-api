@@ -79,6 +79,41 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
   }
 
   /**
+   * Sets a cell formula
+   * 
+   * @param sheetId sheet id
+   * @param rowNumber row number
+   * @param columnNumber column number
+   * @param value value
+   * @return cell
+   */
+  public Cell setCellFormula(String sheetId, int rowNumber, int columnNumber, String value) {
+    Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
+    if (cell != null) {
+      cell.setCellFormula(value);
+    }
+    
+    return cell;
+  }
+
+  /**
+   * Gets A1 style representation of cell address
+   * 
+   * @param sheetId sheet id
+   * @param rowNumber row number
+   * @param columnNumber column number
+   * @return A1 style representation of cell address
+   */
+  public String getCellAddress(String sheetId, int rowNumber, int columnNumber) {
+    Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
+    if (cell != null) {
+      return cell.getAddress().formatAsString();
+    }
+    
+    return null;
+  }
+
+  /**
    * Sets a cell value
    * 
    * @param sheetId sheet id

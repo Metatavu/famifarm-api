@@ -11,6 +11,7 @@ import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.PlantingEventController;
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.PackingState;
 import fi.metatavu.famifarm.rest.model.PackingType;
 import fi.metatavu.famifarm.rest.model.PotType;
 
@@ -62,6 +63,22 @@ public class EventCountController {
       }
     }
     return count;
+  }
+
+  /**
+   * Counts wasted packed units by product
+   * 
+   * @param packings list of packings to count from
+   * @param product product to count by
+   * @return number of wasted, already packed units
+   */
+  public Double countWastedPackedUnitsByProduct(List<Packing> packings, Product product) {
+    List<Packing> wastedPackings = packings
+      .stream()
+      .filter(p -> p.getPackingState() == PackingState.WASTAGE)
+      .collect(Collectors.toList());
+    
+    return countPackedUnitsByProduct(wastedPackings, product);
   }
 
   /**
