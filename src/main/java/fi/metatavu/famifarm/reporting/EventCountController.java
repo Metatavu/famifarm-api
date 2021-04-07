@@ -110,6 +110,8 @@ public class EventCountController {
         return countSowedUnits(events);
       case TABLE_SPREAD:
         return countSpreadUnits(events);
+      case WASTAGE:
+        return countWastedUnits(events);
       case PLANTING:
         return countPlantedUnits(events);
       case CULTIVATION_OBSERVATION:
