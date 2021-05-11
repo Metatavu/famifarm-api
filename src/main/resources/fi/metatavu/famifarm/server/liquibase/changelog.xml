@@ -952,4 +952,30 @@
 
   </changeSet>
 
+  <changeSet id="storagediscard" author="Katja Danilova">
+    <createTable tableName="storagediscard">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="product_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true" foreignKeyName="FK_STORAGEDISCARD_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
+      </column>
+      <column name="packagesize_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true"  foreignKeyName="FK_STORAGEDISCARD_PACKAGESIZE_ID" referencedColumnNames="id" referencedTableName="packagesize"/>
+      </column>
+      <column name="discarddate" type="datetime(6)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="discardamount" type="integer">
+        <constraints nullable="false" />
+      </column>
+      <column name="creatorid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="lastmodifierid" type="binary(16)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

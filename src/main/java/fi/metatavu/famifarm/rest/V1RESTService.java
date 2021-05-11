@@ -3,6 +3,7 @@ package fi.metatavu.famifarm.rest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import fi.metatavu.famifarm.campaigns.CampaignController;
+import fi.metatavu.famifarm.discards.StorageDiscardController;
 import fi.metatavu.famifarm.packings.CutPackingController;
 import fi.metatavu.famifarm.packings.CutPackingInvalidParametersException;
 import fi.metatavu.famifarm.printing.PrintingController;
@@ -193,6 +195,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Inject
   private CutPackingTranslator cutPackingTranslator;
+
+  @Inject
+  private StorageDiscardController storageDiscardController;
+
+  @Inject
+  private StorageDiscardTranslator storageDiscardTranslator;
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
@@ -379,6 +387,32 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  public Response listStorageDiscards(Integer firstResult, Integer maxResults, String fromTime, String toTime, UUID productId) {
+    fi.metatavu.famifarm.persistence.model.Product product = productId != null ? productController.findProduct(productId) : null;
+
+    OffsetDateTime createdAfterTime;
+    OffsetDateTime createdBeforeTime;
+
+    try {
+      createdBeforeTime = toTime != null ? OffsetDateTime.parse(toTime) : null;
+    } catch (DateTimeParseException ex) {
+      return createBadRequest("Invalid created before date");
+    }
+
+    try {
+      createdAfterTime = fromTime != null ? OffsetDateTime.parse(fromTime) : null;
+    } catch (DateTimeParseException ex) {
+      return createBadRequest("Invalid created after date");
+    }
+
+    List<StorageDiscard> collect = storageDiscardController.listStorageDiscards(firstResult, maxResults, createdBeforeTime, createdAfterTime, product).stream().map(storageDiscardTranslator::translateStorageDiscard)
+        .collect(Collectors.toList());
+
+    return createOk(collect);
+  }
+
+  @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   @Transactional
   public Response updateSeed(Seed body, UUID seedId) {
@@ -542,6 +576,31 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
+  @Transactional
+  public Response createStorageDiscard(StorageDiscard payload) {
+    UUID loggerUserId = getLoggerUserId();
+    fi.metatavu.famifarm.persistence.model.Product foundProduct = productController.findProduct(payload.getProductId());
+
+    if (foundProduct == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    fi.metatavu.famifarm.persistence.model.PackageSize foundpackageSize = packageSizeController.findPackageSize(payload.getPackageSizeId());
+
+    if (foundpackageSize == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (productController.listPackageSizesForProduct(foundProduct).stream().filter(packSize -> packSize == foundpackageSize.getId()).findAny().isEmpty()) {
+      return createBadRequest("Package size doesn't belong to the product");
+    }
+
+    fi.metatavu.famifarm.persistence.model.StorageDiscard storageDiscard = storageDiscardController.create(foundProduct, foundpackageSize, payload.getDiscardAmount(), payload.getDiscardDate(), loggerUserId);
+    return createOk(storageDiscardTranslator.translateStorageDiscard(storageDiscard));
+  }
+
+  @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   @Transactional
   public Response createWastageReason(WastageReason body) {
@@ -669,6 +728,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     seedBatchController.deleteSeedBatch(seedBatch);
 
+    return createNoContent();
+  }
+
+  @Override
+  @Transactional
+  public Response deleteStorageDiscard(UUID storageDiscardId) {
+    fi.metatavu.famifarm.persistence.model.StorageDiscard storageDiscard = storageDiscardController.findById(storageDiscardId);
+
+    if (storageDiscard == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    storageDiscardController.deleteStorageDiscard(storageDiscard);
     return createNoContent();
   }
 
@@ -1137,6 +1209,30 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   @Transactional
+  public Response updateStorageDiscard(StorageDiscard payload, UUID storageDiscardId) {
+    fi.metatavu.famifarm.persistence.model.StorageDiscard foundStorageDiscard = storageDiscardController.findById(storageDiscardId);
+
+    if (foundStorageDiscard == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(payload.getPackageSizeId());
+    if (packageSize == null) {
+      return createNotFound("Package size not found");
+    }
+
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(payload.getProductId());
+    if (product == null) {
+      return createNotFound("Product not found");
+    }
+
+    return createOk(storageDiscardTranslator.translateStorageDiscard(storageDiscardController.
+        updateStorageDiscard(foundStorageDiscard, payload.getDiscardAmount(), payload.getDiscardDate(), product, packageSize, getLoggerUserId())));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  @Transactional
   public Response updateWastageReason(WastageReason body, UUID wastageReasonId) {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(wastageReasonId);
@@ -1194,6 +1290,18 @@ public class V1RESTService extends AbstractApi implements V1Api {
       this.logger.error("Failed to output report", e);
       return createInternalServerError("Failed to output report");
     }
+  }
+
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
+  @Override
+  public Response getStorageDiscard(UUID storageDiscardId) {
+
+    fi.metatavu.famifarm.persistence.model.StorageDiscard foundStorageDiscard = storageDiscardController.findById(storageDiscardId);
+    if (foundStorageDiscard == null) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    return createOk(storageDiscardTranslator.translateStorageDiscard(foundStorageDiscard));
   }
 
   @Override
