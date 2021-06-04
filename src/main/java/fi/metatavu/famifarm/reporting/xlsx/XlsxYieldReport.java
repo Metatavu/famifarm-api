@@ -93,7 +93,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
               eventCountController.countUnitsByProductAndEventType(events, product, EventType.HARVEST),
               eventCountController.countPackedUnitsByProduct(packings, product),
               eventCountController.countUnitsByProductAndEventType(events, product, EventType.WASTAGE),
-              eventCountController.countWastedPackedUnitsByProduct(product, fromTimeOffset, toTimeOffset)
+              eventCountController.countWastedPackedUnitsByProduct(product, toTimeOffset, fromTimeOffset)
             )
           );
         }
