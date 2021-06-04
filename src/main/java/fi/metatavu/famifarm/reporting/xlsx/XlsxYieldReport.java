@@ -1,6 +1,7 @@
 package fi.metatavu.famifarm.reporting.xlsx;
 
 import java.io.OutputStream;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -59,8 +60,11 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       int wastageFromStorageIndex = 5;
       int totalYieldIndex = 6;
       
-      Date fromTime = Date.from(parseDate(parameters.get("fromTime")).toInstant());
-      Date toTime = Date.from(parseDate(parameters.get("toTime")).toInstant());
+      OffsetDateTime fromTimeOffset = parseDate(parameters.get("fromTime"));
+      OffsetDateTime toTimeOffset = parseDate(parameters.get("toTime"));
+
+      Date fromTime = Date.from(fromTimeOffset.toInstant());
+      Date toTime = Date.from(toTimeOffset.toInstant());
       
       // Headers 
       
@@ -76,8 +80,8 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       
       // Values
       
-      List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
-      List<Packing> packings = packingController.listPackings(null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(toTimeOffset, fromTimeOffset);
+      List<Packing> packings = packingController.listPackings(null, null, null, null, toTimeOffset, fromTimeOffset);
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
         Product product = event.getProduct();
@@ -89,7 +93,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
               eventCountController.countUnitsByProductAndEventType(events, product, EventType.HARVEST),
               eventCountController.countPackedUnitsByProduct(packings, product),
               eventCountController.countUnitsByProductAndEventType(events, product, EventType.WASTAGE),
-              eventCountController.countWastedPackedUnitsByProduct(packings, product)
+              eventCountController.countWastedPackedUnitsByProduct(product, fromTimeOffset, toTimeOffset)
             )
           );
         }

@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.reporting;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,11 +8,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.campaigns.CampaignController;
+import fi.metatavu.famifarm.discards.StorageDiscardController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.PlantingEventController;
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
-import fi.metatavu.famifarm.rest.model.PackingState;
 import fi.metatavu.famifarm.rest.model.PackingType;
 import fi.metatavu.famifarm.rest.model.PotType;
 
@@ -31,6 +32,9 @@ public class EventCountController {
 
   @Inject
   private CampaignController campaingController;
+
+  @Inject
+  private StorageDiscardController storageDiscardController;
 
   /**
    * Counts packed units by product
@@ -68,17 +72,19 @@ public class EventCountController {
   /**
    * Counts wasted packed units by product
    * 
-   * @param packings list of packings to count from
    * @param product product to count by
+   * @param fromTime time to count from
+   * @param toTime time to count to
+   * 
    * @return number of wasted, already packed units
    */
-  public Double countWastedPackedUnitsByProduct(List<Packing> packings, Product product) {
-    List<Packing> wastedPackings = packings
-      .stream()
-      .filter(p -> p.getPackingState() == PackingState.WASTAGE)
-      .collect(Collectors.toList());
-    
-    return countPackedUnitsByProduct(wastedPackings, product);
+  public Double countWastedPackedUnitsByProduct(Product product, OffsetDateTime fromTime, OffsetDateTime toTime) {
+    List<StorageDiscard> storageDiscards = storageDiscardController.listStorageDiscards(null, null, fromTime, toTime, product);
+    Double wastedPackedUnits = 0d;
+    for (StorageDiscard storageDiscard : storageDiscards) {
+      wastedPackedUnits += (storageDiscard.getPackageSize().getSize() * storageDiscard.getDiscardAmount());
+    }
+    return wastedPackedUnits;
   }
 
   /**
