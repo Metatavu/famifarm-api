@@ -3,7 +3,6 @@ package fi.metatavu.famifarm.rest.translate;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import fi.metatavu.famifarm.events.CultivationObservationEventController;
 import fi.metatavu.famifarm.products.ProductController;
 import fi.metatavu.famifarm.rest.model.Product;
 

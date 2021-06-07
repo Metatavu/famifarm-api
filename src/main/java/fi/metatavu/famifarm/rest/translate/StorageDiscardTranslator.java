@@ -1,8 +1,5 @@
 package fi.metatavu.famifarm.rest.translate;
 
-import fi.metatavu.famifarm.persistence.model.StorageDiscard;
-import fi.metatavu.famifarm.rest.model.Seed;
-
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
