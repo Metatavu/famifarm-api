@@ -87,7 +87,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
       createdBeforeStr = createdBefore.toString();
     }
     
-    return getApi().listPackings(firstResult, maxResults, productId, packingState, createdAfterStr, createdBeforeStr);
+    return getApi().listPackings(firstResult, maxResults, productId, null, packingState, createdAfterStr, createdBeforeStr);
   }
   
   /**
