@@ -272,13 +272,21 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
-  public Response listPackings(Integer firstResult, Integer maxResults, UUID productId, PackingState status,
+  public Response listPackings(Integer firstResult, Integer maxResults, UUID productId, UUID campaingId, PackingState status,
       String createdBefore, String createdAfter) {
     fi.metatavu.famifarm.persistence.model.Product product = null;
+    fi.metatavu.famifarm.persistence.model.Campaign campaign = null;
     if (productId != null) {
       product = productController.findProduct(productId);
       
       if (product == null) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
+    }
+
+    if (campaingId != null) {
+      campaign = campaignController.find(campaingId);
+      if (campaign == null) {
         return createNotFound(NOT_FOUND_MESSAGE);
       }
     }
@@ -293,7 +301,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       createdAfterTime = OffsetDateTime.parse(createdAfter);
     }
 
-    return createOk(packingController.listPackings(firstResult, maxResults, product, status, createdBeforeTime, createdAfterTime).stream().map(packing -> packingTranslator.translate(packing)).collect(Collectors.toList()));
+    return createOk(packingController.listPackings(firstResult, maxResults, product, campaign, status, createdBeforeTime, createdAfterTime).stream().map(packing -> packingTranslator.translate(packing)).collect(Collectors.toList()));
   }
 
   @Override
@@ -691,7 +699,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound("Product not found");
     }
     
-    for (fi.metatavu.famifarm.persistence.model.Packing packing : packingController.listPackings(null, null, null, null, null, null)) {
+    for (fi.metatavu.famifarm.persistence.model.Packing packing : packingController.listPackings(null, null, null, null, null, null, null)) {
       if (packing.getProduct().getId() == productId) {
         return createBadRequest("Product can not be deleted, because it is linked to packings");
       }
