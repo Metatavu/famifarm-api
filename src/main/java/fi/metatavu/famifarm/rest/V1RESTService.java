@@ -47,6 +47,7 @@ import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
+import fi.metatavu.famifarm.persistence.model.ProductAllowedHarvestType;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
@@ -58,7 +59,6 @@ import fi.metatavu.famifarm.reporting.ReportController;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.reporting.ReportType;
 import fi.metatavu.famifarm.rest.api.V1Api;
-import fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum;
 import fi.metatavu.famifarm.seedbatches.SeedBatchesController;
 import fi.metatavu.famifarm.seeds.SeedsController;
 import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
@@ -550,9 +550,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     LocalizedEntry name = createLocalizedEntry(body.getName());
-
-    return createOk(
-        productsTranslator.translateProduct(productController.createProduct(name, packageSizes, body.getIsSubcontractorProduct(), body.getActive(), getLoggerUserId())));
+    fi.metatavu.famifarm.persistence.model.Product productEntity = productController.createProduct(
+      name,
+      packageSizes,
+      body.getIsSubcontractorProduct(),
+      body.getActive(),
+      getLoggerUserId()
+    );
+    if (body.getAllowedHarvestTypes() != null) {
+      body.getAllowedHarvestTypes().forEach(allowedHarvestType -> {
+        productController.createAllowedHarvestType(allowedHarvestType, productEntity);
+      });
+    }
+    return createOk(productsTranslator.translateProduct(productEntity));
   }
 
   @Override
@@ -1174,9 +1184,29 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     LocalizedEntry name = createLocalizedEntry(body.getName());
+    fi.metatavu.famifarm.persistence.model.Product productEntity = productController.updateProduct(
+      product,
+      name,
+      packageSizeList,
+      body.getIsSubcontractorProduct(),
+      body.getActive(),
+      getLoggerUserId()
+    );
+    List<ProductAllowedHarvestType> allowedHarvestTypes = productController.listAllowedHarvestTypes(productEntity);
+    List<HarvestEventType> updatedHarvestTypes = body.getAllowedHarvestTypes() != null ? body.getAllowedHarvestTypes() : new ArrayList<HarvestEventType>();
+    allowedHarvestTypes.forEach(allowedHarvestType -> {
+      if (updatedHarvestTypes.contains(allowedHarvestType.getHarvestType())) {
+        updatedHarvestTypes.remove(allowedHarvestType.getHarvestType());
+      } else {
+        productController.deleteProductAllowedHarvestType(allowedHarvestType);
+      }
+    });
+    updatedHarvestTypes.forEach(newHarvestType -> {
+      productController.createAllowedHarvestType(newHarvestType, productEntity);
+    });
 
     return createOk(productsTranslator
-        .translateProduct(productController.updateProduct(product, name, packageSizeList, body.getIsSubcontractorProduct(), body.getActive(), getLoggerUserId())));
+        .translateProduct(productEntity));
   }
 
   @Override
@@ -1738,7 +1768,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer gutterHoleCount = eventData.getGutterHoleCount();
     OffsetDateTime sowingTime = eventData.getSowingDate();
 
-    TypeEnum harvestType = eventData.getType();
+    HarvestEventType harvestType = eventData.getType();
     HarvestEvent event = harvestEventController.createHarvestEvent(product, startTime, endTime, harvestType,
         productionLine, sowingTime, additionalInformation, amount, gutterHoleCount, creatorId);
 
@@ -1780,7 +1810,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
 
-    TypeEnum harvestType = eventData.getType();
+    HarvestEventType harvestType = eventData.getType();
     OffsetDateTime sowingTime = eventData.getSowingDate();
     HarvestEvent updatedEvent = harvestEventController.updateHarvestEvent((HarvestEvent) event, product, startTime,
         endTime, harvestType, productionLine, sowingTime, eventData.getGutterCount(), eventData.getGutterHoleCount(), additionalInformation, creatorId);

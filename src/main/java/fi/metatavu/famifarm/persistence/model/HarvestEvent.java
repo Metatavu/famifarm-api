@@ -15,6 +15,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.HarvestEventType;
 
 /**
  * JPA entity for sowing event
@@ -27,7 +28,7 @@ import fi.metatavu.famifarm.rest.model.EventType;
 public class HarvestEvent extends Event {
 
   @Enumerated(EnumType.STRING)
-  private fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType;
+  private HarvestEventType harvestType;
 
   @ManyToOne
   private ProductionLine productionLine;
@@ -43,11 +44,11 @@ public class HarvestEvent extends Event {
   @Column(nullable = false)
   private OffsetDateTime sowingDate;
 
-  public fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum getHarvestType() {
+  public HarvestEventType getHarvestType() {
     return harvestType;
   }
 
-  public void setHarvestType(fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType) {
+  public void setHarvestType(HarvestEventType harvestType) {
     this.harvestType = harvestType;
   }
 

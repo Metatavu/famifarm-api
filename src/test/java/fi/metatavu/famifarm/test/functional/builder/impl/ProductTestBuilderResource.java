@@ -15,6 +15,7 @@ import org.json.JSONException;
 import feign.FeignException;
 import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.client.api.ProductsApi;
+import fi.metatavu.famifarm.client.model.HarvestEventType;
 import fi.metatavu.famifarm.client.model.LocalizedValue;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.Product;
@@ -36,7 +37,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
     super(apiClient);
   }
   
-  /**
+    /**
    * Creates new product
    * 
    * @param name name
@@ -45,7 +46,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @return created product
    */
   public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct) {
-    return create(name, packageSizes, isSubcontractorProduct, true);
+    return create(name, packageSizes, null, isSubcontractorProduct, true);
   }
 
   /**
@@ -56,11 +57,26 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @param isSubcontractorProduct is subcontractor product
    * @return created product
    */
-  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct,  boolean isActive) {
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct) {
+    return create(name, packageSizes, allowedHarvestTypes, isSubcontractorProduct, true);
+  }
+
+  /**
+   * Creates new product
+   * 
+   * @param name name
+   * @param packageSizes package size list
+   * @param isSubcontractorProduct is subcontractor product
+   * @return created product
+   */
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct,  boolean isActive) {
     Product product = new Product();
     product.setName(name);
     if (packageSizes != null) {
       product.setDefaultPackageSizeIds(packageSizes.stream().map(PackageSize::getId).collect(Collectors.toList()));
+    }
+    if (allowedHarvestTypes != null) {
+      product.setAllowedHarvestTypes(allowedHarvestTypes);
     }
 
     product.setIsSubcontractorProduct(isSubcontractorProduct);

@@ -20,6 +20,7 @@ import fi.metatavu.famifarm.client.model.PotType;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.EventType;
 import fi.metatavu.famifarm.client.model.HarvestEventData;
+import fi.metatavu.famifarm.client.model.HarvestEventType;
 import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.client.model.Pest;
 import fi.metatavu.famifarm.client.model.PlantingEventData;
@@ -127,7 +128,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type type
    * @return created event
    */
-  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type) {
     HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, type);
 
     Event event = new Event();
@@ -423,7 +424,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type 
    * @return harvest event data
    */
-  private HarvestEventData createHarvestEventData(ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum type) {
+  private HarvestEventData createHarvestEventData(ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, HarvestEventType type) {
     HarvestEventData data = new HarvestEventData();
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setGutterCount(gutterCount);

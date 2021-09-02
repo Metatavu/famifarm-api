@@ -978,4 +978,18 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="productallowedharvesttype" author="Heikki Kurhinen">
+    <createTable tableName="productallowedharvesttype">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="product_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true" foreignKeyName="FK_ALLOWEDHARVETTYPE_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
+      </column>
+      <column name="harvestType" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
 </databaseChangeLog>

@@ -1,10 +1,8 @@
 package fi.metatavu.famifarm.test.functional;
 
-import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +13,6 @@ import fi.metatavu.famifarm.reporting.ReportFormat;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 
-import fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -161,7 +158,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
       
       createWastageEvent(builder, product, startTime, endTime);
-      createHarvestEvent(builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BOXING, product);
+      createHarvestEvent(builder, HarvestEventType.BOXING, product);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
@@ -200,7 +197,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
       endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
       
-      createHarvestEvent(builder, fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.BOXING, product);
+      createHarvestEvent(builder, HarvestEventType.BOXING, product);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
@@ -314,7 +311,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       createSowingEvent(builder, product, 10, startTime, endTime);
       createPlantingEvent(builder, product, 10, 3);
-      createHarvestEvent(builder, TypeEnum.BOXING, product, 3, 10);
+      createHarvestEvent(builder, HarvestEventType.BOXING, product, 3, 10);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
