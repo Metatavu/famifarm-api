@@ -562,6 +562,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         productController.createAllowedHarvestType(allowedHarvestType, productEntity);
       });
     }
+
     return createOk(productsTranslator.translateProduct(productEntity));
   }
 

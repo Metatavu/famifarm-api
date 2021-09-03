@@ -54,6 +54,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param name name
    * @param packageSizes package size list
+   * @param allowedHarvestTypes allowed harvest type list
    * @param isSubcontractorProduct is subcontractor product
    * @return created product
    */
@@ -66,6 +67,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param name name
    * @param packageSizes package size list
+   * @param allowedHarvestTypes allowed harvest type list
    * @param isSubcontractorProduct is subcontractor product
    * @return created product
    */
