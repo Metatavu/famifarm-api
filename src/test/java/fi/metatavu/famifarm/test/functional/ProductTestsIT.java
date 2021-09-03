@@ -2,15 +2,17 @@ package fi.metatavu.famifarm.test.functional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 
+import fi.metatavu.famifarm.client.model.HarvestEventType;
 import fi.metatavu.famifarm.client.model.LocalizedValue;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.Product;
@@ -36,10 +38,13 @@ public class ProductTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
+      List<HarvestEventType> allowedHarvestTypes = Lists.newArrayList(HarvestEventType.BAGGING);
+      Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), allowedHarvestTypes, false);
       assertNotNull(product);
       assertNotNull(product.getDefaultPackageSizeIds());
       assertEquals(1, product.getDefaultPackageSizeIds().size());
+      assertEquals(1, product.getAllowedHarvestTypes().size());
+      assertEquals(HarvestEventType.BAGGING, product.getAllowedHarvestTypes().get(0));
       assertEquals(false, product.getIsSubcontractorProduct());
     }
   }
@@ -114,7 +119,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       builder.admin().products().create(name, packageSizes, true);
       builder.admin().products().assertCount(2);
       builder.admin().products().assertCountWithSubcontractors(3);
-      builder.admin().products().create(name, packageSizes, false, false);
+      builder.admin().products().create(name, packageSizes, null, false, false);
       builder.admin().products().assertCount(2);
       builder.admin().products().assertCountWithInactive(3);
       builder.admin().products().assertCountWithInactiveAndSubcontractors(4);
@@ -142,7 +147,6 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       PackageSize createdPackageSize8 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize8"), 8);
 
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      
       Product createdProduct = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize8), false);
       
       Product updateProduct = new Product(); 
@@ -152,13 +156,26 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       name = builder.createLocalizedEntry("Updated name", "Tuotteen nimi");
       updateProduct.setName(name);
       updateProduct.setActive(true);
+      updateProduct.setAllowedHarvestTypes(Lists.newArrayList(HarvestEventType.BOXING, HarvestEventType.CUTTING));
       updateProduct.setDefaultPackageSizeIds(Lists.newArrayList());
 
       Product updatedProduct = builder.admin().products().updateProduct(updateProduct);
       assertEquals(updateProduct.getId(), builder.admin().products().findProduct(createdProduct.getId()).getId());
       assertNotNull(updatedProduct.getDefaultPackageSizeIds());
+      assertEquals(2, updatedProduct.getAllowedHarvestTypes().size());
+      assertTrue(updateProduct.getAllowedHarvestTypes().contains(HarvestEventType.BOXING));
+      assertTrue(updateProduct.getAllowedHarvestTypes().contains(HarvestEventType.CUTTING));
       assertEquals(0, updatedProduct.getDefaultPackageSizeIds().size());
       assertEquals(true, updatedProduct.getIsSubcontractorProduct());
+
+      updatedProduct.setAllowedHarvestTypes(Lists.newArrayList(HarvestEventType.BAGGING));
+      updatedProduct = builder.admin().products().updateProduct(updatedProduct);
+      assertEquals(1, updatedProduct.getAllowedHarvestTypes().size());
+      assertTrue(updatedProduct.getAllowedHarvestTypes().contains(HarvestEventType.BAGGING));
+
+      updatedProduct.setAllowedHarvestTypes(ImmutableList.of());
+      updatedProduct = builder.admin().products().updateProduct(updatedProduct);
+      assertEquals(0, updatedProduct.getAllowedHarvestTypes().size());
     }
   }
 

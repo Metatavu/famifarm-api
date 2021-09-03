@@ -8,6 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
+import fi.metatavu.famifarm.rest.model.HarvestEventType;
 
 /**
  * DAO class for HarvestEvents
@@ -37,7 +38,7 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer remainingUnits, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, UUID creatorId, UUID lastModifierId) {
+  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer remainingUnits, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, UUID creatorId, UUID lastModifierId) {
     HarvestEvent harvestEvent = new HarvestEvent();
     harvestEvent.setProduct(product);
     harvestEvent.setRemainingUnits(remainingUnits);
@@ -73,7 +74,7 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @param lastModifierId modifier
    * @return updated harvestEvent
    */
-  public HarvestEvent updateHarvestType(HarvestEvent harvestEvent, fi.metatavu.famifarm.rest.model.HarvestEventData.TypeEnum harvestType, UUID lastModifierId) {
+  public HarvestEvent updateHarvestType(HarvestEvent harvestEvent, HarvestEventType harvestType, UUID lastModifierId) {
     harvestEvent.setLastModifierId(lastModifierId);
     harvestEvent.setHarvestType(harvestType);
     return persist(harvestEvent);

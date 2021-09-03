@@ -7,14 +7,17 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.rest.model.HarvestEventType;
 import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
 import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
+import fi.metatavu.famifarm.persistence.dao.ProductAllowedHarvestTypeDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductPackageSizeDAO;
 import fi.metatavu.famifarm.persistence.model.*;
 
 @ApplicationScoped
 public class ProductController {
+
   @Inject
   private CampaignProductDAO campaignProductDAO;
 
@@ -26,6 +29,9 @@ public class ProductController {
 
   @Inject
   private ProductPackageSizeDAO productPackageSizeDAO;
+
+  @Inject
+  private ProductAllowedHarvestTypeDAO productAllowedHarvestTypeDAO;
 
   /**
    * Creates new product
@@ -117,6 +123,10 @@ public class ProductController {
       productPackageSizeDAO.delete(productPackageSize);
     }
 
+    productAllowedHarvestTypeDAO
+      .listByProduct(product)
+      .forEach(productAllowedHarvestTypeDAO::delete);
+
     productDAO.delete(product);
   }
 
@@ -135,5 +145,36 @@ public class ProductController {
       productPackageSizeIds.add(productPackageSize.getPackageSize().getId());
     }
     return productPackageSizeIds;
+  }
+
+  /**
+   * Lists allowed harvest types for product
+   * 
+   * @param product product
+   * @return List of allowed harvest types
+   */
+  public List<ProductAllowedHarvestType> listAllowedHarvestTypes(Product product) {
+    return productAllowedHarvestTypeDAO.listByProduct(product);
+  }
+
+  /**
+   * Creates new allowed harvest type for product
+   * 
+   * @param type type
+   * @param product product
+   * @return created allowed harvest type
+   */
+  public ProductAllowedHarvestType createAllowedHarvestType(HarvestEventType type, Product product) {
+    return productAllowedHarvestTypeDAO.create(UUID.randomUUID(), type, product);
+  }
+
+
+  /**
+   * Deletes allowed harvest type for product
+   * 
+   * @param type allowed harvest type to be deleted
+   */
+  public void deleteProductAllowedHarvestType(ProductAllowedHarvestType type) {
+    productAllowedHarvestTypeDAO.delete(type);
   }
 }
