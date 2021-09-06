@@ -21,6 +21,7 @@ import fi.metatavu.famifarm.client.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.EventType;
 import fi.metatavu.famifarm.client.model.HarvestEventData;
+import fi.metatavu.famifarm.client.model.HarvestEventType;
 import fi.metatavu.famifarm.client.model.LocalizedValue;
 import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.client.model.PlantingEventData;
@@ -305,7 +306,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       
       HarvestEventData updateData = new HarvestEventData();
       updateData.setProductionLineId(updateProductionLine.getId());
-      updateData.setType(fi.metatavu.famifarm.client.model.HarvestEventData.TypeEnum.CUTTING);
+      updateData.setType(HarvestEventType.CUTTING);
       updateData.setGutterCount(100);
       updateData.setGutterHoleCount(150);
       updateData.setSowingDate(updateSowingTime);

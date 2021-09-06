@@ -1,9 +1,13 @@
 package fi.metatavu.famifarm.rest.translate;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import fi.metatavu.famifarm.products.ProductController;
+import fi.metatavu.famifarm.rest.model.HarvestEventType;
 import fi.metatavu.famifarm.rest.model.Product;
 
 /**
@@ -29,9 +33,16 @@ public class ProductsTranslator extends AbstractTranslator {
     }
     
     Product result = new Product();
+    List<HarvestEventType> allowedHarvestTypes = productController
+      .listAllowedHarvestTypes(product)
+      .stream()
+      .map((allowedHarvestType) -> allowedHarvestType.getHarvestType())
+      .collect(Collectors.toList());
+
     result.setId(product.getId());
     result.setName(translatelocalizedValue(product.getName()));
     result.setDefaultPackageSizeIds(productController.listPackageSizesForProduct(product));
+    result.setAllowedHarvestTypes(allowedHarvestTypes);
     result.setIsSubcontractorProduct(product.isSubcontractorProduct());
     result.setActive(product.isActive());
 
