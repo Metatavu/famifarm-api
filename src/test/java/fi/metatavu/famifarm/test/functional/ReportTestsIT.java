@@ -295,7 +295,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
         builder.admin().reports().assertCellValue("A - product", workbook, 0, 4, 0);
-        builder.admin().reports().assertCellValue(525.0, workbook, 0, 4, 1);
+        builder.admin().reports().assertCellValue(810.0, workbook, 0, 4, 1);
       }
     }
   }
