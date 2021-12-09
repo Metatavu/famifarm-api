@@ -93,11 +93,10 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createSowingEvent(TestBuilder builder, Product product, int amount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-    PotType potType = PotType.LARGE;
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
     SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
     
-    return builder.admin().events().createSowing(product, startTime, endTime, amount, potType, productionLine, Arrays.asList(seedBatch));
+    return builder.admin().events().createSowing(product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));
   }
 
   /**
@@ -391,10 +390,10 @@ public abstract class AbstractFunctionalTest {
    * @return amount
    */
   protected int getPotTypeAmount(PotType potType) {
-    if (PotType.SMALL == potType) {
-      return 54;
+    if (PotType.LARGE == potType) {
+      return 35;
     }
-    return 35;
+    return 54;
   }
 
   /**
