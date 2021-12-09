@@ -1514,7 +1514,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController.findProductionLine(eventData.getProductionLineId());
-    PotType potType = eventData.getPotType();
+    PotType potType = PotType.PAPER;
     Integer amount = eventData.getAmount();
 
     SowingEvent event = sowingEventController.createSowingEvent(product, startTime, endTime, productionLine, seedBatches,
@@ -1566,7 +1566,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID creatorId = getLoggerUserId();
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController
         .findProductionLine(eventData.getProductionLineId());
-    PotType potType = eventData.getPotType();
+    PotType potType = ((SowingEvent) event).getPotType();
     Integer amount = eventData.getAmount();
     SowingEvent updatedEvent = sowingEventController.updateSowingEvent((SowingEvent) event, product, startTime, endTime,
         productionLine, seedBatches, potType, amount, additionalInformation, creatorId);

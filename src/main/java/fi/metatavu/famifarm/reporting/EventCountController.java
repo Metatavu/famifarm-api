@@ -267,10 +267,10 @@ public class EventCountController {
       return 0;
     }
 
-    if (PotType.SMALL == sowingEvent.getPotType()) {
-      return 54;
+    if (PotType.LARGE == sowingEvent.getPotType()) {
+      return 35;
     }
-    return 35;
+    return 54;
   }
 
 }

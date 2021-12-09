@@ -51,13 +51,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param startTime event start time
    * @param endTime event end time
    * @param amount amount
-   * @param potType type
    * @param productionLine production line id
    * @param seedBatches seed batch
    * @return created event
    */
-  public Event createSowing(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
-    SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatches);
+  public Event createSowing(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches) {
+    SowingEventData data = createSowingEventData(amount, productionLine, seedBatches);
     
     Event event = new Event();
     event.setProductId(product != null ? product.getId() : null);
@@ -250,13 +249,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param startTime event start time
    * @param endTime event end time
    * @param amount amount
-   * @param potType cell type
    * @param productionLine production line
    * @param seedBatch seed batch
    */
-  public void assertCreateFailStatus(int expectedStatus, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
+  public void assertCreateFailStatus(int expectedStatus, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches) {
     try {
-      SowingEventData data = createSowingEventData(amount, potType, productionLine, seedBatches);
+      SowingEventData data = createSowingEventData(amount, productionLine, seedBatches);
       
       Event event = new Event();
       event.setProductId(product != null ? product.getId() : null);
@@ -371,16 +369,14 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Creates event data object
    * 
    * @param amount amount
-   * @param potType cell type
    * @param gutterNumber gutter number
    * @param productionLine production line
    * @param seedBatch seed batch
    * @return
    */
-  private SowingEventData createSowingEventData(Integer amount, PotType potType, ProductionLine productionLine, List<SeedBatch> seedBatches) {
+  private SowingEventData createSowingEventData(Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches) {
     SowingEventData data = new SowingEventData();
     data.setAmount(amount);
-    data.setPotType(potType);
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setSeedBatchIds(seedBatches.stream().map(SeedBatch::getId).collect(Collectors.toList()));
     return data;
