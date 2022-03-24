@@ -57,7 +57,7 @@ public class XlsxSeedlingTimeReport extends AbstractXlsxReport {
       xlsxBuilder.setCellValue(sheetId, 1, 0, localesController.getString(locale, "reports.common.dateBetween", fromTime, toTime)); 
       xlsxBuilder.setCellValue(sheetId, 3, lineIndex, localesController.getString(locale, "reports.seedling_time.lineHeader"));
       xlsxBuilder.setCellValue(sheetId, 3, productIndex, localesController.getString(locale, "reports.seedling_time.productHeader")); 
-      xlsxBuilder.setCellValue(sheetId, 3, plantingDateIndex, localesController.getString(locale, "reports.seedling_time.seedlingTimeHeader")); 
+      xlsxBuilder.setCellValue(sheetId, 3, plantingDateIndex, localesController.getString(locale, "reports.seedling_time.plantingDateHeader")); 
       xlsxBuilder.setCellValue(sheetId, 3, sowingDateIndex, localesController.getString(locale, "reports.seedling_time.sowingDateHeader"));
       xlsxBuilder.setCellValue(sheetId, 3, seedlingTimeIndex, localesController.getString(locale, "reports.seedling_time.seedlingTimeHeader"));
       
