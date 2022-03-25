@@ -53,6 +53,9 @@ public class ReportController {
   @Inject
   private JsonWastageReport jsonWastageReport;
 
+  @Inject
+  private XlsxSeedlingTimeReport xlsxSeedlingTimeReport;
+
   /**
    * Returns report for given report type
    * 
@@ -90,6 +93,8 @@ public class ReportController {
         return xlsxPackedReport;
       case PACKED_CAMPAINGS:
         return xlsxPackedCampaingsReport;
+      case SEEDLING_TIME:
+        return xlsxSeedlingTimeReport;
     }
     
     return null;
