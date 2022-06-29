@@ -9,7 +9,7 @@
 
     <!-- POI -->
 
-    <poi.version>4.0.1</poi.version>
+    <poi.version>4.1.1</poi.version>
 
     <!-- Test -->
     <openapitools.jackson-databind-nullable.version>0.2.0</openapitools.jackson-databind-nullable.version>
