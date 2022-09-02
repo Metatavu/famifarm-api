@@ -140,7 +140,7 @@ public class EventCountController {
     for (Event event : events) {
       if (event.getType() == EventType.SOWING) {
         SowingEvent sowingEvent = (SowingEvent) event;
-        count += sowingEvent.getAmount();
+        count += (sowingEvent.getAmount() * getTraySizeForPotType(sowingEvent.getPotType()));
       }
     }
 
@@ -253,6 +253,19 @@ public class EventCountController {
     Integer gutterHoleCount = latestPlanting.getGutterHoleCount();
     return gutterHoleCount != null ? gutterHoleCount : 0;
   } 
+
+  /**
+   * Gets amount of plants in one tray with specified pot type
+   * 
+   * @param potType pot type
+   * @return number of plants in one tray
+   */
+  private int getTraySizeForPotType(PotType potType) {
+    if (PotType.LARGE == potType) {
+      return 35;
+    }
+    return 54;
+  }
 
   /**
    * Get tray type as int
