@@ -74,7 +74,7 @@ public class XlsxPlantingYieldReport extends AbstractXlsxReport {
           rowLookup.put(
             product.getId(),
             new ReportRow(localizedValueController.getValue(product.getName(), locale),
-            eventCountController.countUnitsByProductAndEventType(events, product, EventType.TABLE_SPREAD),
+            eventCountController.countUnitsByProductAndEventType(events, product, EventType.SOWING),
             eventCountController.countUnitsByProductAndEventType(events, product, EventType.PLANTING)
           ));
         }
