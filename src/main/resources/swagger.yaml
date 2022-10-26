@@ -2168,6 +2168,18 @@ components:
       scheme: bearer
 
   schemas:
+    CampaignProduct:
+      type: object
+      required:
+        - productIt
+        - count
+      properties:
+        productId:
+          type: string
+          format: uuid
+        count:
+          type: integer
+
     Campaign:
       type: object
       required:
@@ -2182,16 +2194,7 @@ components:
         products:
           type: array
           items:
-            type: object
-            required:
-              - productId
-              - count
-            properties:
-              productId:
-               type: string
-               format: uuid
-              count:
-                type: integer
+            $ref: '#/components/schemas/CampaignProduct'
         
     LocalizedEntry: 
        type: array

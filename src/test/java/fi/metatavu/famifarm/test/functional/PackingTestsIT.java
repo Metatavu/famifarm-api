@@ -136,7 +136,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
 
-      CampaignProducts campaignProduct = new CampaignProducts();
+      CampaignProduct campaignProduct = new CampaignProduct();
       campaignProduct.setCount(100);
       campaignProduct.setProductId(product.getId());
       campaignToCreate.addProductsItem(campaignProduct);

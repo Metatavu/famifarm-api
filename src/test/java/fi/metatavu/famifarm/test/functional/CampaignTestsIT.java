@@ -41,7 +41,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
 
-      CampaignProducts campaignProduct = new CampaignProducts();
+      CampaignProduct campaignProduct = new CampaignProduct();
       campaignProduct.setCount(100);
       campaignProduct.setProductId(product.getId());
       campaignToCreate.addProductsItem(campaignProduct);
@@ -55,10 +55,10 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
 
       campaign.setName("Winter campaign");
 
-      CampaignProducts campaignProduct2 = new CampaignProducts();
+      CampaignProduct campaignProduct2 = new CampaignProduct();
       campaignProduct2.setCount(20);
       campaignProduct2.setProductId(product.getId());
-      ArrayList<CampaignProducts> campaignProducts = new ArrayList<>();
+      ArrayList<CampaignProduct> campaignProducts = new ArrayList<>();
       campaignProducts.add(campaignProduct2);
       campaign.setProducts(campaignProducts);
 
@@ -86,7 +86,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
 
-      CampaignProducts campaignProduct = new CampaignProducts();
+      CampaignProduct campaignProduct = new CampaignProduct();
       campaignProduct.setCount(100);
       campaignProduct.setProductId(product.getId());
       campaignToCreate.addProductsItem(campaignProduct);
@@ -117,7 +117,7 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Summer");
 
-      CampaignProducts campaignProduct = new CampaignProducts();
+      CampaignProduct campaignProduct = new CampaignProduct();
       campaignProduct.setCount(100);
       campaignProduct.setProductId(product.getId());
       campaignToCreate.addProductsItem(campaignProduct);
