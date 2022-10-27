@@ -440,9 +440,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response createCampaign(@Valid Campaign campaign) {
     HashMap<fi.metatavu.famifarm.persistence.model.Product, Integer> campaignProductsToCreate = new HashMap<>();
-    List<CampaignProduct> restCampaignProducts = campaign.getProducts();
+    List<CampaignProducts> restCampaignProducts = campaign.getProducts();
 
-    for (CampaignProduct campaignProduct : restCampaignProducts) {
+    for (CampaignProducts campaignProduct : restCampaignProducts) {
       fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(campaignProduct.getProductId());
       if (product == null) {
         return createNotFound(String.format("Campaign product %s not found!", campaignProduct.getProductId()));
@@ -1046,9 +1046,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response updateCampaign(@Valid Campaign campaign, UUID campaignId) {
     HashMap<fi.metatavu.famifarm.persistence.model.Product, Integer> campaignProductsToCreate = new HashMap<>();
-    List<CampaignProduct> restCampaignProducts = campaign.getProducts();
+    List<CampaignProducts> restCampaignProducts = campaign.getProducts();
 
-    for (CampaignProduct campaignProduct : restCampaignProducts) {
+    for (CampaignProducts campaignProduct : restCampaignProducts) {
       fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(campaignProduct.getProductId());
       if (product == null) {
         return createNotFound(String.format("Campaign product %s not found!", campaignProduct.getProductId()));

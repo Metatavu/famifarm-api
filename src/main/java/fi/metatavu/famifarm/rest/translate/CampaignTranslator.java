@@ -3,7 +3,7 @@ package fi.metatavu.famifarm.rest.translate;
 import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
 
 import fi.metatavu.famifarm.rest.model.Campaign;
-import fi.metatavu.famifarm.rest.model.CampaignProduct;
+import fi.metatavu.famifarm.rest.model.CampaignProducts;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,7 +30,7 @@ public class CampaignTranslator extends AbstractTranslator {
     campaign.setId(jpaCampaign.getId());
     campaign.setName(jpaCampaign.getName());
 
-    List<CampaignProduct> campaignProducts = campaignProductDAO.listByCampaign(jpaCampaign).stream().map(this::translateCampaignProduct).collect(Collectors.toList());
+    List<CampaignProducts> campaignProducts = campaignProductDAO.listByCampaign(jpaCampaign).stream().map(this::translateCampaignProduct).collect(Collectors.toList());
     campaign.setProducts(campaignProducts);
 
     return campaign;
@@ -43,8 +43,8 @@ public class CampaignTranslator extends AbstractTranslator {
    *
    * @return REST campaign products
    */
-  private CampaignProduct translateCampaignProduct (fi.metatavu.famifarm.persistence.model.CampaignProduct jpaCampaignProduct) {
-    CampaignProduct campaignProduct = new CampaignProduct();
+  private CampaignProducts translateCampaignProduct (fi.metatavu.famifarm.persistence.model.CampaignProduct jpaCampaignProduct) {
+    CampaignProducts campaignProduct = new CampaignProducts();
     campaignProduct.setProductId(jpaCampaignProduct.getProduct().getId());
     campaignProduct.setCount(jpaCampaignProduct.getCount());
 

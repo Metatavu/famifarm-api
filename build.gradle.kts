@@ -101,6 +101,7 @@ val generateApiSpec = tasks.register("generateApiSpec", GenerateTask::class) {
     this.configOptions.put("returnResponse", "true")
     this.configOptions.put("useSwaggerAnnotations", "false")
     this.configOptions.put("prependFormOrBodyParameters", "true")
+    this.configOptions.put("useBeanValidation", "true")
 }
 
 val generateApiClient = tasks.register("generateApiClient", GenerateTask::class){
