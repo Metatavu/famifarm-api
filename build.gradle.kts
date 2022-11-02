@@ -91,7 +91,7 @@ allOpen {
 
 val generateApiSpec = tasks.register("generateApiSpec", GenerateTask::class) {
     setProperty("generatorName", "jaxrs-spec")
-    setProperty("inputSpec", "$rootDir/src/main/resources/swagger.yaml")
+    setProperty("inputSpec", "$rootDir/famifarm-api-spec/swagger.yaml")
     setProperty("outputDir", "$buildDir/generated/api-spec")
     setProperty("apiPackage", "${project.group}.rest.api")
     setProperty("modelPackage", "${project.group}.rest.model")
@@ -107,7 +107,7 @@ val generateApiSpec = tasks.register("generateApiSpec", GenerateTask::class) {
 val generateApiClient = tasks.register("generateApiClient", GenerateTask::class){
     setProperty("generatorName", "java")
     setProperty("library", "feign")
-    setProperty("inputSpec", "$rootDir/src/main/resources/swagger.yaml")
+    setProperty("inputSpec", "$rootDir/famifarm-api-spec/swagger.yaml")
     setProperty("outputDir", "$buildDir/generated/api-client")
     setProperty("packageName", "fi.metatavu.famifarm.client")
     setProperty("modelPackage", "${project.group}.client.model")
