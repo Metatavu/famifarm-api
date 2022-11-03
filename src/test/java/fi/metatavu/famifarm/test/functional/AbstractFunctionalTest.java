@@ -158,8 +158,8 @@ public abstract class AbstractFunctionalTest {
     Double luminance = 44d;
     Double weight = 22d;
     List<PerformedCultivationAction> performedActions = Arrays.asList(
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely")),
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"))
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN),
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"), Facility.JOROINEN)
     );
     
     List<Pest> pests = Arrays.asList(
@@ -185,8 +185,8 @@ public abstract class AbstractFunctionalTest {
 
     Double luminance = 44d;
     List<PerformedCultivationAction> performedActions = Arrays.asList(
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely")),
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"))
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN),
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"), Facility.JOROINEN)
     );
     
     List<Pest> pests = Arrays.asList(

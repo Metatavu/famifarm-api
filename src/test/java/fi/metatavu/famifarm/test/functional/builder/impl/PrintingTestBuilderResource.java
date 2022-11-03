@@ -3,6 +3,7 @@ package fi.metatavu.famifarm.test.functional.builder.impl;
 import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.client.api.PrintersApi;
 
+import fi.metatavu.famifarm.client.model.Facility;
 import fi.metatavu.famifarm.client.model.PrintData;
 import fi.metatavu.famifarm.client.model.Printer;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
@@ -34,7 +35,7 @@ public class PrintingTestBuilderResource extends AbstractTestBuilderResource<Pri
     public void print(UUID packingId, String printerId) {
         PrintData printData = new PrintData();
         printData.setPackingId(packingId);
-        getApi().print(printData, printerId);
+        getApi().print(printData, Facility.JOROINEN, printerId);
     }
 
     /**
@@ -43,7 +44,7 @@ public class PrintingTestBuilderResource extends AbstractTestBuilderResource<Pri
      * @return connected printers
      */
     public List<Printer> getPrinters() {
-        return getApi().listPrinters();
+        return getApi().listPrinters(Facility.JOROINEN);
     }
 
     @Override

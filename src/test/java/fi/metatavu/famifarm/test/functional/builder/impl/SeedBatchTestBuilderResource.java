@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import fi.metatavu.famifarm.client.model.Facility;
 import org.json.JSONException;
 
 import feign.FeignException;
@@ -37,7 +38,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
   /**
    * Creates new seed batch
    * 
-   * @param name name
+   * @param code name
    * @param seed seed
    * @return created seed
    */
@@ -46,7 +47,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
     seedBatch.setCode(code);
     seedBatch.setSeedId(seed != null ? seed.getId() : null);
     seedBatch.setTime(time);
-    return addClosable(getApi().createSeedBatch(seedBatch));
+    return addClosable(getApi().createSeedBatch(seedBatch, Facility.JOROINEN));
   }
 
   /**
@@ -56,7 +57,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    * @return found seed batch
    */
   public SeedBatch findSeedBatch(UUID seedBatchId) {
-    return getApi().findSeedBatch(seedBatchId);
+    return getApi().findSeedBatch(Facility.JOROINEN, seedBatchId);
   }
 
   /**
@@ -65,7 +66,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    * @param body body payload
    */
   public SeedBatch updateSeedBatch(SeedBatch body) {
-    return getApi().updateSeedBatch(body, body.getId());
+    return getApi().updateSeedBatch(body, Facility.JOROINEN, body.getId());
   }
   
   /**
@@ -77,7 +78,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    * @return
    */
   public List<SeedBatch> listSeedBatches(Integer firstResult, Integer maxResults, Boolean isPassive) {
-    return getApi().listSeedBatches(firstResult, maxResults, isPassive);
+    return getApi().listSeedBatches(Facility.JOROINEN, firstResult, maxResults, isPassive);
   }
   
   /**
@@ -86,7 +87,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    * @param seedBatch seed batch to be deleted
    */
   public void delete(SeedBatch seedBatch) {
-    getApi().deleteSeedBatch(seedBatch.getId());  
+    getApi().deleteSeedBatch(Facility.JOROINEN, seedBatch.getId());
     removeClosable(closable -> !closable.getId().equals(seedBatch.getId()));
   }
   
@@ -96,7 +97,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    * @param expected expected count
    */
   public void assertCount(int expected) {
-    assertEquals(expected, getApi().listSeedBatches(Collections.emptyMap()).size());
+    assertEquals(expected, getApi().listSeedBatches(Facility.JOROINEN, Collections.emptyMap()).size());
   }
   
   /**
@@ -106,7 +107,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    */
   public void assertFindFailStatus(int expectedStatus, UUID seedBatchId) {
     try {
-      getApi().findSeedBatch(seedBatchId);
+      getApi().findSeedBatch(Facility.JOROINEN, seedBatchId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -121,7 +122,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    */
   public void assertUpdateFailStatus(int expectedStatus, SeedBatch seedBatch) {
     try {
-      getApi().updateSeedBatch(seedBatch, seedBatch.getId());
+      getApi().updateSeedBatch(seedBatch, Facility.JOROINEN, seedBatch.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -136,7 +137,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    */
   public void assertDeleteFailStatus(int expectedStatus, SeedBatch seedBatch) {
     try {
-      getApi().deleteSeedBatch(seedBatch.getId());
+      getApi().deleteSeedBatch(Facility.JOROINEN, seedBatch.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -150,7 +151,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    */
   public void assertListFailStatus(int expectedStatus) {
     try {
-      getApi().listSeedBatches(Collections.emptyMap());
+      getApi().listSeedBatches(Facility.JOROINEN, Collections.emptyMap());
       fail(String.format("Expected list to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -160,7 +161,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
   /**
    * Asserts that actual seed batch equals expected seed when both are serialized into JSON
    * 
-   * @param expectedStatus expected status code
+   * @param expected expected status code
    * @throws JSONException thrown when JSON serialization error occurs
    * @throws IOException thrown when IO Exception occurs
    */
@@ -170,7 +171,7 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
 
   @Override
   public void clean(SeedBatch seedBatch) {
-    getApi().deleteSeedBatch(seedBatch.getId());  
+    getApi().deleteSeedBatch(Facility.JOROINEN, seedBatch.getId());
   }
 
 }

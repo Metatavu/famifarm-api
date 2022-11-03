@@ -5,6 +5,7 @@ import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
 import fi.metatavu.famifarm.persistence.model.Campaign;
 import fi.metatavu.famifarm.persistence.model.CampaignProduct;
 import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -34,8 +35,8 @@ public class CampaignController {
    *
    * @return created campaign
    */
-  public Campaign create (String name, HashMap<Product, Integer> campaignProducts, UUID creatorId) {
-    Campaign createdCampaign = campaignDAO.create(UUID.randomUUID(), name, creatorId);
+  public Campaign create (String name, HashMap<Product, Integer> campaignProducts, Facility facility, UUID creatorId) {
+    Campaign createdCampaign = campaignDAO.create(UUID.randomUUID(), name, facility, creatorId);
     for (Map.Entry<Product, Integer> campaignProduct : campaignProducts.entrySet()) {
       campaignProductDAO.create(UUID.randomUUID(), campaignProduct.getValue(), campaignProduct.getKey(), createdCampaign, creatorId);
     }
@@ -54,12 +55,13 @@ public class CampaignController {
   }
 
   /**
-   * Lists all campaigns in the database
+   * Lists campaigns in the database
    *
+   * @param facility facility
    * @return all campaigns in the database
    */
-  public List<Campaign> list () {
-    return campaignDAO.listAll();
+  public List<Campaign> list (Facility facility) {
+    return campaignDAO.listByFacility(facility);
   }
 
   /**

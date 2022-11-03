@@ -10,26 +10,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import fi.metatavu.famifarm.client.model.*;
 import org.json.JSONException;
 
 import feign.FeignException;
 import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.client.api.EventsApi;
-import fi.metatavu.famifarm.client.model.Product;
-import fi.metatavu.famifarm.client.model.PotType;
-import fi.metatavu.famifarm.client.model.Event;
-import fi.metatavu.famifarm.client.model.EventType;
-import fi.metatavu.famifarm.client.model.HarvestEventData;
-import fi.metatavu.famifarm.client.model.HarvestEventType;
-import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
-import fi.metatavu.famifarm.client.model.Pest;
-import fi.metatavu.famifarm.client.model.PlantingEventData;
-import fi.metatavu.famifarm.client.model.ProductionLine;
-import fi.metatavu.famifarm.client.model.SeedBatch;
-import fi.metatavu.famifarm.client.model.SowingEventData;
-import fi.metatavu.famifarm.client.model.TableSpreadEventData;
-import fi.metatavu.famifarm.client.model.WastageEventData;
-import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
@@ -65,7 +51,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setStartTime(startTime);
     event.setType(EventType.SOWING);
     
-    return addClosable(getApi().createEvent(event));
+    return addClosable(getApi().createEvent(event, Facility.JOROINEN));
   }
   
   /**
@@ -88,7 +74,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setStartTime(startTime);
     event.setType(EventType.TABLE_SPREAD);
     
-    return addClosable(getApi().createEvent(event));
+    return addClosable(getApi().createEvent(event, Facility.JOROINEN));
   }
 
   /**
@@ -113,7 +99,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setStartTime(startTime);
     event.setType(EventType.CULTIVATION_OBSERVATION);
     
-    return addClosable(getApi().createEvent(event));
+    return addClosable(getApi().createEvent(event, Facility.JOROINEN));
   }
 
   /**
@@ -123,7 +109,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param startTime event start time
    * @param endTime event end time
    * @param productionLine production line
-   * @param team team
+   * @param sowingDate sowingDate
    * @param type type
    * @return created event
    */
@@ -137,7 +123,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setStartTime(startTime);
     event.setType(EventType.HARVEST);
     
-    return addClosable(getApi().createEvent(event));
+    return addClosable(getApi().createEvent(event, Facility.JOROINEN));
   }
   
   /**
@@ -163,7 +149,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setStartTime(startTime);
     event.setType(EventType.PLANTING);
     
-    return addClosable(getApi().createEvent(event));
+    return addClosable(getApi().createEvent(event, Facility.JOROINEN));
   }
 
   /**
@@ -190,7 +176,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setType(EventType.WASTAGE);
     event.setAdditionalInformation(additionalInformation);
     
-    return addClosable(getApi().createEvent(event));
+    return addClosable(getApi().createEvent(event, Facility.JOROINEN));
   }
   
   /**
@@ -200,16 +186,16 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @return found Event
    */
   public Event findEvent(UUID eventId) {
-    return getApi().findEvent(eventId);
+    return getApi().findEvent(Facility.JOROINEN, eventId);
   }
 
   /**
    * Updates an Event into the API
-   * 
+   *
    * @param body body payload
    */
   public Event updateEvent(Event body) {
-    return getApi().updateEvent(body, body.getId());
+    return getApi().updateEvent(body, Facility.JOROINEN, body.getId());
   }
   
   /**
@@ -218,7 +204,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param event Event to be deleted
    */
   public void delete(Event event) {
-    getApi().deleteEvent(event.getId());  
+    getApi().deleteEvent(Facility.JOROINEN, event.getId());
     removeClosable(closable -> !closable.getId().equals(event.getId()));
   }
 
@@ -228,7 +214,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param expected expected count
    */
   public void assertCount(int expected) {
-    assertEquals(expected, getApi().listEvents(Collections.emptyMap()).size());
+    assertEquals(expected, getApi().listEvents(Facility.JOROINEN, Collections.emptyMap()).size());
   }
 
   /**
@@ -239,7 +225,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param expected expected count
    */
   public void assertCount(UUID productId, EventType eventType, int expected) {
-    assertEquals(expected, getApi().listEvents(null, null, productId, null, null, eventType).size());
+    assertEquals(expected, getApi().listEvents(Facility.JOROINEN, null, null, productId, null, null, eventType).size());
   }
 
   /**
@@ -263,7 +249,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
       event.setStartTime(startTime);
       event.setType(EventType.SOWING);
       
-      getApi().createEvent(event);
+      getApi().createEvent(event, Facility.JOROINEN);
       
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
@@ -279,7 +265,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    */
   public void assertFindFailStatus(int expectedStatus, UUID eventId) {
     try {
-      getApi().findEvent(eventId);
+      getApi().findEvent(Facility.JOROINEN, eventId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -294,7 +280,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    */
   public void assertUpdateFailStatus(int expectedStatus, Event event) {
     try {
-      getApi().updateEvent(event, event.getId());
+      getApi().updateEvent(event, Facility.JOROINEN, event.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -309,7 +295,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    */
   public void assertDeleteFailStatus(int expectedStatus, Event event) {
     try {
-      getApi().deleteEvent(event.getId());
+      getApi().deleteEvent(Facility.JOROINEN, event.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -323,7 +309,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    */
   public void assertListFailStatus(int expectedStatus) {
     try {
-      getApi().listEvents(Collections.emptyMap());
+      getApi().listEvents(Facility.JOROINEN, Collections.emptyMap());
       fail(String.format("Expected list to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -344,7 +330,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
 
   @Override
   public void clean(Event event) {
-    getApi().deleteEvent(event.getId());  
+    getApi().deleteEvent(Facility.JOROINEN, event.getId());
   }
   
   /**

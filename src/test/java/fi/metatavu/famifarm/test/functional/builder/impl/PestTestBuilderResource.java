@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import fi.metatavu.famifarm.client.model.Facility;
 import org.json.JSONException;
 
 import feign.FeignException;
@@ -42,7 +43,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
   public Pest create(List<LocalizedValue> name) {
     Pest performedCultivationAction = new Pest();
     performedCultivationAction.setName(name);
-    return addClosable(getApi().createPest(performedCultivationAction));
+    return addClosable(getApi().createPest(performedCultivationAction, Facility.JOROINEN));
   }
 
   /**
@@ -52,7 +53,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    * @return found performedCultivationAction
    */
   public Pest findPest(UUID performedCultivationActionId) {
-    return getApi().findPest(performedCultivationActionId);
+    return getApi().findPest(Facility.JOROINEN, performedCultivationActionId);
   }
 
   /**
@@ -61,7 +62,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    * @param body body payload
    */
   public Pest updatePest(Pest body) {
-    return getApi().updatePest(body, body.getId());
+    return getApi().updatePest(body, Facility.JOROINEN, body.getId());
   }
   
   /**
@@ -70,7 +71,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    * @param performedCultivationAction performedCultivationAction to be deleted
    */
   public void delete(Pest performedCultivationAction) {
-    getApi().deletePest(performedCultivationAction.getId());  
+    getApi().deletePest(Facility.JOROINEN, performedCultivationAction.getId());
     removeClosable(closable -> !closable.getId().equals(performedCultivationAction.getId()));
   }
   
@@ -80,7 +81,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    * @param expected expected count
    */
   public void assertCount(int expected) {
-    assertEquals(expected, getApi().listPests(Collections.emptyMap()).size());
+    assertEquals(expected, getApi().listPests(Facility.JOROINEN, Collections.emptyMap()).size());
   }
   
   /**
@@ -90,7 +91,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    */
   public void assertFindFailStatus(int expectedStatus, UUID performedCultivationActionId) {
     try {
-      getApi().findPest(performedCultivationActionId);
+      getApi().findPest(Facility.JOROINEN, performedCultivationActionId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -106,7 +107,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
     try {
       Pest performedCultivationAction = new Pest();
       performedCultivationAction.setName(name);
-      getApi().createPest(performedCultivationAction);
+      getApi().createPest(performedCultivationAction, Facility.JOROINEN);
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -120,7 +121,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    */
   public void assertUpdateFailStatus(int expectedStatus, Pest performedCultivationAction) {
     try {
-      getApi().updatePest(performedCultivationAction, performedCultivationAction.getId());
+      getApi().updatePest(performedCultivationAction, Facility.JOROINEN, performedCultivationAction.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -134,7 +135,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    */
   public void assertDeleteFailStatus(int expectedStatus, Pest performedCultivationAction) {
     try {
-      getApi().deletePest(performedCultivationAction.getId());
+      getApi().deletePest(Facility.JOROINEN, performedCultivationAction.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -148,7 +149,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    */
   public void assertListFailStatus(int expectedStatus) {
     try {
-      getApi().listPests(Collections.emptyMap());
+      getApi().listPests(Facility.JOROINEN, Collections.emptyMap());
       fail(String.format("Expected list to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -169,7 +170,7 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
 
   @Override
   public void clean(Pest performedCultivationAction) {
-    getApi().deletePest(performedCultivationAction.getId());  
+    getApi().deletePest(Facility.JOROINEN, performedCultivationAction.getId());
   }
 
 }

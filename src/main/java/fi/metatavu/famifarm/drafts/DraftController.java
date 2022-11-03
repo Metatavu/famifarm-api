@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import fi.metatavu.famifarm.persistence.dao.DraftDAO;
 import fi.metatavu.famifarm.persistence.model.Draft;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Controller for drafts
@@ -20,8 +21,8 @@ public class DraftController {
   @Inject
   private DraftDAO draftDAO;
   
-  public Draft createDraft(String type, String data, UUID creatorId) {
-    return draftDAO.create(UUID.randomUUID(), type, data, creatorId, creatorId);
+  public Draft createDraft(String type, String data, Facility facility, UUID creatorId) {
+    return draftDAO.create(UUID.randomUUID(), type, data, facility, creatorId, creatorId);
   }
   
   /**
@@ -36,13 +37,14 @@ public class DraftController {
   
   /**
    * Finds a draft by creator id and type
-   * 
+   *
    * @param creatorId creator id
-   * @param type type
+   * @param type      type
+   * @param facility  facility
    * @return found draft or null if not found
    */
-  public Draft findDraftByCreatorIdAndType(UUID creatorId, String type) {
-    List<Draft> drafts = draftDAO.listByCreatorIdAndType(creatorId, type);
+  public Draft findDraftByCreatorIdAndType(UUID creatorId, String type, Facility facility) {
+    List<Draft> drafts = draftDAO.listByCreatorIdAndType(creatorId, type, facility);
     return drafts.isEmpty() ? null : drafts.get(drafts.size() - 1);
   }
 
@@ -52,8 +54,8 @@ public class DraftController {
    * @param creatorId creator id
    * @param type type
    */
-  public void deleteDraftsByCreatorIdAndType(UUID creatorId, String type) {
-    draftDAO.listByCreatorIdAndType(creatorId, type)
+  public void deleteDraftsByCreatorIdAndType(UUID creatorId, String type, Facility facility) {
+    draftDAO.listByCreatorIdAndType(creatorId, type, facility)
       .stream()
       .forEach(draftDAO::delete);
   }

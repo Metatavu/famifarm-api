@@ -8,15 +8,12 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import fi.metatavu.famifarm.client.model.PackingType;
+import fi.metatavu.famifarm.client.model.*;
 import org.json.JSONException;
 
 import feign.FeignException;
 import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.client.api.PackingsApi;
-import fi.metatavu.famifarm.client.model.PackageSize;
-import fi.metatavu.famifarm.client.model.Packing;
-import fi.metatavu.famifarm.client.model.PackingState;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 /**
@@ -62,7 +59,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
       packing.setPackageSizeId(packageSize.getId());
     }
 
-    return addClosable(getApi().createPacking(packing));
+    return addClosable(getApi().createPacking(packing, Facility.JOROINEN));
   }
   
   /**
@@ -87,7 +84,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
       createdBeforeStr = createdBefore.toString();
     }
     
-    return getApi().listPackings(firstResult, maxResults, productId, null, packingState, createdAfterStr, createdBeforeStr);
+    return getApi().listPackings(Facility.JOROINEN, firstResult, maxResults, productId, null, packingState, createdAfterStr, createdBeforeStr);
   }
   
   /**
@@ -97,7 +94,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @return packing with corresponding id or null if not found
    */
   public Packing find(UUID packingId) {
-    return getApi().findPacking(packingId);
+    return getApi().findPacking(Facility.JOROINEN, packingId);
   }
   
   /**
@@ -107,7 +104,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @return packing
    */
   public Packing update(Packing packing) {
-    return getApi().updatePacking(packing, packing.getId());
+    return getApi().updatePacking(packing, Facility.JOROINEN, packing.getId());
   }
   
   /**
@@ -117,7 +114,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @return
    */
   public void delete(Packing packing) {
-    getApi().deletePacking(packing.getId());
+    getApi().deletePacking(Facility.JOROINEN, packing.getId());
     removeClosable(closable -> !closable.getId().equals(packing.getId()));
   }
   
@@ -135,7 +132,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
   
   public void assertFindFailStatus(int expectedStatus, UUID packingId) {
     try {
-      getApi().findPacking(packingId);
+      getApi().findPacking(Facility.JOROINEN, packingId);
       fail(String.format("Expected find to fail with status %d.", expectedStatus));
     } catch (FeignException e){
       assertEquals(expectedStatus, e.status());
@@ -145,7 +142,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
   @Override
   public void clean(Packing packing) {
     if (find(packing.getId()) != null) {
-      getApi().deletePacking(packing.getId());  
+      getApi().deletePacking(Facility.JOROINEN, packing.getId());
     }
   }
 }

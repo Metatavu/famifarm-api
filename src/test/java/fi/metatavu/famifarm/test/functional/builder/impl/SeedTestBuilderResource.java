@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import fi.metatavu.famifarm.client.model.Facility;
 import org.json.JSONException;
 
 import feign.FeignException;
@@ -42,7 +43,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
   public Seed create(List<LocalizedValue> name) {
     Seed seed = new Seed();
     seed.setName(name);
-    return addClosable(getApi().createSeed(seed));
+    return addClosable(getApi().createSeed(seed, Facility.JOROINEN));
   }
 
   /**
@@ -52,7 +53,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    * @return found seed
    */
   public Seed findSeed(UUID seedId) {
-    return getApi().findSeed(seedId);
+    return getApi().findSeed(Facility.JOROINEN, seedId);
   }
 
   /**
@@ -61,7 +62,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    * @param body body payload
    */
   public Seed updateSeed(Seed body) {
-    return getApi().updateSeed(body, body.getId());
+    return getApi().updateSeed(body, Facility.JOROINEN, body.getId());
   }
   
   /**
@@ -70,7 +71,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    * @param seed seed to be deleted
    */
   public void delete(Seed seed) {
-    getApi().deleteSeed(seed.getId());  
+    getApi().deleteSeed(Facility.JOROINEN, seed.getId());
     removeClosable(closable -> !closable.getId().equals(seed.getId()));
   }
   
@@ -80,7 +81,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    * @param expected expected count
    */
   public void assertCount(int expected) {
-    assertEquals(expected, getApi().listSeeds(Collections.emptyMap()).size());
+    assertEquals(expected, getApi().listSeeds(Facility.JOROINEN, Collections.emptyMap()).size());
   }
   
   /**
@@ -90,7 +91,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    */
   public void assertFindFailStatus(int expectedStatus, UUID seedId) {
     try {
-      getApi().findSeed(seedId);
+      getApi().findSeed(Facility.JOROINEN, seedId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -106,7 +107,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
     try {
       Seed seed = new Seed();
       seed.setName(name);
-      getApi().createSeed(seed);
+      getApi().createSeed(seed, Facility.JOROINEN);
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -120,7 +121,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    */
   public void assertUpdateFailStatus(int expectedStatus, Seed seed) {
     try {
-      getApi().updateSeed(seed, seed.getId());
+      getApi().updateSeed(seed, Facility.JOROINEN, seed.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -134,7 +135,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    */
   public void assertDeleteFailStatus(int expectedStatus, Seed seed) {
     try {
-      getApi().deleteSeed(seed.getId());
+      getApi().deleteSeed(Facility.JOROINEN, seed.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -148,7 +149,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
    */
   public void assertListFailStatus(int expectedStatus) {
     try {
-      getApi().listSeeds(Collections.emptyMap());
+      getApi().listSeeds(Facility.JOROINEN, Collections.emptyMap());
       fail(String.format("Expected list to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -168,7 +169,7 @@ public class SeedTestBuilderResource extends AbstractTestBuilderResource<Seed, S
 
   @Override
   public void clean(Seed seed) {
-    getApi().deleteSeed(seed.getId());  
+    getApi().deleteSeed(Facility.JOROINEN, seed.getId());
   }
 
 }

@@ -10,6 +10,7 @@ import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.dao.PerformedCultivationActionDAO;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.PerformedCultivationAction;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Controller class for performed cultivation actions
@@ -29,11 +30,12 @@ public class PerformedCultivationActionsController {
    * Creates new performed cultivation action
    * 
    * @param name name
+   * @param facility facility
    * @param creatorId creatorId
    * @return created performed cultivation action
    */
-  public PerformedCultivationAction createPerformedCultivationAction(LocalizedEntry name, UUID creatorId) {
-    return performedCultivationActionDAO.create(UUID.randomUUID(), name, creatorId, creatorId);
+  public PerformedCultivationAction createPerformedCultivationAction(LocalizedEntry name, Facility facility, UUID creatorId) {
+    return performedCultivationActionDAO.create(UUID.randomUUID(), name, facility, creatorId, creatorId);
   }
 
   /**
@@ -48,13 +50,14 @@ public class PerformedCultivationActionsController {
 
   /**
    * Lists performed cultivation actions
-   * 
+   *
+   * @param facility
    * @param firstResult first result
-   * @param maxResults max results
+   * @param maxResults  max results
    * @return list of performed cultivation actions
    */
-  public List<PerformedCultivationAction> listPerformedCultivationActions(Integer firstResult, Integer maxResults) {
-    return performedCultivationActionDAO.listAll(firstResult, maxResults);
+  public List<PerformedCultivationAction> listPerformedCultivationActions(Facility facility, Integer firstResult, Integer maxResults) {
+    return performedCultivationActionDAO.list(facility, firstResult, maxResults);
   }
   
   /**

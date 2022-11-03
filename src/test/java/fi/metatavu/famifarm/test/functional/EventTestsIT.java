@@ -14,25 +14,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
+import fi.metatavu.famifarm.client.model.*;
 import org.junit.jupiter.api.Test;
 
-import fi.metatavu.famifarm.client.model.PotType;
-import fi.metatavu.famifarm.client.model.CultivationObservationEventData;
-import fi.metatavu.famifarm.client.model.Event;
-import fi.metatavu.famifarm.client.model.EventType;
-import fi.metatavu.famifarm.client.model.HarvestEventData;
-import fi.metatavu.famifarm.client.model.HarvestEventType;
-import fi.metatavu.famifarm.client.model.LocalizedValue;
-import fi.metatavu.famifarm.client.model.PackageSize;
-import fi.metatavu.famifarm.client.model.PlantingEventData;
-import fi.metatavu.famifarm.client.model.Product;
-import fi.metatavu.famifarm.client.model.ProductionLine;
-import fi.metatavu.famifarm.client.model.Seed;
-import fi.metatavu.famifarm.client.model.SeedBatch;
-import fi.metatavu.famifarm.client.model.SowingEventData;
-import fi.metatavu.famifarm.client.model.TableSpreadEventData;
-import fi.metatavu.famifarm.client.model.WastageEventData;
-import fi.metatavu.famifarm.client.model.WastageReason;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -231,7 +215,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       List<UUID> updatePerformedActionIds = new ArrayList<>(); 
       
       updatePerformedActionIds.add(UUID.fromString(((List<String>) createdData.get("performedActionIds")).get(0)));
-      updatePerformedActionIds.add(builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 3", "Testi viljely 3")).getId());
+      updatePerformedActionIds.add(builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 3", "Testi viljely 3"), Facility.JOROINEN).getId());
 
       List<UUID> updatedPestIds = new ArrayList<>();
       updatedPestIds.add(UUID.fromString(((List<String>) createdData.get("pestIds")).get(0)));

@@ -10,12 +10,9 @@ import java.util.UUID;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import fi.metatavu.famifarm.client.model.*;
 import org.junit.jupiter.api.Test;
 
-import fi.metatavu.famifarm.client.model.HarvestEventType;
-import fi.metatavu.famifarm.client.model.LocalizedValue;
-import fi.metatavu.famifarm.client.model.PackageSize;
-import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -36,13 +33,17 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateProduct() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      PackageSize createdPackageSizeJoroinen = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
+      PackageSize createdPackageSizeJuva = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JUVA);
+
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       List<HarvestEventType> allowedHarvestTypes = Lists.newArrayList(HarvestEventType.BAGGING);
-      Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), allowedHarvestTypes, false);
+      Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSizeJoroinen, createdPackageSizeJuva), allowedHarvestTypes, false);
       assertNotNull(product);
       assertNotNull(product.getDefaultPackageSizeIds());
+      //Verify that only the package size of correct facility got assigned
       assertEquals(1, product.getDefaultPackageSizeIds().size());
+      assertEquals(createdPackageSizeJoroinen.getId(), product.getDefaultPackageSizeIds().get(0));
       assertEquals(1, product.getAllowedHarvestTypes().size());
       assertEquals(HarvestEventType.BAGGING, product.getAllowedHarvestTypes().get(0));
       assertEquals(false, product.getIsSubcontractorProduct());
@@ -80,9 +81,10 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
-      builder.admin().products().assertFindFailStatus(404, UUID.randomUUID());
-      Product createdProduct = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
-      Product foundProduct = builder.admin().products().findProduct(createdProduct.getId());
+      builder.admin().products().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
+      Product createdProduct = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JUVA);
+      builder.admin().products().assertFindFailStatus(404, createdProduct.getId(), Facility.JOROINEN);
+      Product foundProduct = builder.admin().products().findProduct(createdProduct.getId(), Facility.JUVA);
       assertEquals(createdProduct.getId(), foundProduct.getId());
     }
   }
@@ -97,8 +99,8 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       assertNotNull(builder.admin().products().findProduct(packageSize.getId()));
       assertNotNull(builder.manager().products().findProduct(packageSize.getId()));
       assertNotNull(builder.worker1().products().findProduct(packageSize.getId()));
-      builder.invalid().products().assertFindFailStatus(401, packageSize.getId());
-      builder.anonymous().products().assertFindFailStatus(401, packageSize.getId());
+      builder.invalid().products().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
+      builder.anonymous().products().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
     }
   }
 
@@ -112,17 +114,17 @@ public class ProductTestsIT extends AbstractFunctionalTest {
 
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
-      builder.admin().products().create(name, packageSizes, false);
-      builder.admin().products().assertCount(1);
-      builder.admin().products().create(name, packageSizes, false);
-      builder.admin().products().assertCount(2);
-      builder.admin().products().create(name, packageSizes, true);
-      builder.admin().products().assertCount(2);
-      builder.admin().products().assertCountWithSubcontractors(3);
-      builder.admin().products().create(name, packageSizes, null, false, false);
-      builder.admin().products().assertCount(2);
-      builder.admin().products().assertCountWithInactive(3);
-      builder.admin().products().assertCountWithInactiveAndSubcontractors(4);
+      builder.admin().products().create(name, packageSizes, false, Facility.JOROINEN);
+      builder.admin().products().assertCount(1, Facility.JOROINEN);
+      builder.admin().products().create(name, packageSizes, false, Facility.JOROINEN);
+      builder.admin().products().assertCount(2, Facility.JOROINEN);
+      builder.admin().products().create(name, packageSizes, true, Facility.JUVA);
+      builder.admin().products().assertCountWithSubcontractors(1, Facility.JUVA);
+
+      builder.admin().products().create(name, packageSizes, null, false, false, Facility.JUVA);
+      builder.admin().products().assertCountWithInactive(1, Facility.JUVA);
+      builder.admin().products().assertCountWithInactiveAndSubcontractors(2, Facility.JUVA);
+      builder.admin().products().assertCountWithInactiveAndSubcontractors(2, Facility.JOROINEN);
     }
   }
 
@@ -132,12 +134,12 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
-      Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
-      builder.worker1().products().assertCount(1);
-      builder.manager().products().assertCount(1);
-      builder.admin().products().assertCount(1);
-      builder.invalid().products().assertFindFailStatus(401, packageSize.getId());
-      builder.anonymous().products().assertFindFailStatus(401, packageSize.getId());
+      Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
+      builder.worker1().products().assertCount(1, Facility.JOROINEN);
+      builder.manager().products().assertCount(1, Facility.JOROINEN);
+      builder.admin().products().assertCount(1, Facility.JOROINEN);
+      builder.invalid().products().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
+      builder.anonymous().products().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
     }
   }
 
@@ -159,7 +161,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       updateProduct.setAllowedHarvestTypes(Lists.newArrayList(HarvestEventType.BOXING, HarvestEventType.CUTTING));
       updateProduct.setDefaultPackageSizeIds(Lists.newArrayList());
 
-      Product updatedProduct = builder.admin().products().updateProduct(updateProduct);
+      Product updatedProduct = builder.admin().products().updateProduct(updateProduct, Facility.JOROINEN);
       assertEquals(updateProduct.getId(), builder.admin().products().findProduct(createdProduct.getId()).getId());
       assertNotNull(updatedProduct.getDefaultPackageSizeIds());
       assertEquals(2, updatedProduct.getAllowedHarvestTypes().size());
@@ -169,12 +171,13 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       assertEquals(true, updatedProduct.getIsSubcontractorProduct());
 
       updatedProduct.setAllowedHarvestTypes(Lists.newArrayList(HarvestEventType.BAGGING));
-      updatedProduct = builder.admin().products().updateProduct(updatedProduct);
+      updatedProduct = builder.admin().products().updateProduct(updatedProduct, Facility.JOROINEN);
       assertEquals(1, updatedProduct.getAllowedHarvestTypes().size());
       assertTrue(updatedProduct.getAllowedHarvestTypes().contains(HarvestEventType.BAGGING));
 
       updatedProduct.setAllowedHarvestTypes(ImmutableList.of());
-      updatedProduct = builder.admin().products().updateProduct(updatedProduct);
+      builder.admin().products().assertUpdateFailStatus(404, updatedProduct, Facility.JUVA);
+      updatedProduct = builder.admin().products().updateProduct(updatedProduct, Facility.JOROINEN);
       assertEquals(0, updatedProduct.getAllowedHarvestTypes().size());
     }
   }
@@ -186,9 +189,9 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
-      builder.worker1().products().assertUpdateFailStatus(403, packageSize);
-      builder.anonymous().products().assertUpdateFailStatus(401, packageSize);
-      builder.invalid().products().assertUpdateFailStatus(401, packageSize);
+      builder.worker1().products().assertUpdateFailStatus(403, packageSize, Facility.JOROINEN);
+      builder.anonymous().products().assertUpdateFailStatus(401, packageSize, Facility.JOROINEN);
+      builder.invalid().products().assertUpdateFailStatus(401, packageSize, Facility.JOROINEN);
     }
   }
   
@@ -201,8 +204,9 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       Product createdProduct = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
       Product foundProduct = builder.admin().products().findProduct(createdProduct.getId());
       assertEquals(createdProduct.getId(), foundProduct.getId());
-      builder.admin().products().delete(createdProduct);
-      builder.admin().products().assertFindFailStatus(404, createdProduct.getId());     
+      builder.admin().products().assertDeleteFailStatus(404, createdProduct, Facility.JUVA);
+      builder.admin().products().delete(createdProduct, Facility.JOROINEN);
+      builder.admin().products().assertFindFailStatus(404, createdProduct.getId(), Facility.JOROINEN);
     }
   }
 
@@ -213,9 +217,9 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
-      builder.worker1().products().assertDeleteFailStatus(403, packageSize);
-      builder.anonymous().products().assertDeleteFailStatus(401, packageSize);
-      builder.invalid().products().assertDeleteFailStatus(401, packageSize);
+      builder.worker1().products().assertDeleteFailStatus(403, packageSize, Facility.JOROINEN);
+      builder.anonymous().products().assertDeleteFailStatus(401, packageSize, Facility.JOROINEN);
+      builder.invalid().products().assertDeleteFailStatus(401, packageSize, Facility.JOROINEN);
     }
   }
 

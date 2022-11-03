@@ -136,12 +136,12 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
 
-      CampaignProducts campaignProduct = new CampaignProducts();
+      CampaignProduct campaignProduct = new CampaignProduct();
       campaignProduct.setCount(100);
       campaignProduct.setProductId(product.getId());
       campaignToCreate.addProductsItem(campaignProduct);
 
-      Campaign campaign = builder.admin().campaigns().create(campaignToCreate);
+      Campaign campaign = builder.admin().campaigns().create(campaignToCreate, Facility.JOROINEN);
 
       Packing packing = builder.admin().packings().create(null, campaign.getId(), PackingType.CAMPAIGN, OffsetDateTime.now(), null, PackingState.IN_STORE, null);
       assertNotNull(packing);

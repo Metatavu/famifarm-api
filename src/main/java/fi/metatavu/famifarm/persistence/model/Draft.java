@@ -1,14 +1,11 @@
 package fi.metatavu.famifarm.persistence.model;
 
+import fi.metatavu.famifarm.rest.model.Facility;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -19,6 +16,10 @@ public class Draft {
   @Column(nullable = false)
   @NotNull
   private UUID id;
+
+  @Column
+  @Enumerated(EnumType.STRING)
+  private Facility facility;
 
   @Column(nullable = false)
   @NotNull
@@ -99,6 +100,14 @@ public class Draft {
 
   public void setData(String data) {
     this.data = data;
+  }
+
+  public Facility getFacility() {
+    return facility;
+  }
+
+  public void setFacility(Facility facility) {
+    this.facility = facility;
   }
 
   @PrePersist

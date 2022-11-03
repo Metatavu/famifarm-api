@@ -992,4 +992,22 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="facility" author="katja danilova">
+    <addColumn tableName="campaign">
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+    </addColumn>
+    <addColumn tableName="draft">
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+    </addColumn>
+    <addColumn tableName="packagesize">
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+    </addColumn>
+    <addColumn tableName="performedcultivationaction">
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+    </addColumn>
+    <addColumn tableName="product">
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

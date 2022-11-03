@@ -45,7 +45,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       createHarvestEvent(builder);
       createPlantingEvent(builder);
   
-      byte[] data = builder.admin().reports().createReport("XLS_EXAMPLE", null, null, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "XLS_EXAMPLE", null, null, null);
       assertNotNull(data);
     }
   }
@@ -60,7 +60,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
-      byte[] data = builder.admin().reports().createReport("WASTAGE", fromTime, toTime, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "WASTAGE", fromTime, toTime, null);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -88,7 +88,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
 
-      byte[] data = builder.admin().reports().createReport("WASTAGE", fromTime, toTime, ReportFormat.JSON);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "WASTAGE", fromTime, toTime, ReportFormat.JSON);
       assertNotNull(data);
       try {
         ObjectMapper objectMapper = getObjectMapper();
@@ -124,7 +124,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
-      byte[] data = builder.admin().reports().createReport("GROWTH_TIME", fromTime, toTime, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "GROWTH_TIME", fromTime, toTime, null);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -163,7 +163,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
-      byte[] data = builder.admin().reports().createReport("YIELD", fromTime, toTime, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "YIELD", fromTime, toTime, null);
       assertNotNull(data);
       
       /*try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -202,7 +202,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
-      byte[] data = builder.admin().reports().createReport("PLANTING_YIELD", fromTime, toTime, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "PLANTING_YIELD", fromTime, toTime, null);
       assertNotNull(data);
       
       /*'try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -232,13 +232,10 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       Product product3 = builder.admin().products().create(builder.createLocalizedEntry("C - product", "C - tuote"), packageSizes, false);
       createSowingEvent(builder, product3, 25, startTime, endTime);
       
-      startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
-      endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
-      
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
-      byte[] data = builder.admin().reports().createReport("SOWED", fromTime, toTime, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "SOWED", fromTime, toTime, null);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -265,7 +262,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
-      byte[] data = builder.admin().reports().createReport("PLANTED", fromTime, toTime, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "PLANTED", fromTime, toTime, null);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -290,7 +287,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
-      byte[] data = builder.admin().reports().createReport("SPREAD", fromTime, toTime, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "SPREAD", fromTime, toTime, null);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -316,7 +313,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
-      byte[] data = builder.admin().reports().createReport("HARVESTED", fromTime, toTime, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "HARVESTED", fromTime, toTime, null);
       assertNotNull(data);
       
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
@@ -339,7 +336,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
 
-      byte[] data = builder.admin().reports().createReport("PACKED", fromTime, toTime, null);
+      byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "PACKED", fromTime, toTime, null);
       assertNotNull(data);
 
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {

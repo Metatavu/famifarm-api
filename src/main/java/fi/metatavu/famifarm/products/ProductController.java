@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.rest.model.Facility;
 import fi.metatavu.famifarm.rest.model.HarvestEventType;
 import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
 import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
@@ -42,8 +43,8 @@ public class ProductController {
    * @param creatorId creatorId
    * @return created product
    */
-  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, UUID creatorId) {
-    Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, creatorId, creatorId);
+  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, Facility facility, UUID creatorId) {
+    Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, facility, creatorId, creatorId);
     packageSizes.forEach(packageSize -> productPackageSizeDAO.create(UUID.randomUUID(), product, packageSize));
     return product;
   }
@@ -60,14 +61,15 @@ public class ProductController {
 
   /**
    * Lists products
-   * 
-   * @param firstResult first result
-   * @param maxResults max results
+   *
+   * @param facility                     facility
+   * @param firstResult                  first result
+   * @param maxResults                   max results
    * @param includeSubcontractorProducts include subcontractor products
    * @return list of products
    */
-  public List<Product> listProducts(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts) {
-    return productDAO.list(firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts);
+  public List<Product> listProducts(Facility facility, Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts) {
+    return productDAO.list(facility, firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts);
   }
 
   /**
