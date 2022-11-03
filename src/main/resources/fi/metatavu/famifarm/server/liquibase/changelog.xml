@@ -994,19 +994,29 @@
 
   <changeSet id="facility" author="katja danilova">
     <addColumn tableName="campaign">
-      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN">
+        <constraints nullable="false"/>
+      </column>
     </addColumn>
     <addColumn tableName="draft">
-      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN">
+        <constraints nullable="false"/>
+      </column>
     </addColumn>
     <addColumn tableName="packagesize">
-      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN">
+        <constraints nullable="false"/>
+      </column>
     </addColumn>
     <addColumn tableName="performedcultivationaction">
-      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN">
+        <constraints nullable="false"/>
+      </column>
     </addColumn>
     <addColumn tableName="product">
-      <column name="facility" type="varchar(191)" defaultValue="JOROINEN"/>
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN">
+        <constraints nullable="false"/>
+      </column>
     </addColumn>
   </changeSet>
 
