@@ -28,8 +28,9 @@ public class PerformedCultivationAction {
   @ManyToOne (optional = false)
   private LocalizedEntry name;
 
-  @Column
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
+  @NotNull
   private Facility facility;
 
   @Column(nullable = false)

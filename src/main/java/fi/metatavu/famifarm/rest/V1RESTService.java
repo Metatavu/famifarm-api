@@ -213,7 +213,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (productId != null) {
       product = productController.findProduct(body.getProductId());
 
-      if (product == null) {
+      if (product == null || product.getFacility() != facility) {
         return createNotFound(NOT_FOUND_MESSAGE);
       }
     } else {
@@ -226,7 +226,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.Campaign campaign = null;
     if (campaignId != null) {
       campaign = campaignController.find(campaignId);
-      if (campaign == null) {
+      if (campaign == null || campaign.getFacility() != facility) {
         return createNotFound(NOT_FOUND_MESSAGE);
       }
     } else {
@@ -239,9 +239,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = null;
     if (packageSizeId != null) {
       packageSize = packageSizeController.findPackageSize(packageSizeId);
+      if (packageSize == null || packageSize.getFacility() != facility) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
     }
 
-    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), product, packageSize, body.getPackedCount(), body.getState(), body.getTime(), campaign, packingType)));
+    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), facility, product, packageSize, body.getPackedCount(), body.getState(), body.getTime(), campaign, packingType)));
   }
 
   @Override
@@ -250,7 +253,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deletePacking(Facility facility, UUID packingId) {
     fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
     
-    if (packing == null) {
+    if (packing == null || packing.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
     
@@ -263,7 +266,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findPacking(Facility facility, UUID packingId) {
     fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
     
-    if (packing == null) {
+    if (packing == null || packing.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
     
@@ -279,14 +282,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (productId != null) {
       product = productController.findProduct(productId);
       
-      if (product == null) {
+      if (product == null || product.getFacility() != facility) {
         return createNotFound(NOT_FOUND_MESSAGE);
       }
     }
 
     if (campaingId != null) {
       campaign = campaignController.find(campaingId);
-      if (campaign == null) {
+      if (campaign == null || campaign.getFacility() != facility) {
         return createNotFound(NOT_FOUND_MESSAGE);
       }
     }
@@ -301,7 +304,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       createdAfterTime = OffsetDateTime.parse(createdAfter);
     }
 
-    return createOk(packingController.listPackings(firstResult, maxResults, product, campaign, status, createdBeforeTime, createdAfterTime).stream().map(packing -> packingTranslator.translate(packing)).collect(Collectors.toList()));
+    return createOk(packingController.listPackings(firstResult, maxResults, facility, product, campaign, status, createdBeforeTime, createdAfterTime).stream().map(packing -> packingTranslator.translate(packing)).collect(Collectors.toList()));
   }
 
   @Override
@@ -310,7 +313,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response updatePacking(Packing body, Facility facility, UUID packingId) {
     fi.metatavu.famifarm.persistence.model.Packing packing = packingController.findById(packingId);
 
-    if (packing == null) {
+    if (packing == null || packing.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -320,7 +323,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (productId != null) {
       product = productController.findProduct(body.getProductId());
 
-      if (product == null) {
+      if (product == null || product.getFacility() != facility) {
         return createNotFound(NOT_FOUND_MESSAGE);
       }
     } else {
@@ -333,7 +336,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.Campaign campaign = null;
     if (campaignId != null) {
       campaign = campaignController.find(campaignId);
-      if (campaign == null) {
+      if (campaign == null || campaign.getFacility() != facility) {
         return createNotFound(NOT_FOUND_MESSAGE);
       }
     } else {
@@ -346,6 +349,9 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = null;
     if (packageSizeId != null) {
       packageSize = packageSizeController.findPackageSize(packageSizeId);
+      if (packageSize == null || packageSize.getFacility() != facility) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
     }
     return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), product, body.getTime(), campaign, packingType, getLoggerUserId())));
   }
@@ -711,7 +717,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound("Product not found");
     }
     
-    for (fi.metatavu.famifarm.persistence.model.Packing packing : packingController.listPackings(null, null, null, null, null, null, null)) {
+    for (fi.metatavu.famifarm.persistence.model.Packing packing : packingController.listPackings(null, null, facility, null, null, null, null, null)) {
       if (packing.getProduct() != null && packing.getProduct().getId() == productId) {
         return createBadRequest("Product can not be deleted, because it is linked to packings");
       }

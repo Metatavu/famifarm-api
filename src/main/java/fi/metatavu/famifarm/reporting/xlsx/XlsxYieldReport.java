@@ -82,7 +82,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       // Values
       
       List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(toTimeOffset, fromTimeOffset);
-      List<Packing> packings = packingController.listPackings(null, null, null, null, null, toTimeOffset, fromTimeOffset);
+      List<Packing> packings = packingController.listPackings(null, null, facility, null, null, null, toTimeOffset, fromTimeOffset);
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
         Product product = event.getProduct();

@@ -50,7 +50,7 @@ public class XlsxPackedReport extends AbstractXlsxReport {
             xlsxBuilder.setCellValue(sheetId, 0, 0, getTitle(locale));
             xlsxBuilder.setCellValue(sheetId, 1, 0, localesController.getString(locale, "reports.common.dateBetween", fromTime, toTime));
 
-            List<Packing> packings = packingController.listPackings(null, null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+            List<Packing> packings = packingController.listPackings(null, null, facility, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
 
             Map<UUID, ReportRow> rowLookup = new HashMap<>();
             packings.stream().forEach(packing -> {

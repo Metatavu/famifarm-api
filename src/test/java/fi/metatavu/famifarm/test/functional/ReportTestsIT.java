@@ -332,7 +332,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
 
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
       Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSize), false);
-      builder.admin().packings().create(product.getId(), null, PackingType.BASIC, startTime, 10, PackingState.IN_STORE, createdPackageSize);
+      builder.admin().packings().create(product.getId(), null, PackingType.BASIC, startTime, 10, PackingState.IN_STORE, createdPackageSize, Facility.JOROINEN);
 
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();

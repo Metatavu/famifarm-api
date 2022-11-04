@@ -5,6 +5,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -34,8 +35,9 @@ public class Campaign {
   @Column(nullable = false)
   private OffsetDateTime createdAt;
 
-  @Column
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
+  @NotNull
   private Facility facility;
 
   public void setId (UUID id) {

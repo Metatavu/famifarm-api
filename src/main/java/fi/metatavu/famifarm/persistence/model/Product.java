@@ -34,8 +34,9 @@ public class Product {
   @Column(nullable = false)
   private boolean isActive;
 
-  @Column
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
+  @NotNull
   private Facility facility;
 
   @Column(nullable = false)
