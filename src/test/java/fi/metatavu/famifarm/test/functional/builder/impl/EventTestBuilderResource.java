@@ -224,8 +224,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param eventType event type
    * @param expected expected count
    */
-  public void assertCount(UUID productId, EventType eventType, int expected) {
-    assertEquals(expected, getApi().listEvents(Facility.JOROINEN, null, null, productId, null, null, eventType).size());
+  public void assertCount(UUID productId, Facility facility, EventType eventType, int expected) {
+    assertEquals(expected, getApi().listEvents(facility, null, null, productId, null, null, eventType).size());
   }
 
   /**
@@ -238,7 +238,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param productionLine production line
    * @param seedBatch seed batch
    */
-  public void assertCreateFailStatus(int expectedStatus, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches) {
+  public void assertCreateFailStatus(int expectedStatus, Facility facility, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches) {
     try {
       SowingEventData data = createSowingEventData(amount, productionLine, seedBatches);
       
@@ -249,7 +249,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
       event.setStartTime(startTime);
       event.setType(EventType.SOWING);
       
-      getApi().createEvent(event, Facility.JOROINEN);
+      getApi().createEvent(event, facility);
       
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
@@ -259,13 +259,14 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   
   /**
    * Asserts find status fails with given status code
-   * 
+   *
    * @param expectedStatus expected status code
-   * @param eventId event id
+   * @param eventId        event id
+   * @param facility
    */
-  public void assertFindFailStatus(int expectedStatus, UUID eventId) {
+  public void assertFindFailStatus(int expectedStatus, UUID eventId, Facility facility) {
     try {
-      getApi().findEvent(Facility.JOROINEN, eventId);
+      getApi().findEvent(facility, eventId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -293,23 +294,37 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param expectedStatus expected status code
    * @param event event
    */
-  public void assertDeleteFailStatus(int expectedStatus, Event event) {
+  public void assertDeleteFailStatus(int expectedStatus, Event event, Facility facility) {
     try {
-      getApi().deleteEvent(Facility.JOROINEN, event.getId());
+      getApi().deleteEvent(facility, event.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
     }
   }
-  
+
   /**
    * Asserts list status fails with given status code
-   * 
+   *
    * @param expectedStatus expected status code
    */
   public void assertListFailStatus(int expectedStatus) {
     try {
       getApi().listEvents(Facility.JOROINEN, Collections.emptyMap());
+      fail(String.format("Expected list to fail with status %d", expectedStatus));
+    } catch (FeignException e) {
+      assertEquals(expectedStatus, e.status());
+    }
+  }
+
+  /**
+   * Asserts list status fails with given status code
+   * 
+   * @param expectedStatus expected status code
+   */
+  public void assertListFailStatus(int expectedStatus, Facility facility, UUID productId) {
+    try {
+      getApi().listEvents(facility, null, null, productId, null, null, null);
       fail(String.format("Expected list to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());

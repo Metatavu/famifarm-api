@@ -495,7 +495,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response createEvent(Event body, Facility facility) {
 
     fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
-    if (product == null) {
+    if (product == null || product.getFacility() != facility) {
       return createBadRequest("Could not find specified product");
     }
 
@@ -671,7 +671,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response deleteEvent(Facility facility, UUID eventId) {
     fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
-    if (event == null) {
+    if (event == null || event.getProduct().getFacility() != facility) {
       return createNotFound(String.format("Could not find event %s", eventId));
     }
 
@@ -815,7 +815,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response findEvent(Facility facility, UUID eventId) {
     fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
-    if (event == null) {
+    if (event == null || event.getProduct().getFacility() != facility) {
       return createNotFound(String.format("Could not find event %s", eventId));
     }
 
@@ -935,12 +935,15 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response listEvents(Facility facility, Integer firstResult, Integer maxResults, UUID productId, String createdAfter,
   String createdBefore, EventType eventType) {
     fi.metatavu.famifarm.persistence.model.Product product = productId != null ? productController.findProduct(productId) : null;
+    if (product != null && product.getFacility() != facility) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
 
     OffsetDateTime createdBeforeTime = createdBefore != null ? OffsetDateTime.parse(createdBefore) : null;
     
     OffsetDateTime createdAfterTime = createdAfter != null ? OffsetDateTime.parse(createdAfter) : null;
 
-    List<Event> result = eventController.listEventsRest(product, createdAfterTime, createdBeforeTime, firstResult, eventType, maxResults).stream().map(this::translateEvent)
+    List<Event> result = eventController.listEventsRest(facility, product, createdAfterTime, createdBeforeTime, firstResult, eventType, maxResults).stream().map(this::translateEvent)
         .collect(Collectors.toList());
 
     return createOk(result);
@@ -1114,12 +1117,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response updateEvent(Event body, Facility facility, UUID eventId) {
     fi.metatavu.famifarm.persistence.model.Event event = eventController.findEventById(eventId);
-    if (event == null) {
+    if (event == null || event.getProduct().getFacility() != facility) {
       return createNotFound(String.format("Could not find event %s", eventId));
     }
 
     fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(body.getProductId());
-    if (product == null) {
+    if (product == null || product.getFacility() != facility) {
       return createBadRequest("Could not find specified batch");
     }
 

@@ -38,6 +38,12 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testCreateSowingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       assertNotNull(createSowingEvent(builder));
+
+      // Assert that cannot create events for products from another facility
+      List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
+      Product productJuva = builder.admin().products().create(name, Lists.newArrayList(), false, Facility.JUVA);
+      ProductionLine productionLineJuva = builder.admin().productionLines().create("1", 100, Facility.JUVA);
+      builder.admin().events().assertCreateFailStatus(400, Facility.JOROINEN, productJuva, OffsetDateTime.now(), OffsetDateTime.now(), 1, productionLineJuva, Lists.newArrayList());
     }
   }
   
@@ -45,7 +51,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testFindSowingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createSowingEvent(builder);
-      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
+      builder.admin().events().assertFindFailStatus(404, createdEvent.getId(), Facility.JUVA);
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
@@ -114,8 +121,9 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Event createdEvent = createSowingEvent(builder);
       Event foundSeed = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundSeed.getId());
+      builder.admin().events().assertDeleteFailStatus(404, createdEvent, Facility.JUVA);  //cannot create events from wrong facility
       builder.admin().events().delete(createdEvent);
-      builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
+      builder.admin().events().assertFindFailStatus(404, createdEvent.getId(), Facility.JOROINEN);
     }
   }
 
@@ -130,7 +138,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testFindTableSpreadEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createTableSpreadEvent(builder);
-      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
@@ -175,7 +183,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Event found = builder.admin().events().findEvent(created.getId());
       assertEquals(created.getId(), found.getId());
       builder.admin().events().delete(created);
-      builder.admin().events().assertFindFailStatus(404, created.getId());     
+      builder.admin().events().assertFindFailStatus(404, created.getId(), Facility.JOROINEN);
     }
   }
 
@@ -190,7 +198,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testFindCultivationObservationEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createCultivationObservationEvent(builder);
-      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
@@ -251,7 +259,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Event found = builder.admin().events().findEvent(created.getId());
       assertEquals(created.getId(), found.getId());
       builder.admin().events().delete(created);
-      builder.admin().events().assertFindFailStatus(404, created.getId());     
+      builder.admin().events().assertFindFailStatus(404, created.getId(), Facility.JOROINEN);
     }
   }
 
@@ -266,7 +274,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testFindHarvestEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createHarvestEvent(builder);
-      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
@@ -315,7 +323,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Event foundSeed = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundSeed.getId());
       builder.admin().events().delete(createdEvent);
-      builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
+      builder.admin().events().assertFindFailStatus(404, createdEvent.getId(), Facility.JOROINEN);
     }
   }
   
@@ -330,7 +338,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testFindPlantingEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createPlantingEvent(builder);
-      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
@@ -382,7 +390,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().delete(createdEvent);
-      builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
+      builder.admin().events().assertFindFailStatus(404, createdEvent.getId(), Facility.JOROINEN);
     }
   }
   
@@ -398,7 +406,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testFindWastageEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createWastageEvent(builder);
-      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID());
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
@@ -449,7 +457,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().delete(createdEvent);
-      builder.admin().events().assertFindFailStatus(404, createdEvent.getId());     
+      builder.admin().events().assertFindFailStatus(404, createdEvent.getId(), Facility.JOROINEN);
     }
   }
 
@@ -471,11 +479,12 @@ public class EventTestsIT extends AbstractFunctionalTest {
       createPlantingEvent(builder);
       builder.admin().events().assertCount(6);
 
-      builder.admin().events().assertCount(null,EventType.SOWING, 2);
-      builder.admin().events().assertCount(null, EventType.TABLE_SPREAD, 1);
-      builder.admin().events().assertCount(null, EventType.CULTIVATION_OBSERVATION, 1);
-      builder.admin().events().assertCount(null, EventType.HARVEST, 1);
-      builder.admin().events().assertCount(null, EventType.PLANTING, 1);
+      builder.admin().events().assertCount(null, Facility.JUVA, EventType.SOWING, 0);
+      builder.admin().events().assertCount(null, Facility.JOROINEN, EventType.SOWING, 2);
+      builder.admin().events().assertCount(null, Facility.JOROINEN, EventType.TABLE_SPREAD, 1);
+      builder.admin().events().assertCount(null, Facility.JOROINEN, EventType.CULTIVATION_OBSERVATION, 1);
+      builder.admin().events().assertCount(null, Facility.JOROINEN, EventType.HARVEST, 1);
+      builder.admin().events().assertCount(null, Facility.JOROINEN, EventType.PLANTING, 1);
     }
   }
 
@@ -496,7 +505,9 @@ public class EventTestsIT extends AbstractFunctionalTest {
       createTableSpreadEvent(builder, product);
 
       builder.admin().events().assertCount(4);
-      builder.admin().events().assertCount(product.getId(), null, 2);
+      builder.admin().events().assertCount(product.getId(), Facility.JOROINEN, null, 2);
+      Product productJuva = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JUVA);
+      builder.admin().events().assertListFailStatus(404, Facility.JOROINEN, productJuva.getId());
     }
   }
 
@@ -504,8 +515,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
   public void testDeleteSeedPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Event createdEvent = createSowingEvent(builder);
-      builder.anonymous().events().assertDeleteFailStatus(401, createdEvent);
-      builder.invalid().events().assertDeleteFailStatus(401, createdEvent);
+      builder.anonymous().events().assertDeleteFailStatus(401, createdEvent, Facility.JOROINEN);
+      builder.invalid().events().assertDeleteFailStatus(401, createdEvent, Facility.JOROINEN);
     }
   }
   
@@ -558,8 +569,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
       ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
       SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
       
-      builder.anonymous().events().assertCreateFailStatus(401, product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));
-      builder.invalid().events().assertCreateFailStatus(401, product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));
+      builder.anonymous().events().assertCreateFailStatus(401, Facility.JOROINEN, product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));
+      builder.invalid().events().assertCreateFailStatus(401, Facility.JOROINEN, product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));
     }
   }
 
