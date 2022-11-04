@@ -60,7 +60,7 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * @return production lines
    */
   public List<ProductionLine> listProductionLines() {
-    return getApi().listProductionLines(Facility.JOROINEN, null);
+    return getApi().listProductionLines(Facility.JOROINEN, Collections.emptyMap());
   }
 
   /**

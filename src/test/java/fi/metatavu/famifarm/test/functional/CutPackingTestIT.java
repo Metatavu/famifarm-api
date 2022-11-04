@@ -119,6 +119,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             CutPacking updatedCutPacking = testBuilder.admin().cutPackings().update(createdCutPacking);
 
             assertNotNull(updatedCutPacking);
+            assertNotNull(updatedCutPacking.getId());
             assertEquals(100, updatedCutPacking.getWeight(), 0.00001);
             assertEquals(product2.getId(), updatedCutPacking.getProductId());
             assertEquals(productionLine2.getId(), updatedCutPacking.getProductionLineId());
@@ -130,17 +131,10 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             assertEquals(200, (int) updatedCutPacking.getGutterHoleCount());
             assertEquals("New storage condition", updatedCutPacking.getStorageCondition());
 
-            CutPacking cutPacking2 = updatedCutPacking;
-            cutPacking2.setProductId(UUID.randomUUID());
-            testBuilder.admin().cutPackings().assertUpdateFailStatus(cutPacking2, 400);
-            cutPacking2.setId(null);
-            testBuilder.admin().cutPackings().assertCreateFailStatus(cutPacking2, 400);
-
-            CutPacking cutPacking3 = updatedCutPacking;
-            cutPacking3.setProductionLineId(UUID.randomUUID());
-            testBuilder.admin().cutPackings().assertUpdateFailStatus(cutPacking3, 400);
-            cutPacking3.setId(null);
-            testBuilder.admin().cutPackings().assertCreateFailStatus(cutPacking3, 400);
+            updatedCutPacking.setProductId(UUID.randomUUID());
+            testBuilder.admin().cutPackings().assertUpdateFailStatus(updatedCutPacking, 400);
+            updatedCutPacking.setId(null);
+            testBuilder.admin().cutPackings().assertCreateFailStatus(updatedCutPacking, 400);
         }
     }
 
