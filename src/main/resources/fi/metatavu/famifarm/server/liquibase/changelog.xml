@@ -1018,9 +1018,7 @@
         <constraints nullable="false"/>
       </column>
     </addColumn>
-  </changeSet>
 
-  <changeSet id="facilitiy_field2" author="katja danilova">
     <addColumn tableName="packing">
       <column name="facility" type="varchar(191)" defaultValue="JOROINEN">
         <constraints nullable="false"/>
