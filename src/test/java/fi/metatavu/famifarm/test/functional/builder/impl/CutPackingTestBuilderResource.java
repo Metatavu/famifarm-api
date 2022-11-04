@@ -115,10 +115,11 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
      * @param productId return only packings belonging to this product
      * @param createdBefore return only packing created after this date
      * @param createdAfter return only packing created before this date
+     * @param facility facility
      *
      * @return cut packings
      */
-    public List<CutPacking> list(Integer firstResult, Integer maxResults, UUID productId, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    public List<CutPacking> list(Integer firstResult, Integer maxResults, UUID productId, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Facility facility) {
         String createdBeforeString = null;
 
         if (createdBefore != null) {
@@ -131,7 +132,7 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
             createdAfterString = createdAfter.toString();
         }
 
-        return getApi().listCutPackings(Facility.JOROINEN, firstResult, maxResults, productId, createdBeforeString, createdAfterString);
+        return getApi().listCutPackings(facility, firstResult, maxResults, productId, createdBeforeString, createdAfterString);
     }
 
     /**
@@ -163,11 +164,12 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
      * Asserts that find request fails correctly
      *
      * @param cutPackingId an id to test
+     * @param facility facility
      * @param expectedStatus expected HTTP status code after failure
      */
-    public void assertFindFailStatus(UUID cutPackingId, int expectedStatus) {
+    public void assertFindFailStatus(UUID cutPackingId, Facility facility, int expectedStatus) {
         try {
-            getApi().findCutPacking(Facility.JOROINEN, cutPackingId);
+            getApi().findCutPacking(facility, cutPackingId);
             fail("Expected to fail with status" + expectedStatus);
         } catch (FeignException exception) {
             assertEquals(expectedStatus, exception.status());

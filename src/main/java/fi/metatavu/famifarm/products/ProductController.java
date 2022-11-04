@@ -113,7 +113,7 @@ public class ProductController {
       campaignProductDAO.delete(campaignProduct);
     }
 
-    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, product, null, null, null);
+    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, null, product, null, null, null);
 
     for (CutPacking cutPacking : cutPackings) {
       cutPackingDAO.delete(cutPacking);

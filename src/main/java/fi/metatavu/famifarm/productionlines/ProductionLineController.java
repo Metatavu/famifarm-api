@@ -77,7 +77,7 @@ public class ProductionLineController {
    * @param productionLine productionLine to be deleted
    */
   public void deleteProductionLine(ProductionLine productionLine) {
-    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, null, productionLine, null, null);
+    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, null, null, productionLine, null, null);
 
     for (CutPacking cutPacking : cutPackings) {
       cutPackingDAO.delete(cutPacking);

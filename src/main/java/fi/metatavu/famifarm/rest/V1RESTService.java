@@ -467,6 +467,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response createCutPacking(@Valid CutPacking cutPacking, Facility facility) {
     try {
       fi.metatavu.famifarm.persistence.model.CutPacking createdCutPacking = cutPackingController.create(
+              facility,
               cutPacking.getProductId(),
               cutPacking.getProductionLineId(),
               cutPacking.getWeight(),
@@ -656,7 +657,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deleteCutPacking(Facility facility, UUID cutPackingId) {
     fi.metatavu.famifarm.persistence.model.CutPacking existingCutPacking = cutPackingController.find(cutPackingId);
 
-    if (existingCutPacking == null) {
+    if (existingCutPacking == null || existingCutPacking.getProduct().getFacility() != facility) {
       return createNotFound(String.format("Cut packing with id %s not found!", cutPackingId));
     }
 
@@ -802,7 +803,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findCutPacking(Facility facility, UUID cutPackingId) {
     fi.metatavu.famifarm.persistence.model.CutPacking foundCutPacking = cutPackingController.find(cutPackingId);
 
-    if (foundCutPacking == null) {
+    if (foundCutPacking == null || foundCutPacking.getProduct().getFacility() != facility) {
       return createNotFound(String.format("Cut packing with id %s not found!", cutPackingId));
     }
 
@@ -907,7 +908,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (productId != null) {
       fi.metatavu.famifarm.persistence.model.Product existingProduct = productController.findProduct(productId);
 
-      if (existingProduct == null) {
+      if (existingProduct == null || existingProduct.getFacility() != facility) {
         return createBadRequest(String.format("Product with id %s not found!", productId));
       }
 
@@ -924,7 +925,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       createdAfter = OffsetDateTime.parse(createdAfterString);
     }
 
-    List<fi.metatavu.famifarm.persistence.model.CutPacking> cutPackings = cutPackingController.list(firstResult, maxResults, productToFilterBy, null, createdBefore, createdAfter);
+    List<fi.metatavu.famifarm.persistence.model.CutPacking> cutPackings = cutPackingController.list(facility, firstResult, maxResults, productToFilterBy, null, createdBefore, createdAfter);
     List<CutPacking> translatedCutPackings = cutPackings.stream().map(cutPackingTranslator::translate).collect(Collectors.toList());
     return createOk(translatedCutPackings);
   }
@@ -1079,12 +1080,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response updateCutPacking(@Valid CutPacking cutPacking, Facility facility, UUID cutPackingId) {
     fi.metatavu.famifarm.persistence.model.CutPacking existingCutPacking = cutPackingController.find(cutPackingId);
 
-    if (existingCutPacking == null) {
+    if (existingCutPacking == null || existingCutPacking.getProduct().getFacility() != facility) {
       return createNotFound(String.format("Cut packing with id %s not found!", cutPackingId));
     }
 
     try {
       fi.metatavu.famifarm.persistence.model.CutPacking updatedCutPacking = cutPackingController.update(
+              facility,
               existingCutPacking,
               cutPacking.getProductId(),
               cutPacking.getProductionLineId(),

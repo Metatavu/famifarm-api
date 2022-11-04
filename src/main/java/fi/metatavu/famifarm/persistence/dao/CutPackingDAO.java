@@ -1,14 +1,12 @@
 package fi.metatavu.famifarm.persistence.dao;
 
 import fi.metatavu.famifarm.persistence.model.*;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -230,16 +228,16 @@ public class CutPackingDAO extends AbstractDAO<CutPacking> {
     /**
      * Lists cut packings
      *
-     * @param firstResult the index of the first result
-     * @param maxResults limit results to this amount
-     * @param product return only packings belonging to this product
+     * @param facility       facility of the products
+     * @param firstResult    the index of the first result
+     * @param maxResults     limit results to this amount
+     * @param product        return only packings belonging to this product
      * @param productionLine return only packings belonging to this production line
-     * @param createdBefore return only packing created after this date
-     * @param createdAfter return only packing created before this date
-     *
+     * @param createdBefore  return only packing created after this date
+     * @param createdAfter   return only packing created before this date
      * @return cut packings
      */
-    public List<CutPacking> list(Integer firstResult, Integer maxResults, Product product, ProductionLine productionLine, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    public List<CutPacking> list(Facility facility, Integer firstResult, Integer maxResults, Product product, ProductionLine productionLine, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
         EntityManager entityManager = getEntityManager();
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -249,6 +247,11 @@ public class CutPackingDAO extends AbstractDAO<CutPacking> {
         criteria.select(root);
 
         List<Predicate> restrictions = new ArrayList<>();
+
+        if (facility != null) {
+            root.fetch(CutPacking_.product, JoinType.LEFT);
+            restrictions.add(criteriaBuilder.equal(root.get(CutPacking_.product).get(Product_.facility), facility));
+        }
 
         if (product != null) {
             restrictions.add(criteriaBuilder.equal(root.get(CutPacking_.product), product));
