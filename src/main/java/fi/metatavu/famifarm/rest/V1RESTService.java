@@ -1402,7 +1402,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     LocalizedEntry name = createLocalizedEntry(body.getName());
     UUID loggerUserId = getLoggerUserId();
 
-    return createOk(pestsTranslator.translatePest(pestsController.createPest(name, loggerUserId)));
+    return createOk(pestsTranslator.translatePest(pestsController.createPest(name, facility, loggerUserId)));
   }
 
   @Override
@@ -1410,7 +1410,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response deletePest(Facility facility, UUID pestId) {
     fi.metatavu.famifarm.persistence.model.Pest pest = pestsController.findPest(pestId);
-    if (pest == null) {
+    if (pest == null || pest.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -1423,7 +1423,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response findPest(Facility facility, UUID pestId) {
     fi.metatavu.famifarm.persistence.model.Pest pest = pestsController.findPest(pestId);
-    if (pest == null) {
+    if (pest == null || pest.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -1433,7 +1433,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response listPests(Facility facility, Integer firstResult, Integer maxResults) {
-    List<Pest> result = pestsController.listPests(firstResult, maxResults).stream().map(pestsTranslator::translatePest)
+    List<Pest> result = pestsController.listPests(facility, firstResult, maxResults).stream().map(pestsTranslator::translatePest)
         .collect(Collectors.toList());
 
     return createOk(result);
@@ -1455,7 +1455,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response updatePest(Pest body, Facility facility, UUID pestId) {
     fi.metatavu.famifarm.persistence.model.Pest pest = pestsController.findPest(pestId);
-    if (pest == null) {
+    if (pest == null || pest.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 

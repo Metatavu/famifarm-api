@@ -83,15 +83,24 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
   public void assertCount(int expected) {
     assertEquals(expected, getApi().listPests(Facility.JOROINEN, Collections.emptyMap()).size());
   }
+
+  /**
+   * Asserts performedCultivationAction count within the system
+   *
+   * @param expected expected count
+   */
+  public void assertCount(int expected, Facility facility) {
+    assertEquals(expected, getApi().listPests(facility, Collections.emptyMap()).size());
+  }
   
   /**
    * Asserts find status fails with given status code
    * 
    * @param expectedStatus expected status code
    */
-  public void assertFindFailStatus(int expectedStatus, UUID performedCultivationActionId) {
+  public void assertFindFailStatus(int expectedStatus, UUID pestId, Facility facility) {
     try {
-      getApi().findPest(Facility.JOROINEN, performedCultivationActionId);
+      getApi().findPest(facility, pestId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -119,9 +128,9 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    * 
    * @param expectedStatus expected status code
    */
-  public void assertUpdateFailStatus(int expectedStatus, Pest performedCultivationAction) {
+  public void assertUpdateFailStatus(int expectedStatus, Pest pestId, Facility facility) {
     try {
-      getApi().updatePest(performedCultivationAction, Facility.JOROINEN, performedCultivationAction.getId());
+      getApi().updatePest(pestId, facility, pestId.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -133,9 +142,9 @@ public class PestTestBuilderResource extends AbstractTestBuilderResource<Pest, P
    * 
    * @param expectedStatus expected status code
    */
-  public void assertDeleteFailStatus(int expectedStatus, Pest performedCultivationAction) {
+  public void assertDeleteFailStatus(int expectedStatus, Pest pest, Facility facility) {
     try {
-      getApi().deletePest(Facility.JOROINEN, performedCultivationAction.getId());
+      getApi().deletePest(facility, pest.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
