@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,9 @@ import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
  * @author Ville Koivukangas
  */
 public class ProductionLineTestBuilderResource extends AbstractTestBuilderResource<ProductionLine, ProductionLinesApi> {
-  
+
+  private final HashMap<UUID, Facility> lineFacilityMap = new HashMap<>();
+
   /**
    * Constructor
    * 
@@ -37,11 +40,27 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    *
    * @return created production line
    */
+  public ProductionLine create(String lineNumber, Integer defaultGutterHoleCount, Facility facility) {
+    ProductionLine productionLine = new ProductionLine();
+    productionLine.setLineNumber(lineNumber);
+    productionLine.setDefaultGutterHoleCount(defaultGutterHoleCount);
+    ProductionLine created = getApi().createProductionLine(productionLine, facility);
+    lineFacilityMap.put(created.getId(), facility);
+    return addClosable(created);
+  }
+
+  /**
+   * Creates new production line for default joroinen facility
+   *
+   * @return created production line
+   */
   public ProductionLine create(String lineNumber, Integer defaultGutterHoleCount) {
     ProductionLine productionLine = new ProductionLine();
     productionLine.setLineNumber(lineNumber);
     productionLine.setDefaultGutterHoleCount(defaultGutterHoleCount);
-    return addClosable(getApi().createProductionLine(productionLine, Facility.JOROINEN));
+    ProductionLine created = getApi().createProductionLine(productionLine, Facility.JOROINEN);
+    lineFacilityMap.put(created.getId(), Facility.JOROINEN);
+    return addClosable(created);
   }
 
   /**
@@ -50,8 +69,8 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * @param productionLineId production line id
    * @return found production line
    */
-  public ProductionLine findProductionLine(UUID productionLineId) {
-    return getApi().findProductionLine(Facility.JOROINEN, productionLineId);
+  public ProductionLine findProductionLine(UUID productionLineId, Facility facility) {
+    return getApi().findProductionLine(facility, productionLineId);
   }
 
   /**
@@ -59,8 +78,8 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    *
    * @return production lines
    */
-  public List<ProductionLine> listProductionLines() {
-    return getApi().listProductionLines(Facility.JOROINEN, Collections.emptyMap());
+  public List<ProductionLine> listProductionLines(Facility facility) {
+    return getApi().listProductionLines(facility, Collections.emptyMap());
   }
 
   /**
@@ -68,8 +87,8 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * 
    * @param body body payload
    */
-  public ProductionLine updateProductionLine(ProductionLine body) {
-    return getApi().updateProductionLine(body, Facility.JOROINEN, body.getId());
+  public ProductionLine updateProductionLine(ProductionLine body, Facility facility) {
+    return getApi().updateProductionLine(body, facility, body.getId());
   }
   
   /**
@@ -77,8 +96,8 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * 
    * @param productionLine production line to be deleted
    */
-  public void delete(ProductionLine productionLine) {
-    getApi().deleteProductionLine(Facility.JOROINEN, productionLine.getId());
+  public void delete(ProductionLine productionLine, Facility facility) {
+    getApi().deleteProductionLine(facility, productionLine.getId());
     removeClosable(closable -> !closable.getId().equals(productionLine.getId()));
   }
   
@@ -87,8 +106,8 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * 
    * @param expected expected count
    */
-  public void assertCount(int expected) {
-    assertEquals(expected, getApi().listProductionLines(Facility.JOROINEN, Collections.emptyMap()).size());
+  public void assertCount(int expected, Facility facility) {
+    assertEquals(expected, getApi().listProductionLines(facility, Collections.emptyMap()).size());
   }
   
   /**
@@ -96,9 +115,9 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * 
    * @param expectedStatus expected status code
    */
-  public void assertFindFailStatus(int expectedStatus, UUID productionLineId) {
+  public void assertFindFailStatus(int expectedStatus, UUID productionLineId, Facility facility) {
     try {
-      getApi().findProductionLine(Facility.JOROINEN, productionLineId);
+      getApi().findProductionLine(facility, productionLineId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -111,9 +130,9 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * @param expectedStatus expected status code
    * @param productionLine productionLine
    */
-  public void assertUpdateFailStatus(int expectedStatus, ProductionLine productionLine) {
+  public void assertUpdateFailStatus(int expectedStatus, ProductionLine productionLine, Facility facility) {
     try {
-      getApi().updateProductionLine(productionLine, Facility.JOROINEN, productionLine.getId());
+      getApi().updateProductionLine(productionLine, facility, productionLine.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -126,9 +145,9 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * @param expectedStatus expected status code
    * @param productionLine
    */
-  public void assertDeleteFailStatus(int expectedStatus, ProductionLine productionLine) {
+  public void assertDeleteFailStatus(int expectedStatus, ProductionLine productionLine, Facility facility) {
     try {
-      getApi().deleteProductionLine(Facility.JOROINEN, productionLine.getId());
+      getApi().deleteProductionLine(facility, productionLine.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -140,9 +159,9 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
    * 
    * @param expectedStatus expected status code
    */
-  public void assertListFailStatus(int expectedStatus) {
+  public void assertListFailStatus(int expectedStatus, Facility facility) {
     try {
-      getApi().listProductionLines(Facility.JOROINEN, Collections.emptyMap());
+      getApi().listProductionLines(facility, Collections.emptyMap());
       fail(String.format("Expected list to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -162,7 +181,7 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
 
   @Override
   public void clean(ProductionLine productionLine) {
-    getApi().deleteProductionLine(Facility.JOROINEN, productionLine.getId());
+    getApi().deleteProductionLine(lineFacilityMap.get(productionLine.getId()), productionLine.getId());
   }
 
 }

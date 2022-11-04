@@ -581,7 +581,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer defaultGutterHoleCount = body.getDefaultGutterHoleCount();
 
     return createOk(productionLineTranslator.translateProductionLine(productionLineController
-        .createProductionLine(lineNumber, defaultGutterHoleCount, getLoggerUserId())));
+        .createProductionLine(facility, lineNumber, defaultGutterHoleCount, getLoggerUserId())));
   }
 
   @Override
@@ -734,7 +734,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deleteProductionLine(Facility facility, UUID productionLineId) {
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController
         .findProductionLine(productionLineId);
-    if (productionLine == null) {
+    if (productionLine == null || productionLine.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -862,7 +862,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findProductionLine(Facility facility, UUID productionLineId) {
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController
         .findProductionLine(productionLineId);
-    if (productionLine == null) {
+    if (productionLine == null || productionLine.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -967,7 +967,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response listProductionLines(Facility facility, Integer firstResult, Integer maxResults) {
-    List<ProductionLine> result = productionLineController.listProductionLines(firstResult, maxResults).stream()
+    List<ProductionLine> result = productionLineController.listProductionLines(facility, firstResult, maxResults).stream()
         .map(productionLineTranslator::translateProductionLine).collect(Collectors.toList());
 
     return createOk(result);
@@ -1223,7 +1223,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response updateProductionLine(ProductionLine body, Facility facility, UUID productionLineId) {
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController
         .findProductionLine(productionLineId);
-    if (productionLine == null) {
+    if (productionLine == null || productionLine.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
