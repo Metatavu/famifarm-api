@@ -594,7 +594,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     OffsetDateTime time = body.getTime();
 
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
-    if (seed == null) {
+    if (seed == null || seed.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -749,7 +749,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response deleteSeedBatch(Facility facility, UUID seedBatchId) {
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
-    if (seedBatch == null) {
+    if (seedBatch == null || seedBatch.getSeed().getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -874,7 +874,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response findSeedBatch(Facility facility, UUID seedBatchId) {
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
-    if (seedBatch == null) {
+    if (seedBatch == null || seedBatch.getSeed().getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -993,7 +993,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (isPassive != null) {
       active = !isPassive;
     }
-    List<SeedBatch> result = seedBatchController.listSeedBatches(firstResult, maxResults, active).stream()
+    List<SeedBatch> result = seedBatchController.listSeedBatches(facility, firstResult, maxResults, active).stream()
         .map(seedBatchesTranslator::translateSeedBatch).collect(Collectors.toList());
 
     return createOk(result);
@@ -1244,14 +1244,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response updateSeedBatch(SeedBatch body, Facility facility, UUID seedBatchId) {
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
-    if (seedBatch == null) {
-      createNotFound(NOT_FOUND_MESSAGE);
+    if (seedBatch == null || seedBatch.getSeed().getFacility() != facility) {
+      return createNotFound(NOT_FOUND_MESSAGE);
     }
 
     String code = body.getCode();
     OffsetDateTime time = body.getTime();
     UUID seedId = body.getSeedId();
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
+    if (seed.getFacility() != facility) {
+      return createNotFound(NOT_FOUND_MESSAGE);
+    }
     boolean active = body.getActive() != null ? body.getActive() : Boolean.FALSE;
 
     return createOk(seedBatchController.updateSeedBatch(seedBatch, code, seed, time, active, getLoggerUserId()));

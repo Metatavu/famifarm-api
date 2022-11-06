@@ -94,7 +94,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createSowingEvent(TestBuilder builder, Product product, int amount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
-    SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
+    SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime, Facility.JOROINEN);
     
     return builder.admin().events().createSowing(product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));
   }

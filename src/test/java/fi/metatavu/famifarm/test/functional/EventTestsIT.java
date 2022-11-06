@@ -65,9 +65,9 @@ public class EventTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket new", "Rucola uusi"));
 
-      SeedBatch seedBatch1 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now());
-      SeedBatch seedBatch2 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now());
-      SeedBatch seedBatch3 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now());
+      SeedBatch seedBatch1 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now(), Facility.JOROINEN);
+      SeedBatch seedBatch2 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now(), Facility.JOROINEN);
+      SeedBatch seedBatch3 = builder.admin().seedBatches().create("123", seed, OffsetDateTime.now(), Facility.JOROINEN);
       
       PackageSize createPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8);
       Product createProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), Lists.newArrayList(createPackageSize), false);
@@ -567,7 +567,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
       Integer amount = 12;
       ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
-      SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
+      SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime, Facility.JOROINEN);
       
       builder.anonymous().events().assertCreateFailStatus(401, Facility.JOROINEN, product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));
       builder.invalid().events().assertCreateFailStatus(401, Facility.JOROINEN, product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));

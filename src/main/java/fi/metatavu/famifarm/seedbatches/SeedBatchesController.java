@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import fi.metatavu.famifarm.persistence.dao.SeedBatchDAO;
 import fi.metatavu.famifarm.persistence.model.Seed;
 import fi.metatavu.famifarm.persistence.model.SeedBatch;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Controller for seed batches
@@ -48,14 +49,15 @@ public class SeedBatchesController {
 
   /**
    * Lists seeds batches
-   * 
+   *
+   * @param facility facility
    * @param firstResult first result
    * @param maxResults max results
    * @param active if true or null, list only active seed batches
    * @return list of seed batches
    */
-  public List<SeedBatch> listSeedBatches(Integer firstResult, Integer maxResults, Boolean active) {
-    return seedBatchDAO.listAll(firstResult, maxResults, active);
+  public List<SeedBatch> listSeedBatches(Facility facility, Integer firstResult, Integer maxResults, Boolean active) {
+    return seedBatchDAO.listAll(facility, firstResult, maxResults, active);
   }
 
   /**
