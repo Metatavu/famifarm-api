@@ -363,7 +363,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     LocalizedEntry name = createLocalizedEntry(body.getName());
     UUID loggerUserId = getLoggerUserId();
 
-    return createOk(seedsTranslator.translateSeed(seedsController.createSeed(name, loggerUserId)));
+    return createOk(seedsTranslator.translateSeed(seedsController.createSeed(facility, name, loggerUserId)));
   }
 
   @Override
@@ -371,7 +371,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response deleteSeed(Facility facility, UUID seedId) {
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
-    if (seed == null) {
+    if (seed == null || seed.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -384,7 +384,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response findSeed(Facility facility, UUID seedId) {
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
-    if (seed == null) {
+    if (seed == null || seed.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
@@ -394,7 +394,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response listSeeds(Facility facility, Integer firstResult, Integer maxResults) {
-    List<Seed> result = seedsController.listSeeds(firstResult, maxResults).stream().map(seedsTranslator::translateSeed)
+    List<Seed> result = seedsController.listSeeds(facility, firstResult, maxResults).stream().map(seedsTranslator::translateSeed)
         .collect(Collectors.toList());
 
     return createOk(result);
@@ -431,7 +431,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response updateSeed(Seed body, Facility facility, UUID seedId) {
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
-    if (seed == null) {
+    if (seed == null || seed.getFacility() != facility) {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 

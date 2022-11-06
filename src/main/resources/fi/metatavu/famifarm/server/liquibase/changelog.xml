@@ -1034,6 +1034,11 @@
         <constraints nullable="false"/>
       </column>
     </addColumn>
+    <addColumn tableName="seed">
+      <column name="facility" type="varchar(191)" defaultValue="JOROINEN">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
   </changeSet>
 
 </databaseChangeLog>
