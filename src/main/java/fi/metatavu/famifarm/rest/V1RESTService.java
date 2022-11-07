@@ -635,7 +635,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID loggerUserId = getLoggerUserId();
 
     return createOk(wastageReasonsTranslator
-        .translateWastageReason(wastageReasonsController.createWastageReason(reason, loggerUserId)));
+        .translateWastageReason(wastageReasonsController.createWastageReason(reason, loggerUserId, facility)));
   }
 
   @Override
@@ -777,8 +777,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deleteWastageReason(Facility facility, UUID wastageReasonId) {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(wastageReasonId);
-    if (wastageReason == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+    if (wastageReason == null || wastageReason.getFacility() != facility) {
+      return createNotFound(String.format("Wastage reason with id %s not found!", wastageReasonId));
     }
 
     wastageReasonsController.deleteWastageReason(wastageReason);
@@ -886,8 +886,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findWastageReason(Facility facility, UUID wastageReasonId) {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(wastageReasonId);
-    if (wastageReason == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+    if (wastageReason == null || wastageReason.getFacility() != facility) {
+      return createNotFound(String.format("Wastage reason with id %s not found!", wastageReasonId));
     }
 
     return createOk(wastageReasonsTranslator.translateWastageReason(wastageReason));
@@ -909,7 +909,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       fi.metatavu.famifarm.persistence.model.Product existingProduct = productController.findProduct(productId);
 
       if (existingProduct == null || existingProduct.getFacility() != facility) {
-        return createBadRequest(String.format("Product with id %s not found!", productId));
+        return createNotFound(String.format("Product with id %s not found!", productId));
       }
 
       productToFilterBy = existingProduct;
@@ -1002,7 +1002,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response listWastageReasons(Facility facility, Integer firstResult, Integer maxResults) {
-    List<WastageReason> result = wastageReasonsController.listWastageReasons(firstResult, maxResults).stream()
+    List<WastageReason> result = wastageReasonsController.listWastageReasons(firstResult, maxResults, facility).stream()
         .map(wastageReasonsTranslator::translateWastageReason).collect(Collectors.toList());
 
     return createOk(result);
@@ -1290,8 +1290,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response updateWastageReason(WastageReason body, Facility facility, UUID wastageReasonId) {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(wastageReasonId);
-    if (wastageReason == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+    if (wastageReason == null || wastageReason.getFacility() != facility) {
+      return createNotFound(String.format("Wastage reason with id %s not found!", wastageReasonId));
     }
 
     LocalizedEntry reason = createLocalizedEntry(body.getReason());

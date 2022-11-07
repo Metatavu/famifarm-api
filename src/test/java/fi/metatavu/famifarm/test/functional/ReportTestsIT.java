@@ -53,9 +53,10 @@ public class ReportTestsIT extends AbstractFunctionalTest {
   @Test
   public void testXlsxWastageReport() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
+      Facility facility = Facility.JOROINEN;
       builder.admin().wastageReasons();
-      createWastageEvent(builder);
-      createWastageEvent(builder);
+      createWastageEvent(builder, facility);
+      createWastageEvent(builder, facility);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
@@ -81,9 +82,10 @@ public class ReportTestsIT extends AbstractFunctionalTest {
   @Test
   public void testJsonWastageReport() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
+      Facility facility = Facility.JOROINEN;
       builder.admin().wastageReasons();
-      createWastageEvent(builder);
-      createWastageEvent(builder);
+      createWastageEvent(builder, facility);
+      createWastageEvent(builder, facility);
 
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2021, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();

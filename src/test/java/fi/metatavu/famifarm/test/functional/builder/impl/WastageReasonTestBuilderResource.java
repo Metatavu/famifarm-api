@@ -38,22 +38,24 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
    * Creates new wastageReason
    * 
    * @param reason reason
+   * @param facility facility
    * @return created wastageReason
    */
-  public WastageReason create(List<LocalizedValue> reason) {
+  public WastageReason create(List<LocalizedValue> reason, Facility facility) {
     WastageReason wastageReason = new WastageReason();
     wastageReason.setReason(reason);
-    return addClosable(getApi().createWastageReason(wastageReason, Facility.JOROINEN));
+    return addClosable(getApi().createWastageReason(wastageReason, facility));
   }
 
   /**
    * Finds a wastageReason
    * 
    * @param wastageReasonId wastageReason id
+   * @param facility facility
    * @return found wastageReason
    */
-  public WastageReason findWastageReason(UUID wastageReasonId) {
-    return getApi().findWastageReason(Facility.JOROINEN, wastageReasonId);
+  public WastageReason findWastageReason(UUID wastageReasonId, Facility facility) {
+    return getApi().findWastageReason(facility, wastageReasonId);
   }
 
   /**

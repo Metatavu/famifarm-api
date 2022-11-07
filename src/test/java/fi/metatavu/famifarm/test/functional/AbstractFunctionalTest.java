@@ -324,11 +324,12 @@ public abstract class AbstractFunctionalTest {
    * Creates test event
    * 
    * @param builder test builder
+   * @param facility facility
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createWastageEvent(TestBuilder builder) throws IOException {
-    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
+  protected Event createWastageEvent(TestBuilder builder, Facility facility) throws IOException {
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"), facility);
     PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
     List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
     Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
@@ -351,7 +352,8 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createWastageEvent(TestBuilder builder, Product product) throws IOException {
-    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
+    Facility facility = Facility.JOROINEN;
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"), facility);
     ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
     
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -374,7 +376,8 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createWastageEvent(TestBuilder builder, Product product, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
-    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
+    Facility facility = Facility.JOROINEN;
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"), facility);
     ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
 
     Integer amount = 20;

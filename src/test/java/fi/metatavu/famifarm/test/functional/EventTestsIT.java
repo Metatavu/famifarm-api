@@ -386,7 +386,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
   @Test
   public void testDeleteWastageEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      Event createdEvent = createWastageEvent(builder);
+      Facility facility = Facility.JOROINEN;
+      Event createdEvent = createWastageEvent(builder, facility);
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().delete(createdEvent);
@@ -398,15 +399,17 @@ public class EventTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateWastageEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      assertNotNull(createWastageEvent(builder));
+      Facility facility = Facility.JOROINEN;
+      assertNotNull(createWastageEvent(builder, facility));
     }
   }
   
   @Test
   public void testFindWastageEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      Event createdEvent = createWastageEvent(builder);
-      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
+      Facility facility = Facility.JOROINEN;
+      Event createdEvent = createWastageEvent(builder, facility);
+      builder.admin().events().assertFindFailStatus(404, UUID.randomUUID(), facility);
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
       builder.admin().events().assertEventsEqual(createdEvent, foundEvent);
@@ -416,7 +419,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
   @Test
   public void testUpdateWastageEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      Event createdEvent = createWastageEvent(builder);
+      Facility facility = Facility.JOROINEN;
+      Event createdEvent = createWastageEvent(builder, facility);
 
       builder.admin().events().assertEventsEqual(createdEvent, builder.admin().events().findEvent(createdEvent.getId()));
 
@@ -425,7 +429,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
 
       OffsetDateTime updateStartTime = OffsetDateTime.of(2020, 3, 3, 4, 5, 6, 0, ZoneOffset.UTC);
       OffsetDateTime updateEndTime = OffsetDateTime.of(2020, 3, 3, 4, 10, 6, 0, ZoneOffset.UTC);
-      WastageReason updateWastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("New reason", "Uusi syy"));
+      WastageReason updateWastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("New reason", "Uusi syy"), Facility.JOROINEN);
       Integer updateAmount = 222;
       String updateAdditionalInformation = "New description";
 
