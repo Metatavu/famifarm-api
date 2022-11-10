@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +34,8 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
   public WastageReasonTestBuilderResource(ApiClient apiClient) {
     super(apiClient);
   }
+
+  private final HashMap<UUID, Facility> wastageReasonFacilityMap = new HashMap<>();
   
   /**
    * Creates new wastageReason
@@ -44,7 +47,9 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
   public WastageReason create(List<LocalizedValue> reason, Facility facility) {
     WastageReason wastageReason = new WastageReason();
     wastageReason.setReason(reason);
-    return addClosable(getApi().createWastageReason(wastageReason, facility));
+    WastageReason createdWastageReason = getApi().createWastageReason(wastageReason, facility);
+    wastageReasonFacilityMap.put(createdWastageReason.getId(), facility);
+    return addClosable(createdWastageReason);
   }
 
   /**
@@ -62,18 +67,21 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
    * Updates a wastageReason into the API
    * 
    * @param body body payload
+   * @param facility facility
    */
-  public WastageReason updateWastageReason(WastageReason body) {
-    return getApi().updateWastageReason(body, Facility.JOROINEN, body.getId());
+  public WastageReason updateWastageReason(WastageReason body, Facility facility) {
+    return getApi().updateWastageReason(body, facility, body.getId());
   }
   
   /**
    * Deletes a wastageReason from the API
    * 
    * @param wastageReason wastageReason to be deleted
+   * @param facility facility
    */
-  public void delete(WastageReason wastageReason) {
-    getApi().deleteWastageReason(Facility.JOROINEN, wastageReason.getId());
+  public void delete(WastageReason wastageReason, Facility facility) {
+    getApi().deleteWastageReason(facility, wastageReason.getId());
+    wastageReasonFacilityMap.remove(wastageReason.getId(), facility);
     removeClosable(closable -> !closable.getId().equals(wastageReason.getId()));
   }
   
@@ -81,19 +89,22 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
    * Asserts wastageReason count within the system
    * 
    * @param expected expected count
+   * @param facility facility
    */
-  public void assertCount(int expected) {
-    assertEquals(expected, getApi().listWastageReasons(Facility.JOROINEN, Collections.emptyMap()).size());
+  public void assertCount(int expected, Facility facility) {
+    assertEquals(expected, getApi().listWastageReasons(facility, Collections.emptyMap()).size());
   }
   
   /**
    * Asserts find status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param wastageReasonId wastage reason id
+   * @param facility facility
    */
-  public void assertFindFailStatus(int expectedStatus, UUID wastageReasonId) {
+  public void assertFindFailStatus(int expectedStatus, UUID wastageReasonId, Facility facility) {
     try {
-      getApi().findWastageReason(Facility.JOROINEN, wastageReasonId);
+      getApi().findWastageReason(facility, wastageReasonId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -102,14 +113,15 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
 
   /**
    * Asserts create status fails with given status code
-   * 
+   *
+   * @param facility facility
    * @param expectedStatus expected status code
    */
-  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> reason) {
+  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> reason, Facility facility) {
     try {
       WastageReason wastageReason = new WastageReason();
       wastageReason.setReason(reason);
-      getApi().createWastageReason(wastageReason, Facility.JOROINEN);
+      getApi().createWastageReason(wastageReason, facility);
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -120,10 +132,12 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
    * Asserts update status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param wastageReason wastage reason
+   * @param facility facility
    */
-  public void assertUpdateFailStatus(int expectedStatus, WastageReason wastageReason) {
+  public void assertUpdateFailStatus(int expectedStatus, WastageReason wastageReason, Facility facility) {
     try {
-      getApi().updateWastageReason(wastageReason, Facility.JOROINEN, wastageReason.getId());
+      getApi().updateWastageReason(wastageReason, facility, wastageReason.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -134,10 +148,12 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
    * Asserts delete status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param wastageReasonId wastage reason id
+   * @param facility facility
    */
-  public void assertDeleteFailStatus(int expectedStatus, WastageReason wastageReason) {
+  public void assertDeleteFailStatus(int expectedStatus, UUID wastageReasonId, Facility facility) {
     try {
-      getApi().deleteWastageReason(Facility.JOROINEN, wastageReason.getId());
+      getApi().deleteWastageReason(facility, wastageReasonId);
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -148,10 +164,11 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
    * Asserts list status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param facility facility
    */
-  public void assertListFailStatus(int expectedStatus) {
+  public void assertListFailStatus(int expectedStatus, Facility facility) {
     try {
-      getApi().listWastageReasons(Facility.JOROINEN, Collections.emptyMap());
+      getApi().listWastageReasons(facility, Collections.emptyMap());
       fail(String.format("Expected list to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -172,7 +189,9 @@ public class WastageReasonTestBuilderResource extends AbstractTestBuilderResourc
 
   @Override
   public void clean(WastageReason wastageReason) {
-    getApi().deleteWastageReason(Facility.JOROINEN, wastageReason.getId());
+    if (wastageReasonFacilityMap.containsKey(wastageReason.getId())) {
+      getApi().deleteWastageReason(wastageReasonFacilityMap.get(wastageReason.getId()), wastageReason.getId());
+    }
   }
 
 }

@@ -58,12 +58,20 @@ public class CutPackingController {
         Product product = productDAO.findById(productId);
         ProductionLine productionLine = productionLineDAO.findById(productionLineId);
 
-        if (product == null || product.getFacility() != facility) {
+        if (product == null) {
             throw new CutPackingInvalidParametersException(String.format("Product with id %s not found!", productId));
         }
 
-        if (productionLine == null || productionLine.getFacility() != facility) {
+        if (product.getFacility() != facility) {
+            throw new CutPackingInvalidParametersException(String.format("Product with id %s doesn't belong to facility %s", productId, facility));
+        }
+
+        if (productionLine == null) {
             throw new CutPackingInvalidParametersException(String.format("Production line with id %s not found!", productionLineId));
+        }
+
+        if (productionLine.getFacility() != facility) {
+            throw new CutPackingInvalidParametersException(String.format("Production line with id %s doesn't belong to facility %s", productionLineId, facility));
         }
 
         return cutPackingDAO.create(UUID.randomUUID(), product, productionLine, weight, sowingDay, cuttingDay, producer, contactInformation, gutterCount, gutterHoleCount, storageCondition, creatorId);

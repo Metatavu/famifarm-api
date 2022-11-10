@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.persistence.model;
 
+import fi.metatavu.famifarm.rest.model.Facility;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -40,6 +41,11 @@ public class StorageDiscard {
     @Column(nullable = false)
     @NotNull
     private UUID lastModifierId;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private Facility facility;
 
     public UUID getId() {
         return id;
@@ -96,4 +102,8 @@ public class StorageDiscard {
     public void setLastModifierId(UUID lastModifierId) {
         this.lastModifierId = lastModifierId;
     }
+
+    public Facility getFacility()  { return facility; }
+
+    public void setFacility(Facility facility) { this.facility = facility; }
 }

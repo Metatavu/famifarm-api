@@ -122,7 +122,7 @@ public class SeedTestsIT extends AbstractFunctionalTest {
       Seed createdSeed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       Seed foundSeed = builder.admin().seeds().findSeed(createdSeed.getId());
       assertEquals(createdSeed.getId(), foundSeed.getId());
-      builder.admin().seeds().assertDeleteFailStatus(404, createdSeed, Facility.JUVA);
+      builder.admin().seeds().assertDeleteFailStatus(400, createdSeed, Facility.JUVA);
       builder.admin().seeds().delete(createdSeed);
       builder.admin().seeds().assertFindFailStatus(404, createdSeed.getId());     
     }

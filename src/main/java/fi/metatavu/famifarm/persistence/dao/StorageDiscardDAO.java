@@ -1,6 +1,7 @@
 package fi.metatavu.famifarm.persistence.dao;
 
 import fi.metatavu.famifarm.persistence.model.*;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
@@ -28,9 +29,19 @@ public class StorageDiscardDAO extends AbstractDAO<StorageDiscard> {
      * @param packageSize package size
      * @param discardAmount amount
      * @param discardDate discard date
+     * @param facility facility
      * @return new storage discard entity
      */
-    public StorageDiscard create(UUID id, Product product, PackageSize packageSize, Integer discardAmount, OffsetDateTime discardDate, UUID creatorId, UUID lastModifierId) {
+    public StorageDiscard create(
+        UUID id,
+        Product product,
+        PackageSize packageSize,
+        Integer discardAmount,
+        OffsetDateTime discardDate,
+        UUID creatorId,
+        UUID lastModifierId,
+        Facility facility
+    ) {
         StorageDiscard storageDiscard = new StorageDiscard();
         storageDiscard.setId(id);
         storageDiscard.setProduct(product);
@@ -39,6 +50,7 @@ public class StorageDiscardDAO extends AbstractDAO<StorageDiscard> {
         storageDiscard.setDiscardDate(discardDate);
         storageDiscard.setLastModifierId(lastModifierId);
         storageDiscard.setCreatorId(creatorId);
+        storageDiscard.setFacility(facility);
         return persist(storageDiscard);
     }
 
@@ -50,9 +62,17 @@ public class StorageDiscardDAO extends AbstractDAO<StorageDiscard> {
      * @param fromTime created after
      * @param toTime created before
      * @param product product
+     * @param facility facility
      * @return list of storage discard events
      */
-    public List<StorageDiscard> list(Integer firstResult, Integer maxResults, OffsetDateTime fromTime, OffsetDateTime toTime, Product product) {
+    public List<StorageDiscard> list(
+        Integer firstResult,
+        Integer maxResults,
+        OffsetDateTime fromTime,
+        OffsetDateTime toTime,
+        Product product,
+        Facility facility
+    ) {
         EntityManager entityManager = getEntityManager();
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -72,6 +92,10 @@ public class StorageDiscardDAO extends AbstractDAO<StorageDiscard> {
 
         if (toTime != null) {
             restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(StorageDiscard_.discardDate), toTime));
+        }
+
+        if (facility != null) {
+            restrictions.add(criteriaBuilder.equal(root.get(StorageDiscard_.FACILITY), facility));
         }
 
         criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));

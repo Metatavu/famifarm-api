@@ -53,6 +53,22 @@ public class CampaignTestBuilderResource extends AbstractTestBuilderResource<Cam
   }
 
   /**
+   * Asserts create fails with given status
+   *
+   * @param expectedStatus expected status
+   * @param facility facility
+   * @param payload payload
+   */
+  public void assertCreateFailStatus(int expectedStatus, Campaign payload, Facility facility) {
+    try {
+      getApi().createCampaign(payload, facility);
+      fail(String.format("Expected create to fail with status %d", expectedStatus));
+    } catch (FeignException e) {
+      assertEquals(expectedStatus, e.status());
+    }
+  }
+
+  /**
    * Asserts update status fails with given status code
    *
    * @param expectedStatus expected status code
@@ -60,7 +76,7 @@ public class CampaignTestBuilderResource extends AbstractTestBuilderResource<Cam
   public void assertUpdateFailStatus(int expectedStatus, Campaign campaign, Facility facility) {
     try {
       getApi().updateCampaign(campaign, facility, campaign.getId());
-      fail(String.format("Expected create to fail with status %d", expectedStatus));
+      fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
     }
@@ -104,7 +120,7 @@ public class CampaignTestBuilderResource extends AbstractTestBuilderResource<Cam
   /**
    * Deletes a campaign
    *
-   * @param facility
+   * @param facility facility
    * @param campaign to be deleted
    */
   public void delete(Facility facility, Campaign campaign) {

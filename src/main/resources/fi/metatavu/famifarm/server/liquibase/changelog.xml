@@ -992,7 +992,7 @@
     </createTable>
   </changeSet>
 
-  <changeSet id="facility" author="katja danilova">
+  <changeSet id="facility-part-1" author="katja danilova">
     <addColumn tableName="campaign">
       <column name="facility" type="varchar(191)">
         <constraints nullable="false"/>
@@ -1039,11 +1039,6 @@
         <constraints nullable="false"/>
       </column>
     </addColumn>
-    <addColumn tableName="wastagereason">
-      <column name="facility" type="varchar(191)">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
     <sql>UPDATE campaign SET facility = 'JOROINEN'</sql>
     <sql>UPDATE draft SET facility = 'JOROINEN'</sql>
     <sql>UPDATE packagesize SET facility = 'JOROINEN'</sql>
@@ -1053,7 +1048,20 @@
     <sql>UPDATE productionline SET facility = 'JOROINEN'</sql>
     <sql>UPDATE pest SET facility = 'JOROINEN'</sql>
     <sql>UPDATE seed SET facility = 'JOROINEN'</sql>
+  </changeSet>
+  <changeSet id="facility-part-2" author="Ville Juutila">
+    <addColumn tableName="wastagereason">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="storagediscard">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
     <sql>UPDATE wastagereason SET facility = 'JOROINEN'</sql>
+    <sql>UPDATE storagediscard SET facility = 'JOROINEN'</sql>
   </changeSet>
 
 </databaseChangeLog>

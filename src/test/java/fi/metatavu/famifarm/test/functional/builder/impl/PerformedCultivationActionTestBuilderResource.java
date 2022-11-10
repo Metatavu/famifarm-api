@@ -54,25 +54,28 @@ public class PerformedCultivationActionTestBuilderResource extends AbstractTestB
    * Finds a performedCultivationAction
    *
    * @param performedCultivationActionId performedCultivationAction id
+   * @param facility facility
    * @return found performedCultivationAction
    */
-  public PerformedCultivationAction findPerformedCultivationAction(UUID performedCultivationActionId) {
-    return getApi().findPerformedCultivationAction(Facility.JOROINEN, performedCultivationActionId);
+  public PerformedCultivationAction findPerformedCultivationAction(UUID performedCultivationActionId, Facility facility) {
+    return getApi().findPerformedCultivationAction(facility, performedCultivationActionId);
   }
 
   /**
    * Updates a performedCultivationAction into the API
    *
    * @param body body payload
+   * @param facility facility
    */
-  public PerformedCultivationAction updatePerformedCultivationAction(PerformedCultivationAction body) {
-    return getApi().updatePerformedCultivationAction(body, Facility.JOROINEN, body.getId());
+  public PerformedCultivationAction updatePerformedCultivationAction(PerformedCultivationAction body, Facility facility) {
+    return getApi().updatePerformedCultivationAction(body, facility, body.getId());
   }
 
   /**
    * Deletes a performedCultivationAction from the API
    *
    * @param performedCultivationAction performedCultivationAction to be deleted
+   * @param facility facility
    */
   public void delete(PerformedCultivationAction performedCultivationAction, Facility facility) {
     getApi().deletePerformedCultivationAction(facility, performedCultivationAction.getId());
@@ -83,6 +86,7 @@ public class PerformedCultivationActionTestBuilderResource extends AbstractTestB
    * Asserts performedCultivationAction count within the system
    *
    * @param expected expected count
+   * @param facility facility
    */
   public void assertCount(int expected, Facility facility) {
     assertEquals(expected, getApi().listPerformedCultivationActions(facility, Collections.emptyMap()).size());
@@ -92,7 +96,7 @@ public class PerformedCultivationActionTestBuilderResource extends AbstractTestB
    * Asserts find status fails with given status code
    *
    * @param expectedStatus expected status code
-   * @param facility
+   * @param facility facility
    */
   public void assertFindFailStatus(int expectedStatus, UUID performedCultivationActionId, Facility facility) {
     try {
@@ -107,6 +111,25 @@ public class PerformedCultivationActionTestBuilderResource extends AbstractTestB
    * Asserts create status fails with given status code
    *
    * @param expectedStatus expected status code
+   * @param name name
+   * @param facility facility
+   */
+  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name, Facility facility) {
+    try {
+      PerformedCultivationAction performedCultivationAction = new PerformedCultivationAction();
+      performedCultivationAction.setName(name);
+      getApi().createPerformedCultivationAction(performedCultivationAction, facility);
+      fail(String.format("Expected create to fail with status %d", expectedStatus));
+    } catch (FeignException e) {
+      assertEquals(expectedStatus, e.status());
+    }
+  }
+
+  /**
+   * Asserts create status fails with given status code in Joroinen facility
+   *
+   * @param expectedStatus expected status code
+   * @param name name
    */
   public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name) {
     try {
@@ -123,6 +146,8 @@ public class PerformedCultivationActionTestBuilderResource extends AbstractTestB
    * Asserts update status fails with given status code
    *
    * @param expectedStatus expected status code
+   * @param performedCultivationAction performed cultivation action
+   * @param facility facility
    */
   public void assertUpdateFailStatus(int expectedStatus, PerformedCultivationAction performedCultivationAction, Facility facility) {
     try {
@@ -137,6 +162,8 @@ public class PerformedCultivationActionTestBuilderResource extends AbstractTestB
    * Asserts delete status fails with given status code
    *
    * @param expectedStatus expected status code
+   * @param performedCultivationAction performed cultivation action
+   * @param facility facility
    */
   public void assertDeleteFailStatus(int expectedStatus, PerformedCultivationAction performedCultivationAction, Facility facility) {
     try {
@@ -151,6 +178,7 @@ public class PerformedCultivationActionTestBuilderResource extends AbstractTestB
    * Asserts list status fails with given status code
    *
    * @param expectedStatus expected status code
+   * @param facility facility
    */
   public void assertListFailStatus(int expectedStatus, Facility facility) {
     try {

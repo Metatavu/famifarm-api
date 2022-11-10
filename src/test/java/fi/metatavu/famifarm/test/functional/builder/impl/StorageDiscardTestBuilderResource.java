@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Test builder resource for StorageDiscardsAPI
  */
 public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResource<StorageDiscard, StorageDiscardsApi> {
+
+    private final HashMap<UUID, Facility> storageDiscardFacilityMap = new HashMap<>();
 
     /**
      * Constructor
@@ -37,7 +40,10 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      */
     @Override
     public void clean(StorageDiscard storageDiscard) {
-        getApi().deleteStorageDiscard(Facility.JOROINEN, storageDiscard.getId());
+        if (storageDiscardFacilityMap.containsKey(storageDiscard.getId())) {
+            getApi().deleteStorageDiscard(storageDiscardFacilityMap.get(storageDiscard.getId()), storageDiscard.getId());
+            storageDiscardFacilityMap.remove(storageDiscard.getId());
+        }
     }
 
     /**
@@ -47,20 +53,24 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @param discardAmount amount of product to be discarded
      * @param productId product id
      * @param packageSizeId package size id of discarded product
+     * @param facility facility
      * @return new storage discard object
      */
-    public StorageDiscard create(OffsetDateTime discardTime, Integer discardAmount, UUID productId, UUID packageSizeId) {
-        return addClosable(getApi().createStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId), Facility.JOROINEN));
+    public StorageDiscard create(OffsetDateTime discardTime, Integer discardAmount, UUID productId, UUID packageSizeId, Facility facility) {
+        StorageDiscard createdStorageDiscard = getApi().createStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId), facility);
+        storageDiscardFacilityMap.put(createdStorageDiscard.getId(), facility);
+        return addClosable(createdStorageDiscard);
     }
 
     /**
      * Finds storage discard event by id
      *
      * @param storageDiscardId storage discard id
+     * @param facility facility
      * @return found entity
      */
-    public StorageDiscard find(UUID storageDiscardId) {
-        return getApi().getStorageDiscard(Facility.JOROINEN, storageDiscardId);
+    public StorageDiscard find(UUID storageDiscardId, Facility facility) {
+        return getApi().getStorageDiscard(facility, storageDiscardId);
     }
 
     /**
@@ -95,7 +105,7 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @param discardAmount discard amount
      * @param productId product id
      * @param packageSizeId package size id
-     * @return
+     * @return StorageDiscard
      */
     public StorageDiscard createObject(OffsetDateTime discardTime, Integer discardAmount, UUID productId, UUID packageSizeId) {
         StorageDiscard storageDiscard = new StorageDiscard();
@@ -113,11 +123,76 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @param discardAmount amount of product to be discarded
      * @param productId product id
      * @param packageSizeId package size id of discarded product
+     * @param facility facility
      */
-    public void assertCreateFail(int expectedStatus, OffsetDateTime discardTime, Integer discardAmount, UUID productId, UUID packageSizeId) {
+    public void assertCreateFail(int expectedStatus, OffsetDateTime discardTime, Integer discardAmount, UUID productId, UUID packageSizeId, Facility facility) {
         try {
-            getApi().createStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId), Facility.JOROINEN);
+            getApi().createStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId), facility);
             Assertions.fail(String.format("Expected create to fail with status %d", expectedStatus));
+        } catch (FeignException e) {
+            Assertions.assertEquals(expectedStatus, e.status());
+        }
+    }
+    /**
+     * Asserts that creating new package discard object fails with given status
+     *
+     * @param expectedStatus expected status
+     * @param productId product id
+     * @param facility facility
+     */
+    public void assertCreateFail(int expectedStatus, UUID productId, Facility facility) {
+        try {
+            getApi().createStorageDiscard(createObject(OffsetDateTime.now(), 1, productId, UUID.randomUUID()), facility);
+            Assertions.fail(String.format("Expected create to fail with status %d", expectedStatus));
+        } catch (FeignException e) {
+            Assertions.assertEquals(expectedStatus, e.status());
+        }
+    }
+
+    /**
+     * Asserts that updating package discard object fails with given status
+     *
+     * @param expectedStatus expected status
+     * @param payload payload
+     * @param facility facility
+     * @param storageDiscardId storage discard id
+     */
+    public void assertUpdateFail(int expectedStatus, StorageDiscard payload, Facility facility, UUID storageDiscardId) {
+        try {
+            getApi().updateStorageDiscard(payload, facility, storageDiscardId);
+            Assertions.fail(String.format("Expected update to fail with status %d", expectedStatus));
+        } catch (FeignException e) {
+            Assertions.assertEquals(expectedStatus, e.status());
+        }
+    }
+
+    /**
+     * Asserts that finding package discard object fails with given status
+     *
+     * @param expectedStatus expected status
+     * @param facility facility
+     * @param storageDiscardId storage discard id
+     */
+    public void assertFindFail(int expectedStatus, Facility facility, UUID storageDiscardId) {
+        try {
+            getApi().getStorageDiscard(facility, storageDiscardId);
+            Assertions.fail(String.format("Expected find to fail with status %d", expectedStatus));
+        } catch (FeignException e) {
+            Assertions.assertEquals(expectedStatus, e.status());
+        }
+    }
+
+    /**
+     * Asserts listing fails with given status
+     *
+     * @param facility facility
+     * @param productId product id
+     * @param expectedStatus expected status code
+     */
+    public void assertListFail(Facility facility, UUID productId, int expectedStatus) {
+        try {
+            getApi().listStorageDiscards(facility, null, null, null, null, productId);
+            Assertions.fail(String.format("Expected list to fail with status %d", expectedStatus));
         } catch (FeignException e) {
             Assertions.assertEquals(expectedStatus, e.status());
         }
@@ -130,14 +205,16 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @param fromTime from time
      * @param toTime to time
      * @param productId product id
+     * @param facility facility
      */
-    public void assertCount(int expected, String fromTime, String toTime, UUID productId) {
-        Assertions.assertEquals(expected, getApi().listStorageDiscards(Facility.JOROINEN, null, null, fromTime, toTime, productId).size());
+    public void assertCount(int expected, String fromTime, String toTime, UUID productId, Facility facility) {
+        Assertions.assertEquals(expected, getApi().listStorageDiscards(facility, null, null, fromTime, toTime, productId).size());
     }
 
     /**
      * Lists all storage discards based on parameters
      *
+     * @param facility facility
      * @param first first result
      * @param max max results
      * @param fromTime created after
@@ -145,7 +222,7 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @param productId product id
      * @return list of all fitting storeage discard events
      */
-    public List<StorageDiscard> list(int first, int max, String fromTime, String toTime, UUID productId) {
-        return getApi().listStorageDiscards(Facility.JOROINEN, first, max, fromTime, toTime, productId);
+    public List<StorageDiscard> list(Facility facility, int first, int max, String fromTime, String toTime, UUID productId) {
+        return getApi().listStorageDiscards(facility, first, max, fromTime, toTime, productId);
     }
 }

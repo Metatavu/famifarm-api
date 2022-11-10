@@ -27,9 +27,19 @@ public class SeedBatchTestIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       SeedBatch seedBatch = builder.admin().seedBatches().create("code", seed, OffsetDateTime.now(), Facility.JOROINEN);
-      assertNotNull(seedBatch);
+      Seed seedInvalidId = new Seed();
+      seedInvalidId.setId(UUID.randomUUID());
+      seedInvalidId.setName(builder.createLocalizedEntry("Rocket", "Rucole"));
+      SeedBatch seedBatchInvalid = new SeedBatch();
+      seedBatchInvalid.setSeedId(seedInvalidId.getId());
+      seedBatchInvalid.setActive(true);
+      seedBatchInvalid.setId(UUID.randomUUID());
+      seedBatchInvalid.setCode("code");
+      seedBatchInvalid.setTime(OffsetDateTime.now());
 
-      builder.admin().seedBatches().assertCreateFailStatus(404, seedBatch, Facility.JUVA);
+      assertNotNull(seedBatch);
+      builder.admin().seedBatches().assertCreateFailStatus(400, seedBatch, Facility.JUVA);
+      builder.admin().seedBatches().assertCreateFailStatus(404, seedBatchInvalid, Facility.JOROINEN);
     }
   }
 
@@ -40,10 +50,10 @@ public class SeedBatchTestIT extends AbstractFunctionalTest {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       SeedBatch createdSeedBatch = builder.admin().seedBatches().create("code", seed, OffsetDateTime.now(), Facility.JOROINEN);
       SeedBatch foundSeedBatch = builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId());
-      builder.admin().seedBatches().assertFindFailStatus(404, foundSeedBatch.getId(), Facility.JUVA);
+      builder.admin().seedBatches().assertFindFailStatus(400, foundSeedBatch.getId(), Facility.JUVA);
       assertEquals(createdSeedBatch.getId(), foundSeedBatch.getId());
       builder.admin().seedBatches().assertSeedBatchesEqual(createdSeedBatch, foundSeedBatch);
-      builder.admin().seedBatches().delete(foundSeedBatch);
+      builder.admin().seedBatches().delete(foundSeedBatch, Facility.JOROINEN);
     }
   }
 
@@ -84,10 +94,36 @@ public class SeedBatchTestIT extends AbstractFunctionalTest {
       updatedSeedBatch.setSeedId(createdSeedBatch.getSeedId());
       updatedSeedBatch.setTime(createdSeedBatch.getTime());
       updatedSeedBatch.setActive(false);
+      SeedBatch updatedSeedBatchInvalidId = new SeedBatch();
+      updatedSeedBatchInvalidId.setId(UUID.randomUUID());
+      updatedSeedBatchInvalidId.setCode("code 2");
+      updatedSeedBatchInvalidId.setSeedId(createdSeedBatch.getSeedId());
+      updatedSeedBatchInvalidId.setTime(createdSeedBatch.getTime());
+      updatedSeedBatchInvalidId.setActive(false);
 
-      builder.admin().seedBatches().assertUpdateFailStatus(404, updatedSeedBatch, Facility.JUVA);
+      builder.admin().seedBatches().assertUpdateFailStatus(400, updatedSeedBatch, Facility.JUVA);
+      builder.admin().seedBatches().assertUpdateFailStatus(404, updatedSeedBatchInvalidId, Facility.JOROINEN);
       builder.admin().seedBatches().updateSeedBatch(updatedSeedBatch);
       builder.admin().seedBatches().assertSeedBatchesEqual(updatedSeedBatch, builder.admin().seedBatches().findSeedBatch(createdSeedBatch.getId()));
+    }
+  }
+
+  @Test
+  public void testDeleteSeedBatch() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
+      SeedBatch createdSeedBatch = builder.admin().seedBatches().create("code", seed, OffsetDateTime.now(), Facility.JOROINEN);
+      SeedBatch createdSeedBatchInvalidId = new SeedBatch();
+      createdSeedBatchInvalidId.setId(UUID.randomUUID());
+      createdSeedBatchInvalidId.setSeedId(seed.getId());
+      createdSeedBatchInvalidId.setTime(OffsetDateTime.now());
+      createdSeedBatchInvalidId.setCode("code");
+      createdSeedBatchInvalidId.setActive(true);
+
+      builder.admin().seedBatches().assertDeleteFailStatus(400, createdSeedBatch, Facility.JUVA);
+      builder.admin().seedBatches().assertDeleteFailStatus(404, createdSeedBatchInvalidId, Facility.JOROINEN);
+      builder.admin().seedBatches().delete(createdSeedBatch, Facility.JOROINEN);
+      builder.admin().seedBatches().assertFindFailStatus(404, createdSeedBatch.getId(), Facility.JOROINEN);
     }
   }
 }

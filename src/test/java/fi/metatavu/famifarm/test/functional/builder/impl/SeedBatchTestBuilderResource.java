@@ -89,9 +89,10 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    * Deletes a seed batch from the API
    * 
    * @param seedBatch seed batch to be deleted
+   * @param facility facility
    */
-  public void delete(SeedBatch seedBatch) {
-    getApi().deleteSeedBatch(Facility.JOROINEN, seedBatch.getId());
+  public void delete(SeedBatch seedBatch, Facility facility) {
+    getApi().deleteSeedBatch(facility, seedBatch.getId());
     removeClosable(closable -> !closable.getId().equals(seedBatch.getId()));
   }
   
@@ -137,8 +138,8 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    * Asserts update status fails with given status code
    *
    * @param expectedStatus expected status code
-   * @param seedBatch      seedBatch
-   * @param juva
+   * @param seedBatch seedBatch
+   * @param facility facility
    */
   public void assertUpdateFailStatus(int expectedStatus, SeedBatch seedBatch, Facility facility) {
     try {
@@ -153,11 +154,12 @@ public class SeedBatchTestBuilderResource extends AbstractTestBuilderResource<Se
    * Asserts delete status fails with given status code
    * 
    * @param expectedStatus expected status code
-   * @param seedBatch
+   * @param seedBatch seed batch
+   * @param facility facility
    */
-  public void assertDeleteFailStatus(int expectedStatus, SeedBatch seedBatch) {
+  public void assertDeleteFailStatus(int expectedStatus, SeedBatch seedBatch, Facility facility) {
     try {
-      getApi().deleteSeedBatch(Facility.JOROINEN, seedBatch.getId());
+      getApi().deleteSeedBatch(facility, seedBatch.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());

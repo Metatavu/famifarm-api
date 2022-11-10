@@ -61,9 +61,12 @@ public class DraftTestBuilderResource  extends AbstractTestBuilderResource<Draft
    * Asserts Draft data equals
    * 
    * @param expected expected count
+   * @param userId user id
+   * @param type type
+   * @param facility facility
    */
-  public void assertData(String expected, UUID userId, String type) {
-    List<Draft> drafts = getApi().listDrafts(Facility.JOROINEN, userId, type);
+  public void assertData(String expected, UUID userId, String type, Facility facility) {
+    List<Draft> drafts = getApi().listDrafts(facility, userId, type);
     assertEquals(1, drafts.size());
     assertEquals(expected, drafts.get(0).getData());
   }
@@ -72,6 +75,9 @@ public class DraftTestBuilderResource  extends AbstractTestBuilderResource<Draft
    * Asserts Draft count within the system
    * 
    * @param expected expected count
+   * @param userId user id
+   * @param type type
+   * @param facility facility
    */
   public void assertCount(int expected, UUID userId, String type, Facility facility) {
     assertEquals(expected, getApi().listDrafts(facility, userId, type).size());
@@ -81,6 +87,9 @@ public class DraftTestBuilderResource  extends AbstractTestBuilderResource<Draft
    * Asserts create status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param type type
+   * @param data data
+   * @param facility facility
    */
   public void assertCreateFailStatus(int expectedStatus, String type, String data, Facility facility) {
     try {
@@ -98,6 +107,8 @@ public class DraftTestBuilderResource  extends AbstractTestBuilderResource<Draft
    * Asserts delete status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param draft draft
+   * @param facility facility
    */
   public void assertDeleteFailStatus(int expectedStatus, Draft draft, Facility facility) {
     try {
@@ -112,6 +123,7 @@ public class DraftTestBuilderResource  extends AbstractTestBuilderResource<Draft
    * Asserts list status fails with given status code
    * 
    * @param expectedStatus expected status code
+   * @param facility facility
    */
   public void assertListFailStatus(int expectedStatus, Facility facility) {
     try {

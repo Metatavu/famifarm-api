@@ -54,7 +54,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   public void testCreateProductNoPackageSizes() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product product = builder.admin().products().create(name, null, false);
+      Product product = builder.admin().products().create(name, null, false, Facility.JOROINEN);
       assertNotNull(product);
       assertNotNull(product.getDefaultPackageSizeIds());
       assertEquals(0, product.getDefaultPackageSizeIds().size());
@@ -65,7 +65,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       ArrayList<PackageSize> packageSizes = Lists.newArrayList(createdPackageSize);
 
@@ -78,7 +78,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testFindProduct() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       builder.admin().products().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
@@ -92,10 +92,10 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testFindProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
-      Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
+      Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
       assertNotNull(builder.admin().products().findProduct(packageSize.getId()));
       assertNotNull(builder.manager().products().findProduct(packageSize.getId()));
       assertNotNull(builder.worker1().products().findProduct(packageSize.getId()));
@@ -107,8 +107,8 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testListProducts() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize8 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize8"), 8);
-      PackageSize createdPackageSize16 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize16"), 16);
+      PackageSize createdPackageSize8 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize8"), 8, Facility.JOROINEN);
+      PackageSize createdPackageSize16 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize16"), 16, Facility.JOROINEN);
 
       ArrayList<PackageSize> packageSizes = Lists.newArrayList(createdPackageSize8, createdPackageSize16);
 
@@ -131,7 +131,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testListProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
@@ -146,10 +146,10 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testUpdateProduct() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize8 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize8"), 8);
+      PackageSize createdPackageSize8 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize8"), 8, Facility.JOROINEN);
 
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
-      Product createdProduct = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize8), false);
+      Product createdProduct = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize8), false, Facility.JOROINEN);
       
       Product updateProduct = new Product(); 
       updateProduct.setId(createdProduct.getId());
@@ -185,10 +185,10 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testUpdateProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
-      Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
+      Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
       builder.worker1().products().assertUpdateFailStatus(403, packageSize, Facility.JOROINEN);
       builder.anonymous().products().assertUpdateFailStatus(401, packageSize, Facility.JOROINEN);
       builder.invalid().products().assertUpdateFailStatus(401, packageSize, Facility.JOROINEN);
@@ -198,10 +198,10 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testDeleteproducts() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
-      Product createdProduct = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
+      Product createdProduct = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
       Product foundProduct = builder.admin().products().findProduct(createdProduct.getId());
       assertEquals(createdProduct.getId(), foundProduct.getId());
       builder.admin().products().assertDeleteFailStatus(404, createdProduct, Facility.JUVA);
@@ -213,10 +213,10 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   @Test
   public void testDeleteProductPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+      PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
-      Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
+      Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
       builder.worker1().products().assertDeleteFailStatus(403, packageSize, Facility.JOROINEN);
       builder.anonymous().products().assertDeleteFailStatus(401, packageSize, Facility.JOROINEN);
       builder.invalid().products().assertDeleteFailStatus(401, packageSize, Facility.JOROINEN);

@@ -50,20 +50,6 @@ public class ProductionLineTestBuilderResource extends AbstractTestBuilderResour
   }
 
   /**
-   * Creates new production line for default joroinen facility
-   *
-   * @return created production line
-   */
-  public ProductionLine create(String lineNumber, Integer defaultGutterHoleCount) {
-    ProductionLine productionLine = new ProductionLine();
-    productionLine.setLineNumber(lineNumber);
-    productionLine.setDefaultGutterHoleCount(defaultGutterHoleCount);
-    ProductionLine created = getApi().createProductionLine(productionLine, Facility.JOROINEN);
-    lineFacilityMap.put(created.getId(), Facility.JOROINEN);
-    return addClosable(created);
-  }
-
-  /**
    * Finds a production line
    * 
    * @param productionLineId production line id

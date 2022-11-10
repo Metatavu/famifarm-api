@@ -33,8 +33,8 @@ public class PrintingTestsIT extends AbstractFunctionalTest {
                 assertTrue(printers.size() > 0);
                 assertNotNull(printers.get(0).getName());
                 assertNotNull(printers.get(0).getId());
-                PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-                Product product = builder.admin().products().create(builder.createLocalizedEntry("Valkokärpässieni"), Lists.newArrayList(packageSize), false);
+                PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
+                Product product = builder.admin().products().create(builder.createLocalizedEntry("Valkokärpässieni"), Lists.newArrayList(packageSize), false, Facility.JOROINEN);
                 Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 5, PackingState.IN_STORE, packageSize, Facility.JOROINEN);
                 builder.admin().printers().print(packing.getId(), printers.get(0).getId());
             }

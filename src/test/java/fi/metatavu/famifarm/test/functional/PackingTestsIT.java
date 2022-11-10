@@ -97,8 +97,8 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       testValue.setValue("test value");
       testEntry.add(testValue);
       
-      PackageSize size = builder.admin().packageSizes().create(testEntry, 100);
-      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false);
+      PackageSize size = builder.admin().packageSizes().create(testEntry, 100, Facility.JOROINEN);
+      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, Facility.JOROINEN);
       Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN);
 
       packing.setState(PackingState.REMOVED);
@@ -118,8 +118,8 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       testValue.setValue("test value");
       testEntry.add(testValue);
       
-      PackageSize size = builder.admin().packageSizes().create(testEntry, 100);
-      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false);
+      PackageSize size = builder.admin().packageSizes().create(testEntry, 100, Facility.JOROINEN);
+      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, Facility.JOROINEN);
       Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN);
 
       builder.admin().packings().delete(packing, Facility.JOROINEN);
@@ -138,8 +138,8 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       testValue.setValue("apples");
       testEntry.add(testValue);
 
-      PackageSize size = builder.admin().packageSizes().create(testEntry, 100);
-      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false);
+      PackageSize size = builder.admin().packageSizes().create(testEntry, 100, Facility.JOROINEN);
+      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, Facility.JOROINEN);
 
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
