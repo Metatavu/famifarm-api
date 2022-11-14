@@ -41,12 +41,12 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
 
-      CampaignProducts campaignProduct = new CampaignProducts();
+      CampaignProduct campaignProduct = new CampaignProduct();
       campaignProduct.setCount(100);
       campaignProduct.setProductId(product.getId());
       campaignToCreate.addProductsItem(campaignProduct);
 
-      Campaign campaign = builder.admin().campaigns().create(campaignToCreate);
+      Campaign campaign = builder.admin().campaigns().create(campaignToCreate, Facility.JOROINEN);
 
       assertNotNull(campaign);
       assertEquals(campaignToCreate.getName(), campaign.getName());
@@ -55,14 +55,15 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
 
       campaign.setName("Winter campaign");
 
-      CampaignProducts campaignProduct2 = new CampaignProducts();
+      CampaignProduct campaignProduct2 = new CampaignProduct();
       campaignProduct2.setCount(20);
       campaignProduct2.setProductId(product.getId());
-      ArrayList<CampaignProducts> campaignProducts = new ArrayList<>();
+      ArrayList<CampaignProduct> campaignProducts = new ArrayList<>();
       campaignProducts.add(campaignProduct2);
       campaign.setProducts(campaignProducts);
 
-      Campaign updatedCampaign = builder.admin().campaigns().update(campaign);
+      builder.admin().campaigns().assertUpdateFailStatus(404, campaign, Facility.JUVA);
+      Campaign updatedCampaign = builder.admin().campaigns().update(campaign, Facility.JOROINEN);
       assertNotNull(updatedCampaign);
       assertEquals(campaign.getName(), updatedCampaign.getName());
       assertEquals(campaign.getProducts().get(0).getCount(), updatedCampaign.getProducts().get(0).getCount());
@@ -86,18 +87,17 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Autumn campaign for apples");
 
-      CampaignProducts campaignProduct = new CampaignProducts();
+      CampaignProduct campaignProduct = new CampaignProduct();
       campaignProduct.setCount(100);
       campaignProduct.setProductId(product.getId());
       campaignToCreate.addProductsItem(campaignProduct);
 
-      builder.admin().campaigns().create(campaignToCreate);
-      builder.admin().campaigns().create(campaignToCreate);
-      builder.admin().campaigns().create(campaignToCreate);
+      builder.admin().campaigns().create(campaignToCreate, Facility.JOROINEN);
+      builder.admin().campaigns().create(campaignToCreate, Facility.JOROINEN);
+      builder.admin().campaigns().create(campaignToCreate, Facility.JUVA);
 
-      List<Campaign> campaigns = builder.admin().campaigns().list();
-      assertNotNull(campaigns);
-      assertEquals(3, campaigns.size());
+      assertEquals(2, builder.admin().campaigns().list(Facility.JOROINEN).size());
+      assertEquals(1, builder.admin().campaigns().list(Facility.JUVA).size());
     }
   }
 
@@ -117,14 +117,14 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       Campaign campaignToCreate = new Campaign();
       campaignToCreate.setName("Summer");
 
-      CampaignProducts campaignProduct = new CampaignProducts();
+      CampaignProduct campaignProduct = new CampaignProduct();
       campaignProduct.setCount(100);
       campaignProduct.setProductId(product.getId());
       campaignToCreate.addProductsItem(campaignProduct);
 
-      UUID campaignId = builder.admin().campaigns().create(campaignToCreate).getId();
-      Campaign foundCampaign = builder.admin().campaigns().find(campaignId);
-      assertNotNull(foundCampaign);
+      UUID campaignId = builder.admin().campaigns().create(campaignToCreate, Facility.JUVA).getId();
+      assertNotNull(builder.admin().campaigns().find(campaignId, Facility.JUVA));
+      builder.admin().campaigns().assertFindFailStatus(404, Facility.JOROINEN, campaignId);
     }
   }
 }

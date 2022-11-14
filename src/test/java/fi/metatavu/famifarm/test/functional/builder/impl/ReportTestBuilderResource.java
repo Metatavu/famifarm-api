@@ -9,6 +9,7 @@ import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
+import fi.metatavu.famifarm.client.model.Facility;
 import fi.metatavu.famifarm.reporting.ReportFormat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -43,19 +44,15 @@ public class ReportTestBuilderResource extends AbstractTestBuilderResource<Objec
    * @return report data
    * @throws IOException thrown when request fails
    */
-  public byte[] createReport(String type, String fromTime, String toTime, ReportFormat reportFormat) throws IOException {
+  public byte[] createReport(Facility facility, String type, String fromTime, String toTime, ReportFormat reportFormat) throws IOException {
     ApiClient apiClient = getApiClient();
-    return getBinaryData(apiClient, new URL(String.format("%s/v1/reports/%s?fromTime=%s&toTime=%s&format=%s", apiClient.getBasePath(), type, fromTime, toTime, reportFormat)));
+    return getBinaryData(apiClient, new URL(String.format("%s/v1/%s/reports/%s?fromTime=%s&toTime=%s&format=%s", apiClient.getBasePath(), facility, type, fromTime, toTime, reportFormat)));
   }
 
   /**
    * Asserts that cell's value is expected
    * 
-   * @param expected expected
-   * @param workbook workbook
-   * @param sheetIndex sheet index
-   * @param rowIndex row index
-   * @param cellIndex cell index
+   * @param data data
    */
   public Workbook loadWorkbook(byte[] data) throws IOException {
     try (ByteArrayInputStream inputStream = new ByteArrayInputStream(data)) {

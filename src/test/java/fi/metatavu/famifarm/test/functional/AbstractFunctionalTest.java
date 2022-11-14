@@ -94,7 +94,7 @@ public abstract class AbstractFunctionalTest {
   protected Event createSowingEvent(TestBuilder builder, Product product, int amount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
-    SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
+    SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime, Facility.JOROINEN);
     
     return builder.admin().events().createSowing(product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));
   }
@@ -158,8 +158,8 @@ public abstract class AbstractFunctionalTest {
     Double luminance = 44d;
     Double weight = 22d;
     List<PerformedCultivationAction> performedActions = Arrays.asList(
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely")),
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"))
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN),
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"), Facility.JOROINEN)
     );
     
     List<Pest> pests = Arrays.asList(
@@ -185,8 +185,8 @@ public abstract class AbstractFunctionalTest {
 
     Double luminance = 44d;
     List<PerformedCultivationAction> performedActions = Arrays.asList(
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely")),
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"))
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN),
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"), Facility.JOROINEN)
     );
     
     List<Pest> pests = Arrays.asList(

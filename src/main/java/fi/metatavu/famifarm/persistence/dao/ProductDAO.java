@@ -13,6 +13,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.*;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * DAO class for package sizes
@@ -33,12 +34,13 @@ public class ProductDAO extends AbstractDAO<Product> {
    *
    * @return created seed
    */
-  public Product create(UUID id, LocalizedEntry name, boolean isSubcontractorProduct, boolean active, UUID creatorId, UUID lastModifierId) {
+  public Product create(UUID id, LocalizedEntry name, boolean isSubcontractorProduct, boolean active, Facility facility, UUID creatorId, UUID lastModifierId) {
     Product product = new Product();
     product.setId(id);
     product.setName(name);
     product.setIsSubcontractorProduct(isSubcontractorProduct);
     product.setIsActive(active);
+    product.setFacility(facility);
     product.setCreatorId(creatorId);
     product.setLastModifierId(lastModifierId);
     return persist(product);
@@ -88,7 +90,7 @@ public class ProductDAO extends AbstractDAO<Product> {
     return persist(product);
   }
 
-  public List<Product> list(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts) {
+  public List<Product> list(Facility facility, Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -97,6 +99,7 @@ public class ProductDAO extends AbstractDAO<Product> {
     criteria.select(root);
 
     List<Predicate> restrictions = new ArrayList<>();
+    restrictions.add(criteriaBuilder.equal(root.get(Product_.facility), facility));
 
     if (includeSubcontractorProducts == null || !includeSubcontractorProducts) {
       restrictions.add(criteriaBuilder.equal(root.get(Product_.isSubcontractorProduct), false));

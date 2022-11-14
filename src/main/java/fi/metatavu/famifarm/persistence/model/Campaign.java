@@ -1,9 +1,11 @@
 package fi.metatavu.famifarm.persistence.model;
 
+import fi.metatavu.famifarm.rest.model.Facility;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -33,6 +35,11 @@ public class Campaign {
   @Column(nullable = false)
   private OffsetDateTime createdAt;
 
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  @NotNull
+  private Facility facility;
+
   public void setId (UUID id) {
     this.id = id;
   }
@@ -51,6 +58,14 @@ public class Campaign {
 
   public void setLastModifierId (UUID lastModifierId) {
     this.lastModifierId = lastModifierId;
+  }
+
+  public Facility getFacility() {
+    return facility;
+  }
+
+  public void setFacility(Facility facility) {
+    this.facility = facility;
   }
 
   public UUID getLastModifierId () {

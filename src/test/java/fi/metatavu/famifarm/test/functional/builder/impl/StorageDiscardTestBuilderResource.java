@@ -3,6 +3,7 @@ package fi.metatavu.famifarm.test.functional.builder.impl;
 import feign.FeignException;
 import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.client.api.StorageDiscardsApi;
+import fi.metatavu.famifarm.client.model.Facility;
 import fi.metatavu.famifarm.client.model.StorageDiscard;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 import org.json.JSONException;
@@ -36,7 +37,7 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      */
     @Override
     public void clean(StorageDiscard storageDiscard) {
-        getApi().deleteStorageDiscard(storageDiscard.getId());
+        getApi().deleteStorageDiscard(Facility.JOROINEN, storageDiscard.getId());
     }
 
     /**
@@ -49,7 +50,7 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @return new storage discard object
      */
     public StorageDiscard create(OffsetDateTime discardTime, Integer discardAmount, UUID productId, UUID packageSizeId) {
-        return addClosable(getApi().createStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId)));
+        return addClosable(getApi().createStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId), Facility.JOROINEN));
     }
 
     /**
@@ -59,7 +60,7 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @return found entity
      */
     public StorageDiscard find(UUID storageDiscardId) {
-        return getApi().getStorageDiscard(storageDiscardId);
+        return getApi().getStorageDiscard(Facility.JOROINEN, storageDiscardId);
     }
 
     /**
@@ -73,7 +74,7 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @return updated entity
      */
     public StorageDiscard update(UUID storageDiscardId, OffsetDateTime discardTime, Integer discardAmount, UUID productId, UUID packageSizeId) {
-        return getApi().updateStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId), storageDiscardId);
+        return getApi().updateStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId), Facility.JOROINEN, storageDiscardId);
     }
 
     /**
@@ -115,7 +116,7 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      */
     public void assertCreateFail(int expectedStatus, OffsetDateTime discardTime, Integer discardAmount, UUID productId, UUID packageSizeId) {
         try {
-            getApi().createStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId));
+            getApi().createStorageDiscard(createObject(discardTime, discardAmount, productId, packageSizeId), Facility.JOROINEN);
             Assertions.fail(String.format("Expected create to fail with status %d", expectedStatus));
         } catch (FeignException e) {
             Assertions.assertEquals(expectedStatus, e.status());
@@ -131,7 +132,7 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @param productId product id
      */
     public void assertCount(int expected, String fromTime, String toTime, UUID productId) {
-        Assertions.assertEquals(expected, getApi().listStorageDiscards(null, null, fromTime, toTime, productId).size());
+        Assertions.assertEquals(expected, getApi().listStorageDiscards(Facility.JOROINEN, null, null, fromTime, toTime, productId).size());
     }
 
     /**
@@ -145,6 +146,6 @@ public class StorageDiscardTestBuilderResource extends AbstractTestBuilderResour
      * @return list of all fitting storeage discard events
      */
     public List<StorageDiscard> list(int first, int max, String fromTime, String toTime, UUID productId) {
-        return getApi().listStorageDiscards(first, max, fromTime, toTime, productId);
+        return getApi().listStorageDiscards(Facility.JOROINEN, first, max, fromTime, toTime, productId);
     }
 }

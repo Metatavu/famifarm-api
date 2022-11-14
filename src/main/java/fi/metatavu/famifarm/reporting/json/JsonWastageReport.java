@@ -6,6 +6,7 @@ import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -32,11 +33,12 @@ public class JsonWastageReport extends AbstractJsonReport {
    *
    * @param output     output stream
    * @param locale     locale
+   * @param facility
    * @param parameters report parameters
    * @throws ReportException when report creation fails
    */
   @Override
-  public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
+  public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
     List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
     List<fi.metatavu.famifarm.reporting.json.models.Event> translatedEvents = translateEvents(events, locale);
     try {

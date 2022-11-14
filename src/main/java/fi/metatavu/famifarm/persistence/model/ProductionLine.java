@@ -3,15 +3,10 @@ package fi.metatavu.famifarm.persistence.model;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import fi.metatavu.famifarm.rest.model.Facility;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -33,6 +28,11 @@ public class ProductionLine {
   @Column(nullable = false)
   @NotNull
   private String lineNumber;
+
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  @NotNull
+  private Facility facility;
 
   @Column(nullable = false)
   @NotNull
@@ -105,6 +105,14 @@ public class ProductionLine {
 
   public void setModifiedAt(OffsetDateTime modifiedAt) {
     this.modifiedAt = modifiedAt;
+  }
+
+  public Facility getFacility() {
+    return facility;
+  }
+
+  public void setFacility(Facility facility) {
+    this.facility = facility;
   }
 
   @PrePersist

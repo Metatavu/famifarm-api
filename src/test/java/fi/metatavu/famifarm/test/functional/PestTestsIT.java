@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.UUID;
 
+import fi.metatavu.famifarm.client.model.Facility;
 import org.junit.jupiter.api.Test;
 
 import fi.metatavu.famifarm.client.model.Pest;
@@ -44,10 +45,11 @@ public class PestTestsIT extends AbstractFunctionalTest {
   @Test
   public void testFindPest() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      builder.admin().pests().assertFindFailStatus(404, UUID.randomUUID());
+      builder.admin().pests().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
       Pest createdPest = builder.admin().pests().create(builder.createLocalizedEntry("Test Pest", "Testi Loinen"));
       Pest foundPest = builder.admin().pests().findPest(createdPest.getId());
       assertEquals(createdPest.getId(), foundPest.getId());
+      builder.admin().pests().assertFindFailStatus(404, createdPest.getId(), Facility.JUVA);
       builder.admin().pests().assertPestsEqual(createdPest, foundPest);
     }
   }
@@ -59,8 +61,8 @@ public class PestTestsIT extends AbstractFunctionalTest {
       assertNotNull(builder.admin().pests().findPest(pest.getId()));
       assertNotNull(builder.manager().pests().findPest(pest.getId()));
       assertNotNull(builder.worker1().pests().findPest(pest.getId()));
-      builder.invalid().pests().assertFindFailStatus(401, pest.getId());
-      builder.anonymous().pests().assertFindFailStatus(401, pest.getId());
+      builder.invalid().pests().assertFindFailStatus(401, pest.getId(), Facility.JOROINEN);
+      builder.anonymous().pests().assertFindFailStatus(401, pest.getId(), Facility.JOROINEN);
     }
   }
   
@@ -72,6 +74,7 @@ public class PestTestsIT extends AbstractFunctionalTest {
       builder.admin().pests().assertCount(1);
       builder.admin().pests().create(builder.createLocalizedEntry("Test Pest 2", "Testi Loinen 2"));
       builder.admin().pests().assertCount(2);
+      builder.admin().pests().assertCount(0, Facility.JUVA);
     }
   }
   
@@ -96,7 +99,8 @@ public class PestTestsIT extends AbstractFunctionalTest {
       Pest updatePest = new Pest(); 
       updatePest.setId(createdPest.getId());
       updatePest.setName(builder.createLocalizedEntry("Test Pest", "Testi Loinen"));
-     
+
+      builder.admin().pests().assertUpdateFailStatus(404, updatePest, Facility.JUVA);
       builder.admin().pests().updatePest(updatePest);
       builder.admin().pests().assertPestsEqual(updatePest, builder.admin().pests().findPest(createdPest.getId()));
     }
@@ -106,9 +110,9 @@ public class PestTestsIT extends AbstractFunctionalTest {
   public void testUpdatePestPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Pest pest = builder.admin().pests().create(builder.createLocalizedEntry("Test Pest", "Testi Loinen"));
-      builder.worker1().pests().assertUpdateFailStatus(403, pest);
-      builder.anonymous().pests().assertUpdateFailStatus(401, pest);
-      builder.invalid().pests().assertUpdateFailStatus(401, pest);
+      builder.worker1().pests().assertUpdateFailStatus(403, pest, Facility.JOROINEN);
+      builder.anonymous().pests().assertUpdateFailStatus(401, pest, Facility.JOROINEN);
+      builder.invalid().pests().assertUpdateFailStatus(401, pest, Facility.JOROINEN);
     }
   }
   
@@ -118,8 +122,9 @@ public class PestTestsIT extends AbstractFunctionalTest {
       Pest createdPest = builder.admin().pests().create(builder.createLocalizedEntry("Test Pest", "Testi Loinen"));
       Pest foundPest = builder.admin().pests().findPest(createdPest.getId());
       assertEquals(createdPest.getId(), foundPest.getId());
+      builder.admin().pests().assertDeleteFailStatus(404, createdPest, Facility.JUVA);
       builder.admin().pests().delete(createdPest);
-      builder.admin().pests().assertFindFailStatus(404, createdPest.getId());     
+      builder.admin().pests().assertFindFailStatus(404, createdPest.getId(), Facility.JOROINEN);
     }
   }
 
@@ -127,9 +132,9 @@ public class PestTestsIT extends AbstractFunctionalTest {
   public void testDeletePestPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Pest pest = builder.admin().pests().create(builder.createLocalizedEntry("Test Pest", "Testi Loinen"));
-      builder.worker1().pests().assertDeleteFailStatus(403, pest);
-      builder.anonymous().pests().assertDeleteFailStatus(401, pest);
-      builder.invalid().pests().assertDeleteFailStatus(401, pest);
+      builder.worker1().pests().assertDeleteFailStatus(403, pest, Facility.JOROINEN);
+      builder.anonymous().pests().assertDeleteFailStatus(401, pest, Facility.JOROINEN);
+      builder.invalid().pests().assertDeleteFailStatus(401, pest, Facility.JOROINEN);
     }
   }
   

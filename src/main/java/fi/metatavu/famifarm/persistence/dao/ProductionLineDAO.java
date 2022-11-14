@@ -12,6 +12,8 @@ import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.persistence.model.ProductionLine_;
+import fi.metatavu.famifarm.rest.model.Facility;
+
 /**
  * DAO class for seed batches
  * 
@@ -24,15 +26,17 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
    * Creates new seed production line
    *
    * @param id id
+   * @param facility facility
    * @param lineNumber lineNumber
    * @param defaultGutterHoleCount default gutter hole count
    * @param creatorId creatorId
    * @param lastModifierId lastModifierId
    * @return created production line
    */
-  public ProductionLine create(UUID id, String lineNumber, Integer defaultGutterHoleCount, UUID creatorId, UUID lastModifierId) {
+  public ProductionLine create(UUID id, Facility facility, String lineNumber, Integer defaultGutterHoleCount, UUID creatorId, UUID lastModifierId) {
     ProductionLine productionLine = new ProductionLine();
     productionLine.setId(id);
+    productionLine.setFacility(facility);
     productionLine.setLineNumber(lineNumber);
     productionLine.setDefaultGutterHoleCount(defaultGutterHoleCount);
     productionLine.setCreatorId(creatorId);
@@ -43,17 +47,18 @@ public class ProductionLineDAO extends AbstractDAO<ProductionLine> {
   /**
    * Lists production lines sorted by line number
    */
-  public List<ProductionLine> listSortByLineNumber(Integer firstResult, Integer maxResults) {
+  public List<ProductionLine> listSortByLineNumber(Facility facility, Integer firstResult, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<ProductionLine> criteria = criteriaBuilder.createQuery(ProductionLine.class);
     Root<ProductionLine> root = criteria.from(ProductionLine.class);
     criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(ProductionLine_.facility), facility));
     criteria.orderBy(criteriaBuilder.asc(root.get(ProductionLine_.lineNumber)));
     
     TypedQuery<ProductionLine> query = entityManager.createQuery(criteria);
-    
+
     if (firstResult != null) {
       query.setFirstResult(firstResult);
     }

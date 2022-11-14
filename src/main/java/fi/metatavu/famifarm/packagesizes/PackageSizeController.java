@@ -10,6 +10,7 @@ import fi.metatavu.famifarm.persistence.dao.PackageSizeDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductPackageSizeDAO;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Controller for seed batches
@@ -30,11 +31,12 @@ public class PackageSizeController {
    * 
    * @param name name
    * @param size size
+   * @param facility facility
    * @param userId userId
    * @return created package size
    */
-  public PackageSize createPackageSize(LocalizedEntry name, Integer size, UUID userId) {
-    return packageSizeDAO.create(UUID.randomUUID(), name, size, userId, userId);
+  public PackageSize createPackageSize(LocalizedEntry name, Integer size, Facility facility, UUID userId) {
+    return packageSizeDAO.create(UUID.randomUUID(), name, size, facility, userId, userId);
   }
 
   /**
@@ -49,13 +51,14 @@ public class PackageSizeController {
 
   /**
    * Lists package sizes
-   * 
+   *
+   * @param facility facility
    * @param firstResult first result
-   * @param maxResults max results
+   * @param maxResults  max results
    * @return list of package sizes
    */
-  public List<PackageSize> listPackageSizes(Integer firstResult, Integer maxResults) {
-    return packageSizeDAO.listAll(firstResult, maxResults);
+  public List<PackageSize> listPackageSizes(Facility facility, Integer firstResult, Integer maxResults) {
+    return packageSizeDAO.list(facility, firstResult, maxResults);
   }
 
   /**

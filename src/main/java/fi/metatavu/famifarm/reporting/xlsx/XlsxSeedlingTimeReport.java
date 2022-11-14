@@ -18,6 +18,7 @@ import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Report for seedling time
@@ -38,7 +39,7 @@ public class XlsxSeedlingTimeReport extends AbstractXlsxReport {
 
   @Override
   @SuppressWarnings ("squid:S3776")
-  public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
+  public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
       String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.seedling_time.title"));
       

@@ -992,4 +992,62 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="facility" author="katja danilova">
+    <addColumn tableName="campaign">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="draft">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="packagesize">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="performedcultivationaction">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="product">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <addColumn tableName="packing">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="productionline">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="pest">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="seed">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <sql>UPDATE campaign SET facility = 'JOROINEN'</sql>
+    <sql>UPDATE draft SET facility = 'JOROINEN'</sql>
+    <sql>UPDATE packagesize SET facility = 'JOROINEN'</sql>
+    <sql>UPDATE performedcultivationaction SET facility = 'JOROINEN'</sql>
+    <sql>UPDATE product SET facility = 'JOROINEN'</sql>
+    <sql>UPDATE packing SET facility = 'JOROINEN'</sql>
+    <sql>UPDATE productionline SET facility = 'JOROINEN'</sql>
+    <sql>UPDATE pest SET facility = 'JOROINEN'</sql>
+    <sql>UPDATE seed SET facility = 'JOROINEN'</sql>
+  </changeSet>
+
 </databaseChangeLog>

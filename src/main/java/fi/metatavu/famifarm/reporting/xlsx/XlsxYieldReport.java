@@ -24,6 +24,7 @@ import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.EventCountController;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Report for yield
@@ -48,7 +49,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
   private EventCountController eventCountController;
 
   @Override
-  public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
+  public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
       String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.yield.yieldTitle"));
       
@@ -81,7 +82,7 @@ public class XlsxYieldReport extends AbstractXlsxReport {
       // Values
       
       List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(toTimeOffset, fromTimeOffset);
-      List<Packing> packings = packingController.listPackings(null, null, null, null, null, toTimeOffset, fromTimeOffset);
+      List<Packing> packings = packingController.listPackings(null, null, facility, null, null, null, toTimeOffset, fromTimeOffset);
       Map<UUID, ReportRow> rowLookup = new HashMap<>();
       events.stream().forEach(event -> {
         Product product = event.getProduct();

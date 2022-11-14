@@ -1,5 +1,7 @@
 package fi.metatavu.famifarm.reporting;
 
+import fi.metatavu.famifarm.rest.model.Facility;
+
 import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Map;
@@ -19,13 +21,13 @@ public interface Report {
    * @param output output stream
    * @throws ReportException when report creation fails
    */
-  public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException;
+  void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException;
   
   /**
    * Returns report's content type
    * 
    * @return report's content type 
    */
-  public String getContentType();
+  String getContentType();
   
 }
