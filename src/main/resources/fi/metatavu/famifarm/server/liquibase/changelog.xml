@@ -1055,13 +1055,7 @@
         <constraints nullable="false"/>
       </column>
     </addColumn>
-    <addColumn tableName="storagediscard">
-      <column name="facility" type="varchar(191)">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
     <sql>UPDATE wastagereason SET facility = 'JOROINEN'</sql>
-    <sql>UPDATE storagediscard SET facility = 'JOROINEN'</sql>
   </changeSet>
 
 </databaseChangeLog>

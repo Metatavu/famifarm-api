@@ -36,10 +36,9 @@ public class StorageDiscardController {
         PackageSize packageSize,
         Integer discardAmount,
         OffsetDateTime discardDate,
-        UUID creatorId,
-        Facility facility
+        UUID creatorId
     ) {
-        return storageDiscardDAO.create(UUID.randomUUID(), product, packageSize, discardAmount, discardDate, creatorId, creatorId, facility);
+        return storageDiscardDAO.create(UUID.randomUUID(), product, packageSize, discardAmount, discardDate, creatorId, creatorId);
     }
 
     /**

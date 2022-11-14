@@ -42,11 +42,6 @@ public class StorageDiscard {
     @NotNull
     private UUID lastModifierId;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private Facility facility;
-
     public UUID getId() {
         return id;
     }
@@ -102,8 +97,4 @@ public class StorageDiscard {
     public void setLastModifierId(UUID lastModifierId) {
         this.lastModifierId = lastModifierId;
     }
-
-    public Facility getFacility()  { return facility; }
-
-    public void setFacility(Facility facility) { this.facility = facility; }
 }

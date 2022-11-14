@@ -6,10 +6,7 @@ import fi.metatavu.famifarm.rest.model.Facility;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +26,6 @@ public class StorageDiscardDAO extends AbstractDAO<StorageDiscard> {
      * @param packageSize package size
      * @param discardAmount amount
      * @param discardDate discard date
-     * @param facility facility
      * @return new storage discard entity
      */
     public StorageDiscard create(
@@ -39,8 +35,7 @@ public class StorageDiscardDAO extends AbstractDAO<StorageDiscard> {
         Integer discardAmount,
         OffsetDateTime discardDate,
         UUID creatorId,
-        UUID lastModifierId,
-        Facility facility
+        UUID lastModifierId
     ) {
         StorageDiscard storageDiscard = new StorageDiscard();
         storageDiscard.setId(id);
@@ -50,7 +45,6 @@ public class StorageDiscardDAO extends AbstractDAO<StorageDiscard> {
         storageDiscard.setDiscardDate(discardDate);
         storageDiscard.setLastModifierId(lastModifierId);
         storageDiscard.setCreatorId(creatorId);
-        storageDiscard.setFacility(facility);
         return persist(storageDiscard);
     }
 
@@ -95,7 +89,10 @@ public class StorageDiscardDAO extends AbstractDAO<StorageDiscard> {
         }
 
         if (facility != null) {
-            restrictions.add(criteriaBuilder.equal(root.get(StorageDiscard_.FACILITY), facility));
+            root.fetch(StorageDiscard_.product, JoinType.LEFT);
+            root.fetch(StorageDiscard_.packageSize, JoinType.LEFT);
+            restrictions.add(criteriaBuilder.equal(root.get(StorageDiscard_.product).get(Product_.FACILITY), facility));
+            restrictions.add(criteriaBuilder.equal(root.get(StorageDiscard_.packageSize).get(PackageSize_.FACILITY), facility));
         }
 
         criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));

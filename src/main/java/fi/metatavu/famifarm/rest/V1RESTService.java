@@ -649,7 +649,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createBadRequest("Package size doesn't belong to the product");
     }
 
-    fi.metatavu.famifarm.persistence.model.StorageDiscard storageDiscard = storageDiscardController.create(foundProduct, foundpackageSize, payload.getDiscardAmount(), payload.getDiscardDate(), loggerUserId, facility);
+    fi.metatavu.famifarm.persistence.model.StorageDiscard storageDiscard = storageDiscardController.create(foundProduct, foundpackageSize, payload.getDiscardAmount(), payload.getDiscardDate(), loggerUserId);
     return createOk(storageDiscardTranslator.translateStorageDiscard(storageDiscard));
   }
 
@@ -813,8 +813,20 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deleteStorageDiscard(Facility facility, UUID storageDiscardId) {
     fi.metatavu.famifarm.persistence.model.StorageDiscard storageDiscard = storageDiscardController.findById(storageDiscardId);
 
-    if (storageDiscard == null || storageDiscard.getFacility() != facility) {
+    if (storageDiscard == null) {
       return createNotFound(String.format("Storage discard with id %s not found!", storageDiscardId));
+    }
+
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(storageDiscard.getProduct().getId());
+
+    if (product.getFacility() != facility) {
+      return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", product.getId(), facility));
+    }
+
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(storageDiscard.getPackageSize().getId());
+
+    if (packageSize.getFacility() != facility) {
+      return createBadRequest(String.format("Package size with id %s doesn't belong to facility %s", packageSize.getFacility(), facility));
     }
 
     storageDiscardController.deleteStorageDiscard(storageDiscard);
@@ -1380,18 +1392,22 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(String.format("Storage discard with id %s not found!", storageDiscardId));
     }
 
-    if (foundStorageDiscard.getFacility() != facility) {
-      return createBadRequest(String.format("Storage discard with id %s doesn't belong to facility %s", storageDiscardId, facility));
-    }
-
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(payload.getPackageSizeId());
     if (packageSize == null) {
       return createNotFound("Package size not found");
     }
 
+    if (packageSize.getFacility() != facility) {
+      return createBadRequest(String.format("Package size with id %s doesn't belong to facility %s", packageSize.getId(), facility));
+    }
+
     fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(payload.getProductId());
     if (product == null) {
       return createNotFound("Product not found");
+    }
+
+    if (product.getFacility() != facility) {
+      return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", product.getId(), facility));
     }
 
     return createOk(storageDiscardTranslator.translateStorageDiscard(storageDiscardController.
@@ -1474,8 +1490,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
-    if (foundStorageDiscard.getFacility() != facility) {
-      return createBadRequest(String.format("Storage discard with id %s doesn't belong to facility %s", storageDiscardId, facility));
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(foundStorageDiscard.getProduct().getId());
+    if (product.getFacility() != facility) {
+      return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", product.getId(), facility));
+    }
+
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(foundStorageDiscard.getPackageSize().getId());
+    if (packageSize.getFacility() != facility) {
+      return createBadRequest(String.format("Package size with id %s doesn't belong to facility %s", packageSize.getId(), facility));
     }
 
     return createOk(storageDiscardTranslator.translateStorageDiscard(foundStorageDiscard));
