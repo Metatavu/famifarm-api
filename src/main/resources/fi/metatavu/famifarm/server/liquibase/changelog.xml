@@ -992,7 +992,7 @@
     </createTable>
   </changeSet>
 
-  <changeSet id="facility-part-1" author="katja danilova">
+  <changeSet id="facility" author="katja danilova">
     <addColumn tableName="campaign">
       <column name="facility" type="varchar(191)">
         <constraints nullable="false"/>
