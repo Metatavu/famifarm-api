@@ -58,7 +58,7 @@ public class WastageReasonTestsIT extends AbstractFunctionalTest {
       assertEquals(createdWastageReasonJuva.getId(), foundWastageReasonJuva.getId());
       builder.admin().wastageReasons().assertWastageReasonsEqual(createdWastageReasonJoroinen, foundWastageReasonJoroinen);
       builder.admin().wastageReasons().assertWastageReasonsEqual(createdWastageReasonJuva, foundWastageReasonJuva);
-      builder.workerJoroinen().wastageReasons().assertFindFailStatus(400, createdWastageReasonJoroinen.getId(), Facility.JUVA);
+      builder.workerJuva().wastageReasons().assertFindFailStatus(400, createdWastageReasonJoroinen.getId(), Facility.JUVA);
       builder.workerJoroinen().wastageReasons().assertFindFailStatus(400, createdWastageReasonJuva.getId(), Facility.JOROINEN);
     }
   }
