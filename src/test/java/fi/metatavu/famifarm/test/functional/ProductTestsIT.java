@@ -69,7 +69,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       ArrayList<PackageSize> packageSizes = Lists.newArrayList(createdPackageSize);
 
-      builder.worker1().products().assertCreateFailStatus(403, name, packageSizes);
+      builder.workerJoroinen().products().assertCreateFailStatus(403, name, packageSizes);
       builder.anonymous().products().assertCreateFailStatus(401, name, packageSizes);
       builder.invalid().products().assertCreateFailStatus(401, name, packageSizes);
     }
@@ -97,8 +97,8 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       
       Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
       assertNotNull(builder.admin().products().findProduct(packageSize.getId()));
-      assertNotNull(builder.manager().products().findProduct(packageSize.getId()));
-      assertNotNull(builder.worker1().products().findProduct(packageSize.getId()));
+      assertNotNull(builder.managerJoroinen().products().findProduct(packageSize.getId()));
+      assertNotNull(builder.workerJoroinen().products().findProduct(packageSize.getId()));
       builder.invalid().products().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
       builder.anonymous().products().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
     }
@@ -135,8 +135,8 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
-      builder.worker1().products().assertCount(1, Facility.JOROINEN);
-      builder.manager().products().assertCount(1, Facility.JOROINEN);
+      builder.workerJoroinen().products().assertCount(1, Facility.JOROINEN);
+      builder.managerJoroinen().products().assertCount(1, Facility.JOROINEN);
       builder.admin().products().assertCount(1, Facility.JOROINEN);
       builder.invalid().products().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
       builder.anonymous().products().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
@@ -189,7 +189,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
-      builder.worker1().products().assertUpdateFailStatus(403, packageSize, Facility.JOROINEN);
+      builder.workerJoroinen().products().assertUpdateFailStatus(403, packageSize, Facility.JOROINEN);
       builder.anonymous().products().assertUpdateFailStatus(401, packageSize, Facility.JOROINEN);
       builder.invalid().products().assertUpdateFailStatus(401, packageSize, Facility.JOROINEN);
     }
@@ -217,7 +217,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
       
       Product packageSize = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
-      builder.worker1().products().assertDeleteFailStatus(403, packageSize, Facility.JOROINEN);
+      builder.workerJoroinen().products().assertDeleteFailStatus(403, packageSize, Facility.JOROINEN);
       builder.anonymous().products().assertDeleteFailStatus(401, packageSize, Facility.JOROINEN);
       builder.invalid().products().assertDeleteFailStatus(401, packageSize, Facility.JOROINEN);
     }

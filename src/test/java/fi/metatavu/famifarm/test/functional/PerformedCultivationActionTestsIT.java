@@ -34,7 +34,7 @@ public class PerformedCultivationActionTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreatePerformedCultivationActionPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      builder.worker1().performedCultivationActions().assertCreateFailStatus(403, builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"));
+      builder.workerJoroinen().performedCultivationActions().assertCreateFailStatus(403, builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"));
       builder.anonymous().performedCultivationActions().assertCreateFailStatus(401, builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"));
       builder.invalid().performedCultivationActions().assertCreateFailStatus(401, builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"));
     }
@@ -57,8 +57,8 @@ public class PerformedCultivationActionTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PerformedCultivationAction performedCultivationAction = builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN);
       assertNotNull(builder.admin().performedCultivationActions().findPerformedCultivationAction(performedCultivationAction.getId(), Facility.JOROINEN));
-      assertNotNull(builder.manager().performedCultivationActions().findPerformedCultivationAction(performedCultivationAction.getId(), Facility.JOROINEN));
-      assertNotNull(builder.worker1().performedCultivationActions().findPerformedCultivationAction(performedCultivationAction.getId(), Facility.JOROINEN));
+      assertNotNull(builder.managerJoroinen().performedCultivationActions().findPerformedCultivationAction(performedCultivationAction.getId(), Facility.JOROINEN));
+      assertNotNull(builder.workerJoroinen().performedCultivationActions().findPerformedCultivationAction(performedCultivationAction.getId(), Facility.JOROINEN));
       builder.invalid().performedCultivationActions().assertFindFailStatus(401, performedCultivationAction.getId(), Facility.JOROINEN);
       builder.anonymous().performedCultivationActions().assertFindFailStatus(401, performedCultivationAction.getId(), Facility.JOROINEN);
     }
@@ -80,8 +80,8 @@ public class PerformedCultivationActionTestsIT extends AbstractFunctionalTest {
   public void testListPerformedCultivationActionPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN);
-      builder.worker1().performedCultivationActions().assertCount(1, Facility.JOROINEN);
-      builder.manager().performedCultivationActions().assertCount(1, Facility.JOROINEN);
+      builder.workerJoroinen().performedCultivationActions().assertCount(1, Facility.JOROINEN);
+      builder.managerJoroinen().performedCultivationActions().assertCount(1, Facility.JOROINEN);
       builder.admin().performedCultivationActions().assertCount(1, Facility.JOROINEN);
       builder.invalid().performedCultivationActions().assertListFailStatus(401, Facility.JOROINEN);
       builder.anonymous().performedCultivationActions().assertListFailStatus(401, Facility.JOROINEN);
@@ -112,7 +112,7 @@ public class PerformedCultivationActionTestsIT extends AbstractFunctionalTest {
   public void testUpdatePerformedCultivationActionPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PerformedCultivationAction performedCultivationAction = builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN);
-      builder.worker1().performedCultivationActions().assertUpdateFailStatus(403, performedCultivationAction, Facility.JOROINEN);
+      builder.workerJoroinen().performedCultivationActions().assertUpdateFailStatus(403, performedCultivationAction, Facility.JOROINEN);
       builder.anonymous().performedCultivationActions().assertUpdateFailStatus(401, performedCultivationAction, Facility.JOROINEN);
       builder.invalid().performedCultivationActions().assertUpdateFailStatus(401, performedCultivationAction, Facility.JOROINEN);
     }
@@ -139,7 +139,7 @@ public class PerformedCultivationActionTestsIT extends AbstractFunctionalTest {
   public void testDeletePerformedCultivationActionPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PerformedCultivationAction performedCultivationAction = builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN);
-      builder.worker1().performedCultivationActions().assertDeleteFailStatus(403, performedCultivationAction, Facility.JOROINEN);
+      builder.workerJoroinen().performedCultivationActions().assertDeleteFailStatus(403, performedCultivationAction, Facility.JOROINEN);
       builder.anonymous().performedCultivationActions().assertDeleteFailStatus(401, performedCultivationAction, Facility.JOROINEN);
       builder.invalid().performedCultivationActions().assertDeleteFailStatus(401, performedCultivationAction, Facility.JOROINEN);
     }

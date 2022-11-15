@@ -54,7 +54,7 @@ public class DraftTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       Draft draft = builder.admin().drafts().create("test", TEST_JSON, Facility.JOROINEN);
       builder.admin().drafts().assertDeleteFailStatus(404, draft, Facility.JUVA);
-      builder.worker1().drafts().assertDeleteFailStatus(403, draft, Facility.JOROINEN);
+      builder.workerJoroinen().drafts().assertDeleteFailStatus(403, draft, Facility.JOROINEN);
       builder.anonymous().drafts().assertDeleteFailStatus(401, draft, Facility.JOROINEN);
       builder.invalid().drafts().assertDeleteFailStatus(401, draft, Facility.JOROINEN);
     }

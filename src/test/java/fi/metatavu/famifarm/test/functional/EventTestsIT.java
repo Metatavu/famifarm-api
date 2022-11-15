@@ -538,8 +538,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       createSowingEvent(builder, Facility.JOROINEN);
       
-      builder.worker1().events().assertCount(1);
-      builder.manager().events().assertCount(1);
+      builder.workerJoroinen().events().assertCount(1);
+      builder.managerJoroinen().events().assertCount(1);
       builder.admin().events().assertCount(1);
       builder.invalid().events().assertListFailStatus(401);
       builder.anonymous().events().assertListFailStatus(401);
@@ -552,8 +552,8 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Event event = createSowingEvent(builder, Facility.JOROINEN);
       
       assertNotNull(builder.admin().events().findEvent(event.getId()));
-      assertNotNull(builder.manager().events().findEvent(event.getId()));
-      assertNotNull(builder.worker1().events().findEvent(event.getId()));
+      assertNotNull(builder.managerJoroinen().events().findEvent(event.getId()));
+      assertNotNull(builder.workerJoroinen().events().findEvent(event.getId()));
       builder.invalid().seeds().assertFindFailStatus(401, event.getId());
       builder.anonymous().seeds().assertFindFailStatus(401, event.getId());
     }

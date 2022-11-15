@@ -36,7 +36,7 @@ public class SeedTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateSeedPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      builder.worker1().seeds().assertCreateFailStatus(403, builder.createLocalizedEntry("Rocket", "Rucola"));
+      builder.workerJoroinen().seeds().assertCreateFailStatus(403, builder.createLocalizedEntry("Rocket", "Rucola"));
       builder.anonymous().seeds().assertCreateFailStatus(401, builder.createLocalizedEntry("Rocket", "Rucola"));
       builder.invalid().seeds().assertCreateFailStatus(401, builder.createLocalizedEntry("Rocket", "Rucola"));
     }
@@ -59,8 +59,8 @@ public class SeedTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
       assertNotNull(builder.admin().seeds().findSeed(seed.getId()));
-      assertNotNull(builder.manager().seeds().findSeed(seed.getId()));
-      assertNotNull(builder.worker1().seeds().findSeed(seed.getId()));
+      assertNotNull(builder.managerJoroinen().seeds().findSeed(seed.getId()));
+      assertNotNull(builder.workerJoroinen().seeds().findSeed(seed.getId()));
       builder.invalid().seeds().assertFindFailStatus(401, seed.getId());
       builder.anonymous().seeds().assertFindFailStatus(401, seed.getId());
     }
@@ -82,8 +82,8 @@ public class SeedTestsIT extends AbstractFunctionalTest {
   public void testListSeedPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      builder.worker1().seeds().assertCount(1);
-      builder.manager().seeds().assertCount(1);
+      builder.workerJoroinen().seeds().assertCount(1);
+      builder.managerJoroinen().seeds().assertCount(1);
       builder.admin().seeds().assertCount(1);
       builder.invalid().seeds().assertFindFailStatus(401, seed.getId());
       builder.anonymous().seeds().assertFindFailStatus(401, seed.getId());
@@ -110,7 +110,7 @@ public class SeedTestsIT extends AbstractFunctionalTest {
   public void testUpdateSeedPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      builder.worker1().seeds().assertUpdateFailStatus(403, seed, Facility.JUVA);
+      builder.workerJoroinen().seeds().assertUpdateFailStatus(403, seed, Facility.JUVA);
       builder.anonymous().seeds().assertUpdateFailStatus(401, seed, Facility.JUVA);
       builder.invalid().seeds().assertUpdateFailStatus(401, seed, Facility.JUVA);
     }
@@ -132,7 +132,7 @@ public class SeedTestsIT extends AbstractFunctionalTest {
   public void testDeleteSeedPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-      builder.worker1().seeds().assertDeleteFailStatus(403, seed, Facility.JUVA);
+      builder.workerJoroinen().seeds().assertDeleteFailStatus(403, seed, Facility.JUVA);
       builder.anonymous().seeds().assertDeleteFailStatus(401, seed, Facility.JUVA);
       builder.invalid().seeds().assertDeleteFailStatus(401, seed, Facility.JUVA);
     }

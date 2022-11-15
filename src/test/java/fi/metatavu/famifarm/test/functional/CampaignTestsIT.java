@@ -53,6 +53,8 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       assertEquals(campaignToCreate.getProducts().get(0).getCount(), campaign.getProducts().get(0).getCount());
       assertEquals(campaignToCreate.getProducts().get(0).getProductId(), campaign.getProducts().get(0).getProductId());
       builder.admin().campaigns().assertCreateFailStatus(400, campaignToCreate, Facility.JUVA);
+
+      builder.managerJuva().campaigns().assertListFail(403, Facility.JOROINEN);
     }
   }
 
@@ -91,6 +93,8 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       assertEquals(campaign.getName(), updatedCampaign.getName());
       assertEquals(campaign.getProducts().get(0).getCount(), updatedCampaign.getProducts().get(0).getCount());
       assertEquals(campaign.getProducts().get(0).getProductId(), updatedCampaign.getProducts().get(0).getProductId());
+
+      builder.managerJuva().campaigns().assertListFail(403, Facility.JOROINEN);
     }
   }
 
@@ -129,6 +133,8 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
 
       assertEquals(2, builder.admin().campaigns().list(Facility.JOROINEN).size());
       assertEquals(1, builder.admin().campaigns().list(Facility.JUVA).size());
+
+      builder.workerJuva().campaigns().assertListFail(403, Facility.JOROINEN);
     }
   }
 
@@ -156,6 +162,8 @@ public class CampaignTestsIT extends AbstractFunctionalTest {
       UUID campaignId = builder.admin().campaigns().create(campaignToCreate, Facility.JOROINEN).getId();
       assertNotNull(builder.admin().campaigns().find(campaignId, Facility.JOROINEN));
       builder.admin().campaigns().assertFindFailStatus(400, Facility.JUVA, campaignId);
+
+      builder.managerJuva().campaigns().assertListFail(403, Facility.JOROINEN);
     }
   }
 }
