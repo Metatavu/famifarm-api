@@ -8,6 +8,7 @@ import javax.ws.rs.core.*;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
 
 /**
  * JaxRs Interceptor for restricting access to non-authorized facility
@@ -15,18 +16,26 @@ import java.security.Principal;
 @Provider
 public class FacilityInterceptor implements ContainerRequestFilter {
 
+
     private static final String FACILITY = "facility";
+    private static final String[] WHITELISTED_PATHS = { "/v1/system/ping" };
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         try {
             UriInfo uriInfo = requestContext.getUriInfo();
+            String path = uriInfo.getPath();
             MultivaluedMap<String, String> pathParameters  = uriInfo.getPathParameters();
             String facility = pathParameters.get(FACILITY).stream().findFirst().orElseThrow();
-            Principal principal = requestContext.getSecurityContext().getUserPrincipal();
             SecurityContext securityContext = requestContext.getSecurityContext();
+            Principal userPrincipal = securityContext.getUserPrincipal();
 
-            if (principal != null && !securityContext.isUserInRole(facility.toLowerCase())) {
+            if (!Arrays.asList(WHITELISTED_PATHS).contains(path) && userPrincipal == null) {
+                requestContext.abortWith(createErrorResponse("Unauthorized", Response.Status.UNAUTHORIZED));
+                return;
+            }
+
+            if (!securityContext.isUserInRole(facility.toLowerCase())) {
                 requestContext.abortWith(createErrorResponse(String.format("Logged user doesn't have access to facility %s", facility), Response.Status.FORBIDDEN));
             }
         } catch (Exception e) {

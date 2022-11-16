@@ -578,4 +578,23 @@ public class EventTestsIT extends AbstractFunctionalTest {
     }
   }
 
+  @Test
+  public void testFacilityAccessControl() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      Event event = new Event();
+      event.setId(UUID.randomUUID());
+      event.setProductId(UUID.randomUUID());
+      event.setUserId(UUID.randomUUID());
+      event.setStartTime(OffsetDateTime.now());
+      event.setEndTime(OffsetDateTime.now());
+      event.setAdditionalInformation("additionalInformation");
+      event.setType(EventType.CULTIVATION_OBSERVATION);
+      event.setData(new Object());
+
+//      builder.workerJoroinen().events().assertCreateFailStatus(403, event, Facility.JUVA);
+//      builder.workerJuva().events().assertCreateFailStatus(403, event, Facility.JOROINEN);
+//      builder.workerJoroinen().events()
+    }
+  }
+
 }

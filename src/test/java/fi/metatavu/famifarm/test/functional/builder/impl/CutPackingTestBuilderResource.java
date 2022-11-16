@@ -159,6 +159,21 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
     }
 
     /**
+     * Asserts that list request fails correctly
+     *
+     * @param expectedStatus expected HTTP status code after failure
+     * @param facility facility
+     */
+    public void assertListFailStatus(int expectedStatus, Facility facility) {
+        try {
+            getApi().listCutPackings(facility, null, null, null, null, null);
+            fail("Expected to fail with status" + expectedStatus);
+        } catch (FeignException exception) {
+            assertEquals(expectedStatus, exception.status());
+        }
+    }
+
+    /**
      * Sends a request to the API to find a cut packing
      *
      * @param cutPackingId the id of a cut packing to find

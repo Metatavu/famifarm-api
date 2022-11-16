@@ -235,7 +235,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param endTime event end time
    * @param amount amount
    * @param productionLine production line
-   * @param seedBatch seed batch
+   * @param seedBatches seed batch
    */
   public void assertCreateFailStatus(int expectedStatus, Facility facility, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches) {
     try {
@@ -255,13 +255,29 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
       assertEquals(expectedStatus, e.status());
     }
   }
+
+  /**
+   * Asserts create status fails with given status code
+   *
+   * @param expectedStatus expected status
+   * @param payload payload
+   * @param facility facility
+   */
+  public void assertCreateFailStatus(int expectedStatus, Event payload, Facility facility) {
+    try {
+      getApi().createEvent(payload, facility);
+      fail(String.format("Expected create to fail with status %d", expectedStatus));
+    } catch (FeignException e) {
+      assertEquals(expectedStatus, e.status());
+    }
+  }
   
   /**
    * Asserts find status fails with given status code
    *
    * @param expectedStatus expected status code
    * @param eventId        event id
-   * @param facility
+   * @param facility       facility
    */
   public void assertFindFailStatus(int expectedStatus, UUID eventId, Facility facility) {
     try {

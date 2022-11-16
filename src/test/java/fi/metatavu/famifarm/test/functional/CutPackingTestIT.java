@@ -79,6 +79,10 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             cutPacking.setProductId(product.getId());
             cutPacking.setProductionLineId(juvaProductionLine.getId());
             testBuilder.admin().cutPackings().assertCreateFailStatus(cutPacking, 400, Facility.JOROINEN);
+
+            // Verify that user cannot access facility they don't have access to
+            testBuilder.workerJuva().cutPackings().assertCreateFailStatus(cutPacking, 403, Facility.JOROINEN);
+            testBuilder.workerJoroinen().cutPackings().assertCreateFailStatus(cutPacking, 403, Facility.JUVA);
         }
     }
 
@@ -154,6 +158,10 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testBuilder.admin().cutPackings().assertUpdateFailStatus(updatedCutPacking, 400, Facility.JOROINEN);
             updatedCutPacking.setId(null);
             testBuilder.admin().cutPackings().assertCreateFailStatus(updatedCutPacking, 400, Facility.JOROINEN);
+
+            // Verify that user cannot access facility they don't have access to
+            testBuilder.workerJuva().cutPackings().assertUpdateFailStatus(createdCutPacking, 403, Facility.JOROINEN);
+            testBuilder.workerJoroinen().cutPackings().assertUpdateFailStatus(createdCutPacking, 403, Facility.JUVA);
         }
     }
 
@@ -243,6 +251,10 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
 
             testBuilder.admin().cutPackings().assertListFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
             testBuilder.admin().cutPackings().assertListFailStatus(400, product2.getId(), Facility.JUVA);
+
+            // Verify that user cannot access facility they don't have access to
+            testBuilder.workerJuva().cutPackings().assertListFailStatus(403, Facility.JOROINEN);
+            testBuilder.workerJoroinen().cutPackings().assertListFailStatus(403, Facility.JUVA);
         }
     }
 
@@ -282,6 +294,10 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
 
             testBuilder.admin().cutPackings().assertFindFailStatus(cutPackingId, Facility.JUVA, 400);
             testBuilder.admin().cutPackings().assertFindFailStatus(UUID.randomUUID(), Facility.JOROINEN,404);
+
+            // Verify that user cannot access facility they don't have access to
+            testBuilder.workerJuva().cutPackings().assertFindFailStatus(cutPackingId, Facility.JOROINEN, 403);
+            testBuilder.workerJoroinen().cutPackings().assertFindFailStatus(cutPackingId, Facility.JUVA, 403);
         }
 
     }
@@ -320,6 +336,10 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testBuilder.admin().cutPackings().assertDeleteFailStatus(cutPackingId, 400, Facility.JUVA);
             testBuilder.admin().cutPackings().delete(cutPackingId, Facility.JOROINEN);
             testBuilder.admin().cutPackings().assertFindFailStatus(cutPackingId, Facility.JOROINEN, 404);
+
+            // Verify that user cannot access facility they don't have access to
+            testBuilder.workerJuva().cutPackings().assertDeleteFailStatus(cutPackingId, 403, Facility.JOROINEN);
+            testBuilder.workerJoroinen().cutPackings().assertDeleteFailStatus(cutPackingId, 403, Facility.JUVA);
         }
     }
 }
