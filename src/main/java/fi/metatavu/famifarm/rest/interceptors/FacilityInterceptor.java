@@ -9,6 +9,7 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * JaxRs Interceptor for restricting access to non-authorized facility
@@ -22,24 +23,22 @@ public class FacilityInterceptor implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        try {
-            UriInfo uriInfo = requestContext.getUriInfo();
-            String path = uriInfo.getPath();
-            MultivaluedMap<String, String> pathParameters  = uriInfo.getPathParameters();
-            String facility = pathParameters.get(FACILITY).stream().findFirst().orElseThrow();
-            SecurityContext securityContext = requestContext.getSecurityContext();
-            Principal userPrincipal = securityContext.getUserPrincipal();
+        UriInfo uriInfo = requestContext.getUriInfo();
+        String path = uriInfo.getPath();
+        MultivaluedMap<String, String> pathParameters  = uriInfo.getPathParameters();
+        Optional<String> facility = pathParameters.get(FACILITY).stream().findFirst();
+        SecurityContext securityContext = requestContext.getSecurityContext();
+        Principal userPrincipal = securityContext.getUserPrincipal();
 
+        if (facility.isPresent()) {
             if (!Arrays.asList(WHITELISTED_PATHS).contains(path) && userPrincipal == null) {
                 requestContext.abortWith(createErrorResponse("Unauthorized", Response.Status.UNAUTHORIZED));
                 return;
             }
 
-            if (!securityContext.isUserInRole(facility.toLowerCase())) {
+            if (!securityContext.isUserInRole(facility.get().toLowerCase())) {
                 requestContext.abortWith(createErrorResponse(String.format("Logged user doesn't have access to facility %s", facility), Response.Status.FORBIDDEN));
             }
-        } catch (Exception e) {
-            requestContext.abortWith(createErrorResponse("Bad request", Response.Status.BAD_REQUEST));
         }
     }
 
