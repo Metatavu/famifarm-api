@@ -255,22 +255,6 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
       assertEquals(expectedStatus, e.status());
     }
   }
-
-  /**
-   * Asserts create status fails with given status code
-   *
-   * @param expectedStatus expected status
-   * @param payload payload
-   * @param facility facility
-   */
-  public void assertCreateFailStatus(int expectedStatus, Event payload, Facility facility) {
-    try {
-      getApi().createEvent(payload, facility);
-      fail(String.format("Expected create to fail with status %d", expectedStatus));
-    } catch (FeignException e) {
-      assertEquals(expectedStatus, e.status());
-    }
-  }
   
   /**
    * Asserts find status fails with given status code
