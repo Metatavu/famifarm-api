@@ -97,10 +97,24 @@ public class CampaignTestBuilderResource extends AbstractTestBuilderResource<Cam
   }
 
   /**
+   * Asserts list status fails with given status code
+   *
+   * @param expectedStatus expected status code
+   */
+  public void assertListFail(int expectedStatus, Facility facility) {
+    try {
+      getApi().listCampaigns(facility);
+      fail(String.format("Expected list to fail with status %d", expectedStatus));
+    } catch (FeignException e) {
+      assertEquals(expectedStatus, e.status());
+    }
+  }
+
+  /**
    * Sends a request to the API to find a campaign with the given id
    *
    * @param campaignId id of the campaign to find
-   * @param facility
+   * @param facility facility
    * @return found campaign
    */
   public Campaign find(UUID campaignId, Facility facility) {
@@ -110,7 +124,7 @@ public class CampaignTestBuilderResource extends AbstractTestBuilderResource<Cam
   /**
    * Sends a request to the API to list campaigns
    *
-   * @param facility
+   * @param facility facility
    * @return all campaigns
    */
   public List<Campaign> list(Facility facility) {

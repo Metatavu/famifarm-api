@@ -30,20 +30,20 @@ public class StorageDiscardTestIT extends AbstractFunctionalTest {
             Product productJoroinen = builder.admin().products().create(name, Lists.newArrayList(createdPackageSizeJoroinen), false, Facility.JOROINEN);
             Product productJuva = builder.admin().products().create(name, Lists.newArrayList(createdPackageSizeJuva), false, Facility.JUVA);
 
-            StorageDiscard created = builder.worker1().storageDiscards().create(OffsetDateTime.now(), 30, productJoroinen.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
-            StorageDiscard createdJuva = builder.worker1().storageDiscards().create(OffsetDateTime.now(), 30, productJuva.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
+            StorageDiscard created = builder.workerJoroinen().storageDiscards().create(OffsetDateTime.now(), 30, productJoroinen.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
+            StorageDiscard createdJuva = builder.workerJuva().storageDiscards().create(OffsetDateTime.now(), 30, productJuva.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
 
-            StorageDiscard foundJoroinen = builder.worker1().storageDiscards().find(created.getId(), Facility.JOROINEN);
-            StorageDiscard foundJuva = builder.worker1().storageDiscards().find(createdJuva.getId(), Facility.JUVA);
-            builder.worker1().storageDiscards().assertEquals(created, foundJoroinen);
-            builder.worker1().storageDiscards().assertEquals(createdJuva, foundJuva);
+            StorageDiscard foundJoroinen = builder.workerJoroinen().storageDiscards().find(created.getId(), Facility.JOROINEN);
+            StorageDiscard foundJuva = builder.workerJuva().storageDiscards().find(createdJuva.getId(), Facility.JUVA);
+            builder.workerJoroinen().storageDiscards().assertEquals(created, foundJoroinen);
+            builder.workerJoroinen().storageDiscards().assertEquals(createdJuva, foundJuva);
 
-            builder.worker1().storageDiscards().assertCreateFail(400, OffsetDateTime.now(), 30, productJoroinen.getId(), createdPackageSizeJoroinen1.getId(), Facility.JOROINEN);
-            builder.worker1().storageDiscards().assertCreateFail(404, OffsetDateTime.now(), 10, UUID.randomUUID(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
-            builder.worker1().storageDiscards().assertCreateFail(400, OffsetDateTime.now(), 30, productJuva.getId(), createdPackageSizeJuva1.getId(), Facility.JUVA);
-            builder.worker1().storageDiscards().assertCreateFail(404, OffsetDateTime.now(), 10, UUID.randomUUID(), createdPackageSizeJuva.getId(), Facility.JUVA);
+            builder.workerJoroinen().storageDiscards().assertCreateFail(400, OffsetDateTime.now(), 30, productJoroinen.getId(), createdPackageSizeJoroinen1.getId(), Facility.JOROINEN);
+            builder.workerJoroinen().storageDiscards().assertCreateFail(404, OffsetDateTime.now(), 10, UUID.randomUUID(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
+            builder.workerJuva().storageDiscards().assertCreateFail(400, OffsetDateTime.now(), 30, productJuva.getId(), createdPackageSizeJuva1.getId(), Facility.JUVA);
+            builder.workerJuva().storageDiscards().assertCreateFail(404, OffsetDateTime.now(), 10, UUID.randomUUID(), createdPackageSizeJuva.getId(), Facility.JUVA);
 
-            builder.worker1().storageDiscards().assertCreateFail(400, productJoroinen.getId(), Facility.JUVA);
+            builder.workerJuva().storageDiscards().assertCreateFail(400, productJoroinen.getId(), Facility.JUVA);
         }
     }
 
@@ -54,12 +54,12 @@ public class StorageDiscardTestIT extends AbstractFunctionalTest {
             List<LocalizedValue> name = builder.createLocalizedEntry("Porduct name", "Tuotteen nimi");
             Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
 
-            StorageDiscard originalStorageDiscard = builder.worker1().storageDiscards().create(OffsetDateTime.parse("2021-02-01T10:15:30+01:00"), 10, product.getId(), createdPackageSize.getId(), Facility.JOROINEN);
-            StorageDiscard updated = builder.manager().storageDiscards().update(originalStorageDiscard.getId(), OffsetDateTime.parse("2020-02-01T10:15:30+01:00"), 20, product.getId(), createdPackageSize.getId());
+            StorageDiscard originalStorageDiscard = builder.workerJoroinen().storageDiscards().create(OffsetDateTime.parse("2021-02-01T10:15:30+01:00"), 10, product.getId(), createdPackageSize.getId(), Facility.JOROINEN);
+            StorageDiscard updated = builder.managerJoroinen().storageDiscards().update(originalStorageDiscard.getId(), OffsetDateTime.parse("2020-02-01T10:15:30+01:00"), 20, product.getId(), createdPackageSize.getId());
 
             Assertions.assertEquals(20, updated.getDiscardAmount());
-            builder.manager().storageDiscards().assertUpdateFail(404, originalStorageDiscard, Facility.JUVA, UUID.randomUUID());
-            builder.manager().storageDiscards().assertUpdateFail(400, originalStorageDiscard, Facility.JUVA, originalStorageDiscard.getId());
+            builder.managerJuva().storageDiscards().assertUpdateFail(404, originalStorageDiscard, Facility.JUVA, UUID.randomUUID());
+            builder.managerJuva().storageDiscards().assertUpdateFail(400, originalStorageDiscard, Facility.JUVA, originalStorageDiscard.getId());
         }
     }
 
@@ -75,24 +75,24 @@ public class StorageDiscardTestIT extends AbstractFunctionalTest {
             Product productJuva1 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name1", "Tuotteen nimi1"), Lists.newArrayList(createdPackageSizeJuva), false, Facility.JUVA);
             Product productJuva2 = builder.admin().products().create(builder.createLocalizedEntry("Porduct name2", "Tuotteen nimi2"), Lists.newArrayList(createdPackageSizeJuva), false, Facility.JUVA);
 
-            builder.worker1().storageDiscards().create(OffsetDateTime.parse("2021-02-01T10:15:30+01:00"), 10, productJoroinen.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
-            builder.worker1().storageDiscards().create(OffsetDateTime.parse("2021-03-01T10:15:30+01:00"), 20, productJoroinen.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
-            builder.worker1().storageDiscards().create(OffsetDateTime.parse("2021-03-02T10:15:30+01:00"), 30, productJoroinen1.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
-            builder.worker1().storageDiscards().create(OffsetDateTime.parse("2021-04-01T10:15:30+01:00"), 40, productJoroinen2.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
-            builder.worker1().storageDiscards().create(OffsetDateTime.parse("2021-02-01T10:15:30+01:00"), 10, productJuva.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
-            builder.worker1().storageDiscards().create(OffsetDateTime.parse("2021-03-01T10:15:30+01:00"), 20, productJuva.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
-            builder.worker1().storageDiscards().create(OffsetDateTime.parse("2021-03-02T10:15:30+01:00"), 30, productJuva1.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
-            builder.worker1().storageDiscards().create(OffsetDateTime.parse("2021-04-01T10:15:30+01:00"), 40, productJuva2.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
+            builder.workerJoroinen().storageDiscards().create(OffsetDateTime.parse("2021-02-01T10:15:30+01:00"), 10, productJoroinen.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
+            builder.workerJoroinen().storageDiscards().create(OffsetDateTime.parse("2021-03-01T10:15:30+01:00"), 20, productJoroinen.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
+            builder.workerJoroinen().storageDiscards().create(OffsetDateTime.parse("2021-03-02T10:15:30+01:00"), 30, productJoroinen1.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
+            builder.workerJoroinen().storageDiscards().create(OffsetDateTime.parse("2021-04-01T10:15:30+01:00"), 40, productJoroinen2.getId(), createdPackageSizeJoroinen.getId(), Facility.JOROINEN);
+            builder.workerJuva().storageDiscards().create(OffsetDateTime.parse("2021-02-01T10:15:30+01:00"), 10, productJuva.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
+            builder.workerJuva().storageDiscards().create(OffsetDateTime.parse("2021-03-01T10:15:30+01:00"), 20, productJuva.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
+            builder.workerJuva().storageDiscards().create(OffsetDateTime.parse("2021-03-02T10:15:30+01:00"), 30, productJuva1.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
+            builder.workerJuva().storageDiscards().create(OffsetDateTime.parse("2021-04-01T10:15:30+01:00"), 40, productJuva2.getId(), createdPackageSizeJuva.getId(), Facility.JUVA);
 
-            builder.worker1().storageDiscards().assertCount(4, null, null, null, Facility.JOROINEN);
-            builder.worker1().storageDiscards().assertCount(2, null, null, productJoroinen.getId(), Facility.JOROINEN);
-            builder.worker1().storageDiscards().assertCount(3, "2021-02-28T10:15:30+01:00", "2021-04-05T10:15:30+01:00", null, Facility.JOROINEN);
-            builder.worker1().storageDiscards().assertCount(4, null, null, null, Facility.JUVA);
-            builder.worker1().storageDiscards().assertCount(2, null, null, productJuva.getId(), Facility.JUVA);
-            builder.worker1().storageDiscards().assertCount(3, "2021-02-28T10:15:30+01:00", "2021-04-05T10:15:30+01:00", null, Facility.JUVA);
+            builder.workerJoroinen().storageDiscards().assertCount(4, null, null, null, Facility.JOROINEN);
+            builder.workerJoroinen().storageDiscards().assertCount(2, null, null, productJoroinen.getId(), Facility.JOROINEN);
+            builder.workerJoroinen().storageDiscards().assertCount(3, "2021-02-28T10:15:30+01:00", "2021-04-05T10:15:30+01:00", null, Facility.JOROINEN);
+            builder.workerJuva().storageDiscards().assertCount(4, null, null, null, Facility.JUVA);
+            builder.workerJuva().storageDiscards().assertCount(2, null, null, productJuva.getId(), Facility.JUVA);
+            builder.workerJuva().storageDiscards().assertCount(3, "2021-02-28T10:15:30+01:00", "2021-04-05T10:15:30+01:00", null, Facility.JUVA);
 
-            builder.worker1().storageDiscards().assertListFail(Facility.JUVA, productJoroinen.getId(), 400);
-            builder.worker1().storageDiscards().assertListFail(Facility.JOROINEN, productJuva.getId(), 400);
+            builder.workerJuva().storageDiscards().assertListFail(Facility.JUVA, productJoroinen.getId(), 400);
+            builder.workerJoroinen().storageDiscards().assertListFail(Facility.JOROINEN, productJuva.getId(), 400);
         }
     }
 
@@ -101,10 +101,10 @@ public class StorageDiscardTestIT extends AbstractFunctionalTest {
         try (TestBuilder builder = new TestBuilder()) {
             PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
             Product product = builder.admin().products().create(builder.createLocalizedEntry("Porduct name", "Tuotteen nimi"), Lists.newArrayList(packageSize), false, Facility.JOROINEN);
-            StorageDiscard storageDiscard = builder.worker1().storageDiscards().create(OffsetDateTime.now(), 10, product.getId(), packageSize.getId(), Facility.JOROINEN);
+            StorageDiscard storageDiscard = builder.workerJoroinen().storageDiscards().create(OffsetDateTime.now(), 10, product.getId(), packageSize.getId(), Facility.JOROINEN);
 
-            builder.worker1().storageDiscards().assertFindFail(404, Facility.JOROINEN, UUID.randomUUID());
-            builder.worker1().storageDiscards().assertFindFail(400, Facility.JUVA, storageDiscard.getId());
+            builder.workerJoroinen().storageDiscards().assertFindFail(404, Facility.JOROINEN, UUID.randomUUID());
+            builder.workerJuva().storageDiscards().assertFindFail(400, Facility.JUVA, storageDiscard.getId());
         }
     }
 }

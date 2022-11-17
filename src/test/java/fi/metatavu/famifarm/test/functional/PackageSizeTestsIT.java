@@ -36,7 +36,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreatePackageSizePermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      builder.worker1().packageSizes().assertCreateFailStatus(403, builder.createLocalizedEntry("Test PackageSize"), Facility.JOROINEN);
+      builder.workerJoroinen().packageSizes().assertCreateFailStatus(403, builder.createLocalizedEntry("Test PackageSize"), Facility.JOROINEN);
       builder.anonymous().packageSizes().assertCreateFailStatus(401, builder.createLocalizedEntry("Test PackageSize"), Facility.JOROINEN);
       builder.invalid().packageSizes().assertCreateFailStatus(401, builder.createLocalizedEntry("Test PackageSize"), Facility.JOROINEN);
     }
@@ -59,8 +59,8 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       assertNotNull(builder.admin().packageSizes().findPackageSize(packageSize.getId(), Facility.JOROINEN));
-      assertNotNull(builder.manager().packageSizes().findPackageSize(packageSize.getId(), Facility.JOROINEN));
-      assertNotNull(builder.worker1().packageSizes().findPackageSize(packageSize.getId(), Facility.JOROINEN));
+      assertNotNull(builder.managerJoroinen().packageSizes().findPackageSize(packageSize.getId(), Facility.JOROINEN));
+      assertNotNull(builder.workerJoroinen().packageSizes().findPackageSize(packageSize.getId(), Facility.JOROINEN));
       builder.invalid().packageSizes().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
       builder.anonymous().packageSizes().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
     }
@@ -81,8 +81,8 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   public void testListPackageSizePermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
-      builder.worker1().packageSizes().assertCount(1, Facility.JOROINEN);
-      builder.manager().packageSizes().assertCount(1, Facility.JOROINEN);
+      builder.workerJoroinen().packageSizes().assertCount(1, Facility.JOROINEN);
+      builder.managerJoroinen().packageSizes().assertCount(1, Facility.JOROINEN);
       builder.admin().packageSizes().assertCount(1, Facility.JOROINEN);
       builder.invalid().packageSizes().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
       builder.anonymous().packageSizes().assertFindFailStatus(401, packageSize.getId(), Facility.JOROINEN);
@@ -110,7 +110,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   public void testUpdatePackageSizePermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
-      builder.worker1().packageSizes().assertUpdateFailStatus(403, packageSize, Facility.JOROINEN);
+      builder.workerJoroinen().packageSizes().assertUpdateFailStatus(403, packageSize, Facility.JOROINEN);
       builder.anonymous().packageSizes().assertUpdateFailStatus(401, packageSize, Facility.JOROINEN);
       builder.invalid().packageSizes().assertUpdateFailStatus(401, packageSize, Facility.JOROINEN);
     }
@@ -132,7 +132,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
   public void testDeletePackageSizePermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize packageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
-      builder.worker1().packageSizes().assertDeleteFailStatus(403, packageSize, Facility.JOROINEN);
+      builder.workerJoroinen().packageSizes().assertDeleteFailStatus(403, packageSize, Facility.JOROINEN);
       builder.anonymous().packageSizes().assertDeleteFailStatus(401, packageSize, Facility.JOROINEN);
       builder.invalid().packageSizes().assertDeleteFailStatus(401, packageSize, Facility.JOROINEN);
     }

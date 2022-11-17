@@ -20,15 +20,22 @@ public class TestBuilder implements AutoCloseable {
   private static final String CLIENT_ID = "ui";
   private static final String ADMIN_USER = "admin";
   private static final String ADMIN_PASSWORD = "test";
-  private static final String MANAGER_USER = "manager@example.com";
-  private static final String MANAGER_PASSWORD = "test";
-  private static final String WORKER1_USER = "worker1@example.com";
-  private static final String WORKER1_PASSWORD = "test";
+  private static final String MANAGER_JOROINEN_USER = "manager@example.com";
+  private static final String MANAGER_JOROINEN_PASSWORD = "test";
+  private static final String WORKER_JOROINEN_USER = "worker1@example.com";
+  private static final String WORKER_JOROINEN_PASSWORD = "test";
+  private static final String MANAGER_JUVA_USER = "manager-juva";
+  private static final String MANAGER_JUVA_PASSWORD = "password";
+  private static final String WORKER_JUVA_USER = "worker-juva";
+  private static final String WORKER_JUVA_PASSWORD = "password";
   
   private TestBuilderAuthentication admin;
   private TestBuilderAuthentication invalid;
   private TestBuilderAuthentication anonymous;
-  private TestBuilderAuthentication worker1;
+  private TestBuilderAuthentication workerJoroinen;
+  private TestBuilderAuthentication workerJuva;
+  private TestBuilderAuthentication managerJuva;
+  private TestBuilderAuthentication managerJoroinen;
   private List<AutoCloseable> closables = new ArrayList<>();
   
   /**
@@ -49,14 +56,27 @@ public class TestBuilder implements AutoCloseable {
    * 
    * @return manager authenticated authentication resource
    */
-  public TestBuilderAuthentication manager() {
-    if (admin != null) {
-      return admin;
+  public TestBuilderAuthentication managerJoroinen() {
+    if (managerJoroinen != null) {
+      return managerJoroinen;
     }
     
-    return admin = this.addClosable(new TestBuilderAuthentication(new DefaultAccessTokenProvider(REALM, CLIENT_ID, MANAGER_USER, MANAGER_PASSWORD, null)));
+    return managerJoroinen = this.addClosable(new TestBuilderAuthentication(new DefaultAccessTokenProvider(REALM, CLIENT_ID, MANAGER_JOROINEN_USER, MANAGER_JOROINEN_PASSWORD, null)));
   }
-  
+
+  /**
+   * Returns manager-juva authenticated authentication resource
+   *
+   * @return manager-juva authenticated authentication resource
+   */
+  public TestBuilderAuthentication managerJuva() {
+    if (managerJuva != null) {
+      return managerJuva;
+    }
+
+    return managerJuva = this.addClosable((new TestBuilderAuthentication(new DefaultAccessTokenProvider(REALM, CLIENT_ID, MANAGER_JUVA_USER, MANAGER_JUVA_PASSWORD, null))));
+  }
+
   /**
    * Returns authentication resource with invalid token
    * 
@@ -88,12 +108,25 @@ public class TestBuilder implements AutoCloseable {
    * 
    * @return worker1 authenticated authentication resource
    */
-  public TestBuilderAuthentication worker1() {
-    if (worker1 != null) {
-      return worker1;
+  public TestBuilderAuthentication workerJoroinen() {
+    if (workerJoroinen != null) {
+      return workerJoroinen;
     }
     
-    return worker1 = this.addClosable(new TestBuilderAuthentication(new DefaultAccessTokenProvider(REALM, CLIENT_ID, WORKER1_USER, WORKER1_PASSWORD, null)));
+    return workerJoroinen = this.addClosable(new TestBuilderAuthentication(new DefaultAccessTokenProvider(REALM, CLIENT_ID, WORKER_JOROINEN_USER, WORKER_JOROINEN_PASSWORD, null)));
+  }
+
+  /**
+   * Returns worker-juva authenticated authentication resource
+   *
+   * @return worker-juva authenticated authentication resource
+   */
+  public TestBuilderAuthentication workerJuva() {
+    if (workerJuva != null) {
+      return workerJuva;
+    }
+
+    return workerJuva = this.addClosable((new TestBuilderAuthentication(new DefaultAccessTokenProvider(REALM, CLIENT_ID, WORKER_JUVA_USER, WORKER_JUVA_PASSWORD, null))));
   }
   
   /**

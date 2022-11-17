@@ -235,7 +235,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param endTime event end time
    * @param amount amount
    * @param productionLine production line
-   * @param seedBatch seed batch
+   * @param seedBatches seed batch
    */
   public void assertCreateFailStatus(int expectedStatus, Facility facility, Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches) {
     try {
@@ -261,7 +261,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    *
    * @param expectedStatus expected status code
    * @param eventId        event id
-   * @param facility
+   * @param facility       facility
    */
   public void assertFindFailStatus(int expectedStatus, UUID eventId, Facility facility) {
     try {

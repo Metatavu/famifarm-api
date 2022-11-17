@@ -32,6 +32,10 @@ public class DraftTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       assertNotNull(builder.admin().drafts().create("test", TEST_JSON, Facility.JOROINEN));
       assertNotNull(builder.admin().drafts().create("test", TEST_JSON, Facility.JUVA));
+
+      // Test that user cannot access facility they don't have access to
+      builder.workerJuva().drafts().assertCreateFailStatus(403, "test", TEST_JSON, Facility.JOROINEN);
+      builder.workerJoroinen().drafts().assertCreateFailStatus(403, "test", TEST_JSON, Facility.JUVA);
     }
   }
   
@@ -46,6 +50,10 @@ public class DraftTestsIT extends AbstractFunctionalTest {
       builder.admin().drafts().assertCount(0, UUID.randomUUID(), "something", Facility.JOROINEN);
       builder.admin().drafts().delete(draft, Facility.JOROINEN);
       builder.admin().drafts().assertCount(0, draft.getUserId(), draft.getType(), Facility.JOROINEN);
+
+      // Test that user cannot access facility they don't have access to
+      builder.workerJuva().drafts().assertListFailStatus(403, Facility.JOROINEN);
+      builder.workerJoroinen().drafts().assertListFailStatus(403, Facility.JUVA);
     }
   }
   
@@ -54,9 +62,13 @@ public class DraftTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       Draft draft = builder.admin().drafts().create("test", TEST_JSON, Facility.JOROINEN);
       builder.admin().drafts().assertDeleteFailStatus(404, draft, Facility.JUVA);
-      builder.worker1().drafts().assertDeleteFailStatus(403, draft, Facility.JOROINEN);
+      builder.workerJoroinen().drafts().assertDeleteFailStatus(403, draft, Facility.JOROINEN);
       builder.anonymous().drafts().assertDeleteFailStatus(401, draft, Facility.JOROINEN);
       builder.invalid().drafts().assertDeleteFailStatus(401, draft, Facility.JOROINEN);
+
+      // Test that user cannot access facility they don't have access to
+      builder.workerJoroinen().drafts().assertDeleteFailStatus(403, draft, Facility.JUVA);
+      builder.workerJuva().drafts().assertDeleteFailStatus(403, draft, Facility.JOROINEN);
     }
   }
   

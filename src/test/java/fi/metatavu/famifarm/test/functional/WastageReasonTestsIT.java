@@ -38,7 +38,7 @@ public class WastageReasonTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateWastageReasonPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      builder.worker1().wastageReasons().assertCreateFailStatus(403, builder.createLocalizedEntry("Test WastageReason", "Testi Syy"), Facility.JOROINEN);
+      builder.workerJoroinen().wastageReasons().assertCreateFailStatus(403, builder.createLocalizedEntry("Test WastageReason", "Testi Syy"), Facility.JOROINEN);
       builder.anonymous().wastageReasons().assertCreateFailStatus(401, builder.createLocalizedEntry("Test WastageReason", "Testi Syy"), Facility.JUVA);
       builder.invalid().wastageReasons().assertCreateFailStatus(401, builder.createLocalizedEntry("Test WastageReason", "Testi Syy"), Facility.JOROINEN);
     }
@@ -58,8 +58,8 @@ public class WastageReasonTestsIT extends AbstractFunctionalTest {
       assertEquals(createdWastageReasonJuva.getId(), foundWastageReasonJuva.getId());
       builder.admin().wastageReasons().assertWastageReasonsEqual(createdWastageReasonJoroinen, foundWastageReasonJoroinen);
       builder.admin().wastageReasons().assertWastageReasonsEqual(createdWastageReasonJuva, foundWastageReasonJuva);
-      builder.worker1().wastageReasons().assertFindFailStatus(400, createdWastageReasonJoroinen.getId(), Facility.JUVA);
-      builder.worker1().wastageReasons().assertFindFailStatus(400, createdWastageReasonJuva.getId(), Facility.JOROINEN);
+      builder.workerJuva().wastageReasons().assertFindFailStatus(400, createdWastageReasonJoroinen.getId(), Facility.JUVA);
+      builder.workerJoroinen().wastageReasons().assertFindFailStatus(400, createdWastageReasonJuva.getId(), Facility.JOROINEN);
     }
   }
   
@@ -68,8 +68,8 @@ public class WastageReasonTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test WastageReason", "Testi Syy"), Facility.JOROINEN);
       assertNotNull(builder.admin().wastageReasons().findWastageReason(wastageReason.getId(), Facility.JOROINEN));
-      assertNotNull(builder.manager().wastageReasons().findWastageReason(wastageReason.getId(), Facility.JOROINEN));
-      assertNotNull(builder.worker1().wastageReasons().findWastageReason(wastageReason.getId(), Facility.JOROINEN));
+      assertNotNull(builder.managerJoroinen().wastageReasons().findWastageReason(wastageReason.getId(), Facility.JOROINEN));
+      assertNotNull(builder.workerJoroinen().wastageReasons().findWastageReason(wastageReason.getId(), Facility.JOROINEN));
       builder.invalid().wastageReasons().assertFindFailStatus(401, wastageReason.getId(), Facility.JOROINEN);
       builder.anonymous().wastageReasons().assertFindFailStatus(401, wastageReason.getId(),Facility.JOROINEN);
     }
@@ -90,8 +90,8 @@ public class WastageReasonTestsIT extends AbstractFunctionalTest {
   public void testListWastageReasonPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test WastageReason", "Testi Syy"), Facility.JOROINEN);
-      builder.worker1().wastageReasons().assertCount(1, Facility.JOROINEN);
-      builder.manager().wastageReasons().assertCount(1, Facility.JOROINEN);
+      builder.workerJoroinen().wastageReasons().assertCount(1, Facility.JOROINEN);
+      builder.managerJoroinen().wastageReasons().assertCount(1, Facility.JOROINEN);
       builder.admin().wastageReasons().assertCount(1, Facility.JOROINEN);
       builder.invalid().wastageReasons().assertFindFailStatus(401, wastageReason.getId(), Facility.JOROINEN);
       builder.anonymous().wastageReasons().assertFindFailStatus(401, wastageReason.getId(), Facility.JOROINEN);
@@ -123,7 +123,7 @@ public class WastageReasonTestsIT extends AbstractFunctionalTest {
   public void testUpdateWastageReasonPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test WastageReason", "Testi Syy"), Facility.JOROINEN);
-      builder.worker1().wastageReasons().assertUpdateFailStatus(403, wastageReason, Facility.JOROINEN);
+      builder.workerJoroinen().wastageReasons().assertUpdateFailStatus(403, wastageReason, Facility.JOROINEN);
       builder.anonymous().wastageReasons().assertUpdateFailStatus(401, wastageReason, Facility.JOROINEN);
       builder.invalid().wastageReasons().assertUpdateFailStatus(401, wastageReason, Facility.JOROINEN);
     }
@@ -145,7 +145,7 @@ public class WastageReasonTestsIT extends AbstractFunctionalTest {
   public void testDeleteWastageReasonPermissions() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test WastageReason", "Testi Syy"), Facility.JOROINEN);
-      builder.worker1().wastageReasons().assertDeleteFailStatus(403, wastageReason.getId(), Facility.JOROINEN);
+      builder.workerJoroinen().wastageReasons().assertDeleteFailStatus(403, wastageReason.getId(), Facility.JOROINEN);
       builder.anonymous().wastageReasons().assertDeleteFailStatus(401, wastageReason.getId(), Facility.JOROINEN);
       builder.invalid().wastageReasons().assertDeleteFailStatus(401, wastageReason.getId(), Facility.JOROINEN);
     }
