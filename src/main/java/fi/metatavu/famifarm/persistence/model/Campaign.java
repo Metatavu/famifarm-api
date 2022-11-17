@@ -61,7 +61,7 @@ public class Campaign {
   }
 
   public Facility getFacility() {
-    return facility;
+    return this.facility;
   }
 
   public void setFacility(Facility facility) {

@@ -36,7 +36,7 @@ public class ProductionLineTestsIT extends AbstractFunctionalTest {
       ProductionLine foundProductionLine = builder.admin().productionLines().findProductionLine(createdProductionLine.getId(), Facility.JOROINEN);
       assertEquals(createdProductionLine.getId(), foundProductionLine.getId());
       builder.admin().productionLines().assertProductionLinesEqual(createdProductionLine, foundProductionLine);
-      builder.admin().productionLines().assertFindFailStatus(404, createdProductionLine.getId(), Facility.JUVA);
+      builder.admin().productionLines().assertFindFailStatus(400, createdProductionLine.getId(), Facility.JUVA);
       builder.admin().productionLines().delete(foundProductionLine, Facility.JOROINEN);
     }
   }
@@ -61,8 +61,12 @@ public class ProductionLineTestsIT extends AbstractFunctionalTest {
       ProductionLine updatedProductionLine = new ProductionLine();
       updatedProductionLine.setId(createdProductionLine.getId());
       updatedProductionLine.setLineNumber("5c");
+      ProductionLine updatedProductionLineWrongId = new ProductionLine();
+      updatedProductionLineWrongId.setId(UUID.randomUUID());
+      updatedProductionLineWrongId.setLineNumber("5c");
 
-      builder.admin().productionLines().assertUpdateFailStatus(404, updatedProductionLine, Facility.JUVA);
+      builder.admin().productionLines().assertUpdateFailStatus(404, updatedProductionLineWrongId, Facility.JOROINEN);
+      builder.admin().productionLines().assertUpdateFailStatus(400, updatedProductionLine, Facility.JUVA);
       builder.admin().productionLines().updateProductionLine(updatedProductionLine, Facility.JOROINEN);
       builder.admin().productionLines().assertProductionLinesEqual(updatedProductionLine, builder.admin().productionLines().findProductionLine(createdProductionLine.getId(), Facility.JOROINEN));
     }
@@ -75,7 +79,7 @@ public class ProductionLineTestsIT extends AbstractFunctionalTest {
       ProductionLine createdProductionLine = builder.admin().productionLines().create("1", 7, Facility.JOROINEN);
       ProductionLine foundProductionLine = builder.admin().productionLines().findProductionLine(createdProductionLine.getId(), Facility.JOROINEN);
       assertEquals(createdProductionLine.getId(), foundProductionLine.getId());
-      builder.admin().productionLines().assertDeleteFailStatus(404, createdProductionLine, Facility.JUVA);
+      builder.admin().productionLines().assertDeleteFailStatus(400, createdProductionLine, Facility.JUVA);
       builder.admin().productionLines().delete(createdProductionLine, Facility.JOROINEN);
       builder.admin().productionLines().assertFindFailStatus(404, createdProductionLine.getId(), Facility.JOROINEN);
     }

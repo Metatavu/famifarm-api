@@ -29,6 +29,7 @@ public class ProductDAO extends AbstractDAO<Product> {
    * @param id id
    * @param name name
    * @param isSubcontractorProduct is subcontractor product
+   * @param facility facility
    * @param creatorId creator
    * @param lastModifierId modifier
    *
@@ -80,8 +81,7 @@ public class ProductDAO extends AbstractDAO<Product> {
    *
    * @param product a product to update
    * @param isSubcontractorProduct a new value
-   * @param lastModifierId an id of an user who is modifying this product
-   *
+   * @param lastModifierId an id of a user who is modifying this product
    * @return updated product
    */
   public Product updateIsSubcontractorProduct(Product product, boolean isSubcontractorProduct, UUID lastModifierId) {

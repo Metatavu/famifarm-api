@@ -31,6 +31,7 @@ public class DraftTestsIT extends AbstractFunctionalTest {
   public void testCreateDraft() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       assertNotNull(builder.admin().drafts().create("test", TEST_JSON, Facility.JOROINEN));
+      assertNotNull(builder.admin().drafts().create("test", TEST_JSON, Facility.JUVA));
     }
   }
   

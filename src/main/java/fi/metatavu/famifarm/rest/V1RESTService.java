@@ -371,8 +371,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response deleteSeed(Facility facility, UUID seedId) {
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
-    if (seed == null || seed.getFacility() != facility) {
+
+    if (seed == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (seed.getFacility() != facility) {
+      return createBadRequest(String.format("Seed with id %s doesn't belong to facility %s", seedId, facility));
     }
 
     seedsController.deleteSeed(seed);
@@ -405,6 +410,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response listStorageDiscards(Facility facility, Integer firstResult, Integer maxResults, String fromTime, String toTime, UUID productId) {
     fi.metatavu.famifarm.persistence.model.Product product = productId != null ? productController.findProduct(productId) : null;
 
+    if (product != null && product.getFacility() != facility) {
+      return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", productId, facility));
+    }
+
     OffsetDateTime createdAfterTime;
     OffsetDateTime createdBeforeTime;
 
@@ -420,7 +429,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createBadRequest("Invalid created after date");
     }
 
-    List<StorageDiscard> collect = storageDiscardController.listStorageDiscards(firstResult, maxResults, createdBeforeTime, createdAfterTime, product).stream().map(storageDiscardTranslator::translateStorageDiscard)
+    List<StorageDiscard> collect = storageDiscardController.listStorageDiscards(firstResult, maxResults, createdBeforeTime, createdAfterTime, product, facility).stream().map(storageDiscardTranslator::translateStorageDiscard)
         .collect(Collectors.toList());
 
     return createOk(collect);
@@ -452,6 +461,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
       fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(campaignProduct.getProductId());
       if (product == null) {
         return createNotFound(String.format("Campaign product %s not found!", campaignProduct.getProductId()));
+      }
+
+      if (product.getFacility() != facility) {
+        return createBadRequest(String.format("Campaign product with id %s doesn't belong to facility %s", product.getId(), facility));
       }
 
       campaignProductsToCreate.put(product, campaignProduct.getCount());
@@ -594,8 +607,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
     OffsetDateTime time = body.getTime();
 
     fi.metatavu.famifarm.persistence.model.Seed seed = seedsController.findSeed(seedId);
-    if (seed == null || seed.getFacility() != facility) {
+
+    if (seed == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (seed.getFacility() != facility) {
+      return createBadRequest(String.format("Seed with id %s doesn't belong to facility %s", seedId, facility));
     }
 
     return createOk(seedBatchesTranslator
@@ -610,13 +628,21 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.Product foundProduct = productController.findProduct(payload.getProductId());
 
     if (foundProduct == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+      return createNotFound(String.format("Product with id %s not found", payload.getId()));
+    }
+
+    if (foundProduct.getFacility() != facility) {
+      return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", foundProduct.getId(), facility));
     }
 
     fi.metatavu.famifarm.persistence.model.PackageSize foundpackageSize = packageSizeController.findPackageSize(payload.getPackageSizeId());
 
     if (foundpackageSize == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+      return createNotFound(String.format("PackageSize with id %s not found", payload.getPackageSizeId()));
+    }
+
+    if (foundpackageSize.getFacility() != facility) {
+      return createNotFound(String.format("PackageSize with id %s doesn't belong to facility %s", payload.getPackageSizeId(), facility));
     }
 
     if (productController.listPackageSizesForProduct(foundProduct).stream().filter(packSize -> packSize == foundpackageSize.getId()).findAny().isEmpty()) {
@@ -635,7 +661,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     UUID loggerUserId = getLoggerUserId();
 
     return createOk(wastageReasonsTranslator
-        .translateWastageReason(wastageReasonsController.createWastageReason(reason, loggerUserId)));
+        .translateWastageReason(wastageReasonsController.createWastageReason(reason, loggerUserId, facility)));
   }
 
   @Override
@@ -657,8 +683,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deleteCutPacking(Facility facility, UUID cutPackingId) {
     fi.metatavu.famifarm.persistence.model.CutPacking existingCutPacking = cutPackingController.find(cutPackingId);
 
-    if (existingCutPacking == null || existingCutPacking.getProduct().getFacility() != facility) {
+    if (existingCutPacking == null) {
       return createNotFound(String.format("Cut packing with id %s not found!", cutPackingId));
+    }
+
+    if (existingCutPacking.getProduct().getFacility() != facility) {
+      return createBadRequest(String.format("Cut packing with id %s doesn't belong to facility %s", cutPackingId, facility));
     }
 
     cutPackingController.delete(existingCutPacking);
@@ -685,8 +715,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deletePackageSize(Facility facility, UUID packageSizeId) {
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController
         .findPackageSize(packageSizeId);
-    if (packageSize == null || packageSize.getFacility() != facility) {
+
+    if (packageSize == null) {
       return createNotFound("Package size not found");
+    }
+
+    if (packageSize.getFacility() != facility) {
+      return createBadRequest(String.format("Package size with id %s doesn't belong to facility %s", packageSizeId, facility));
     }
 
     packageSizeController.deletePackageSize(packageSize);
@@ -700,8 +735,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deletePerformedCultivationAction(Facility facility, UUID performedCultivationActionId) {
     fi.metatavu.famifarm.persistence.model.PerformedCultivationAction performedCultivationAction = performedCultivationActionsController
         .findPerformedCultivationAction(performedCultivationActionId);
-    if (performedCultivationAction == null || performedCultivationAction.getFacility() != facility) {
+
+    if (performedCultivationAction == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (performedCultivationAction.getFacility() != facility) {
+      return createBadRequest(String.format("Performed cultivation action with id %s doesn't belong to facility %s", performedCultivationActionId, facility));
     }
 
     performedCultivationActionsController.deletePerformedCultivationAction(performedCultivationAction);
@@ -735,8 +775,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deleteProductionLine(Facility facility, UUID productionLineId) {
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController
         .findProductionLine(productionLineId);
-    if (productionLine == null || productionLine.getFacility() != facility) {
+
+    if (productionLine == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (productionLine.getFacility() != facility) {
+      return createBadRequest(String.format("Production line with id %s doesn't belong to facility %s", productionLineId, facility));
     }
 
     productionLineController.deleteProductionLine(productionLine);
@@ -749,8 +794,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response deleteSeedBatch(Facility facility, UUID seedBatchId) {
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
-    if (seedBatch == null || seedBatch.getSeed().getFacility() != facility) {
+
+    if (seedBatch == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (seedBatch.getSeed().getFacility() != facility) {
+      return createBadRequest(String.format("Seed with id %s doesn't belong to facility %s", seedBatch.getSeed().getId(), facility));
     }
 
     seedBatchController.deleteSeedBatch(seedBatch);
@@ -764,7 +814,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.StorageDiscard storageDiscard = storageDiscardController.findById(storageDiscardId);
 
     if (storageDiscard == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+      return createNotFound(String.format("Storage discard with id %s not found!", storageDiscardId));
+    }
+
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(storageDiscard.getProduct().getId());
+
+    if (product.getFacility() != facility) {
+      return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", product.getId(), facility));
+    }
+
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(storageDiscard.getPackageSize().getId());
+
+    if (packageSize.getFacility() != facility) {
+      return createBadRequest(String.format("Package size with id %s doesn't belong to facility %s", packageSize.getFacility(), facility));
     }
 
     storageDiscardController.deleteStorageDiscard(storageDiscard);
@@ -777,8 +839,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response deleteWastageReason(Facility facility, UUID wastageReasonId) {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(wastageReasonId);
+
     if (wastageReason == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+      return createNotFound(String.format("Wastage reason with id %s not found!", wastageReasonId));
+    }
+
+    if (wastageReason.getFacility() != facility) {
+      return createBadRequest(String.format("Wastage reason iwth id %s doesn't belong to facility %s", wastageReasonId, facility));
     }
 
     wastageReasonsController.deleteWastageReason(wastageReason);
@@ -791,8 +858,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findCampaign(Facility facility, UUID campaignId) {
     fi.metatavu.famifarm.persistence.model.Campaign campaign = campaignController.find(campaignId);
 
-    if (campaign == null || campaign.getFacility() != facility) {
+    if (campaign == null) {
       return createNotFound(String.format("Campaign %s not found!", campaignId));
+    }
+
+    if (campaign.getFacility() != facility) {
+      return createBadRequest(String.format("Campaign %s doesn't belong to facility %s", campaignId, facility));
     }
 
     return createOk(campaignTranslator.translate(campaign));
@@ -803,8 +874,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findCutPacking(Facility facility, UUID cutPackingId) {
     fi.metatavu.famifarm.persistence.model.CutPacking foundCutPacking = cutPackingController.find(cutPackingId);
 
-    if (foundCutPacking == null || foundCutPacking.getProduct().getFacility() != facility) {
+    if (foundCutPacking == null) {
       return createNotFound(String.format("Cut packing with id %s not found!", cutPackingId));
+    }
+
+    if (foundCutPacking.getProduct().getFacility() != facility) {
+      return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", foundCutPacking.getProduct().getId(), facility));
     }
 
     CutPacking translatedCutPacking = cutPackingTranslator.translate(foundCutPacking);
@@ -827,8 +902,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findPackageSize(Facility facility, UUID packageSizeId) {
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController
         .findPackageSize(packageSizeId);
-    if (packageSize == null || facility != packageSize.getFacility()) {
+
+    if (packageSize == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (facility != packageSize.getFacility()) {
+      return createBadRequest(String.format("Package size with id %s doesn't belong to facility %s", packageSizeId, facility));
     }
 
     return createOk(packageSizeTranslator.translatePackageSize(packageSize));
@@ -839,8 +919,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findPerformedCultivationAction(Facility facility, UUID performedCultivationActionId) {
     fi.metatavu.famifarm.persistence.model.PerformedCultivationAction performedCultivationAction = performedCultivationActionsController
         .findPerformedCultivationAction(performedCultivationActionId);
-    if (performedCultivationAction == null || performedCultivationAction.getFacility() != facility) {
+    if (performedCultivationAction == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (performedCultivationAction.getFacility() != facility) {
+      return createBadRequest(String.format("Performed cultivation action with id %s doesn't belong to facility %s", performedCultivationActionId, facility));
     }
 
     return createOk(
@@ -863,8 +947,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findProductionLine(Facility facility, UUID productionLineId) {
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController
         .findProductionLine(productionLineId);
-    if (productionLine == null || productionLine.getFacility() != facility) {
+
+    if (productionLine == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (productionLine.getFacility() != facility) {
+      return createBadRequest(String.format("Production line with id %s doesn't belong to facility %s", productionLineId, facility));
     }
 
     return createOk(productionLineTranslator.translateProductionLine(productionLine));
@@ -874,8 +963,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response findSeedBatch(Facility facility, UUID seedBatchId) {
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
-    if (seedBatch == null || seedBatch.getSeed().getFacility() != facility) {
+
+    if (seedBatch == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (seedBatch.getSeed().getFacility() != facility) {
+      return createBadRequest(String.format("Seed batch with id %s doesn't belong to facility %s", seedBatchId, facility));
     }
 
     return createOk(seedBatchesTranslator.translateSeedBatch(seedBatchController.findSeedBatch(seedBatchId)));
@@ -886,8 +980,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response findWastageReason(Facility facility, UUID wastageReasonId) {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(wastageReasonId);
+
     if (wastageReason == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+      return createNotFound(String.format("Wastage reason with id %s not found!", wastageReasonId));
+    }
+
+    if (wastageReason.getFacility() != facility) {
+      return createBadRequest(String.format("Wastage reason with id %s doesn't belong to facility %s", wastageReasonId, facility));
     }
 
     return createOk(wastageReasonsTranslator.translateWastageReason(wastageReason));
@@ -908,8 +1007,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (productId != null) {
       fi.metatavu.famifarm.persistence.model.Product existingProduct = productController.findProduct(productId);
 
-      if (existingProduct == null || existingProduct.getFacility() != facility) {
-        return createBadRequest(String.format("Product with id %s not found!", productId));
+      if (existingProduct == null) {
+        return createNotFound(String.format("Product with id %s not found!", productId));
+      }
+
+      if (existingProduct.getFacility() != facility) {
+        return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", productId, facility));
       }
 
       productToFilterBy = existingProduct;
@@ -1002,7 +1105,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   public Response listWastageReasons(Facility facility, Integer firstResult, Integer maxResults) {
-    List<WastageReason> result = wastageReasonsController.listWastageReasons(firstResult, maxResults).stream()
+    List<WastageReason> result = wastageReasonsController.listWastageReasons(firstResult, maxResults, facility).stream()
         .map(wastageReasonsTranslator::translateWastageReason).collect(Collectors.toList());
 
     return createOk(result);
@@ -1060,8 +1163,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
     List<CampaignProduct> restCampaignProducts = campaign.getProducts();
 
     fi.metatavu.famifarm.persistence.model.Campaign campaignToUpdate = campaignController.find(campaignId);
-    if (campaignToUpdate == null || campaignToUpdate.getFacility() != facility) {
+    if (campaignToUpdate == null) {
       return createNotFound(String.format("Campaign %s not found!", campaignId));
+    }
+
+    if (campaignToUpdate.getFacility() != facility) {
+      return createBadRequest(String.format("Campaign %s doesn't belong to facility %s", campaignId, facility));
     }
 
     for (CampaignProduct campaignProduct : restCampaignProducts) {
@@ -1170,8 +1277,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response updatePerformedCultivationAction(PerformedCultivationAction body, Facility facility, UUID performedCultivationActionId) {
     fi.metatavu.famifarm.persistence.model.PerformedCultivationAction performedCultivationAction = performedCultivationActionsController
         .findPerformedCultivationAction(performedCultivationActionId);
-    if (performedCultivationAction == null || performedCultivationAction.getFacility() != facility) {
+
+    if (performedCultivationAction == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (performedCultivationAction.getFacility() != facility) {
+      return createBadRequest(String.format("Performed cultivation action with id %s doesn't belong to facility %s", performedCultivationActionId, facility));
     }
 
     LocalizedEntry name = createLocalizedEntry(body.getName());
@@ -1228,8 +1340,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response updateProductionLine(ProductionLine body, Facility facility, UUID productionLineId) {
     fi.metatavu.famifarm.persistence.model.ProductionLine productionLine = productionLineController
         .findProductionLine(productionLineId);
-    if (productionLine == null || productionLine.getFacility() != facility) {
+
+    if (productionLine == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (productionLine.getFacility() != facility) {
+      return createBadRequest(String.format("Production line with id %s doesn't belong to facility %s", productionLineId, facility));
     }
 
     Integer defaultGutterHoleCount = body.getDefaultGutterHoleCount();
@@ -1244,8 +1361,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response updateSeedBatch(SeedBatch body, Facility facility, UUID seedBatchId) {
     fi.metatavu.famifarm.persistence.model.SeedBatch seedBatch = seedBatchController.findSeedBatch(seedBatchId);
-    if (seedBatch == null || seedBatch.getSeed().getFacility() != facility) {
+
+    if (seedBatch == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (seedBatch.getSeed().getFacility() != facility) {
+      return createBadRequest(String.format("Seed batch with id %s doesn't belong to facility %s", seedBatchId, facility));
     }
 
     String code = body.getCode();
@@ -1267,7 +1389,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     fi.metatavu.famifarm.persistence.model.StorageDiscard foundStorageDiscard = storageDiscardController.findById(storageDiscardId);
 
     if (foundStorageDiscard == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+      return createNotFound(String.format("Storage discard with id %s not found!", storageDiscardId));
     }
 
     fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(payload.getPackageSizeId());
@@ -1275,9 +1397,17 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound("Package size not found");
     }
 
+    if (packageSize.getFacility() != facility) {
+      return createBadRequest(String.format("Package size with id %s doesn't belong to facility %s", packageSize.getId(), facility));
+    }
+
     fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(payload.getProductId());
     if (product == null) {
       return createNotFound("Product not found");
+    }
+
+    if (product.getFacility() != facility) {
+      return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", product.getId(), facility));
     }
 
     return createOk(storageDiscardTranslator.translateStorageDiscard(storageDiscardController.
@@ -1290,8 +1420,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response updateWastageReason(WastageReason body, Facility facility, UUID wastageReasonId) {
     fi.metatavu.famifarm.persistence.model.WastageReason wastageReason = wastageReasonsController
         .findWastageReason(wastageReasonId);
+
     if (wastageReason == null) {
-      return createNotFound(NOT_FOUND_MESSAGE);
+      return createNotFound(String.format("Wastage reason with id %s not found!", wastageReasonId));
+    }
+
+    if (wastageReason.getFacility() != facility) {
+      return createBadRequest(String.format("Wastage reason with id %s doesn't belong to facility %s", wastageReasonId, facility));
     }
 
     LocalizedEntry reason = createLocalizedEntry(body.getReason());
@@ -1355,6 +1490,16 @@ public class V1RESTService extends AbstractApi implements V1Api {
       return createNotFound(NOT_FOUND_MESSAGE);
     }
 
+    fi.metatavu.famifarm.persistence.model.Product product = productController.findProduct(foundStorageDiscard.getProduct().getId());
+    if (product.getFacility() != facility) {
+      return createBadRequest(String.format("Product with id %s doesn't belong to facility %s", product.getId(), facility));
+    }
+
+    fi.metatavu.famifarm.persistence.model.PackageSize packageSize = packageSizeController.findPackageSize(foundStorageDiscard.getPackageSize().getId());
+    if (packageSize.getFacility() != facility) {
+      return createBadRequest(String.format("Package size with id %s doesn't belong to facility %s", packageSize.getId(), facility));
+    }
+
     return createOk(storageDiscardTranslator.translateStorageDiscard(foundStorageDiscard));
   }
 
@@ -1364,10 +1509,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response createDraft(Draft body, Facility facility) {
     UUID creatorId = getLoggerUserId();
 
-    //TODO: Add unique index to database to prevent duplicates created by ui errors
     draftController.deleteDraftsByCreatorIdAndType(creatorId, body.getType(), facility);
     return createOk(
-        draftTranslator.translateDraft(draftController.createDraft(body.getType(), body.getData(), facility, creatorId)));
+        draftTranslator.translateDraft(draftController.createDraft(body.getType(), body.getData(), facility, creatorId))
+    );
   }
 
   @Override
@@ -1413,8 +1558,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response deletePest(Facility facility, UUID pestId) {
     fi.metatavu.famifarm.persistence.model.Pest pest = pestsController.findPest(pestId);
-    if (pest == null || pest.getFacility() != facility) {
+
+    if (pest == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (pest.getFacility() != facility) {
+      return createBadRequest(String.format("Pest with id %s doesn't belong to facility %s", pestId, facility));
     }
 
     pestsController.deletePest(pest);
@@ -1426,8 +1576,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response findPest(Facility facility, UUID pestId) {
     fi.metatavu.famifarm.persistence.model.Pest pest = pestsController.findPest(pestId);
-    if (pest == null || pest.getFacility() != facility) {
+
+    if (pest == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (pest.getFacility() != facility) {
+      return createBadRequest(String.format("Pest with id %s doesn't belong to facility %s", pestId, facility));
     }
 
     return createOk(pestsTranslator.translatePest(pest));
@@ -1458,8 +1613,13 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Transactional
   public Response updatePest(Pest body, Facility facility, UUID pestId) {
     fi.metatavu.famifarm.persistence.model.Pest pest = pestsController.findPest(pestId);
-    if (pest == null || pest.getFacility() != facility) {
+
+    if (pest == null) {
       return createNotFound(NOT_FOUND_MESSAGE);
+    }
+
+    if (pest.getFacility() != facility) {
+      return createBadRequest(String.format("Pest with id %s doesn't belong to facility %s", pestId, facility));
     }
 
     LocalizedEntry name = createLocalizedEntry(body.getName());
@@ -1593,10 +1753,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
   /**
    * Creates new tableSpread event
    * 
-   * @param batch     batch
+   * @param product   product
    * @param startTime start time
    * @param endTime   end time
-   * @param eventData event data
+   * @param additionalInformation additional information
+   * @param eventDataObject event data object
    * @return response
    */
   private Response createTableSpreadEvent(fi.metatavu.famifarm.persistence.model.Product product, OffsetDateTime startTime,
@@ -1625,7 +1786,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
    * Updates table spread event
    * 
    * @param event           event
-   * @param batch           batch
+   * @param product         product
    * @param startTime       start time
    * @param endTime         end time
    * @param eventDataObject event data object
@@ -1658,10 +1819,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
   /**
    * Creates new harvest event
    * 
-   * @param batch     batch
+   * @param product   product
    * @param startTime start time
    * @param endTime   end time
-   * @param eventData event data
+   * @param eventDataObject event data object
    * @return response
    */
   private Response createCultivationObservationEvent(fi.metatavu.famifarm.persistence.model.Product product,
@@ -1704,9 +1865,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
    * Updates cultivationObservation event
    * 
    * @param event           event
-   * @param batch           batch
+   * @param product         product
    * @param startTime       start time
    * @param endTime         end time
+   * @param additionalInformation additional information
    * @param eventDataObject event data object
    * @return response
    */
@@ -1751,10 +1913,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
   /**
    * Creates new harvest event
    * 
-   * @param batch     batch
+   * @param product   product
    * @param startTime start time
    * @param endTime   end time
-   * @param eventData event data
+   * @param additionalInformation additional information
+   * @param eventDataObject event data object
    * @return response
    */
   private Response createHarvestEvent(fi.metatavu.famifarm.persistence.model.Product product, OffsetDateTime startTime,
@@ -1796,9 +1959,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
    * Updates harvest event
    * 
    * @param event           event
-   * @param batch           batch
+   * @param product         product
    * @param startTime       start time
    * @param endTime         end time
+   * @param additionalInformation additionalInformation
    * @param eventDataObject event data object
    * @return response
    */
@@ -1839,10 +2003,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
   /**
    * Creates new planting event
    * 
-   * @param batch     batch
+   * @param product   product
    * @param startTime start time
    * @param endTime   end time
-   * @param eventData event data
+   * @param additionalInformation additional information
+   * @param eventDataObject event data object
    * @return response
    */
   private Response createPlantingEvent(fi.metatavu.famifarm.persistence.model.Product product, OffsetDateTime startTime,
@@ -1878,9 +2043,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
    * Updates planting event
    * 
    * @param event           event
-   * @param batch           batch
+   * @param product         product
    * @param startTime       start time
    * @param endTime         end time
+   * @param additionalInformation additional information
    * @param eventDataObject event data object
    * @return response
    */
@@ -1969,10 +2135,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
   /**
    * Creates new wastage event
    * 
-   * @param batch     batch
+   * @param product   product
    * @param startTime start time
    * @param endTime   end time
-   * @param eventData event data
+   * @param additionalInformation additional information
+   * @param eventDataObject event data object
    * @return response
    */
   private Response createWastageEvent(fi.metatavu.famifarm.persistence.model.Product product, OffsetDateTime startTime,
@@ -2012,9 +2179,10 @@ public class V1RESTService extends AbstractApi implements V1Api {
    * Updates wastage event
    * 
    * @param event           event
-   * @param batch           batch
+   * @param product         product
    * @param startTime       start time
    * @param endTime         end time
+   * @param additionalInformation additional information
    * @param eventDataObject event data object
    * @return response
    */

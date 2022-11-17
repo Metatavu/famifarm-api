@@ -1049,5 +1049,13 @@
     <sql>UPDATE pest SET facility = 'JOROINEN'</sql>
     <sql>UPDATE seed SET facility = 'JOROINEN'</sql>
   </changeSet>
+  <changeSet id="facility-part-2" author="Ville Juutila">
+    <addColumn tableName="wastagereason">
+      <column name="facility" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <sql>UPDATE wastagereason SET facility = 'JOROINEN'</sql>
+  </changeSet>
 
 </databaseChangeLog>

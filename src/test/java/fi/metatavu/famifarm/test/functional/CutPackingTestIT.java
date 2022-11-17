@@ -36,9 +36,9 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testValue.setValue("test value");
             testEntry.add(testValue);
 
-            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
-            Product product = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false);
-            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
+            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100, Facility.JOROINEN);
+            Product product = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false, Facility.JOROINEN);
+            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100, Facility.JOROINEN);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().withYear(2019);
             OffsetDateTime cuttingDay = OffsetDateTime.now().withYear(2020);
@@ -53,7 +53,9 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     "Contact information",
                     "Storage condition",
                     10,
-                    100);
+                    100,
+                    Facility.JOROINEN
+            );
 
             assertNotNull(cutPacking);
             assertEquals(10, cutPacking.getWeight(), 0.00001);
@@ -70,13 +72,13 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             //verify that cannot create cut packings from products of different facilities
             Product juvaProduct = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false, Facility.JUVA);
             cutPacking.setProductId(juvaProduct.getId());
-            testBuilder.admin().cutPackings().assertCreateFailStatus(cutPacking, 400);
+            testBuilder.admin().cutPackings().assertCreateFailStatus(cutPacking, 400, Facility.JOROINEN);
 
             //verify that cannot create cut packings from production line of different facilities
             ProductionLine juvaProductionLine = testBuilder.admin().productionLines().create("1", 100, Facility.JUVA);
             cutPacking.setProductId(product.getId());
             cutPacking.setProductionLineId(juvaProductionLine.getId());
-            testBuilder.admin().cutPackings().assertCreateFailStatus(cutPacking, 400);
+            testBuilder.admin().cutPackings().assertCreateFailStatus(cutPacking, 400, Facility.JOROINEN);
         }
     }
 
@@ -90,13 +92,13 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testValue.setValue("test value");
             testEntry.add(testValue);
 
-            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
+            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100, Facility.JOROINEN);
             ArrayList<PackageSize> packageSizes = Lists.newArrayList(size);
-            Product product = testBuilder.admin().products().create(testEntry, packageSizes, false);
-            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
+            Product product = testBuilder.admin().products().create(testEntry, packageSizes, false, Facility.JOROINEN);
+            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100, Facility.JOROINEN);
 
-            Product product2 = testBuilder.admin().products().create(testEntry, packageSizes, false);
-            ProductionLine productionLine2 = testBuilder.admin().productionLines().create("1", 100);
+            Product product2 = testBuilder.admin().products().create(testEntry, packageSizes, false, Facility.JOROINEN);
+            ProductionLine productionLine2 = testBuilder.admin().productionLines().create("1", 100, Facility.JOROINEN);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30).withYear(2019);
             OffsetDateTime cuttingDay = OffsetDateTime.now().withYear(2019);
@@ -111,7 +113,9 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     "Contact information",
                     "Storage condition",
                     10,
-                    100);
+                    100,
+                    Facility.JOROINEN
+                );
 
             assertEquals(2019, createdCutPacking.getSowingDay().getYear());
             assertEquals(2019, createdCutPacking.getCuttingDay().getYear());
@@ -127,7 +131,7 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             createdCutPacking.setGutterHoleCount(200);
             createdCutPacking.setStorageCondition("New storage condition");
 
-            CutPacking updatedCutPacking = testBuilder.admin().cutPackings().update(createdCutPacking);
+            CutPacking updatedCutPacking = testBuilder.admin().cutPackings().update(createdCutPacking, Facility.JOROINEN);
 
             assertNotNull(updatedCutPacking);
             assertNotNull(updatedCutPacking.getId());
@@ -144,12 +148,12 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
 
             Product juvaProduct = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false, Facility.JUVA);
             updatedCutPacking.setProductId(juvaProduct.getId());
-            testBuilder.admin().cutPackings().assertUpdateFailStatus(updatedCutPacking, 400);
+            testBuilder.admin().cutPackings().assertUpdateFailStatus(updatedCutPacking, 400, Facility.JOROINEN);
 
             updatedCutPacking.setProductId(UUID.randomUUID());
-            testBuilder.admin().cutPackings().assertUpdateFailStatus(updatedCutPacking, 400);
+            testBuilder.admin().cutPackings().assertUpdateFailStatus(updatedCutPacking, 400, Facility.JOROINEN);
             updatedCutPacking.setId(null);
-            testBuilder.admin().cutPackings().assertCreateFailStatus(updatedCutPacking, 400);
+            testBuilder.admin().cutPackings().assertCreateFailStatus(updatedCutPacking, 400, Facility.JOROINEN);
         }
     }
 
@@ -163,17 +167,17 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testValue.setValue("test value");
             testEntry.add(testValue);
 
-            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
+            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100, Facility.JOROINEN);
             ArrayList<PackageSize> packageSizes = Lists.newArrayList(size);
 
-            Product product = testBuilder.admin().products().create(testEntry, packageSizes, false);
-            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
+            Product product = testBuilder.admin().products().create(testEntry, packageSizes, false, Facility.JOROINEN);
+            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100, Facility.JOROINEN);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30);
             OffsetDateTime cuttingDay = OffsetDateTime.now();
 
-            Product product2 = testBuilder.admin().products().create(testEntry, packageSizes, false);
-            ProductionLine productionLine2 = testBuilder.admin().productionLines().create("1", 100);
+            Product product2 = testBuilder.admin().products().create(testEntry, packageSizes, false, Facility.JOROINEN);
+            ProductionLine productionLine2 = testBuilder.admin().productionLines().create("1", 100, Facility.JOROINEN);
 
             testBuilder.admin().cutPackings().create(
                     10,
@@ -185,7 +189,9 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     "Contact information",
                     "Storage information",
                     10,
-                    100);
+                    100,
+                    Facility.JOROINEN
+            );
 
             testBuilder.admin().cutPackings().create(
                     10,
@@ -197,7 +203,9 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     "Contact information",
                     "Storage information",
                     10,
-                    100);
+                    100,
+                    Facility.JOROINEN
+            );
 
             testBuilder.admin().cutPackings().create(
                     10,
@@ -209,7 +217,9 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     "Contact information",
                     "Storage information",
                     10,
-                    100);
+                    100,
+                    Facility.JOROINEN
+            );
 
             testBuilder.admin().cutPackings().create(
                     10,
@@ -221,7 +231,9 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     "Contact information",
                     "Storage information",
                     10,
-                    100);
+                    100,
+                    Facility.JOROINEN
+            );
 
             assertEquals(4, testBuilder.admin().cutPackings().list(null, null, null, null, null, Facility.JOROINEN).size());
             assertEquals(3, testBuilder.admin().cutPackings().list(null, null, product2.getId(), null, null, Facility.JOROINEN).size());
@@ -229,7 +241,8 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             assertEquals(1, testBuilder.admin().cutPackings().list(2, 2, product2.getId(), null, null, Facility.JOROINEN).size());
             assertEquals(0, testBuilder.admin().cutPackings().list(null, null, null, null, null, Facility.JUVA).size());
 
-            testBuilder.admin().cutPackings().assertListFailStatus(400);
+            testBuilder.admin().cutPackings().assertListFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
+            testBuilder.admin().cutPackings().assertListFailStatus(400, product2.getId(), Facility.JUVA);
         }
     }
 
@@ -243,9 +256,9 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testValue.setValue("test value");
             testEntry.add(testValue);
 
-            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
-            Product product = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false);
-            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
+            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100, Facility.JOROINEN);
+            Product product = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false, Facility.JOROINEN);
+            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100, Facility.JOROINEN);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30);
             OffsetDateTime cuttingDay = OffsetDateTime.now();
@@ -260,12 +273,14 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     "Contact information",
                     "Storage information",
                     10,
-                    100).getId();
+                    100,
+                    Facility.JOROINEN
+            ).getId();
 
-            CutPacking foundPacking = testBuilder.admin().cutPackings().find(cutPackingId);
+            CutPacking foundPacking = testBuilder.admin().cutPackings().find(cutPackingId, Facility.JOROINEN);
             assertNotNull(foundPacking);
 
-            testBuilder.admin().cutPackings().assertFindFailStatus(cutPackingId, Facility.JUVA, 404);
+            testBuilder.admin().cutPackings().assertFindFailStatus(cutPackingId, Facility.JUVA, 400);
             testBuilder.admin().cutPackings().assertFindFailStatus(UUID.randomUUID(), Facility.JOROINEN,404);
         }
 
@@ -281,9 +296,9 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
             testValue.setValue("test value");
             testEntry.add(testValue);
 
-            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100);
-            Product product = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false);
-            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100);
+            PackageSize size = testBuilder.admin().packageSizes().create(testEntry, 100, Facility.JOROINEN);
+            Product product = testBuilder.admin().products().create(testEntry, Lists.newArrayList(size), false, Facility.JOROINEN);
+            ProductionLine productionLine = testBuilder.admin().productionLines().create("1", 100, Facility.JOROINEN);
 
             OffsetDateTime sowingDay = OffsetDateTime.now().minusDays(30);
             OffsetDateTime cuttingDay = OffsetDateTime.now();
@@ -298,11 +313,13 @@ public class CutPackingTestIT extends AbstractFunctionalTest {
                     "Contact information",
                     "Storage information",
                     10,
-                    100).getId();
+                    100,
+                    Facility.JOROINEN
+            ).getId();
 
-            testBuilder.admin().cutPackings().delete(cutPackingId);
+            testBuilder.admin().cutPackings().assertDeleteFailStatus(cutPackingId, 400, Facility.JUVA);
+            testBuilder.admin().cutPackings().delete(cutPackingId, Facility.JOROINEN);
             testBuilder.admin().cutPackings().assertFindFailStatus(cutPackingId, Facility.JOROINEN, 404);
-            testBuilder.admin().cutPackings().assertDeleteFailStatus(cutPackingId, 404);
         }
     }
 }

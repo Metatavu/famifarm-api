@@ -60,8 +60,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param product product
    * @param startTime event start time
    * @param endTime event end time
-   * @param location 
-   * @param tableCount 
+   * @param tableCount table count
    * @return created event
    */
   public Event createTableSpread(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer tableCount) {

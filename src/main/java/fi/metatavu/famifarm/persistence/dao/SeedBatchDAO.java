@@ -86,8 +86,8 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
    * Lists seed batches
    *
    * @param facility facility
-   * @param firstResult
-   * @param maxResults
+   * @param firstResult first result
+   * @param maxResults max results
    * @param active if true or null, list only active seed batches
    * @return seed batches that match the criteria
    */

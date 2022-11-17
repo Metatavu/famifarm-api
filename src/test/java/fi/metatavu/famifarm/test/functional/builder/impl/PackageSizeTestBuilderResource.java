@@ -33,7 +33,7 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * Creates new package size
    * 
    * @param name name
-   * @param facility
+   * @param facility facility
    * @return created package size
    */
   public PackageSize create(List<LocalizedValue> name, Integer size, Facility facility) {
@@ -42,21 +42,6 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
     packageSize.setSize(size);
     PackageSize created = getApi().createPackageSize(packageSize, facility);
     packageFacilityMap.put(created.getId(), facility);
-    return addClosable(created);
-  }
-
-  /**
-   * Creates new package size at Joroinen
-   *
-   * @param name name
-   * @return created seed
-   */
-  public PackageSize create(List<LocalizedValue> name, Integer size) {
-    PackageSize packageSize = new PackageSize();
-    packageSize.setName(name);
-    packageSize.setSize(size);
-    PackageSize created = getApi().createPackageSize(packageSize, Facility.JOROINEN);
-    packageFacilityMap.put(created.getId(), Facility.JOROINEN);
     return addClosable(created);
   }
 

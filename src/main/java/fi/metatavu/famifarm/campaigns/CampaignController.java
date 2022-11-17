@@ -55,7 +55,7 @@ public class CampaignController {
   }
 
   /**
-   * Lists campaigns in the database
+   * Lists campaigns in the database by facility
    *
    * @param facility facility
    * @return all campaigns in the database

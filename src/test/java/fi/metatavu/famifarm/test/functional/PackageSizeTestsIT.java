@@ -48,7 +48,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
       builder.admin().packageSizes().assertFindFailStatus(404, UUID.randomUUID(), Facility.JOROINEN);
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       PackageSize foundPackageSize = builder.admin().packageSizes().findPackageSize(createdPackageSize.getId(), Facility.JOROINEN);
-      builder.admin().packageSizes().assertFindFailStatus(404, createdPackageSize.getId(), Facility.JUVA);
+      builder.admin().packageSizes().assertFindFailStatus(400, createdPackageSize.getId(), Facility.JUVA);
       assertEquals(createdPackageSize.getId(), foundPackageSize.getId());
       builder.admin().packageSizes().assertPackageSizeEqual(createdPackageSize, foundPackageSize);
     }
@@ -122,7 +122,7 @@ public class PackageSizeTestsIT extends AbstractFunctionalTest {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       PackageSize foundPackageSize = builder.admin().packageSizes().findPackageSize(createdPackageSize.getId(), Facility.JOROINEN);
       assertEquals(createdPackageSize.getId(), foundPackageSize.getId());
-      builder.admin().packageSizes().assertDeleteFailStatus(404, createdPackageSize, Facility.JUVA);
+      builder.admin().packageSizes().assertDeleteFailStatus(400, createdPackageSize, Facility.JUVA);
       builder.admin().packageSizes().delete(createdPackageSize, Facility.JOROINEN);
       builder.admin().packageSizes().assertFindFailStatus(404, createdPackageSize.getId(), Facility.JOROINEN);
     }

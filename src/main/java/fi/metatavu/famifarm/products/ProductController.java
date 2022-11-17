@@ -40,6 +40,7 @@ public class ProductController {
    * @param name name
    * @param packageSizes package sizes
    * @param isSubcontractorProduct is subcontractor product
+   * @param facility facility
    * @param creatorId creatorId
    * @return created product
    */

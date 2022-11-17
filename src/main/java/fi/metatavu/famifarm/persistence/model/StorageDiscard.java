@@ -1,5 +1,6 @@
 package fi.metatavu.famifarm.persistence.model;
 
+import fi.metatavu.famifarm.rest.model.Facility;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 

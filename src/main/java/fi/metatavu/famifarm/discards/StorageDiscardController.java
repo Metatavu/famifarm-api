@@ -4,6 +4,7 @@ import fi.metatavu.famifarm.persistence.dao.StorageDiscardDAO;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.StorageDiscard;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,7 +31,13 @@ public class StorageDiscardController {
      * @param creatorId creator id
      * @return new storage discard entity
      */
-    public StorageDiscard create(Product product, PackageSize packageSize, Integer discardAmount, OffsetDateTime discardDate, UUID creatorId) {
+    public StorageDiscard create(
+        Product product,
+        PackageSize packageSize,
+        Integer discardAmount,
+        OffsetDateTime discardDate,
+        UUID creatorId
+    ) {
         return storageDiscardDAO.create(UUID.randomUUID(), product, packageSize, discardAmount, discardDate, creatorId, creatorId);
     }
 
@@ -61,10 +68,18 @@ public class StorageDiscardController {
      * @param fromTime from time
      * @param toTime to time
      * @param productId product id
+     * @param facility facility
      * @return list of all fitting storage discard entities
      */
-    public List<StorageDiscard> listStorageDiscards(Integer firstResult, Integer maxResults, OffsetDateTime fromTime, OffsetDateTime toTime, Product productId) {
-        return storageDiscardDAO.list(firstResult, maxResults, fromTime, toTime, productId);
+    public List<StorageDiscard> listStorageDiscards(
+        Integer firstResult,
+        Integer maxResults,
+        OffsetDateTime fromTime,
+        OffsetDateTime toTime,
+        Product productId,
+        Facility facility
+    ) {
+        return storageDiscardDAO.list(firstResult, maxResults, fromTime, toTime, productId, facility);
     }
 
     /**
