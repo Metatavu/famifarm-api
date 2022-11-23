@@ -30,10 +30,6 @@ public class FacilityInterceptor implements ContainerRequestFilter {
         List<String> facilityParams = pathParameters.get(FACILITY);
         CollectionUtils.filter(facilityParams, PredicateUtils.notNullPredicate());
 
-        if (facilityParams == null && Arrays.asList(WHITELISTED_PATHS).contains(path)) {
-            return;
-        }
-
         if (facilityParams == null) {
             return;
         }
