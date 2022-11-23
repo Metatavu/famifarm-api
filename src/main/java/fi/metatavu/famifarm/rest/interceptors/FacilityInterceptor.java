@@ -1,6 +1,8 @@
 package fi.metatavu.famifarm.rest.interceptors;
 
 import fi.metatavu.famifarm.rest.model.ErrorResponse;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.PredicateUtils;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -8,8 +10,7 @@ import javax.ws.rs.core.*;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * JaxRs Interceptor for restricting access to non-authorized facility
@@ -26,19 +27,24 @@ public class FacilityInterceptor implements ContainerRequestFilter {
         UriInfo uriInfo = requestContext.getUriInfo();
         String path = uriInfo.getPath();
         MultivaluedMap<String, String> pathParameters  = uriInfo.getPathParameters();
-        Optional<String> facility = pathParameters.get(FACILITY).stream().findFirst();
+        List<String> facilityParams = pathParameters.get(FACILITY);
+        CollectionUtils.filter(facilityParams, PredicateUtils.notNullPredicate());
+
+        if (facilityParams == null) {
+            return;
+        }
+
+        Optional<String> facility = facilityParams.stream().findFirst();
         SecurityContext securityContext = requestContext.getSecurityContext();
         Principal userPrincipal = securityContext.getUserPrincipal();
 
-        if (facility.isPresent()) {
-            if (!Arrays.asList(WHITELISTED_PATHS).contains(path) && userPrincipal == null) {
-                requestContext.abortWith(createErrorResponse("Unauthorized", Response.Status.UNAUTHORIZED));
-                return;
-            }
+        if (!Arrays.asList(WHITELISTED_PATHS).contains(path) && userPrincipal == null) {
+            requestContext.abortWith(createErrorResponse("Unauthorized", Response.Status.UNAUTHORIZED));
+            return;
+        }
 
-            if (!securityContext.isUserInRole(facility.get().toLowerCase())) {
-                requestContext.abortWith(createErrorResponse(String.format("Logged user doesn't have access to facility %s", facility), Response.Status.FORBIDDEN));
-            }
+        if (!securityContext.isUserInRole(facility.get().toLowerCase())) {
+            requestContext.abortWith(createErrorResponse(String.format("Logged user doesn't have access to facility %s", facility), Response.Status.FORBIDDEN));
         }
     }
 
