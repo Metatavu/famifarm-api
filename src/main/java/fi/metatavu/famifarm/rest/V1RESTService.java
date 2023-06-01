@@ -241,7 +241,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       packageSize = packageSizeController.findPackageSize(packageSizeId);
     }
 
-    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), product, packageSize, body.getPackedCount(), body.getState(), body.getTime(), campaign, packingType)));
+    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), product, packageSize, body.getPackedCount(), body.getState(), body.getTime(), campaign, body.getRemovedFromStorage(), packingType)));
   }
 
   @Override
@@ -347,7 +347,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     if (packageSizeId != null) {
       packageSize = packageSizeController.findPackageSize(packageSizeId);
     }
-    return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), product, body.getTime(), campaign, packingType, getLoggerUserId())));
+    return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), product, body.getTime(), campaign, packingType, body.getRemovedFromStorage(), getLoggerUserId())));
   }
   
   @Override

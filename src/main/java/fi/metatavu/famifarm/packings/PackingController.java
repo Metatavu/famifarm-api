@@ -41,8 +41,8 @@ public class PackingController {
    * @param type packing type
    * @return packing
    */
-  public Packing create(UUID creatorId, Product product, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, PackingType type) {
-    return packingDAO.create(creatorId, product, UUID.randomUUID(), packageSize, packedCount, packingState, time, campaign, type);
+  public Packing create(UUID creatorId, Product product, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, OffsetDateTime removedFromStorage, PackingType type) {
+    return packingDAO.create(creatorId, product, UUID.randomUUID(), packageSize, packedCount, packingState, time, campaign, removedFromStorage, type);
   }
   
   /**
@@ -81,14 +81,20 @@ public class PackingController {
    * @param type type
    * @return updated packing
    */
-  public Packing updatePacking(Packing packing, PackageSize packageSize, PackingState packingState, Integer packedCount, Product product, OffsetDateTime time, Campaign campaign, PackingType type, UUID modifier) {
+  public Packing updatePacking(Packing packing, PackageSize packageSize, PackingState packingState, Integer packedCount, Product product, OffsetDateTime time, Campaign campaign, PackingType type, OffsetDateTime removedFromStorage, UUID modifier) {
     packingDAO.updatePackageSize(packing, packageSize, modifier);
     packingDAO.updatePackedCount(packing, packedCount, modifier);
-    packingDAO.updatePackingState(packing, packingState, modifier);
     packingDAO.updateProduct(packing, product, modifier);
     packingDAO.updateTime(packing, time, modifier);
     packingDAO.updateCampaign(packing, campaign, modifier);
     packingDAO.updateType(packing, type, modifier);
+
+    OffsetDateTime removedFromStorageNewTime = removedFromStorage;
+    if (packing.getPackingState() != PackingState.REMOVED && packingState == PackingState.REMOVED) {
+      removedFromStorageNewTime = OffsetDateTime.now();
+    }
+    packingDAO.updateRemovedFromStorage(packing, removedFromStorageNewTime, modifier);
+    packingDAO.updatePackingState(packing, packingState, modifier);
     return packing;
   }
   

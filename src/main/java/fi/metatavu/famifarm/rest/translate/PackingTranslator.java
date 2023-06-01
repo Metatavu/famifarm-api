@@ -42,6 +42,7 @@ public class PackingTranslator {
       result.setCampaignId(packing.getCampaign().getId());
     }
 
+    result.setRemovedFromStorage(packing.getRemovedFromStorage());
     result.setState(packing.getPackingState());
     result.setTime(packing.getTime());
     result.setType(packing.getType());

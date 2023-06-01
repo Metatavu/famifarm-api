@@ -38,7 +38,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param time time of packing
      * @return packing
      */
-    public Packing create(UUID creatorId, Product product, UUID id, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, PackingType type) {
+    public Packing create(UUID creatorId, Product product, UUID id, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, OffsetDateTime removedFromStorage, PackingType type) {
       Packing packing = new Packing();
       packing.setCreatorId(creatorId);
       packing.setId(id);
@@ -50,6 +50,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
       packing.setPackedCount(packedCount);
       packing.setTime(time);
       packing.setCampaign(campaign);
+      packing.setRemovedFromStorage(removedFromStorage);
       packing.setType(type);
       return persist(packing);
     }
@@ -149,6 +150,20 @@ public class PackingDAO extends AbstractDAO<Packing>{
     public Packing updateProduct(Packing packing, Product product, UUID lastModifierId) {
       packing.setLastModifierId(lastModifierId);
       packing.setProduct(product);
+      return persist(packing);
+    }
+
+  /**
+   * Updates packing removed from storage time
+   *
+   * @param packing packing to be updated
+   * @param now new removed from storage time
+   * @param modifier modifier id
+   * @return updated packing
+   */
+    public Packing updateRemovedFromStorage(Packing packing, OffsetDateTime now, UUID modifier) {
+      packing.setLastModifierId(modifier);
+      packing.setRemovedFromStorage(now);
       return persist(packing);
     }
     
