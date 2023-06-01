@@ -992,4 +992,9 @@
     </createTable>
   </changeSet>
 
+  <changeSet id="packing_removed_from_storage" author="katja danilova">
+    <addColumn tableName="packing">
+      <column name="removedfromstorage" type="datetime(6)"/>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

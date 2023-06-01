@@ -1,8 +1,5 @@
 package fi.metatavu.famifarm.test.functional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +14,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 @QuarkusTestResource(MysqlResource.class)
@@ -93,11 +92,26 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       PackageSize size = builder.admin().packageSizes().create(testEntry, 100);
       Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false);
       Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size);
-      
-      packing.setState(PackingState.REMOVED);
+
+      packing.setState(PackingState.IN_STORE);
       assertNotNull(builder.admin().packings().update(packing));
       Packing foundPacking = builder.admin().packings().find(packing.getId());
       builder.admin().packings().assertPackingsEqual(packing, foundPacking);
+      assertNull(foundPacking.getRemovedFromStorage());
+
+      // Test that removed from storage field is filled when packing is removed
+      packing.setState(PackingState.REMOVED);
+      assertNotNull(builder.admin().packings().update(packing));
+      foundPacking = builder.admin().packings().find(packing.getId());
+      assertNotNull(foundPacking.getRemovedFromStorage());
+
+      // Test that remove from storage field is updatable manually
+      OffsetDateTime newRemovedFromStorage = OffsetDateTime.now().minusDays(1);
+      packing.setRemovedFromStorage(newRemovedFromStorage);
+      assertNotNull(builder.admin().packings().update(packing));
+      foundPacking = builder.admin().packings().find(packing.getId());
+      assertNotNull(foundPacking.getRemovedFromStorage());
+      assertEquals(newRemovedFromStorage.toEpochSecond(), foundPacking.getRemovedFromStorage().toEpochSecond());
     }
   }
   

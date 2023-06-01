@@ -51,7 +51,10 @@ public class Packing {
   
   @Column(nullable = false)
   private OffsetDateTime time;
-  
+
+  @Column
+  private OffsetDateTime removedFromStorage;
+
   @Column(nullable = false)
   @NotNull
   private UUID creatorId;
@@ -160,6 +163,14 @@ public class Packing {
 
   public void setType(PackingType type) {
     this.type = type;
+  }
+
+  public OffsetDateTime getRemovedFromStorage() {
+    return removedFromStorage;
+  }
+
+  public void setRemovedFromStorage(OffsetDateTime removedFromStorage) {
+    this.removedFromStorage = removedFromStorage;
   }
 
   @PrePersist
