@@ -1057,5 +1057,12 @@
     </addColumn>
     <sql>UPDATE wastagereason SET facility = 'JOROINEN'</sql>
   </changeSet>
+  <changeSet id="add-is-end-product-to-product" author="Josh Dallos">
+    <addColumn tableName="product">
+      <column name="isendproduct" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 
 </databaseChangeLog>
