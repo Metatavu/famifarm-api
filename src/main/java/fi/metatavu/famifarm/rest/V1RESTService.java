@@ -575,6 +575,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       packageSizes,
       body.getIsSubcontractorProduct(),
       body.getActive(),
+      body.getIsEndProduct(),
       facility,
       getLoggerUserId()
     );
@@ -1082,8 +1083,8 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
-  public Response listProducts(Facility facility, Integer firstResult, Integer maxResults, Boolean includeInActiveProducts, Boolean includeSubcontractorProducts) {
-    List<Product> result = productController.listProducts(facility, firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts).stream()
+  public Response listProducts(Facility facility, Integer firstResult, Integer maxResults, Boolean includeInActiveProducts, Boolean includeSubcontractorProducts, Boolean filterByEndProduct) {
+    List<Product> result = productController.listProducts(facility, firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts, filterByEndProduct).stream()
         .map(productsTranslator::translateProduct).collect(Collectors.toList());
 
     return createOk(result);
@@ -1315,6 +1316,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       packageSizeList,
       body.getIsSubcontractorProduct(),
       body.getActive(),
+      body.getIsEndProduct(),
       getLoggerUserId()
     );
     List<ProductAllowedHarvestType> allowedHarvestTypes = productController.listAllowedHarvestTypes(productEntity);

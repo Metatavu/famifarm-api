@@ -35,6 +35,9 @@ public class Product {
   private boolean isActive;
 
   @Column(nullable = false)
+  private boolean isEndProduct;
+
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   @NotNull
   private Facility facility;
@@ -88,6 +91,12 @@ public class Product {
   public boolean isActive() {
     return isActive;
   }
+
+  public void setIsEndProduct(boolean isEndProduct) {
+    this.isEndProduct = isEndProduct;
+  }
+
+  public boolean isEndProduct() { return isEndProduct; }
 
   public void setCreatorId(UUID creatorId) {
     this.creatorId = creatorId;
