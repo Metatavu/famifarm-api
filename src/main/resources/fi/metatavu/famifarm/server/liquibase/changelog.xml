@@ -1064,5 +1064,12 @@
       </column>
     </addColumn>
   </changeSet>
+  <changeSet id="add-is-raw-material-to-product" author="Josh Dallos">
+    <addColumn tableName="product">
+      <column name="israwmaterial" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 
 </databaseChangeLog>

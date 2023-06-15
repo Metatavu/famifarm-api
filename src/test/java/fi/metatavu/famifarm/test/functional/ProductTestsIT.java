@@ -121,7 +121,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       builder.admin().products().create(name, packageSizes, true, Facility.JUVA);
       builder.admin().products().assertCountWithSubcontractors(1, Facility.JUVA);
 
-      builder.admin().products().create(name, packageSizes, null, false, false, Facility.JUVA, false);
+      builder.admin().products().create(name, packageSizes, null, false, false, Facility.JUVA, false, false);
       builder.admin().products().assertCountWithInactive(1, Facility.JUVA);
       builder.admin().products().assertCountWithInactiveAndSubcontractors(2, Facility.JUVA);
       builder.admin().products().assertCountWithInactiveAndSubcontractors(2, Facility.JOROINEN);
@@ -129,7 +129,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
   }
 
   @Test
-  public void testIsEndProducts() throws Exception {
+  public void testProductFilters() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       PackageSize createdPackageSize8 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize8"), 8, Facility.JOROINEN);
       PackageSize createdPackageSize16 = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize16"), 16, Facility.JOROINEN);
@@ -138,13 +138,16 @@ public class ProductTestsIT extends AbstractFunctionalTest {
 
       List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
 
-      Product product1 = builder.admin().products().create(name, packageSizes, null, false, true, Facility.JOROINEN, true);
-      Product product2 = builder.admin().products().create(name, packageSizes, null, false, true, Facility.JOROINEN, false);
+      Product product1 = builder.admin().products().create(name, packageSizes, null, false, true, Facility.JOROINEN, true, false);
+      Product product2 = builder.admin().products().create(name, packageSizes, null, false, true, Facility.JOROINEN, false, false);
+      Product product3 = builder.admin().products().create(name, packageSizes, null, false, true, Facility.JOROINEN, false, true);
 
-      builder.admin().products().assertCount(2, Facility.JOROINEN);
+      builder.admin().products().assertCount(3, Facility.JOROINEN);
       builder.admin().products().assertCountWithEndProduct(1, Facility.JOROINEN);
+      builder.admin().products().assertCountWithRawMaterial(1, Facility.JOROINEN);
       assertEquals(true, product1.getIsEndProduct());
       assertEquals(false, product2.getIsEndProduct());
+      assertEquals(true, product3.getIsRawMaterial());
     }
   }
 
@@ -181,6 +184,7 @@ public class ProductTestsIT extends AbstractFunctionalTest {
       updateProduct.setAllowedHarvestTypes(Lists.newArrayList(HarvestEventType.BOXING, HarvestEventType.CUTTING));
       updateProduct.setDefaultPackageSizeIds(Lists.newArrayList());
       updateProduct.setIsEndProduct(false);
+      updateProduct.setIsRawMaterial(false);
 
       Product updatedProduct = builder.admin().products().updateProduct(updateProduct, Facility.JOROINEN);
       assertEquals(updateProduct.getId(), builder.admin().products().findProduct(createdProduct.getId()).getId());

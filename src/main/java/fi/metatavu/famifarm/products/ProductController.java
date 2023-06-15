@@ -41,12 +41,13 @@ public class ProductController {
    * @param packageSizes package sizes
    * @param isSubcontractorProduct is subcontractor product
    * @param isEndProduct is end product
+   * @param isRawMaterial is raw material
    * @param facility facility
    * @param creatorId creatorId
    * @return created product
    */
-  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, Facility facility, UUID creatorId) {
-    Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, isEndProduct, facility, creatorId, creatorId);
+  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, Facility facility, UUID creatorId) {
+    Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, isEndProduct, isRawMaterial, facility, creatorId, creatorId);
     packageSizes.forEach(packageSize -> productPackageSizeDAO.create(UUID.randomUUID(), product, packageSize));
     return product;
   }
@@ -68,11 +69,12 @@ public class ProductController {
    * @param firstResult                  first result
    * @param maxResults                   max results
    * @param includeSubcontractorProducts include subcontractor products
-   * @param filterIsEndProduct include end products
+   * @param filterIsEndProduct filter by end products
+   * @param filterIsRawMaterial filter by raw materials
    * @return list of products
    */
-  public List<Product> listProducts(Facility facility, Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts, Boolean filterIsEndProduct) {
-    return productDAO.list(facility, firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts, filterIsEndProduct);
+  public List<Product> listProducts(Facility facility, Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts, Boolean filterIsEndProduct, Boolean filterIsRawMaterial) {
+    return productDAO.list(facility, firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts, filterIsEndProduct, filterIsRawMaterial);
   }
 
   /**
@@ -83,10 +85,11 @@ public class ProductController {
    * @param packageSizes new default package sizes
    * @param isSubcontractorProduct is subcontractor product
    * @param isEndProduct is end product
+   * @param isRawMaterial is raw material
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, Boolean isEndProduct, UUID lastModifierId) {
+  public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, Boolean isEndProduct, Boolean isRawMaterial, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
 
     if (packageSizes != null) {
@@ -103,6 +106,7 @@ public class ProductController {
     productDAO.updateIsSubcontractorProduct(product, isSubcontractorProduct, lastModifierId);
     productDAO.updateIsActive(product, isActive, lastModifierId);
     productDAO.updateIsEndProduct(product, isEndProduct, lastModifierId);
+    productDAO.updateIsRawMaterial(product, isRawMaterial, lastModifierId);
     return product;
   }
 

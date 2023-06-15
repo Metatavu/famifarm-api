@@ -38,6 +38,9 @@ public class Product {
   private boolean isEndProduct;
 
   @Column(nullable = false)
+  private boolean isRawMaterial;
+
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   @NotNull
   private Facility facility;
@@ -97,6 +100,12 @@ public class Product {
   }
 
   public boolean isEndProduct() { return isEndProduct; }
+
+  public void setIsRawMaterial(boolean isRawMaterial) {
+     this.isRawMaterial = isRawMaterial;
+  }
+
+  public boolean isRawMaterial() { return isRawMaterial; }
 
   public void setCreatorId(UUID creatorId) {
     this.creatorId = creatorId;

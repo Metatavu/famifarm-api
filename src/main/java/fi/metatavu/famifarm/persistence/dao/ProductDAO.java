@@ -30,19 +30,21 @@ public class ProductDAO extends AbstractDAO<Product> {
    * @param name name
    * @param isSubcontractorProduct is subcontractor product
    * @param isEndProduct is end product
+   * @param isRawMaterial is raw material
    * @param facility facility
    * @param creatorId creator
    * @param lastModifierId modifier
    *
    * @return created seed
    */
-  public Product create(UUID id, LocalizedEntry name, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, Facility facility, UUID creatorId, UUID lastModifierId) {
+  public Product create(UUID id, LocalizedEntry name, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, Facility facility, UUID creatorId, UUID lastModifierId) {
     Product product = new Product();
     product.setId(id);
     product.setName(name);
     product.setIsSubcontractorProduct(isSubcontractorProduct);
     product.setIsActive(active);
     product.setIsEndProduct(isEndProduct);
+    product.setIsRawMaterial(isRawMaterial);
     product.setFacility(facility);
     product.setCreatorId(creatorId);
     product.setLastModifierId(lastModifierId);
@@ -105,7 +107,21 @@ public class ProductDAO extends AbstractDAO<Product> {
     return persist(product);
   }
 
-  public List<Product> list(Facility facility, Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts, Boolean filterEndProducts) {
+  /**
+   * Updates isRawMaterial
+   *
+   * @param product a product to update
+   * @param isRawMaterial a new value
+   * @param lastModifierId an id of a user who is modifying this product
+   * @return updated product
+   */
+  public Product updateIsRawMaterial(Product product, boolean isRawMaterial, UUID lastModifierId) {
+    product.setLastModifierId(lastModifierId);
+    product.setIsRawMaterial(isRawMaterial);
+    return persist(product);
+  }
+
+  public List<Product> list(Facility facility, Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts, Boolean filterEndProducts, Boolean filterByRawMaterials) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -126,6 +142,10 @@ public class ProductDAO extends AbstractDAO<Product> {
 
     if (filterEndProducts != null && filterEndProducts) {
       restrictions.add(criteriaBuilder.equal(root.get(Product_.isEndProduct), true));
+    }
+
+    if (filterByRawMaterials != null && filterByRawMaterials) {
+      restrictions.add(criteriaBuilder.equal(root.get(Product_.isRawMaterial), true));
     }
 
     criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
