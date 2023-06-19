@@ -36,12 +36,13 @@ public class HarvestEventController {
    * @param additionalInformation additional information
    * @param gutterCount gutterCount
    * @param gutterHoleCount gutter hole count
+   * @param numberOfBaskets number of baskets
    * @param creatorId creator id
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent createHarvestEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, UUID creatorId) {
-    return harvestEventDAO.create(UUID.randomUUID(), product, startTime, endTime, harvestType, productionLine, sowingDate, 0, additionalInformation, gutterCount, gutterHoleCount, creatorId, creatorId);
+  public HarvestEvent createHarvestEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, Integer numberOfBaskets, UUID creatorId) {
+    return harvestEventDAO.create(UUID.randomUUID(), product, startTime, endTime, harvestType, productionLine, sowingDate, 0, additionalInformation, gutterCount, gutterHoleCount, numberOfBaskets, creatorId, creatorId);
   }
   
   /**
@@ -80,7 +81,7 @@ public class HarvestEventController {
    */
   @SuppressWarnings ("squid:S00107")
 
-  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, String additionalInformation, UUID modifier) {
+  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, Integer numberOfBaskets, String additionalInformation, UUID modifier) {
 
     harvestEventDAO.updateProduct(harvestEvent, product, modifier);
     harvestEventDAO.updateStartTime(harvestEvent, startTime, modifier);
@@ -91,6 +92,7 @@ public class HarvestEventController {
     harvestEventDAO.updateGutterCount(harvestEvent, gutterCount, modifier);
     harvestEventDAO.updateSowingDate(harvestEvent, sowingDate, modifier);
     harvestEventDAO.updateGutterHoleCount(harvestEvent, gutterHoleCount, modifier);
+    harvestEventDAO.updateNumberOfBaskets(harvestEvent, numberOfBaskets, modifier);
 
     return harvestEvent;
   }

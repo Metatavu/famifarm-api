@@ -254,8 +254,9 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount) throws IOException {
     Integer gutterHoleCount = 50;
-    
-    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount);
+    Integer numberOfBaskets = 0;
+
+    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount, numberOfBaskets);
   }
 
   /**
@@ -267,14 +268,14 @@ public abstract class AbstractFunctionalTest {
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount) throws IOException {
+  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount, Integer numberOfBaskets) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     OffsetDateTime sowingTime = OffsetDateTime.of(2020, 1, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8, Facility.JOROINEN);
     
-    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, startTime, endTime, productionLine, sowingTime, harvestType);
+    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, numberOfBaskets, startTime, endTime, productionLine, sowingTime, harvestType);
   }
 
   /**

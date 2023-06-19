@@ -112,8 +112,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param type type
    * @return created event
    */
-  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type) {
-    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, type);
+  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, Integer numberOfBaskets, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type) {
+    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, numberOfBaskets, type);
 
     Event event = new Event();
     event.setProductId(product != null ? product.getId() : null);
@@ -369,9 +369,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Creates event data object
    * 
    * @param amount amount
-   * @param gutterNumber gutter number
    * @param productionLine production line
-   * @param seedBatch seed batch
    * @return
    */
   private SowingEventData createSowingEventData(Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches) {
@@ -384,7 +382,6 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
 
   /**
    * Creates table spread event data object
-   * @param location location
    * @param trayCount tray count
    * @return
    */
@@ -417,14 +414,16 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Creates event data object
    * @param productionLine production line
    * @param gutterCount gutterCount
-   * @param type 
+   * @param numberOfBaskets numberOfBaskets
+   * @param type
    * @return harvest event data
    */
-  private HarvestEventData createHarvestEventData(ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, HarvestEventType type) {
+  private HarvestEventData createHarvestEventData(ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, Integer numberOfBaskets, HarvestEventType type) {
     HarvestEventData data = new HarvestEventData();
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setGutterCount(gutterCount);
     data.setGutterHoleCount(gutterHoleCount);
+    data.setNumberOfBaskets(numberOfBaskets);
     data.setSowingDate(sowingDate);
     data.setType(type);
     return data;
