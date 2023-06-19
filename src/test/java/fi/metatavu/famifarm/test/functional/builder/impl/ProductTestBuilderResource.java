@@ -46,7 +46,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @return created product
    */
   public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Facility facility) {
-    return create(name, packageSizes, null, isSubcontractorProduct, true, facility, false);
+    return create(name, packageSizes, null, isSubcontractorProduct, true, facility, false, false);
   }
 
 //  /**
@@ -72,7 +72,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @return created product
    */
   public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct) {
-    return create(name, packageSizes, allowedHarvestTypes, isSubcontractorProduct, true, Facility.JOROINEN, false);
+    return create(name, packageSizes, allowedHarvestTypes, isSubcontractorProduct, true, Facility.JOROINEN, false, false);
   }
 
   /**
@@ -82,9 +82,13 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @param packageSizes package size list
    * @param allowedHarvestTypes allowed harvest type list
    * @param isSubcontractorProduct is subcontractor product
+   * @param isActive is active product
+   * @param facility facility
+   * @param isEndProduct is end product
+   * @param isRawMaterial is raw material
    * @return created product
    */
-  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct,  boolean isActive, Facility facility, boolean isEndProduct) {
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct,  boolean isActive, Facility facility, boolean isEndProduct, boolean isRawMaterial) {
     Product product = new Product();
     product.setName(name);
     if (packageSizes != null) {
@@ -97,6 +101,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
     product.setIsSubcontractorProduct(isSubcontractorProduct);
     product.setIsEndProduct(isEndProduct);
     product.setActive(isActive);
+    product.setIsRawMaterial(isRawMaterial);
     Product created = getApi().createProduct(product, facility);
     productFacilityMap.put(created.getId(), facility);
     return addClosable(created);
@@ -173,7 +178,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
   }
 
   /**
-   * Asserts product count within the system (with isEndProduct included)
+   * Asserts product count with isEndProduct
    *
    * @param expected expected count
    * @param facility facility
@@ -181,6 +186,18 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
   public void assertCountWithEndProduct(int expected, Facility facility) {
     HashMap<String, Object> queryParameters = new HashMap<>();
     queryParameters.put("filterByEndProducts", true);
+    assertEquals(expected, getApi().listProducts(facility, queryParameters).size());
+  }
+
+  /**
+   * Asserts product count with isRawMaterial
+   *
+   * @param expected expected count
+   * @param facility facility
+   */
+  public void assertCountWithRawMaterial(int expected, Facility facility) {
+    HashMap<String, Object> queryParameters = new HashMap<>();
+    queryParameters.put("filterByRawMaterials", true);
     assertEquals(expected, getApi().listProducts(facility, queryParameters).size());
   }
 
