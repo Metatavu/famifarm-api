@@ -47,6 +47,7 @@ public class ProductsTranslator extends AbstractTranslator {
     result.setActive(product.isActive());
     result.setIsEndProduct(product.isEndProduct());
     result.setIsRawMaterial(product.isRawMaterial());
+    result.setSalesWeight(product.getSalesWeight());
 
     return result;
   }

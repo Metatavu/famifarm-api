@@ -577,6 +577,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       body.getActive(),
       body.getIsEndProduct(),
       body.getIsRawMaterial(),
+      body.getSalesWeight(),
       facility,
       getLoggerUserId()
     );
@@ -1319,6 +1320,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
       body.getActive(),
       body.getIsEndProduct(),
       body.getIsRawMaterial(),
+      body.getSalesWeight(),
       getLoggerUserId()
     );
     List<ProductAllowedHarvestType> allowedHarvestTypes = productController.listAllowedHarvestTypes(productEntity);
