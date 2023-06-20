@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import org.junit.jupiter.api.Test;
@@ -300,6 +302,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateData.setType(HarvestEventType.CUTTING);
       updateData.setGutterCount(100);
       updateData.setGutterHoleCount(150);
+      updateData.setNumberOfBaskets(100);
       updateData.setSowingDate(updateSowingTime);
 
       Event updateEvent = new Event(); 
@@ -311,8 +314,14 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateEvent.setType(createdEvent.getType());
       updateEvent.setUserId(createdEvent.getUserId());
       
-      builder.admin().events().updateEvent(updateEvent);
+      Event harvest1 = builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
+
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.registerModule(new JavaTimeModule());
+      HarvestEventData harvestEventData = objectMapper.convertValue(harvest1.getData(), HarvestEventData.class);
+      int numberOfBaskets = harvestEventData.getNumberOfBaskets();
+      assertEquals(100, numberOfBaskets);
     }
   }
 

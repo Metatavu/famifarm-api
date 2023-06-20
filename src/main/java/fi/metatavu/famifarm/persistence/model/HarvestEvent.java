@@ -41,6 +41,10 @@ public class HarvestEvent extends Event {
   @Column (nullable = false)
   private Integer gutterHoleCount;
 
+  @NotNull
+  @Column (nullable = false)
+  private Integer numberOfBaskets;
+
   @Column(nullable = false)
   private OffsetDateTime sowingDate;
 
@@ -66,6 +70,14 @@ public class HarvestEvent extends Event {
 
   public void setGutterCount(Integer gutterCount) {
     this.gutterCount = gutterCount;
+  }
+
+  public Integer getNumberOfBaskets() {
+    return numberOfBaskets;
+  }
+
+  public void setNumberOfBaskets(Integer numberOfBaskets) {
+    this.numberOfBaskets = numberOfBaskets;
   }
 
   public OffsetDateTime getSowingDate() {

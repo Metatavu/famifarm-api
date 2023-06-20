@@ -1071,6 +1071,13 @@
       </column>
     </addColumn>
   </changeSet>
+  <changeSet id="add-number-of-baskets-to-harvest-event" author="Josh Dallos">
+    <addColumn tableName="harvestevent">
+      <column name="numberofbaskets" type="integer">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
   <changeSet id="add-sales-weight-to-product" author="Josh Dallos">
     <addColumn tableName="product">
       <column name="salesWeight" type="integer">
