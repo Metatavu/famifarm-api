@@ -1080,7 +1080,7 @@
   </changeSet>
   <changeSet id="add-sales-weight-to-product" author="Josh Dallos">
     <addColumn tableName="product">
-      <column name="salesWeight" type="integer">
+      <column name="salesWeight" type="double">
         <constraints nullable="false"/>
       </column>
     </addColumn>

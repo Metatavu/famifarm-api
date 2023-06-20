@@ -47,7 +47,7 @@ public class ProductController {
    * @param creatorId creatorId
    * @return created product
    */
-  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, Integer salesWeight, Facility facility, UUID creatorId) {
+  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, Double salesWeight, Facility facility, UUID creatorId) {
     Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, isEndProduct, isRawMaterial, salesWeight, facility, creatorId, creatorId);
     packageSizes.forEach(packageSize -> productPackageSizeDAO.create(UUID.randomUUID(), product, packageSize));
     return product;
@@ -91,7 +91,7 @@ public class ProductController {
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, Boolean isEndProduct, Boolean isRawMaterial, Integer salesWeight, UUID lastModifierId) {
+  public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, Boolean isEndProduct, Boolean isRawMaterial, Double salesWeight, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
 
     if (packageSizes != null) {

@@ -41,7 +41,7 @@ public class Product {
   private boolean isRawMaterial;
 
   @Column(nullable = false)
-  private Integer salesWeight;
+  private Double salesWeight;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -110,11 +110,11 @@ public class Product {
 
   public boolean isRawMaterial() { return isRawMaterial; }
 
-  public void setSalesWeight(Integer salesWeight) {
+  public void setSalesWeight(Double salesWeight) {
     this.salesWeight = salesWeight;
   }
 
-  public int getSalesWeight () {
+  public Double getSalesWeight () {
     return salesWeight;
   }
 

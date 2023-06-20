@@ -46,7 +46,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @return created product
    */
   public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Facility facility) {
-    return create(name, packageSizes, null, isSubcontractorProduct, true, facility, false, false, 0);
+    return create(name, packageSizes, null, isSubcontractorProduct, true, facility, false, false, 0.0);
   }
 
 //  /**
@@ -72,7 +72,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @return created product
    */
   public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct) {
-    return create(name, packageSizes, allowedHarvestTypes, isSubcontractorProduct, true, Facility.JOROINEN, false, false, 0);
+    return create(name, packageSizes, allowedHarvestTypes, isSubcontractorProduct, true, Facility.JOROINEN, false, false, 0.0);
   }
 
   /**
@@ -89,7 +89,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @param salesWeight is sales weight
    * @return created product
    */
-  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct,  boolean isActive, Facility facility, boolean isEndProduct, boolean isRawMaterial, Integer salesWeight) {
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct,  boolean isActive, Facility facility, boolean isEndProduct, boolean isRawMaterial, Double salesWeight) {
     Product product = new Product();
     product.setName(name);
     if (packageSizes != null) {

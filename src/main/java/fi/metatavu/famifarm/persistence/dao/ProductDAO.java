@@ -38,7 +38,7 @@ public class ProductDAO extends AbstractDAO<Product> {
    *
    * @return created seed
    */
-  public Product create(UUID id, LocalizedEntry name, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, int salesWeight, Facility facility, UUID creatorId, UUID lastModifierId) {
+  public Product create(UUID id, LocalizedEntry name, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, double salesWeight, Facility facility, UUID creatorId, UUID lastModifierId) {
     Product product = new Product();
     product.setId(id);
     product.setName(name);
@@ -131,7 +131,7 @@ public class ProductDAO extends AbstractDAO<Product> {
    * @param lastModifierId an id of a user who is modifying this product
    * @return updated product
    */
-  public Product updateSalesWeight(Product product, Integer salesWeight, UUID lastModifierId) {
+  public Product updateSalesWeight(Product product, Double salesWeight, UUID lastModifierId) {
     product.setLastModifierId(lastModifierId);
     product.setSalesWeight(salesWeight);
     return persist(product);
