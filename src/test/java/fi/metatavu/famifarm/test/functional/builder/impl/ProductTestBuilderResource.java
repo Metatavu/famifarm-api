@@ -46,7 +46,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @return created product
    */
   public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Facility facility) {
-    return create(name, packageSizes, null, isSubcontractorProduct, true, facility, false, false);
+    return create(name, packageSizes, null, isSubcontractorProduct, true, facility, false, false, 0.0);
   }
 
 //  /**
@@ -72,7 +72,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @return created product
    */
   public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct) {
-    return create(name, packageSizes, allowedHarvestTypes, isSubcontractorProduct, true, Facility.JOROINEN, false, false);
+    return create(name, packageSizes, allowedHarvestTypes, isSubcontractorProduct, true, Facility.JOROINEN, false, false, 0.0);
   }
 
   /**
@@ -86,9 +86,10 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @param facility facility
    * @param isEndProduct is end product
    * @param isRawMaterial is raw material
+   * @param salesWeight is sales weight
    * @return created product
    */
-  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct,  boolean isActive, Facility facility, boolean isEndProduct, boolean isRawMaterial) {
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct,  boolean isActive, Facility facility, boolean isEndProduct, boolean isRawMaterial, Double salesWeight) {
     Product product = new Product();
     product.setName(name);
     if (packageSizes != null) {
@@ -102,6 +103,8 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
     product.setIsEndProduct(isEndProduct);
     product.setActive(isActive);
     product.setIsRawMaterial(isRawMaterial);
+    product.setSalesWeight(salesWeight);
+
     Product created = getApi().createProduct(product, facility);
     productFacilityMap.put(created.getId(), facility);
     return addClosable(created);

@@ -42,12 +42,13 @@ public class ProductController {
    * @param isSubcontractorProduct is subcontractor product
    * @param isEndProduct is end product
    * @param isRawMaterial is raw material
+   * @param salesWeight sales weight
    * @param facility facility
    * @param creatorId creatorId
    * @return created product
    */
-  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, Facility facility, UUID creatorId) {
-    Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, isEndProduct, isRawMaterial, facility, creatorId, creatorId);
+  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, Double salesWeight, Facility facility, UUID creatorId) {
+    Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, isEndProduct, isRawMaterial, salesWeight, facility, creatorId, creatorId);
     packageSizes.forEach(packageSize -> productPackageSizeDAO.create(UUID.randomUUID(), product, packageSize));
     return product;
   }
@@ -65,9 +66,9 @@ public class ProductController {
   /**
    * Lists products
    *
-   * @param facility                     facility
-   * @param firstResult                  first result
-   * @param maxResults                   max results
+   * @param facility facility
+   * @param firstResult first result
+   * @param maxResults max results
    * @param includeSubcontractorProducts include subcontractor products
    * @param filterIsEndProduct filter by end products
    * @param filterIsRawMaterial filter by raw materials
@@ -86,10 +87,11 @@ public class ProductController {
    * @param isSubcontractorProduct is subcontractor product
    * @param isEndProduct is end product
    * @param isRawMaterial is raw material
+   * @param salesWeight sales weight
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, Boolean isEndProduct, Boolean isRawMaterial, UUID lastModifierId) {
+  public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, Boolean isEndProduct, Boolean isRawMaterial, Double salesWeight, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
 
     if (packageSizes != null) {
@@ -107,6 +109,7 @@ public class ProductController {
     productDAO.updateIsActive(product, isActive, lastModifierId);
     productDAO.updateIsEndProduct(product, isEndProduct, lastModifierId);
     productDAO.updateIsRawMaterial(product, isRawMaterial, lastModifierId);
+    productDAO.updateSalesWeight(product, salesWeight, lastModifierId);
     return product;
   }
 

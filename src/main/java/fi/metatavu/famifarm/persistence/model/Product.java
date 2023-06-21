@@ -41,6 +41,9 @@ public class Product {
   private boolean isRawMaterial;
 
   @Column(nullable = false)
+  private Double salesWeight;
+
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   @NotNull
   private Facility facility;
@@ -106,6 +109,14 @@ public class Product {
   }
 
   public boolean isRawMaterial() { return isRawMaterial; }
+
+  public void setSalesWeight(Double salesWeight) {
+    this.salesWeight = salesWeight;
+  }
+
+  public Double getSalesWeight () {
+    return salesWeight;
+  }
 
   public void setCreatorId(UUID creatorId) {
     this.creatorId = creatorId;

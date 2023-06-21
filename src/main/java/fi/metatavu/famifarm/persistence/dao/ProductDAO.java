@@ -31,13 +31,14 @@ public class ProductDAO extends AbstractDAO<Product> {
    * @param isSubcontractorProduct is subcontractor product
    * @param isEndProduct is end product
    * @param isRawMaterial is raw material
+   * @param salesWeight sales weight
    * @param facility facility
    * @param creatorId creator
    * @param lastModifierId modifier
    *
    * @return created seed
    */
-  public Product create(UUID id, LocalizedEntry name, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, Facility facility, UUID creatorId, UUID lastModifierId) {
+  public Product create(UUID id, LocalizedEntry name, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, double salesWeight, Facility facility, UUID creatorId, UUID lastModifierId) {
     Product product = new Product();
     product.setId(id);
     product.setName(name);
@@ -45,6 +46,7 @@ public class ProductDAO extends AbstractDAO<Product> {
     product.setIsActive(active);
     product.setIsEndProduct(isEndProduct);
     product.setIsRawMaterial(isRawMaterial);
+    product.setSalesWeight(salesWeight);
     product.setFacility(facility);
     product.setCreatorId(creatorId);
     product.setLastModifierId(lastModifierId);
@@ -118,6 +120,20 @@ public class ProductDAO extends AbstractDAO<Product> {
   public Product updateIsRawMaterial(Product product, boolean isRawMaterial, UUID lastModifierId) {
     product.setLastModifierId(lastModifierId);
     product.setIsRawMaterial(isRawMaterial);
+    return persist(product);
+  }
+
+  /**
+   * Updates salesWeight
+   *
+   * @param product a product to update
+   * @param salesWeight a new value
+   * @param lastModifierId an id of a user who is modifying this product
+   * @return updated product
+   */
+  public Product updateSalesWeight(Product product, Double salesWeight, UUID lastModifierId) {
+    product.setLastModifierId(lastModifierId);
+    product.setSalesWeight(salesWeight);
     return persist(product);
   }
 
