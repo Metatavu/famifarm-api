@@ -14,6 +14,7 @@ import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.reporting.ReportException;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Simple report demonstrating reporting features
@@ -30,7 +31,7 @@ public class XlsxExampleReport extends AbstractXlsxReport {
   private EventController eventController;
 
   @Override
-  public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
+  public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
     Map<UUID, String> userCache = new HashMap<>();
     
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {

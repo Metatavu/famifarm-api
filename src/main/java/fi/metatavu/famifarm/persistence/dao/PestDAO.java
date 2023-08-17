@@ -1,11 +1,17 @@
 package fi.metatavu.famifarm.persistence.dao;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
-import fi.metatavu.famifarm.persistence.model.Pest;
+import fi.metatavu.famifarm.persistence.model.*;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * DAO class for pest
@@ -22,9 +28,10 @@ public class PestDAO extends AbstractDAO<Pest> {
    * @param lastModifier modifier
    * @return created pest
    */
-  public Pest create(UUID id, LocalizedEntry name, UUID creatorId, UUID lastModifierId) {
+  public Pest create(UUID id, LocalizedEntry name, Facility facility, UUID creatorId, UUID lastModifierId) {
     Pest pest = new Pest();
     pest.setName(name);
+    pest.setFacility(facility);
     pest.setId(id);
     pest.setCreatorId(creatorId);
     pest.setLastModifierId(lastModifierId);
@@ -45,4 +52,33 @@ public class PestDAO extends AbstractDAO<Pest> {
     return persist(pest);
   }
 
+  /**
+   * Lists pests by facility
+   *
+   * @param facility not null facility
+   * @param firstResult firstResult
+   * @param maxResults maxResults
+   * @return pests
+   */
+  public List<Pest> list(Facility facility, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Pest> criteria = criteriaBuilder.createQuery(Pest.class);
+    Root<Pest> root = criteria.from(Pest.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(Pest_.facility), facility));
+
+    TypedQuery<Pest> query = entityManager.createQuery(criteria);
+
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
 }

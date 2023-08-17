@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,9 +12,13 @@ import feign.FeignException;
 import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.client.api.CutPackingsApi;
 import fi.metatavu.famifarm.client.model.CutPacking;
+import fi.metatavu.famifarm.client.model.Facility;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<CutPacking, CutPackingsApi> {
+
+    private final HashMap<UUID, Facility> cutPackingFacilityMap = new HashMap<>();
+
     /**
      * Constructor
      *
@@ -35,7 +40,7 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
      * @param contactInformation contact information
      * @param gutterCount gutter count
      * @param gutterHoleCount gutter hole count
-     *
+     * @param facility facility
      * @return created cut packing
      */
     public CutPacking create(
@@ -48,7 +53,8 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
             String contactInformation,
             String storageCondition,
             int gutterCount,
-            int gutterHoleCount
+            int gutterHoleCount,
+            Facility facility
     ) {
         CutPacking cutPacking = new CutPacking();
         cutPacking.setContactInformation(contactInformation);
@@ -61,7 +67,8 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
         cutPacking.setGutterCount(gutterCount);
         cutPacking.setGutterHoleCount(gutterHoleCount);
         cutPacking.setStorageCondition(storageCondition);
-        CutPacking created = getApi().createCutPacking(cutPacking);
+        CutPacking created = getApi().createCutPacking(cutPacking, facility);
+        cutPackingFacilityMap.put(created.getId(), facility);
         return addClosable(created);
     }
 
@@ -70,10 +77,11 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
      *
      * @param cutPacking cut packing to test
      * @param expectedStatus expected HTTP status code after failure
+     * @param facility facility
      */
-    public void assertCreateFailStatus(CutPacking cutPacking, int expectedStatus) {
+    public void assertCreateFailStatus(CutPacking cutPacking, int expectedStatus, Facility facility) {
         try {
-            getApi().createCutPacking(cutPacking);
+            getApi().createCutPacking(cutPacking, facility);
             fail("Expected to fail with status" + expectedStatus);
         } catch (FeignException exception) {
             assertEquals(expectedStatus, exception.status());
@@ -84,11 +92,11 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
      * Sends a request to the API to update a cut packing
      *
      * @param cutPacking a cut packing to update
-     *
+     * @param facility facility
      * @return updated cut packing
      */
-    public CutPacking update(CutPacking cutPacking) {
-        return getApi().updateCutPacking(cutPacking, cutPacking.getId());
+    public CutPacking update(CutPacking cutPacking, Facility facility) {
+        return getApi().updateCutPacking(cutPacking, facility, cutPacking.getId());
     }
 
     /**
@@ -96,10 +104,11 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
      *
      * @param cutPacking cut packing to test
      * @param expectedStatus expected HTTP status code after failure
+     * @param facility facility
      */
-    public void assertUpdateFailStatus(CutPacking cutPacking, int expectedStatus) {
+    public void assertUpdateFailStatus(CutPacking cutPacking, int expectedStatus, Facility facility) {
         try {
-            getApi().updateCutPacking(cutPacking, cutPacking.getId());
+            getApi().updateCutPacking(cutPacking, facility, cutPacking.getId());
             fail("Expected to fail with status" + expectedStatus);
         } catch (FeignException exception) {
             assertEquals(expectedStatus, exception.status());
@@ -114,10 +123,10 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
      * @param productId return only packings belonging to this product
      * @param createdBefore return only packing created after this date
      * @param createdAfter return only packing created before this date
-     *
+     * @param facility facility
      * @return cut packings
      */
-    public List<CutPacking> list(Integer firstResult, Integer maxResults, UUID productId, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    public List<CutPacking> list(Integer firstResult, Integer maxResults, UUID productId, OffsetDateTime createdBefore, OffsetDateTime createdAfter, Facility facility) {
         String createdBeforeString = null;
 
         if (createdBefore != null) {
@@ -130,17 +139,34 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
             createdAfterString = createdAfter.toString();
         }
 
-        return getApi().listCutPackings(firstResult, maxResults, productId, createdBeforeString, createdAfterString);
+        return getApi().listCutPackings(facility, firstResult, maxResults, productId, createdBeforeString, createdAfterString);
     }
 
     /**
      * Asserts that list request fails correctly
      *
      * @param expectedStatus expected HTTP status code after failure
+     * @param productId product id
+     * @param facility facility
      */
-    public void assertListFailStatus(int expectedStatus) {
+    public void assertListFailStatus(int expectedStatus, UUID productId, Facility facility) {
         try {
-            getApi().listCutPackings(null, null, UUID.randomUUID(), null, null);
+            getApi().listCutPackings(facility, null, null, productId, null, null);
+            fail("Expected to fail with status" + expectedStatus);
+        } catch (FeignException exception) {
+            assertEquals(expectedStatus, exception.status());
+        }
+    }
+
+    /**
+     * Asserts that list request fails correctly
+     *
+     * @param expectedStatus expected HTTP status code after failure
+     * @param facility facility
+     */
+    public void assertListFailStatus(int expectedStatus, Facility facility) {
+        try {
+            getApi().listCutPackings(facility, null, null, null, null, null);
             fail("Expected to fail with status" + expectedStatus);
         } catch (FeignException exception) {
             assertEquals(expectedStatus, exception.status());
@@ -151,22 +177,23 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
      * Sends a request to the API to find a cut packing
      *
      * @param cutPackingId the id of a cut packing to find
-     *
+     * @param facility facility
      * @return found cut packing
      */
-    public CutPacking find(UUID cutPackingId) {
-        return getApi().findCutPacking(cutPackingId);
+    public CutPacking find(UUID cutPackingId, Facility facility) {
+        return getApi().findCutPacking(facility, cutPackingId);
     }
 
     /**
      * Asserts that find request fails correctly
      *
      * @param cutPackingId an id to test
+     * @param facility facility
      * @param expectedStatus expected HTTP status code after failure
      */
-    public void assertFindFailStatus(UUID cutPackingId, int expectedStatus) {
+    public void assertFindFailStatus(UUID cutPackingId, Facility facility, int expectedStatus) {
         try {
-            getApi().findCutPacking(cutPackingId);
+            getApi().findCutPacking(facility, cutPackingId);
             fail("Expected to fail with status" + expectedStatus);
         } catch (FeignException exception) {
             assertEquals(expectedStatus, exception.status());
@@ -176,10 +203,11 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
     /**
      * Sends a request to the API to delete a cut packing
      *
+     * @param facility facility
      * @param cutPackingId the id of a cut packing to delete
      */
-    public void delete(UUID cutPackingId) {
-        getApi().deleteCutPacking(cutPackingId);
+    public void delete(UUID cutPackingId, Facility facility) {
+        getApi().deleteCutPacking(facility, cutPackingId);
         removeClosable(closable -> !closable.getId().equals(cutPackingId));
     }
 
@@ -188,10 +216,11 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
      *
      * @param cutPackingId an id to test
      * @param expectedStatus expected HTTP status code after failure
+     * @param facility facility
      */
-    public void assertDeleteFailStatus(UUID cutPackingId, int expectedStatus) {
+    public void assertDeleteFailStatus(UUID cutPackingId, int expectedStatus, Facility facility) {
         try {
-            getApi().deleteCutPacking(cutPackingId);
+            getApi().deleteCutPacking(facility, cutPackingId);
             fail("Expected to fail with status" + expectedStatus);
         } catch (FeignException exception) {
             assertEquals(expectedStatus, exception.status());
@@ -200,6 +229,8 @@ public class CutPackingTestBuilderResource extends AbstractTestBuilderResource<C
 
     @Override
     public void clean(CutPacking cutPacking) {
-        getApi().deleteCutPacking(cutPacking.getId());
+        if (cutPackingFacilityMap.containsKey(cutPacking.getId())) {
+            getApi().deleteCutPacking(cutPackingFacilityMap.get(cutPacking.getId()), cutPacking.getId());
+        }
     }
 }

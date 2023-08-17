@@ -10,6 +10,7 @@ import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
 import fi.metatavu.famifarm.persistence.dao.ProductionLineDAO;
 import fi.metatavu.famifarm.persistence.model.CutPacking;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 @ApplicationScoped
 public class ProductionLineController {
@@ -22,14 +23,15 @@ public class ProductionLineController {
 
   /**
    * Creates new production line
-   * 
+   *
+   * @param facility facility
    * @param lineNumber lineNumber
    * @param defaultGutterHoleCount default gutter hole count
    * @param userId userId
    * @return created production line
    */
-  public ProductionLine createProductionLine(String lineNumber, Integer defaultGutterHoleCount, UUID userId) {
-    return productionLineDAO.create(UUID.randomUUID(), lineNumber, defaultGutterHoleCount, userId, userId);
+  public ProductionLine createProductionLine(Facility facility, String lineNumber, Integer defaultGutterHoleCount, UUID userId) {
+    return productionLineDAO.create(UUID.randomUUID(), facility, lineNumber, defaultGutterHoleCount, userId, userId);
   }
 
   /**
@@ -44,13 +46,14 @@ public class ProductionLineController {
 
   /**
    * Lists production lines
-   * 
+   *
+   * @param facility not null facility
    * @param firstResult first result
    * @param maxResults max results
    * @return list of production lines
    */
-  public List<ProductionLine> listProductionLines(Integer firstResult, Integer maxResults) {
-    return productionLineDAO.listSortByLineNumber(firstResult, maxResults);
+  public List<ProductionLine> listProductionLines(Facility facility, Integer firstResult, Integer maxResults) {
+    return productionLineDAO.listSortByLineNumber(facility, firstResult, maxResults);
   }
 
   /**
@@ -74,7 +77,7 @@ public class ProductionLineController {
    * @param productionLine productionLine to be deleted
    */
   public void deleteProductionLine(ProductionLine productionLine) {
-    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, null, productionLine, null, null);
+    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, null, null, productionLine, null, null);
 
     for (CutPacking cutPacking : cutPackings) {
       cutPackingDAO.delete(cutPacking);

@@ -4,10 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import fi.metatavu.famifarm.client.model.Facility;
 import org.json.JSONException;
 
 import feign.FeignException;
@@ -18,7 +17,9 @@ import fi.metatavu.famifarm.client.model.PackageSize;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource<PackageSize, PackageSizesApi> {
-  
+
+  private final HashMap<UUID, Facility> packageFacilityMap = new HashMap<>();
+
   /**
    * Constructor
    * 
@@ -32,23 +33,26 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * Creates new package size
    * 
    * @param name name
-   * @return created seed
+   * @param facility facility
+   * @return created package size
    */
-  public PackageSize create(List<LocalizedValue> name, Integer size) {
+  public PackageSize create(List<LocalizedValue> name, Integer size, Facility facility) {
     PackageSize packageSize = new PackageSize();
     packageSize.setName(name);
     packageSize.setSize(size);
-    return addClosable(getApi().createPackageSize(packageSize));
+    PackageSize created = getApi().createPackageSize(packageSize, facility);
+    packageFacilityMap.put(created.getId(), facility);
+    return addClosable(created);
   }
-  
+
   /**
    * Finds a PackageSize
    * 
    * @param packageSizeId PackageSize id
    * @return found PackageSize
    */
-  public PackageSize findPackageSize(UUID packageSizeId) {
-    return getApi().findPackageSize(packageSizeId);
+  public PackageSize findPackageSize(UUID packageSizeId, Facility facility) {
+    return getApi().findPackageSize(facility, packageSizeId);
   }
 
   /**
@@ -56,8 +60,8 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * 
    * @param body body payload
    */
-  public PackageSize updatePackageSize(PackageSize body) {
-    return getApi().updatePackageSize(body, body.getId());
+  public PackageSize updatePackageSize(PackageSize body, Facility facility) {
+    return getApi().updatePackageSize(body, facility, body.getId());
   }
   
   /**
@@ -65,8 +69,8 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * 
    * @param packageSize PackageSize to be deleted
    */
-  public void delete(PackageSize packageSize) {
-    getApi().deletePackageSize(packageSize.getId());  
+  public void delete(PackageSize packageSize, Facility facility) {
+    getApi().deletePackageSize(facility, packageSize.getId());
     removeClosable(closable -> !closable.getId().equals(packageSize.getId()));
   }
   
@@ -75,8 +79,8 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * 
    * @param expected expected count
    */
-  public void assertCount(int expected) {
-    assertEquals(expected, getApi().listPackageSizes(Collections.emptyMap()).size());
+  public void assertCount(int expected, Facility facility) {
+    assertEquals(expected, getApi().listPackageSizes(facility, Collections.emptyMap()).size());
   }
   
   /**
@@ -84,11 +88,11 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * 
    * @param expectedStatus expected status code
    */
-  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name) {
+  public void assertCreateFailStatus(int expectedStatus, List<LocalizedValue> name, Facility facility) {
     try {
       PackageSize packageSize = new PackageSize();
       packageSize.setName(name);
-      getApi().createPackageSize(packageSize);
+      getApi().createPackageSize(packageSize, facility);
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -100,9 +104,9 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * 
    * @param expectedStatus expected status code
    */
-  public void assertFindFailStatus(int expectedStatus, UUID packageSizeId) {
+  public void assertFindFailStatus(int expectedStatus, UUID packageSizeId, Facility facility) {
     try {
-      getApi().findPackageSize(packageSizeId);
+      getApi().findPackageSize(facility, packageSizeId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -114,9 +118,9 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * 
    * @param expectedStatus expected status code
    */
-  public void assertUpdateFailStatus(int expectedStatus, PackageSize packageSize) {
+  public void assertUpdateFailStatus(int expectedStatus, PackageSize packageSize, Facility facility) {
     try {
-      getApi().updatePackageSize(packageSize, packageSize.getId());
+      getApi().updatePackageSize(packageSize, facility, packageSize.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -128,9 +132,9 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * 
    * @param expectedStatus expected status code
    */
-  public void assertDeleteFailStatus(int expectedStatus, PackageSize packageSize) {
+  public void assertDeleteFailStatus(int expectedStatus, PackageSize packageSize, Facility facility) {
     try {
-      getApi().deletePackageSize(packageSize.getId());
+      getApi().deletePackageSize(facility, packageSize.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -142,9 +146,9 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
    * 
    * @param expectedStatus expected status code
    */
-  public void assertListFailStatus(int expectedStatus) {
+  public void assertListFailStatus(int expectedStatus, Facility facility) {
     try {
-      getApi().listPackageSizes(Collections.emptyMap());
+      getApi().listPackageSizes(facility, Collections.emptyMap());
       fail(String.format("Expected list to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -165,7 +169,6 @@ public class PackageSizeTestBuilderResource  extends AbstractTestBuilderResource
 
   @Override
   public void clean(PackageSize packageSize) {
-    getApi().deletePackageSize(packageSize.getId());  
+    getApi().deletePackageSize(packageFacilityMap.get(packageSize.getId()), packageSize.getId());
   }
-
 }

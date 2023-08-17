@@ -13,6 +13,7 @@ import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.PlantingEventController;
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.Facility;
 import fi.metatavu.famifarm.rest.model.PackingType;
 import fi.metatavu.famifarm.rest.model.PotType;
 
@@ -75,11 +76,11 @@ public class EventCountController {
    * @param product product to count by
    * @param fromTime time to count from
    * @param toTime time to count to
-   * 
+   * @param facility facility
    * @return number of wasted, already packed units
    */
-  public Double countWastedPackedUnitsByProduct(Product product, OffsetDateTime fromTime, OffsetDateTime toTime) {
-    List<StorageDiscard> storageDiscards = storageDiscardController.listStorageDiscards(null, null, fromTime, toTime, product);
+  public Double countWastedPackedUnitsByProduct(Product product, OffsetDateTime fromTime, OffsetDateTime toTime, Facility facility) {
+    List<StorageDiscard> storageDiscards = storageDiscardController.listStorageDiscards(null, null, fromTime, toTime, product, facility);
     Double wastedPackedUnits = 0d;
     for (StorageDiscard storageDiscard : storageDiscards) {
       wastedPackedUnits += (storageDiscard.getPackageSize().getSize() * storageDiscard.getDiscardAmount());

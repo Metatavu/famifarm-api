@@ -30,6 +30,7 @@ public class HarvestEventTranslator extends AbstractEventTranslator<HarvestEvent
     result.setType(event.getHarvestType());
     result.setGutterCount(event.getGutterCount());
     result.setGutterHoleCount(event.getGutterHoleCount());
+    result.setNumberOfBaskets(event.getNumberOfBaskets());
     result.setSowingDate(event.getSowingDate());
     
     return result;

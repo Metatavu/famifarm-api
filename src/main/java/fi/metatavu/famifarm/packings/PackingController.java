@@ -12,6 +12,7 @@ import fi.metatavu.famifarm.persistence.model.Campaign;
 import fi.metatavu.famifarm.persistence.model.PackageSize;
 import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.persistence.model.Product;
+import fi.metatavu.famifarm.rest.model.Facility;
 import fi.metatavu.famifarm.rest.model.PackingState;
 import fi.metatavu.famifarm.rest.model.PackingType;
 
@@ -32,6 +33,7 @@ public class PackingController {
    * Creates a new packing
    * 
    * @param creatorId creator id
+   * @param facility required facility param
    * @param product product
    * @param packageSize package size
    * @param packedCount packed count
@@ -41,8 +43,8 @@ public class PackingController {
    * @param type packing type
    * @return packing
    */
-  public Packing create(UUID creatorId, Product product, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, PackingType type) {
-    return packingDAO.create(creatorId, product, UUID.randomUUID(), packageSize, packedCount, packingState, time, campaign, type);
+  public Packing create(UUID creatorId, Facility facility, Product product, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, PackingType type) {
+    return packingDAO.create(creatorId, facility, product, UUID.randomUUID(), packageSize, packedCount, packingState, time, campaign, type);
   }
   
   /**
@@ -60,6 +62,7 @@ public class PackingController {
    * 
    * @param firstResult
    * @param maxResults
+   * @param facility non nullable facility
    * @param product
    * @param campaign
    * @param state
@@ -67,8 +70,8 @@ public class PackingController {
    * @param createdAfter
    * @return packings
    */
-  public List<Packing> listPackings(Integer firstResult, Integer maxResults, Product product, Campaign campaign, PackingState state, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
-    return packingDAO.list(firstResult, maxResults, product, campaign, state, createdBefore, createdAfter);
+  public List<Packing> listPackings(Integer firstResult, Integer maxResults, Facility facility, Product product, Campaign campaign, PackingState state, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+    return packingDAO.list(firstResult, maxResults, facility, product, campaign, state, createdBefore, createdAfter);
   }
   
   /**

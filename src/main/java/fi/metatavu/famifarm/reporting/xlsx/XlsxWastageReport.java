@@ -19,6 +19,7 @@ import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Report for growth time
@@ -37,7 +38,7 @@ public class XlsxWastageReport extends AbstractXlsxReport {
   private LocalizedValueController localizedValueController;
 
   @Override
-  public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
+  public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
     Map<UUID, String> userCache = new HashMap<>();
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
       String sheetId = xlsxBuilder.createSheet(localesController.getString(locale, "reports.wastage.title"));

@@ -10,6 +10,7 @@ import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.dao.WastageReasonDAO;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.WastageReason;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Controller class for wastage reasons
@@ -30,10 +31,11 @@ public class WastageReasonsController {
    * 
    * @param reason reason
    * @param creatorId creatorId
+   * @param facility facility
    * @return created wastage reason
    */
-  public WastageReason createWastageReason(LocalizedEntry reason, UUID creatorId) {
-    return wastageReasonDAO.create(UUID.randomUUID(), reason, creatorId, creatorId);
+  public WastageReason createWastageReason(LocalizedEntry reason, UUID creatorId, Facility facility) {
+    return wastageReasonDAO.create(UUID.randomUUID(), reason, creatorId, creatorId, facility);
   }
 
   /**
@@ -51,10 +53,11 @@ public class WastageReasonsController {
    * 
    * @param firstResult first result
    * @param maxResults max results
+   * @param facility facility
    * @return list of wastage reasons
    */
-  public List<WastageReason> listWastageReasons(Integer firstResult, Integer maxResults) {
-    return wastageReasonDAO.listAll(firstResult, maxResults);
+  public List<WastageReason> listWastageReasons(Integer firstResult, Integer maxResults, Facility facility) {
+    return wastageReasonDAO.listAll(firstResult, maxResults, facility);
   }
   
   /**

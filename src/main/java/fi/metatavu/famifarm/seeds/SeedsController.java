@@ -10,6 +10,7 @@ import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.dao.SeedDAO;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.Seed;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Controller class for seeds
@@ -27,13 +28,14 @@ public class SeedsController {
   
   /**
    * Creates new seed
-   * 
-   * @param name name
+   *
+   * @param facility  facility
+   * @param name      name
    * @param creatorId creatorId
    * @return created seed
    */
-  public Seed createSeed(LocalizedEntry name, UUID creatorId) {
-    return seedDAO.create(UUID.randomUUID(), name, creatorId, creatorId);
+  public Seed createSeed(Facility facility, LocalizedEntry name, UUID creatorId) {
+    return seedDAO.create(UUID.randomUUID(), facility, name, creatorId, creatorId);
   }
 
   /**
@@ -48,13 +50,14 @@ public class SeedsController {
 
   /**
    * Lists seeds
-   * 
+   *
+   * @param facility required facility filter
    * @param firstResult first result
-   * @param maxResults max results
+   * @param maxResults  max results
    * @return list of seeds
    */
-  public List<Seed> listSeeds(Integer firstResult, Integer maxResults) {
-    return seedDAO.listAll(firstResult, maxResults);
+  public List<Seed> listSeeds(Facility facility, Integer firstResult, Integer maxResults) {
+    return seedDAO.list(facility, firstResult, maxResults);
   }
   
   /**

@@ -1,11 +1,17 @@
 package fi.metatavu.famifarm.persistence.dao;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
-import fi.metatavu.famifarm.persistence.model.PerformedCultivationAction;
+import fi.metatavu.famifarm.persistence.model.*;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * DAO class for performed cultivation action
@@ -22,10 +28,11 @@ public class PerformedCultivationActionDAO extends AbstractDAO<PerformedCultivat
    * @param lastModifier modifier
    * @return created performed cultivation action
    */
-  public PerformedCultivationAction create(UUID id, LocalizedEntry name, UUID creatorId, UUID lastModifierId) {
+  public PerformedCultivationAction create(UUID id, LocalizedEntry name, Facility facility, UUID creatorId, UUID lastModifierId) {
     PerformedCultivationAction performedCultivationAction = new PerformedCultivationAction();
     performedCultivationAction.setName(name);
     performedCultivationAction.setId(id);
+    performedCultivationAction.setFacility(facility);
     performedCultivationAction.setCreatorId(creatorId);
     performedCultivationAction.setLastModifierId(lastModifierId);
     return persist(performedCultivationAction);
@@ -45,4 +52,31 @@ public class PerformedCultivationActionDAO extends AbstractDAO<PerformedCultivat
     return persist(performedCultivationAction);
   }
 
+  /**
+   * Lists actions
+   *
+   * @param facility required
+   * @param firstResult optional
+   * @param maxResults optional
+   * @return action list
+   */
+  public List<PerformedCultivationAction> list(Facility facility, Integer firstResult, Integer maxResults) {
+    EntityManager entityManager = getEntityManager();
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<PerformedCultivationAction> criteria = criteriaBuilder.createQuery(PerformedCultivationAction.class);
+    Root<PerformedCultivationAction> root = criteria.from(PerformedCultivationAction.class);
+    criteria.select(root);
+    criteria.where(criteriaBuilder.equal(root.get(PerformedCultivationAction_.facility), facility));
+
+    TypedQuery<PerformedCultivationAction> query = entityManager.createQuery(criteria);
+    if (firstResult != null) {
+      query.setFirstResult(firstResult);
+    }
+
+    if (maxResults != null) {
+      query.setMaxResults(maxResults);
+    }
+
+    return query.getResultList();
+  }
 }

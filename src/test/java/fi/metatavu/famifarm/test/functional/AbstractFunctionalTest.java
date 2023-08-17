@@ -39,12 +39,13 @@ public abstract class AbstractFunctionalTest {
    * Creates test event
    * 
    * @param builder test builder
+   * @param facility facility
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createSowingEvent(TestBuilder builder) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), Lists.newArrayList(createdPackageSize), false);
+  protected Event createSowingEvent(TestBuilder builder, Facility facility) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, facility);
+    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), Lists.newArrayList(createdPackageSize), false, facility);
     return createSowingEvent(builder, product);
   }
 
@@ -93,8 +94,8 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createSowingEvent(TestBuilder builder, Product product, int amount, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
     Seed seed = builder.admin().seeds().create(builder.createLocalizedEntry("Rocket", "Rucola"));
-    ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
-    SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime);
+    ProductionLine productionLine = builder.admin().productionLines().create("4", 8, Facility.JOROINEN);
+    SeedBatch seedBatch = builder.admin().seedBatches().create("123", seed, startTime, Facility.JOROINEN);
     
     return builder.admin().events().createSowing(product, startTime, endTime, amount, productionLine, Arrays.asList(seedBatch));
   }
@@ -103,13 +104,14 @@ public abstract class AbstractFunctionalTest {
    * Creates test event
    * 
    * @param builder test builder
+   * @param facility facility
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createTableSpreadEvent(TestBuilder builder) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+  protected Event createTableSpreadEvent(TestBuilder builder, Facility facility) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, facility);
     List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
+    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, facility);
     return createTableSpreadEvent(builder, product);
   }
 
@@ -133,13 +135,14 @@ public abstract class AbstractFunctionalTest {
    * Creates test event
    * 
    * @param builder test builder
+   * @param facility facility
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createCultivationObservationEvent(TestBuilder builder) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+  protected Event createCultivationObservationEvent(TestBuilder builder, Facility facility) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, facility);
     List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
+    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, facility);
     return createCultivationObservationEvent(builder, product);
   }
   
@@ -158,13 +161,13 @@ public abstract class AbstractFunctionalTest {
     Double luminance = 44d;
     Double weight = 22d;
     List<PerformedCultivationAction> performedActions = Arrays.asList(
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely")),
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"))
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN),
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"), Facility.JOROINEN)
     );
     
     List<Pest> pests = Arrays.asList(
-      builder.admin().pests().create(builder.createLocalizedEntry("Pest 1")),
-      builder.admin().pests().create(builder.createLocalizedEntry("Pest 2"))   
+      builder.admin().pests().create(builder.createLocalizedEntry("Pest 1"), Facility.JOROINEN),
+      builder.admin().pests().create(builder.createLocalizedEntry("Pest 2"), Facility.JOROINEN)
     );
     
     return builder.admin().events().createCultivationObservation(product, startTime, endTime, luminance, pests, weight, performedActions);
@@ -185,13 +188,13 @@ public abstract class AbstractFunctionalTest {
 
     Double luminance = 44d;
     List<PerformedCultivationAction> performedActions = Arrays.asList(
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely")),
-      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"))
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction", "Testi viljely"), Facility.JOROINEN),
+      builder.admin().performedCultivationActions().create(builder.createLocalizedEntry("Test PerformedCultivationAction 2", "Testi viljely 2"), Facility.JOROINEN)
     );
     
     List<Pest> pests = Arrays.asList(
-      builder.admin().pests().create(builder.createLocalizedEntry("Pest 1")),
-      builder.admin().pests().create(builder.createLocalizedEntry("Pest 2"))   
+      builder.admin().pests().create(builder.createLocalizedEntry("Pest 1"), Facility.JOROINEN),
+      builder.admin().pests().create(builder.createLocalizedEntry("Pest 2"), Facility.JOROINEN)
     );
     
     return builder.admin().events().createCultivationObservation(product, startTime, endTime, luminance, pests, weight, performedActions);
@@ -201,12 +204,13 @@ public abstract class AbstractFunctionalTest {
    * Creates test event
    * 
    * @param builder test builder
+   * @param facility facility
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createHarvestEvent(TestBuilder builder) throws IOException {
+  protected Event createHarvestEvent(TestBuilder builder, Facility facility) throws IOException {
     HarvestEventType harvestType = HarvestEventType.BAGGING;
-    return createHarvestEvent(builder, harvestType);
+    return createHarvestEvent(builder, harvestType, facility);
   }
   
   /**
@@ -214,12 +218,13 @@ public abstract class AbstractFunctionalTest {
    * 
    * @param builder test builder
    * @param harvestType harvestType
+   * @param facility facility
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
-    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), Lists.newArrayList(createdPackageSize), false);
+  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Facility facility) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, facility);
+    Product product = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), Lists.newArrayList(createdPackageSize), false, facility);
     return createHarvestEvent(builder, harvestType, product);
   }
   
@@ -249,8 +254,9 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount) throws IOException {
     Integer gutterHoleCount = 50;
-    
-    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount);
+    Integer numberOfBaskets = 0;
+
+    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount, numberOfBaskets);
   }
 
   /**
@@ -262,27 +268,28 @@ public abstract class AbstractFunctionalTest {
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount) throws IOException {
+  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount, Integer numberOfBaskets) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     OffsetDateTime sowingTime = OffsetDateTime.of(2020, 1, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
-    ProductionLine productionLine = builder.admin().productionLines().create("4", 8);
+    ProductionLine productionLine = builder.admin().productionLines().create("4", 8, Facility.JOROINEN);
     
-    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, startTime, endTime, productionLine, sowingTime, harvestType);
+    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, numberOfBaskets, startTime, endTime, productionLine, sowingTime, harvestType);
   }
 
   /**
    * Creates test event
    * 
    * @param builder test builder
+   * @param facility facility
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createPlantingEvent(TestBuilder builder) throws IOException {
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 12);
+  protected Event createPlantingEvent(TestBuilder builder, Facility facility) throws IOException {
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 12, facility);
     List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
+    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, facility);
     return createPlantingEvent(builder, product);
   }
   
@@ -313,7 +320,7 @@ public abstract class AbstractFunctionalTest {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     OffsetDateTime sowingTime = OffsetDateTime.of(2020, 1, 3, 4, 10, 6, 0, ZoneOffset.ofHours(2));
-    ProductionLine productionLine = builder.admin().productionLines().create("4" , 8);
+    ProductionLine productionLine = builder.admin().productionLines().create("4" , 8, Facility.JOROINEN);
     Integer trayCount = 50;
     Integer workerCount = 2;
     
@@ -324,15 +331,16 @@ public abstract class AbstractFunctionalTest {
    * Creates test event
    * 
    * @param builder test builder
+   * @param facility facility
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createWastageEvent(TestBuilder builder) throws IOException {
-    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
-    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8);
+  protected Event createWastageEvent(TestBuilder builder, Facility facility) throws IOException {
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"), facility);
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, facility);
     List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
-    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false);
-    ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
+    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, facility);
+    ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7, Facility.JOROINEN);
     
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
@@ -351,8 +359,9 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createWastageEvent(TestBuilder builder, Product product) throws IOException {
-    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
-    ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
+    Facility facility = Facility.JOROINEN;
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"), facility);
+    ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7, Facility.JOROINEN);
     
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
@@ -374,8 +383,9 @@ public abstract class AbstractFunctionalTest {
    * @throws IOException thrown when event creation fails
    */
   protected Event createWastageEvent(TestBuilder builder, Product product, OffsetDateTime startTime, OffsetDateTime endTime) throws IOException {
-    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"));
-    ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7);
+    Facility facility = Facility.JOROINEN;
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason", "Testi syy"), facility);
+    ProductionLine productionLine = builder.admin().productionLines().create("1 A", 7, Facility.JOROINEN);
 
     Integer amount = 20;
     String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";

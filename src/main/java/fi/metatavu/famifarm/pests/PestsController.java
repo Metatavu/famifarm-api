@@ -10,6 +10,7 @@ import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.dao.PestDAO;
 import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
 import fi.metatavu.famifarm.persistence.model.Pest;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Controller class for pests
@@ -29,11 +30,12 @@ public class PestsController {
    * Creates new pest
    * 
    * @param name name
+   * @param facility facility
    * @param creatorId creatorId
    * @return created pest
    */
-  public Pest createPest(LocalizedEntry name, UUID creatorId) {
-    return pestDAO.create(UUID.randomUUID(), name, creatorId, creatorId);
+  public Pest createPest(LocalizedEntry name, Facility facility, UUID creatorId) {
+    return pestDAO.create(UUID.randomUUID(), name, facility, creatorId, creatorId);
   }
 
   /**
@@ -48,13 +50,14 @@ public class PestsController {
 
   /**
    * Lists pests
-   * 
+   *
+   * @param facility facility
    * @param firstResult first result
-   * @param maxResults max results
+   * @param maxResults  max results
    * @return list of pests
    */
-  public List<Pest> listPests(Integer firstResult, Integer maxResults) {
-    return pestDAO.listAll(firstResult, maxResults);
+  public List<Pest> listPests(Facility facility, Integer firstResult, Integer maxResults) {
+    return pestDAO.list(facility, firstResult, maxResults);
   }
   
   /**

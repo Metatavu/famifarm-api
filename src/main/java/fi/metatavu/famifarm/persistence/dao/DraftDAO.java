@@ -11,6 +11,7 @@ import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.Draft;
 import fi.metatavu.famifarm.persistence.model.Draft_;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * DAO class for drafts
@@ -26,15 +27,17 @@ public class DraftDAO extends AbstractDAO<Draft> {
    * @param id id
    * @param type type
    * @param data data
+   * @param facility facility
    * @param creatorId creator id
    * @param lastModifierId last modifier
    * @return created draft
    */
-  public Draft create(UUID id, String type, String data, UUID creatorId, UUID lastModifierId) {
+  public Draft create(UUID id, String type, String data, Facility facility, UUID creatorId, UUID lastModifierId) {
     Draft draft = new Draft();
     draft.setType(type);
     draft.setData(data);
     draft.setId(id);
+    draft.setFacility(facility);
     draft.setCreatorId(creatorId);
     draft.setLastModifierId(lastModifierId);
     return persist(draft);
@@ -42,12 +45,13 @@ public class DraftDAO extends AbstractDAO<Draft> {
   
   /**
    * Lists drafts by creator and type
-   * 
+   *
    * @param creatorId creatorId
-   * @param type type
+   * @param type      type
+   * @param facility
    * @return list of found drafts
    */
-  public List<Draft> listByCreatorIdAndType(UUID creatorId, String type) {
+  public List<Draft> listByCreatorIdAndType(UUID creatorId, String type, Facility facility) {
     EntityManager entityManager = getEntityManager();
 
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -56,7 +60,8 @@ public class DraftDAO extends AbstractDAO<Draft> {
     criteria.select(root);
     criteria.where(criteriaBuilder.and(
       criteriaBuilder.equal(root.get(Draft_.type), type),
-      criteriaBuilder.equal(root.get(Draft_.creatorId), creatorId)
+      criteriaBuilder.equal(root.get(Draft_.creatorId), creatorId),
+      criteriaBuilder.equal(root.get(Draft_.facility), facility)
     ));
     
     return entityManager.createQuery(criteria).getResultList();

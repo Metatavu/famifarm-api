@@ -10,15 +10,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import fi.metatavu.famifarm.client.model.*;
 import org.json.JSONException;
 
 import feign.FeignException;
 import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.client.api.ProductsApi;
-import fi.metatavu.famifarm.client.model.HarvestEventType;
-import fi.metatavu.famifarm.client.model.LocalizedValue;
-import fi.metatavu.famifarm.client.model.PackageSize;
-import fi.metatavu.famifarm.client.model.Product;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
 
 /**
@@ -27,7 +24,9 @@ import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
  * @author Ville Koivukangas
  */
 public class ProductTestBuilderResource extends AbstractTestBuilderResource<Product, ProductsApi> {
-  
+
+  private final HashMap<UUID, Facility> productFacilityMap = new HashMap<>();
+
   /**
    * Constructor
    * 
@@ -37,17 +36,31 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
     super(apiClient);
   }
   
-    /**
-   * Creates new product
+   /**
+   * Creates new product at default facility
    * 
    * @param name name
    * @param packageSizes package size list
    * @param isSubcontractorProduct is subcontractor product
+   * @param facility facility
    * @return created product
    */
-  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct) {
-    return create(name, packageSizes, null, isSubcontractorProduct, true);
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Facility facility) {
+    return create(name, packageSizes, null, isSubcontractorProduct, true, facility, false, false, 0.0);
   }
+
+//  /**
+//   * Creates new product
+//   *
+//   * @param name name
+//   * @param packageSizes package size list
+//   * @param isSubcontractorProduct is subcontractor product
+//   * @param facility facility
+//   * @return created product
+//   */
+//  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Facility facility) {
+//    return create(name, packageSizes, null, isSubcontractorProduct, true, facility);
+//  }
 
   /**
    * Creates new product
@@ -59,7 +72,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @return created product
    */
   public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct) {
-    return create(name, packageSizes, allowedHarvestTypes, isSubcontractorProduct, true);
+    return create(name, packageSizes, allowedHarvestTypes, isSubcontractorProduct, true, Facility.JOROINEN, false, false, 0.0);
   }
 
   /**
@@ -69,9 +82,14 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @param packageSizes package size list
    * @param allowedHarvestTypes allowed harvest type list
    * @param isSubcontractorProduct is subcontractor product
+   * @param isActive is active product
+   * @param facility facility
+   * @param isEndProduct is end product
+   * @param isRawMaterial is raw material
+   * @param salesWeight is sales weight
    * @return created product
    */
-  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct,  boolean isActive) {
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, List<HarvestEventType> allowedHarvestTypes, boolean isSubcontractorProduct,  boolean isActive, Facility facility, boolean isEndProduct, boolean isRawMaterial, Double salesWeight) {
     Product product = new Product();
     product.setName(name);
     if (packageSizes != null) {
@@ -82,10 +100,25 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
     }
 
     product.setIsSubcontractorProduct(isSubcontractorProduct);
+    product.setIsEndProduct(isEndProduct);
     product.setActive(isActive);
-    return addClosable(getApi().createProduct(product));
+    product.setIsRawMaterial(isRawMaterial);
+    product.setSalesWeight(salesWeight);
+
+    Product created = getApi().createProduct(product, facility);
+    productFacilityMap.put(created.getId(), facility);
+    return addClosable(created);
   }
 
+  /**
+   * Finds a product at default facility
+   *
+   * @param productId product id
+   * @return found product
+   */
+  public Product findProduct(UUID productId) {
+    return getApi().findProduct(Facility.JOROINEN, productId);
+  }
 
   /**
    * Finds a product
@@ -93,8 +126,8 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * @param productId product id
    * @return found product
    */
-  public Product findProduct(UUID productId) {
-    return getApi().findProduct(productId);
+  public Product findProduct(UUID productId, Facility facility) {
+    return getApi().findProduct(facility, productId);
   }
 
   /**
@@ -102,8 +135,8 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param body body payload
    */
-  public Product updateProduct(Product body) {
-    return getApi().updateProduct(body, body.getId());
+  public Product updateProduct(Product body, Facility facility) {
+    return getApi().updateProduct(body, facility, body.getId());
   }
   
   /**
@@ -111,8 +144,8 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param product product to be deleted
    */
-  public void delete(Product product) {
-    getApi().deleteProduct(product.getId());  
+  public void delete(Product product, Facility facility) {
+    getApi().deleteProduct(facility, product.getId());
     removeClosable(closable -> !closable.getId().equals(product.getId()));
   }
   
@@ -121,8 +154,8 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param expected expected count
    */
-  public void assertCount(int expected) {
-    assertEquals(expected, getApi().listProducts(Collections.emptyMap()).size());
+  public void assertCount(int expected, Facility facility) {
+    assertEquals(expected, getApi().listProducts(facility, Collections.emptyMap()).size());
   }
 
   /**
@@ -130,10 +163,10 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    *
    * @param expected expected count
    */
-  public void assertCountWithSubcontractors(int expected) {
+  public void assertCountWithSubcontractors(int expected, Facility facility) {
     HashMap<String, Object> queryParameters = new HashMap<>();
     queryParameters.put("includeSubcontractorProducts", true);
-    assertEquals(expected, getApi().listProducts(queryParameters).size());
+    assertEquals(expected, getApi().listProducts(facility, queryParameters).size());
   }
 
   /**
@@ -141,10 +174,34 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    *
    * @param expected expected count
    */
-  public void assertCountWithInactive(int expected) {
+  public void assertCountWithInactive(int expected, Facility facility) {
     HashMap<String, Object> queryParameters = new HashMap<>();
     queryParameters.put("includeInActiveProducts", true);
-    assertEquals(expected, getApi().listProducts(queryParameters).size());
+    assertEquals(expected, getApi().listProducts(facility, queryParameters).size());
+  }
+
+  /**
+   * Asserts product count with isEndProduct
+   *
+   * @param expected expected count
+   * @param facility facility
+   */
+  public void assertCountWithEndProduct(int expected, Facility facility) {
+    HashMap<String, Object> queryParameters = new HashMap<>();
+    queryParameters.put("filterByEndProducts", true);
+    assertEquals(expected, getApi().listProducts(facility, queryParameters).size());
+  }
+
+  /**
+   * Asserts product count with isRawMaterial
+   *
+   * @param expected expected count
+   * @param facility facility
+   */
+  public void assertCountWithRawMaterial(int expected, Facility facility) {
+    HashMap<String, Object> queryParameters = new HashMap<>();
+    queryParameters.put("filterByRawMaterials", true);
+    assertEquals(expected, getApi().listProducts(facility, queryParameters).size());
   }
 
   /**
@@ -152,11 +209,11 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    *
    * @param expected expected count
    */
-  public void assertCountWithInactiveAndSubcontractors(int expected) {
+  public void assertCountWithInactiveAndSubcontractors(int expected, Facility facility) {
     HashMap<String, Object> queryParameters = new HashMap<>();
     queryParameters.put("includeInActiveProducts", true);
     queryParameters.put("includeSubcontractorProducts", true);
-    assertEquals(expected, getApi().listProducts(queryParameters).size());
+    assertEquals(expected, getApi().listProducts(facility, queryParameters).size());
   }
   
   /**
@@ -164,9 +221,9 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param expectedStatus expected status code
    */
-  public void assertFindFailStatus(int expectedStatus, UUID productId) {
+  public void assertFindFailStatus(int expectedStatus, UUID productId, Facility facility) {
     try {
-      getApi().findProduct(productId);
+      getApi().findProduct(facility, productId);
       fail(String.format("Expected find to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -184,7 +241,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
       product.setName(name);
       product.setDefaultPackageSizeIds(packageSizes.stream().map(PackageSize::getId).collect(Collectors.toList()));
       product.setActive(true);
-      getApi().createProduct(product);
+      getApi().createProduct(product, Facility.JOROINEN);
       fail(String.format("Expected create to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -196,9 +253,9 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param expectedStatus expected status code
    */
-  public void assertUpdateFailStatus(int expectedStatus, Product product) {
+  public void assertUpdateFailStatus(int expectedStatus, Product product, Facility facility) {
     try {
-      getApi().updateProduct(product, product.getId());
+      getApi().updateProduct(product, facility, product.getId());
       fail(String.format("Expected update to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -210,9 +267,9 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param expectedStatus expected status code
    */
-  public void assertDeleteFailStatus(int expectedStatus, Product product) {
+  public void assertDeleteFailStatus(int expectedStatus, Product product, Facility facility) {
     try {
-      getApi().deleteProduct(product.getId());
+      getApi().deleteProduct(facility, product.getId());
       fail(String.format("Expected delete to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -224,9 +281,9 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
    * 
    * @param expectedStatus expected status code
    */
-  public void assertListFailStatus(int expectedStatus) {
+  public void assertListFailStatus(int expectedStatus, Facility facility) {
     try {
-      getApi().listProducts(Collections.emptyMap());
+      getApi().listProducts(facility, Collections.emptyMap());
       fail(String.format("Expected list to fail with status %d", expectedStatus));
     } catch (FeignException e) {
       assertEquals(expectedStatus, e.status());
@@ -247,7 +304,7 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
 
   @Override
   public void clean(Product product) {
-    getApi().deleteProduct(product.getId());
+    getApi().deleteProduct(productFacilityMap.get(product.getId()), product.getId());
   }
 
 }

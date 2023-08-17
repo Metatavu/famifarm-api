@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.rest.model.Facility;
 import fi.metatavu.famifarm.rest.model.HarvestEventType;
 import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
 import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
@@ -39,11 +40,15 @@ public class ProductController {
    * @param name name
    * @param packageSizes package sizes
    * @param isSubcontractorProduct is subcontractor product
+   * @param isEndProduct is end product
+   * @param isRawMaterial is raw material
+   * @param salesWeight sales weight
+   * @param facility facility
    * @param creatorId creatorId
    * @return created product
    */
-  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, UUID creatorId) {
-    Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, creatorId, creatorId);
+  public Product createProduct(LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean active, boolean isEndProduct, boolean isRawMaterial, Double salesWeight, Facility facility, UUID creatorId) {
+    Product product = productDAO.create(UUID.randomUUID(), name, isSubcontractorProduct, active, isEndProduct, isRawMaterial, salesWeight, facility, creatorId, creatorId);
     packageSizes.forEach(packageSize -> productPackageSizeDAO.create(UUID.randomUUID(), product, packageSize));
     return product;
   }
@@ -60,14 +65,17 @@ public class ProductController {
 
   /**
    * Lists products
-   * 
+   *
+   * @param facility facility
    * @param firstResult first result
    * @param maxResults max results
    * @param includeSubcontractorProducts include subcontractor products
+   * @param filterIsEndProduct filter by end products
+   * @param filterIsRawMaterial filter by raw materials
    * @return list of products
    */
-  public List<Product> listProducts(Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts) {
-    return productDAO.list(firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts);
+  public List<Product> listProducts(Facility facility, Integer firstResult, Integer maxResults, Boolean includeSubcontractorProducts, Boolean includeInActiveProducts, Boolean filterIsEndProduct, Boolean filterIsRawMaterial) {
+    return productDAO.list(facility, firstResult, maxResults, includeSubcontractorProducts, includeInActiveProducts, filterIsEndProduct, filterIsRawMaterial);
   }
 
   /**
@@ -77,10 +85,13 @@ public class ProductController {
    * @param name name
    * @param packageSizes new default package sizes
    * @param isSubcontractorProduct is subcontractor product
+   * @param isEndProduct is end product
+   * @param isRawMaterial is raw material
+   * @param salesWeight sales weight
    * @param lastModifierId lastModifierId
    * @return updated package size
    */
-  public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, UUID lastModifierId) {
+  public Product updateProduct(Product product, LocalizedEntry name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, Boolean isActive, Boolean isEndProduct, Boolean isRawMaterial, Double salesWeight, UUID lastModifierId) {
     productDAO.updateName(product, name, lastModifierId);
 
     if (packageSizes != null) {
@@ -96,6 +107,9 @@ public class ProductController {
 
     productDAO.updateIsSubcontractorProduct(product, isSubcontractorProduct, lastModifierId);
     productDAO.updateIsActive(product, isActive, lastModifierId);
+    productDAO.updateIsEndProduct(product, isEndProduct, lastModifierId);
+    productDAO.updateIsRawMaterial(product, isRawMaterial, lastModifierId);
+    productDAO.updateSalesWeight(product, salesWeight, lastModifierId);
     return product;
   }
 
@@ -111,7 +125,7 @@ public class ProductController {
       campaignProductDAO.delete(campaignProduct);
     }
 
-    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, product, null, null, null);
+    List<CutPacking> cutPackings = cutPackingDAO.list(null, null, null, product, null, null, null);
 
     for (CutPacking cutPacking : cutPackings) {
       cutPackingDAO.delete(cutPacking);

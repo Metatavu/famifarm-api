@@ -8,14 +8,10 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
-import fi.metatavu.famifarm.persistence.model.Seed;
-import fi.metatavu.famifarm.persistence.model.SeedBatch;
-import fi.metatavu.famifarm.persistence.model.SeedBatch_;
+import fi.metatavu.famifarm.persistence.model.*;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * DAO class for seed batches
@@ -88,13 +84,14 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
   
   /**
    * Lists seed batches
-   * 
-   * @param firstResult
-   * @param maxResults
+   *
+   * @param facility facility
+   * @param firstResult first result
+   * @param maxResults max results
    * @param active if true or null, list only active seed batches
    * @return seed batches that match the criteria
    */
-  public List<SeedBatch> listAll (Integer firstResult, Integer maxResults, Boolean active) {
+  public List<SeedBatch> listAll (Facility facility, Integer firstResult, Integer maxResults, Boolean active) {
     EntityManager entityManager = getEntityManager();
     
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -104,8 +101,13 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
     criteria.select(root);
     
     List<Predicate> restrictions = new ArrayList<>();
-    
-    if (active == null || active == true){
+
+    if (facility != null) {
+      root.fetch(SeedBatch_.seed, JoinType.LEFT);
+      restrictions.add(criteriaBuilder.equal(root.get(SeedBatch_.seed).get(Seed_.facility), facility));
+    }
+
+    if (active == null || active){
       restrictions.add(criteriaBuilder.equal(root.get(SeedBatch_.active), true));
     }
     

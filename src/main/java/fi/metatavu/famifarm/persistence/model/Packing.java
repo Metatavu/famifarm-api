@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import fi.metatavu.famifarm.rest.model.Facility;
 import fi.metatavu.famifarm.rest.model.PackingType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -48,6 +49,11 @@ public class Packing {
   @Column(nullable = false)
   @NotNull
   private PackingState packingState;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  @NotNull
+  private Facility facility;
   
   @Column(nullable = false)
   private OffsetDateTime time;
@@ -160,6 +166,14 @@ public class Packing {
 
   public void setType(PackingType type) {
     this.type = type;
+  }
+
+  public Facility getFacility() {
+    return facility;
+  }
+
+  public void setFacility(Facility facility) {
+    this.facility = facility;
   }
 
   @PrePersist

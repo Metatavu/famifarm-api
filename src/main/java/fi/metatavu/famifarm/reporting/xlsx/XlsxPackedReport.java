@@ -7,6 +7,7 @@ import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.EventCountController;
 import fi.metatavu.famifarm.reporting.ReportException;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -36,7 +37,7 @@ public class XlsxPackedReport extends AbstractXlsxReport {
     }
 
     @Override
-    public void createReport(OutputStream output, Locale locale, Map<String, String> parameters) throws ReportException {
+    public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
         try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
             String sheetId = xlsxBuilder.createSheet(getTitle(locale));
 
@@ -49,7 +50,7 @@ public class XlsxPackedReport extends AbstractXlsxReport {
             xlsxBuilder.setCellValue(sheetId, 0, 0, getTitle(locale));
             xlsxBuilder.setCellValue(sheetId, 1, 0, localesController.getString(locale, "reports.common.dateBetween", fromTime, toTime));
 
-            List<Packing> packings = packingController.listPackings(null, null, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+            List<Packing> packings = packingController.listPackings(null, null, facility, null, null, null, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
 
             Map<UUID, ReportRow> rowLookup = new HashMap<>();
             packings.stream().forEach(packing -> {

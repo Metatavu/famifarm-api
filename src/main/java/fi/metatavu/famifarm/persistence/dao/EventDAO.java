@@ -7,13 +7,11 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 /**
  * Generic DAO class for events
@@ -56,7 +54,8 @@ public class EventDAO extends AbstractEventDAO<Event> {
 
   /**
    * Lists for rest api
-   * 
+   *
+   * @param facility product facility
    * @param product product
    * @param createdAfter created after
    * @param createdBefore created before
@@ -66,7 +65,7 @@ public class EventDAO extends AbstractEventDAO<Event> {
    *
    * @return list of events
    */
-  public List<Event> listForRestApi(Product product, OffsetDateTime startAfter, OffsetDateTime startBefore, Integer firstResult, EventType eventType, Integer maxResults) {
+  public List<Event> listForRestApi(Facility facility, Product product, OffsetDateTime startAfter, OffsetDateTime startBefore, Integer firstResult, EventType eventType, Integer maxResults) {
     EntityManager entityManager = getEntityManager();
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
@@ -74,6 +73,11 @@ public class EventDAO extends AbstractEventDAO<Event> {
     criteria.select(root);
 
     List<Predicate> restrictions = new ArrayList<>();
+
+    if (facility != null) {
+      root.fetch(Event_.product, JoinType.LEFT);
+      restrictions.add(criteriaBuilder.equal(root.get(Event_.product).get(Product_.facility), facility));
+    }
 
     if (product != null) {
       restrictions.add(criteriaBuilder.equal(root.get(Event_.product), product));

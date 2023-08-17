@@ -14,6 +14,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import fi.metatavu.famifarm.persistence.model.*;
+import fi.metatavu.famifarm.rest.model.Facility;
 import fi.metatavu.famifarm.rest.model.PackingState;
 import fi.metatavu.famifarm.rest.model.PackingType;
 
@@ -30,6 +31,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * Creates new packing
      * 
      * @param creatorId creator id
+     * @param facility required facility param
      * @param product product
      * @param id id
      * @param packageSize package size
@@ -38,10 +40,11 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param time time of packing
      * @return packing
      */
-    public Packing create(UUID creatorId, Product product, UUID id, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, PackingType type) {
+    public Packing create(UUID creatorId, Facility facility, Product product, UUID id, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, PackingType type) {
       Packing packing = new Packing();
       packing.setCreatorId(creatorId);
       packing.setId(id);
+      packing.setFacility(facility);
       packing.setProduct(product);
       packing.setPackingState(packingState);
       packing.setCreatorId(creatorId);
@@ -154,9 +157,10 @@ public class PackingDAO extends AbstractDAO<Packing>{
     
     /**
      * List all packings that match given criteria
-     * 
+     *
      * @param firstResult
      * @param maxResults
+     * @param facility required parameter
      * @param product
      * @param campaign
      * @param state
@@ -164,7 +168,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param timeAfter
      * @return packings
      */
-    public List<Packing> list(Integer firstResult, Integer maxResults, Product product, Campaign campaign, PackingState state, OffsetDateTime timeBefore, OffsetDateTime timeAfter) {
+    public List<Packing> list(Integer firstResult, Integer maxResults, Facility facility, Product product, Campaign campaign, PackingState state, OffsetDateTime timeBefore, OffsetDateTime timeAfter) {
       EntityManager entityManager = getEntityManager();
       
       CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -174,7 +178,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
       criteria.select(root);
       
       List<Predicate> restrictions = new ArrayList<>();
-      
+      restrictions.add(criteriaBuilder.equal(root.get(Packing_.facility), facility));
       if (product != null) {
         restrictions.add(criteriaBuilder.equal(root.get(Packing_.product), product));
       }

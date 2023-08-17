@@ -3,15 +3,10 @@ package fi.metatavu.famifarm.persistence.model;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import fi.metatavu.famifarm.rest.model.Facility;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -38,6 +33,20 @@ public class Product {
 
   @Column(nullable = false)
   private boolean isActive;
+
+  @Column(nullable = false)
+  private boolean isEndProduct;
+
+  @Column(nullable = false)
+  private boolean isRawMaterial;
+
+  @Column(nullable = false)
+  private Double salesWeight;
+
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  @NotNull
+  private Facility facility;
 
   @Column(nullable = false)
   @NotNull
@@ -89,6 +98,26 @@ public class Product {
     return isActive;
   }
 
+  public void setIsEndProduct(boolean isEndProduct) {
+    this.isEndProduct = isEndProduct;
+  }
+
+  public boolean isEndProduct() { return isEndProduct; }
+
+  public void setIsRawMaterial(boolean isRawMaterial) {
+     this.isRawMaterial = isRawMaterial;
+  }
+
+  public boolean isRawMaterial() { return isRawMaterial; }
+
+  public void setSalesWeight(Double salesWeight) {
+    this.salesWeight = salesWeight;
+  }
+
+  public Double getSalesWeight () {
+    return salesWeight;
+  }
+
   public void setCreatorId(UUID creatorId) {
     this.creatorId = creatorId;
   }
@@ -115,6 +144,14 @@ public class Product {
 
   public void setModifiedAt(OffsetDateTime modifiedAt) {
     this.modifiedAt = modifiedAt;
+  }
+
+  public Facility getFacility() {
+    return facility;
+  }
+
+  public void setFacility(Facility facility) {
+    this.facility = facility;
   }
 
   @PrePersist

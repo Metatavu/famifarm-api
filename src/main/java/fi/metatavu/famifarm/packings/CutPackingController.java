@@ -6,6 +6,7 @@ import fi.metatavu.famifarm.persistence.dao.ProductionLineDAO;
 import fi.metatavu.famifarm.persistence.model.CutPacking;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
+import fi.metatavu.famifarm.rest.model.Facility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -27,30 +28,32 @@ public class CutPackingController {
     /**
      * Creates
      *
-     * @param productId the id of a product to which this cut packing belongs
-     * @param productionLineId the id of a production line to which this cut packing belongs
-     * @param weight weight in kilograms
-     * @param sowingDay a day on which these plants were sowed
-     * @param cuttingDay a day on which these plants were cut
-     * @param producer producer name
+     * @param facility           facility that other objects should also belong to
+     * @param productId          the id of a product to which this cut packing belongs
+     * @param productionLineId   the id of a production line to which this cut packing belongs
+     * @param weight             weight in kilograms
+     * @param sowingDay          a day on which these plants were sowed
+     * @param cuttingDay         a day on which these plants were cut
+     * @param producer           producer name
      * @param contactInformation contact information
-     * @param gutterCount gutter count
-     * @param gutterHoleCount gutter hole count
-     * @param storageCondition storage condition
-     * @param creatorId the id of the user who is creating this cut packing
+     * @param gutterCount        gutter count
+     * @param gutterHoleCount    gutter hole count
+     * @param storageCondition   storage condition
+     * @param creatorId          the id of the user who is creating this cut packing
      */
     public CutPacking create (
-            UUID productId,
-            UUID productionLineId,
-            double weight,
-            OffsetDateTime sowingDay,
-            OffsetDateTime cuttingDay,
-            String producer,
-            String contactInformation,
-            int gutterCount,
-            int gutterHoleCount,
-            String storageCondition,
-            UUID creatorId) throws CutPackingInvalidParametersException {
+        Facility facility,
+        UUID productId,
+        UUID productionLineId,
+        double weight,
+        OffsetDateTime sowingDay,
+        OffsetDateTime cuttingDay,
+        String producer,
+        String contactInformation,
+        int gutterCount,
+        int gutterHoleCount,
+        String storageCondition,
+        UUID creatorId) throws CutPackingInvalidParametersException {
 
         Product product = productDAO.findById(productId);
         ProductionLine productionLine = productionLineDAO.findById(productionLineId);
@@ -59,8 +62,16 @@ public class CutPackingController {
             throw new CutPackingInvalidParametersException(String.format("Product with id %s not found!", productId));
         }
 
+        if (product.getFacility() != facility) {
+            throw new CutPackingInvalidParametersException(String.format("Product with id %s doesn't belong to facility %s", productId, facility));
+        }
+
         if (productionLine == null) {
             throw new CutPackingInvalidParametersException(String.format("Production line with id %s not found!", productionLineId));
+        }
+
+        if (productionLine.getFacility() != facility) {
+            throw new CutPackingInvalidParametersException(String.format("Production line with id %s doesn't belong to facility %s", productionLineId, facility));
         }
 
         return cutPackingDAO.create(UUID.randomUUID(), product, productionLine, weight, sowingDay, cuttingDay, producer, contactInformation, gutterCount, gutterHoleCount, storageCondition, creatorId);
@@ -69,6 +80,7 @@ public class CutPackingController {
     /**
      * Updates a cut packing
      *
+     * @param facility facility that all sib objects belong to
      * @param cutPacking a cut packing to update
      * @param productId the id of a new product
      * @param productionLineId the id of a new production line
@@ -85,6 +97,7 @@ public class CutPackingController {
      * @return a cut packing to update
      */
     public CutPacking update (
+            Facility facility,
             CutPacking cutPacking,
             UUID productId,
             UUID productionLineId,
@@ -101,11 +114,11 @@ public class CutPackingController {
         Product product = productDAO.findById(productId);
         ProductionLine productionLine = productionLineDAO.findById(productionLineId);
 
-        if (product == null) {
+        if (product == null || product.getFacility() != facility) {
             throw new CutPackingInvalidParametersException(String.format("Product with id %s not found!", productId));
         }
 
-        if (productionLine == null) {
+        if (productionLine == null || productionLine.getFacility() != facility) {
             throw new CutPackingInvalidParametersException(String.format("Production line with id %s not found!", productionLineId));
         }
 
@@ -137,17 +150,17 @@ public class CutPackingController {
     /**
      * Lists cut packings
      *
-     * @param firstResult the index of the first result
-     * @param maxResults limit results to this amount
-     * @param product return only packings belonging to this product
+     * @param facility       non- null facility parameter
+     * @param firstResult    the index of the first result
+     * @param maxResults     limit results to this amount
+     * @param product        return only packings belonging to this product
      * @param productionLine return only packings belonging to this production line
-     * @param createdBefore return only packing created after this date
-     * @param createdAfter return only packing created before this date
-     *
+     * @param createdBefore  return only packing created after this date
+     * @param createdAfter   return only packing created before this date
      * @return cut packings
      */
-    public List<CutPacking> list(Integer firstResult, Integer maxResults, Product product, ProductionLine productionLine, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
-        return cutPackingDAO.list(firstResult, maxResults, product, productionLine, createdBefore, createdAfter);
+    public List<CutPacking> list(Facility facility, Integer firstResult, Integer maxResults, Product product, ProductionLine productionLine, OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
+        return cutPackingDAO.list(facility, firstResult, maxResults, product, productionLine, createdBefore, createdAfter);
     }
 
     /**
