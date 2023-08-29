@@ -39,7 +39,7 @@ public class JsonWastageReport extends AbstractJsonReport {
    */
   @Override
   public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
-    List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+    List<Event> events = eventController.listByFacilityAndStartTimeAfterAndStartTimeBefore(facility, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
     List<fi.metatavu.famifarm.reporting.json.models.Event> translatedEvents = translateEvents(events, locale);
     try {
       getObjectMapper().writeValue(output, translatedEvents);

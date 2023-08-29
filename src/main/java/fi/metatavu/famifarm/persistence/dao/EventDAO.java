@@ -164,12 +164,13 @@ public class EventDAO extends AbstractEventDAO<Event> {
 
   /**
    * Lists events between dates
-   * 
+   *
+   * @param facility facility
    * @param startBefore start before
    * @param startAfter start after
    * @return list of events
    */
-  public List<Event> listByStartTimeAfterAndStartTimeBefore(OffsetDateTime startBefore, OffsetDateTime startAfter) {
+  public List<Event> listByFacilityAndStartTimeAfterAndStartTimeBefore(Facility facility, OffsetDateTime startBefore, OffsetDateTime startAfter) {
     EntityManager entityManager = getEntityManager();
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
@@ -186,9 +187,12 @@ public class EventDAO extends AbstractEventDAO<Event> {
       restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Event_.startTime), startAfter));
     }
 
+    if (facility != null) {
+        restrictions.add(criteriaBuilder.equal(root.get(Event_.product).get(Product_.facility), facility));
+    }
+
     criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
     TypedQuery<Event> query = entityManager.createQuery(criteria);
-
     return query.getResultList();
   }
 
