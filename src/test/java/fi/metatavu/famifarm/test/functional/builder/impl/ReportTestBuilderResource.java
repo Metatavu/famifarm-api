@@ -1,8 +1,5 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -20,6 +17,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import fi.metatavu.famifarm.client.ApiClient;
 import fi.metatavu.famifarm.client.api.ReportsApi;
 import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test builder resource for reports
@@ -87,7 +86,22 @@ public class ReportTestBuilderResource extends AbstractTestBuilderResource<Objec
     Cell cell = getCell(workbook, sheetIndex, rowIndex, cellIndex);  
     assertEquals(expected, cell.getStringCellValue());
   }
-  
+
+  /**
+   * Asserts that row is null
+   *
+   * @param workbook workbook
+   * @param sheetIndex sheet index
+   * @param rowIndex row index
+   */
+  public void assertRowNull(Workbook workbook, int sheetIndex, int rowIndex) {
+    Sheet sheet = workbook.getSheetAt(sheetIndex);
+    assertNotNull(sheet);
+
+    Row row = sheet.getRow(rowIndex);
+    assertNull(row);
+  }
+
   /**
    * Asserts that cell's value is expected
    * 

@@ -72,7 +72,7 @@ public class XlsxWastageReport extends AbstractXlsxReport {
       
       int rowIndex = 4;
       
-      List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      List<Event> events = eventController.listByFacilityAndStartTimeAfterAndStartTimeBefore(facility, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"); 
       
       for (int j = 0; j < events.size(); j++) {

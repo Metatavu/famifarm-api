@@ -66,7 +66,7 @@ public class XlsxSeedlingTimeReport extends AbstractXlsxReport {
 
       int rowIndex = 4;
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); 
-      List<Event> events = eventController.listByStartTimeAfterAndStartTimeBefore(parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
+      List<Event> events = eventController.listByFacilityAndStartTimeAfterAndStartTimeBefore(facility, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       List<PlantingEvent> plantingEvents = events
         .stream()
         .filter(e -> e.getType().equals(EventType.PLANTING))
