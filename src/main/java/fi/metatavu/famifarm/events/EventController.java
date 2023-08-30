@@ -77,13 +77,14 @@ public class EventController {
   
   /**
    * Lists events between dates
-   * 
+   *
+   * @param facility facility
    * @param startBefore start before
    * @param startAfter start after
    * @return list of events
    */
-  public List<Event> listByStartTimeAfterAndStartTimeBefore(OffsetDateTime startBefore, OffsetDateTime startAfter) {
-    return eventDAO.listByStartTimeAfterAndStartTimeBefore(startBefore, startAfter);
+  public List<Event> listByFacilityAndStartTimeAfterAndStartTimeBefore(Facility facility, OffsetDateTime startBefore, OffsetDateTime startAfter) {
+    return eventDAO.listByFacilityAndStartTimeAfterAndStartTimeBefore(facility, startBefore, startAfter);
   }
 
   /**
