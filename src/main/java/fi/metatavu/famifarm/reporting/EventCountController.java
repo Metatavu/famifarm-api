@@ -141,7 +141,7 @@ public class EventCountController {
     for (Event event : events) {
       if (event.getType() == EventType.SOWING) {
         SowingEvent sowingEvent = (SowingEvent) event;
-        count += (sowingEvent.getAmount() * getTraySizeForPotType(sowingEvent.getPotType()));
+        count += (sowingEvent.getAmount() * getTraySizeForPotType(sowingEvent));
       }
     }
 
@@ -261,11 +261,17 @@ public class EventCountController {
    * @param potType pot type
    * @return number of plants in one tray
    */
-  private int getTraySizeForPotType(PotType potType) {
+  private int getTraySizeForPotType(SowingEvent sowingEvent) {
+    var potType = sowingEvent.getPotType();
     if (PotType.LARGE == potType) {
       return 35;
     }
-    return 54;
+    
+    if (isJuvaFacility(sowingEvent)) {
+      return 50;
+    } else {
+      return 54;
+    }
   }
 
   /**
@@ -284,7 +290,21 @@ public class EventCountController {
     if (PotType.LARGE == sowingEvent.getPotType()) {
       return 35;
     }
-    return 54;
+
+    if (isJuvaFacility(event)) {
+      return 50;
+    } else {
+      return 54;
+    }
   }
 
+  /**
+   * Checks if event took place in Juva facility
+   *
+   * @param event event
+   * @return true if juva
+   */
+  private boolean isJuvaFacility(Event event) {
+    return event.getProduct().getFacility() == Facility.JUVA;
+  }
 }
