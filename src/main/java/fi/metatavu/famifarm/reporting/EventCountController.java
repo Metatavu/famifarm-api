@@ -258,7 +258,7 @@ public class EventCountController {
   /**
    * Gets amount of plants in one tray with specified pot type
    * 
-   * @param potType pot type
+   * @param sowingEvent sowing event
    * @return number of plants in one tray
    */
   private int getTraySizeForPotType(SowingEvent sowingEvent) {
@@ -266,7 +266,7 @@ public class EventCountController {
     if (PotType.LARGE == potType) {
       return 35;
     }
-    
+
     if (isJuvaFacility(sowingEvent)) {
       return 50;
     } else {
@@ -277,7 +277,7 @@ public class EventCountController {
   /**
    * Get tray type as int
    * 
-   * @param potType, potType
+   * @param event
    * @return amount
    */
   private int getPotTypeAmount(Event event) {
