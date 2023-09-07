@@ -1154,6 +1154,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return Response.status(200).build();
       }
     } catch (Exception e) {
+      this.logger.error("Failed to print qr code", e);
       return createInternalServerError(e.getMessage());
     }
   }
