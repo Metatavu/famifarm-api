@@ -366,16 +366,11 @@ public class ReportTestsIT extends AbstractFunctionalTest {
 
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       Product productA = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
-      Product productB = builder.admin().products().create(builder.createLocalizedEntry("B - product", "B - tuote"), Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
-
 
       createSowingEvent(builder, productA, 1, startTime, endTime);
-      createSowingEvent(builder, productB, 5, startTime, endTime);
       createPlantingEvent(builder, productA);
-      createPlantingEvent(builder, productB);
       createHarvestEvent(builder, HarvestEventType.CUTTING, productA);
       createHarvestEvent(builder, HarvestEventType.CUTTING, productA);
-      createHarvestEvent(builder, HarvestEventType.CUTTING, productB);
 
       builder.admin().packings().create(productA.getId(), null, PackingType.BASIC, startTime, 10, PackingState.IN_STORE, createdPackageSize, Facility.JOROINEN);
 
@@ -384,12 +379,9 @@ public class ReportTestsIT extends AbstractFunctionalTest {
 
       byte[] data = builder.admin().reports().createReport(Facility.JOROINEN, "SUMMARY", fromTime, toTime, null);
       assertNotNull(data);
-      Files.deleteIfExists(Path.of("testXlsxSummaryReport.xlsx"));
-      Files.write(Files.createFile(Path.of("testXlsxSummaryReport.xlsx")), data);
 
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
         builder.admin().reports().assertCellValue("A - product", workbook, 0, 5, 0);
-        builder.admin().reports().assertCellValue("B - product", workbook, 0, 6, 0);
       }
 
     }

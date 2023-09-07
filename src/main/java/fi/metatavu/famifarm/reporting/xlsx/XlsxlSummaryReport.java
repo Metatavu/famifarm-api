@@ -13,10 +13,7 @@ import fi.metatavu.famifarm.rest.model.Facility;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.io.OutputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -72,17 +69,17 @@ public class XlsxlSummaryReport extends AbstractXlsxReport {
 
             // Values
             int rowIndex = headerRow2 + 1;
-            List<Event> allEvents = eventController.listByFacilityAndStartTimeAfterAndStartTimeBefore(facility, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")))
-                    .stream().filter(event -> event.getType() == EventType.SOWING || event.getType() == EventType.PLANTING || event.getType() == EventType.HARVEST).collect(Collectors.toList());
+            List<Event> allEvents = eventController.listByFacilityAndStartTimeAfterAndStartTimeBefore(facility, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
 
             Map<Product, List<Event>> collectedEvents = allEvents.stream().collect(groupingBy(Event::getProduct));
 
+            int cartCells = 32;
             // Rows = number of products
             for (Map.Entry<Product, List<Event>> productEntry : collectedEvents.entrySet()) {
                 Product product = productEntry.getKey();
                 List<Event> events = productEntry.getValue();
-                Double sowedCarts = eventCountController.countSowedUnits(events) / 32;
-                Double plantedCarts = eventCountController.countPlantedUnits(events) / 32;
+                Double sowedCarts = eventCountController.countSowedUnits(events) / cartCells;
+                Double plantedCarts = eventCountController.countPlantedUnits(events) / cartCells;
                 Double harvestedTables = eventCountController.countHarvestedUnits(events);
                 Double harvestedBaskets = eventCountController.countHarvestedBaskets(events);
 
