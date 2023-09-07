@@ -80,7 +80,7 @@ public class XlsxlSummaryReport extends AbstractXlsxReport {
                 List<Event> events = productEntry.getValue();
                 Double sowedCarts = eventCountController.countSowedUnits(events) / cartCells;
                 Double plantedCarts = eventCountController.countPlantedUnits(events) / cartCells;
-                Double harvestedTables = eventCountController.countHarvestedUnits(events);
+                Double harvestedTables = eventCountController.countHarvestedGutters(events);
                 Double harvestedBaskets = eventCountController.countHarvestedBaskets(events);
 
                 xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
