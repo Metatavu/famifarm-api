@@ -205,6 +205,44 @@ public class EventCountController {
   }
 
   /**
+   * Sums up all the values of gutter count fiels of a harvest event
+   *
+   * @param events events
+   * @return gutten count sum
+   */
+  public Double countHarvestedGutters(List<Event> events) {
+    Double count = 0d;
+
+    for (Event event : events) {
+      if (event.getType() == EventType.HARVEST) {
+        HarvestEvent harvestEvent = (HarvestEvent) event;
+        count += harvestEvent.getGutterCount();
+      }
+    }
+
+    return count;
+  }
+
+  /**
+   * Counts baskets for all harvested events
+   *
+   * @param events all events
+   * @return number of baskets
+   */
+  public Double countHarvestedBaskets(List<Event> events) {
+    Double count = 0d;
+
+    for (Event event : events) {
+      if (event.getType() == EventType.HARVEST) {
+        HarvestEvent harvestEvent = (HarvestEvent) event;
+        count += harvestEvent.getNumberOfBaskets();
+      }
+    }
+
+    return count;
+  }
+
+  /**
    * Counts number of wasted units from the list of events
    * 
    * @param events list of events to count the packed units from

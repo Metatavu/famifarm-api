@@ -56,6 +56,9 @@ public class ReportController {
   @Inject
   private XlsxSeedlingTimeReport xlsxSeedlingTimeReport;
 
+  @Inject
+  private XlsxlSummaryReport xlsxSummaryReport;
+
   /**
    * Returns report for given report type
    * 
@@ -95,6 +98,8 @@ public class ReportController {
         return xlsxPackedCampaingsReport;
       case SEEDLING_TIME:
         return xlsxSeedlingTimeReport;
+      case SUMMARY:
+        return xlsxSummaryReport;
     }
     
     return null;
