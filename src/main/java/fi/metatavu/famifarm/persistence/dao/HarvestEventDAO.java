@@ -33,13 +33,12 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @param additionalInformation additional information
    * @param gutterCount gutterCount
    * @param gutterHoleCount gutter hole count
-   * @param numberOfBaskets number of baskets
    * @param creatorId creator
    * @param lastModifierId last modifier
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer remainingUnits, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, Integer numberOfBaskets, UUID creatorId, UUID lastModifierId) {
+  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer remainingUnits, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, UUID creatorId, UUID lastModifierId) {
     HarvestEvent harvestEvent = new HarvestEvent();
     harvestEvent.setProduct(product);
     harvestEvent.setRemainingUnits(remainingUnits);
@@ -49,7 +48,6 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
     harvestEvent.setProductionLine(productionLine);
     harvestEvent.setGutterCount(gutterCount);
     harvestEvent.setGutterHoleCount(gutterHoleCount);
-    harvestEvent.setNumberOfBaskets(numberOfBaskets);
     harvestEvent.setId(id);
     harvestEvent.setCreatorId(creatorId);
     harvestEvent.setLastModifierId(lastModifierId);
@@ -120,20 +118,6 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
   public HarvestEvent updateGutterHoleCount(HarvestEvent harvestEvent, Integer gutterHoleCount, UUID lastModifierId) {
     harvestEvent.setLastModifierId(lastModifierId);
     harvestEvent.setGutterHoleCount(gutterHoleCount);
-    return persist(harvestEvent);
-  }
-
-  /**
-   * Updates number of baskets
-   *
-   * @param harvestEvent harvest event to be updated
-   * @param numberOfBaskets number of baskets
-   * @param lastModifierId modifier
-   * @return updated harvestEvent
-   */
-  public HarvestEvent updateNumberOfBaskets(HarvestEvent harvestEvent, Integer numberOfBaskets, UUID lastModifierId) {
-    harvestEvent.setLastModifierId(lastModifierId);
-    harvestEvent.setNumberOfBaskets(numberOfBaskets);
     return persist(harvestEvent);
   }
 
