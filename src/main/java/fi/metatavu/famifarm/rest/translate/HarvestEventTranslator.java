@@ -1,10 +1,15 @@
 package fi.metatavu.famifarm.rest.translate;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.HarvestBasketDAO;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.rest.model.EventType;
+import fi.metatavu.famifarm.rest.model.HarvestBasket;
 import fi.metatavu.famifarm.rest.model.HarvestEventData;
+
+import java.util.stream.Collectors;
 
 /**
  * Translator for harvest events
@@ -13,6 +18,9 @@ import fi.metatavu.famifarm.rest.model.HarvestEventData;
  */
 @ApplicationScoped
 public class HarvestEventTranslator extends AbstractEventTranslator<HarvestEventData, HarvestEvent> {
+
+  @Inject
+  public HarvestBasketDAO harvestBasketDAO;
 
   @Override
   protected EventType getType() {
@@ -30,8 +38,13 @@ public class HarvestEventTranslator extends AbstractEventTranslator<HarvestEvent
     result.setType(event.getHarvestType());
     result.setGutterCount(event.getGutterCount());
     result.setGutterHoleCount(event.getGutterHoleCount());
-    result.setNumberOfBaskets(event.getNumberOfBaskets());
     result.setSowingDate(event.getSowingDate());
+
+    result.setBaskets(harvestBasketDAO.listByHarvestEvent(event).stream().map(harvestBasketEntity -> {
+      HarvestBasket harvestBasket = new HarvestBasket();
+      harvestBasket.setWeight(harvestBasketEntity.getWeight());
+      return harvestBasket;
+    }).collect(Collectors.toList()));
     
     return result;
   }

@@ -1086,4 +1086,16 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="harvest_baskets" author="katja danilova">
+    <dropColumn tableName="harvestevent" columnName="numberofbaskets"/>
+    <createTable tableName="harvestbasket">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="harvestevent_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true" foreignKeyName="FK_HARVESTBASKET_HARVESTEVENT_ID" referencedColumnNames="id" referencedTableName="harvestevent"/>
+      </column>
+      <column name="weight" type="float"/>
+    </createTable>
+  </changeSet>
 </databaseChangeLog>

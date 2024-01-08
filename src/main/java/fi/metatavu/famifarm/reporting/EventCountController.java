@@ -11,6 +11,7 @@ import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.discards.StorageDiscardController;
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.PlantingEventController;
+import fi.metatavu.famifarm.persistence.dao.HarvestBasketDAO;
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.Facility;
@@ -27,6 +28,9 @@ public class EventCountController {
 
   @Inject
   private EventController eventController;
+
+  @Inject
+  public HarvestBasketDAO harvestBasketDAO;
 
   @Inject
   private PlantingEventController plantingEventController;
@@ -230,12 +234,13 @@ public class EventCountController {
    * @return number of baskets
    */
   public Double countHarvestedBaskets(List<Event> events) {
-    Double count = 0d;
+    double count = 0d;
 
     for (Event event : events) {
       if (event.getType() == EventType.HARVEST) {
         HarvestEvent harvestEvent = (HarvestEvent) event;
-        count += harvestEvent.getNumberOfBaskets();
+        List<HarvestBasket> harvestBaskets = harvestBasketDAO.listByHarvestEvent(harvestEvent);
+        count += harvestBaskets.size();
       }
     }
 

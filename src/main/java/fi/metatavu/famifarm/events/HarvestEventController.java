@@ -7,10 +7,12 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.HarvestBasketDAO;
 import fi.metatavu.famifarm.persistence.dao.HarvestEventDAO;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
+import fi.metatavu.famifarm.rest.model.HarvestBasket;
 import fi.metatavu.famifarm.rest.model.HarvestEventType;
 
 /**
@@ -22,7 +24,10 @@ import fi.metatavu.famifarm.rest.model.HarvestEventType;
 public class HarvestEventController {
 
   @Inject
-  private HarvestEventDAO harvestEventDAO;  
+  private HarvestEventDAO harvestEventDAO;
+
+  @Inject
+  private HarvestBasketDAO harvestBasketDAO;
   
 
   /**
@@ -36,13 +41,17 @@ public class HarvestEventController {
    * @param additionalInformation additional information
    * @param gutterCount gutterCount
    * @param gutterHoleCount gutter hole count
-   * @param numberOfBaskets number of baskets
+   * @param baskets list of baskets
    * @param creatorId creator id
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent createHarvestEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, Integer numberOfBaskets, UUID creatorId) {
-    return harvestEventDAO.create(UUID.randomUUID(), product, startTime, endTime, harvestType, productionLine, sowingDate, 0, additionalInformation, gutterCount, gutterHoleCount, numberOfBaskets, creatorId, creatorId);
+  public HarvestEvent createHarvestEvent(Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, List<HarvestBasket> baskets, UUID creatorId) {
+    HarvestEvent harvestEvent = harvestEventDAO.create(UUID.randomUUID(), product, startTime, endTime, harvestType, productionLine, sowingDate, 0, additionalInformation, gutterCount, gutterHoleCount, creatorId, creatorId);
+    baskets.forEach(basket -> {
+      harvestBasketDAO.create(UUID.randomUUID(), basket.getWeight(), harvestEvent);
+    });
+    return harvestEvent;
   }
   
   /**
@@ -76,13 +85,13 @@ public class HarvestEventController {
    * @param harvestType harvestType
    * @param productionLine productionLine
    * @param additionalInformation additional information
+   * @param baskets list of baskets
    * @param modifier modifier
    * @return updated harvestEvent
    */
   @SuppressWarnings ("squid:S00107")
 
-  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, Integer numberOfBaskets, String additionalInformation, UUID modifier) {
-
+  public HarvestEvent updateHarvestEvent(HarvestEvent harvestEvent, Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, String additionalInformation, List<HarvestBasket> baskets, UUID modifier) {
     harvestEventDAO.updateProduct(harvestEvent, product, modifier);
     harvestEventDAO.updateStartTime(harvestEvent, startTime, modifier);
     harvestEventDAO.updateEndTime(harvestEvent, endTime, modifier);
@@ -92,7 +101,12 @@ public class HarvestEventController {
     harvestEventDAO.updateGutterCount(harvestEvent, gutterCount, modifier);
     harvestEventDAO.updateSowingDate(harvestEvent, sowingDate, modifier);
     harvestEventDAO.updateGutterHoleCount(harvestEvent, gutterHoleCount, modifier);
-    harvestEventDAO.updateNumberOfBaskets(harvestEvent, numberOfBaskets, modifier);
+
+    // re-create baskets
+    harvestBasketDAO.listByHarvestEvent(harvestEvent).forEach(harvestBasketDAO::delete);
+    baskets.forEach(basket -> {
+      harvestBasketDAO.create(UUID.randomUUID(), basket.getWeight(), harvestEvent);
+    });
 
     return harvestEvent;
   }
@@ -103,6 +117,7 @@ public class HarvestEventController {
    * @param harvestEvent harvest event to be deleted
    */
   public void deleteHarvestEvent(HarvestEvent harvestEvent) {
+    harvestBasketDAO.listByHarvestEvent(harvestEvent).forEach(harvestBasketDAO::delete);
     harvestEventDAO.delete(harvestEvent);
   }
 

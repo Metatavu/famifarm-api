@@ -7,14 +7,12 @@ import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.EventCountController;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.Facility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.io.OutputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
