@@ -1,7 +1,12 @@
 package fi.metatavu.famifarm.test.functional.builder.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import feign.FeignException;
+import fi.metatavu.famifarm.client.ApiClient;
+import fi.metatavu.famifarm.client.api.EventsApi;
+import fi.metatavu.famifarm.client.model.*;
+import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
+import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -10,14 +15,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import fi.metatavu.famifarm.client.model.*;
-import org.json.JSONException;
-
-import feign.FeignException;
-import fi.metatavu.famifarm.client.ApiClient;
-import fi.metatavu.famifarm.client.api.EventsApi;
-import fi.metatavu.famifarm.rest.model.CultivationObservationEventData;
-import fi.metatavu.famifarm.test.functional.builder.AbstractTestBuilderResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event, EventsApi> {
   
@@ -110,10 +109,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param productionLine production line
    * @param sowingDate sowingDate
    * @param type type
+   * @param baskets baskets list
    * @return created event
    */
-  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, Integer numberOfBaskets, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type) {
-    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, numberOfBaskets, type);
+  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type, List<HarvestBasket> baskets) {
+    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, type, baskets);
 
     Event event = new Event();
     event.setProductId(product != null ? product.getId() : null);
@@ -366,6 +366,16 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
   }
 
   /**
+   * Parses harvest event data
+   *
+   * @param event harvest event
+   * @return parsed harvest event data object
+   */
+  public HarvestEventData readHarvestEventData(Event event) throws IOException {
+    return getObjectMapper().readValue(getObjectMapper().writeValueAsBytes(event.getData()), HarvestEventData.class);
+  }
+
+  /**
    * Creates event data object
    * 
    * @param amount amount
@@ -414,18 +424,20 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Creates event data object
    * @param productionLine production line
    * @param gutterCount gutterCount
-   * @param numberOfBaskets numberOfBaskets
-   * @param type
+   * @param type type of event
+   * @param gutterHoleCount gutter hole count
+   * @param sowingDate sowing date
+   * @param baskets number of baskets
    * @return harvest event data
    */
-  private HarvestEventData createHarvestEventData(ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, Integer numberOfBaskets, HarvestEventType type) {
+  private HarvestEventData createHarvestEventData(ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, HarvestEventType type, List<HarvestBasket> baskets) {
     HarvestEventData data = new HarvestEventData();
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setGutterCount(gutterCount);
     data.setGutterHoleCount(gutterHoleCount);
-    data.setNumberOfBaskets(numberOfBaskets);
     data.setSowingDate(sowingDate);
     data.setType(type);
+    data.setBaskets(baskets);
     return data;
   }
   

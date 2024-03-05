@@ -1,30 +1,22 @@
 package fi.metatavu.famifarm.test.functional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.hamcrest.MatcherAssert.assertThat;
+import com.google.common.collect.Lists;
+import fi.metatavu.famifarm.client.model.*;
+import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
+import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
+import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.collect.Lists;
-import fi.metatavu.famifarm.client.model.*;
-import org.junit.jupiter.api.Test;
-
-import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
-
-import io.quarkus.test.junit.QuarkusTest;
-import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
-import io.quarkus.test.common.QuarkusTestResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests for seeds
@@ -268,7 +260,22 @@ public class EventTestsIT extends AbstractFunctionalTest {
   @Test
   public void testCreateHarvestEvent() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
-      assertNotNull(createHarvestEvent(builder, Facility.JOROINEN));
+      List<HarvestBasket> baskets = new ArrayList<>();
+      HarvestBasket basket1 = new HarvestBasket();
+      basket1.setWeight(2f);
+
+      HarvestBasket basket2 = new HarvestBasket();
+      basket2.setWeight(2f);
+      baskets.add(basket1);
+      baskets.add(basket2);
+
+      Product createProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), List.of(), false, Facility.JOROINEN);
+      Event event = createHarvestEvent(builder, HarvestEventType.BOXING, createProduct, 0, 0, baskets);
+      assertNotNull(event);
+      HarvestEventData data = builder.admin().events().readHarvestEventData(event);
+      assertNotNull(data);
+      assertEquals(2, data.getBaskets().size());
+      assertEquals(2f, data.getBaskets().get(0).getWeight());
     }
   }
   
@@ -302,7 +309,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateData.setType(HarvestEventType.CUTTING);
       updateData.setGutterCount(100);
       updateData.setGutterHoleCount(150);
-      updateData.setNumberOfBaskets(100);
+      updateData.setBaskets(List.of(new HarvestBasket().weight(1f)));
       updateData.setSowingDate(updateSowingTime);
 
       Event updateEvent = new Event(); 
@@ -317,11 +324,10 @@ public class EventTestsIT extends AbstractFunctionalTest {
       Event harvest1 = builder.admin().events().updateEvent(updateEvent);
       builder.admin().events().assertEventsEqual(updateEvent, builder.admin().events().findEvent(createdEvent.getId()));
 
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.registerModule(new JavaTimeModule());
-      HarvestEventData harvestEventData = objectMapper.convertValue(harvest1.getData(), HarvestEventData.class);
-      int numberOfBaskets = harvestEventData.getNumberOfBaskets();
-      assertEquals(100, numberOfBaskets);
+      HarvestEventData harvestEventData = builder.admin().events().readHarvestEventData(harvest1);
+      List<HarvestBasket> baskets = harvestEventData.getBaskets();
+      assertEquals(1, baskets.size());
+      assertEquals(1f, baskets.get(0).getWeight());
     }
   }
 

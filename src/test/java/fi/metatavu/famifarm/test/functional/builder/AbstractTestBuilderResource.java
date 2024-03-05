@@ -193,7 +193,7 @@ public abstract class AbstractTestBuilderResource <T, A extends Api> implements 
    * 
    * @return object mapper
    */
-  private static ObjectMapper getObjectMapper() {
+  protected static ObjectMapper getObjectMapper() {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
