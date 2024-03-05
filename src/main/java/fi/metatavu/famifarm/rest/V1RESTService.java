@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.discards.StorageDiscardController;
 import fi.metatavu.famifarm.packings.CutPackingController;
@@ -2235,6 +2236,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
     }
 
     ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.registerModule(new JavaTimeModule());
     return objectMapper.readValue(objectMapper.writeValueAsBytes(object), targetClass);
   }
