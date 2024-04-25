@@ -22,9 +22,26 @@ import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.discards.StorageDiscardController;
 import fi.metatavu.famifarm.packings.CutPackingController;
 import fi.metatavu.famifarm.packings.CutPackingInvalidParametersException;
+import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.printing.PrintingController;
 import fi.metatavu.famifarm.reporting.ReportFormat;
 import fi.metatavu.famifarm.rest.model.*;
+import fi.metatavu.famifarm.rest.model.Campaign;
+import fi.metatavu.famifarm.rest.model.CampaignProduct;
+import fi.metatavu.famifarm.rest.model.CutPacking;
+import fi.metatavu.famifarm.rest.model.Draft;
+import fi.metatavu.famifarm.rest.model.Event;
+import fi.metatavu.famifarm.rest.model.HarvestBasket;
+import fi.metatavu.famifarm.rest.model.PackageSize;
+import fi.metatavu.famifarm.rest.model.Packing;
+import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
+import fi.metatavu.famifarm.rest.model.Pest;
+import fi.metatavu.famifarm.rest.model.Product;
+import fi.metatavu.famifarm.rest.model.ProductionLine;
+import fi.metatavu.famifarm.rest.model.Seed;
+import fi.metatavu.famifarm.rest.model.SeedBatch;
+import fi.metatavu.famifarm.rest.model.StorageDiscard;
+import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.*;
 import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
@@ -44,14 +61,6 @@ import fi.metatavu.famifarm.events.WastageEventController;
 import fi.metatavu.famifarm.packagesizes.PackageSizeController;
 import fi.metatavu.famifarm.packings.PackingController;
 import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
-import fi.metatavu.famifarm.persistence.model.CultivationObservationEvent;
-import fi.metatavu.famifarm.persistence.model.HarvestEvent;
-import fi.metatavu.famifarm.persistence.model.LocalizedEntry;
-import fi.metatavu.famifarm.persistence.model.PlantingEvent;
-import fi.metatavu.famifarm.persistence.model.ProductAllowedHarvestType;
-import fi.metatavu.famifarm.persistence.model.SowingEvent;
-import fi.metatavu.famifarm.persistence.model.TableSpreadEvent;
-import fi.metatavu.famifarm.persistence.model.WastageEvent;
 import fi.metatavu.famifarm.pests.PestsController;
 import fi.metatavu.famifarm.productionlines.ProductionLineController;
 import fi.metatavu.famifarm.products.ProductController;
@@ -245,7 +254,37 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
 
-    return createOk(packingTranslator.translate(packingController.create(getLoggerUserId(), facility, product, packageSize, body.getPackedCount(), body.getState(), body.getTime(), campaign, packingType)));
+    // Verify packing baskets product references and create a list of valid packing baskets to be reused for creating the objects
+    List<PackingBasket> validPackingBaskets = new ArrayList<>();
+    if (body.getBasketsUsed() != null) {
+      for (PackingUsedBasket basket : body.getBasketsUsed()) {
+        UUID basketProductId = basket.getProductId();
+        fi.metatavu.famifarm.persistence.model.Product basketProduct = productController.findProduct(basketProductId);
+        if (basketProduct == null || basketProduct.getFacility() != facility) {
+          return createNotFound(NOT_FOUND_MESSAGE);
+        }
+        PackingBasket packingBasket = new PackingBasket();
+        packingBasket.setId(UUID.randomUUID());
+        packingBasket.setProduct(product);
+        packingBasket.setCount(basket.getBasketCount());
+        validPackingBaskets.add(packingBasket);
+      }
+    }
+
+    return createOk(
+      packingTranslator.translate(
+        packingController.create(
+          getLoggerUserId(),
+          facility,
+          product,
+          packageSize,
+          body,
+          validPackingBaskets,
+          campaign,
+          packingType
+        )
+      )
+    );
   }
 
   @Override
@@ -354,7 +393,36 @@ public class V1RESTService extends AbstractApi implements V1Api {
         return createNotFound(NOT_FOUND_MESSAGE);
       }
     }
-    return createOk(packingTranslator.translate(packingController.updatePacking(packing, packageSize, body.getState(), body.getPackedCount(), product, body.getTime(), campaign, packingType, getLoggerUserId())));
+
+    // Verify packing baskets and create a list of valid packing baskets to be reused for creating the objects
+    List<PackingBasket> validPackingBaskets = new ArrayList<>();
+    if (body.getBasketsUsed() != null) {
+      for (PackingUsedBasket basket : body.getBasketsUsed()) {
+        UUID basketProductId = basket.getProductId();
+        fi.metatavu.famifarm.persistence.model.Product basketProduct = productController.findProduct(basketProductId);
+        if (basketProduct == null || basketProduct.getFacility() != facility) {
+          return createNotFound(NOT_FOUND_MESSAGE);
+        }
+        PackingBasket packingBasket = new PackingBasket();
+        packingBasket.setId(UUID.randomUUID());
+        packingBasket.setPacking(packing);
+        packingBasket.setProduct(product);
+        packingBasket.setCount(basket.getBasketCount());
+        validPackingBaskets.add(packingBasket);
+      }
+    }
+    return createOk(
+      packingTranslator.translate(
+        packingController.updatePacking(
+          packing,
+          packageSize,
+          body,
+          validPackingBaskets,
+          product,
+          campaign,
+          getLoggerUserId())
+      )
+    );
   }
   
   @Override

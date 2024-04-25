@@ -170,7 +170,7 @@ public abstract class AbstractDAO<T> {
    * @param object entity to be persisted
    * @return persisted entity
    */
-  protected T persist(T object) {
+  public T persist(T object) {
     getEntityManager().persist(object);
     return object;
   }

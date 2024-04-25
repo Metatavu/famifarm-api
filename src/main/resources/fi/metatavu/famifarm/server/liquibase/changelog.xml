@@ -1098,4 +1098,36 @@
       <column name="weight" type="float"/>
     </createTable>
   </changeSet>
+
+  <changeSet id="packing_baskets_verifications_weights" author="katja danilova">
+    <createTable tableName="packingverificationweighting">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="packing_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true" foreignKeyName="FK_PACKINGVERIFICATIONWEIGHTING_PACKING_ID" referencedColumnNames="id" referencedTableName="packing"/>
+      </column>
+      <column name="weight" type="float">
+        <constraints nullable="false"/>
+      </column>
+      <column name="time" type="datetime(6)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="packingbasket">
+      <column name="id" type="binary(16)">
+        <constraints unique="true" nullable="false" primaryKey="true"/>
+      </column>
+      <column name="packing_id" type="binary(16)">
+        <constraints nullable="false" primaryKey="true" foreignKeyName="FK_PACKINGBASKET_PACKING_ID" referencedColumnNames="id" referencedTableName="packing"/>
+      </column>
+      <column name="product_id" type="binary(16)">
+        <constraints nullable="false" foreignKeyName="FK_PACKINGBASKET_PRODUCT_ID" referencedColumnNames="id" referencedTableName="product"/>
+      </column>
+      <column name="count" type="integer">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
 </databaseChangeLog>
