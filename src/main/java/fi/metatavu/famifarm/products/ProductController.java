@@ -7,32 +7,31 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fi.metatavu.famifarm.persistence.dao.*;
 import fi.metatavu.famifarm.rest.model.Facility;
 import fi.metatavu.famifarm.rest.model.HarvestEventType;
-import fi.metatavu.famifarm.persistence.dao.CampaignProductDAO;
-import fi.metatavu.famifarm.persistence.dao.CutPackingDAO;
-import fi.metatavu.famifarm.persistence.dao.ProductAllowedHarvestTypeDAO;
-import fi.metatavu.famifarm.persistence.dao.ProductDAO;
-import fi.metatavu.famifarm.persistence.dao.ProductPackageSizeDAO;
 import fi.metatavu.famifarm.persistence.model.*;
 
 @ApplicationScoped
 public class ProductController {
 
   @Inject
-  private CampaignProductDAO campaignProductDAO;
+  CampaignProductDAO campaignProductDAO;
 
   @Inject
-  private ProductDAO productDAO;
+  ProductDAO productDAO;
 
   @Inject
-  private CutPackingDAO cutPackingDAO;
+  CutPackingDAO cutPackingDAO;
 
   @Inject
-  private ProductPackageSizeDAO productPackageSizeDAO;
+  ProductPackageSizeDAO productPackageSizeDAO;
 
   @Inject
-  private ProductAllowedHarvestTypeDAO productAllowedHarvestTypeDAO;
+  ProductAllowedHarvestTypeDAO productAllowedHarvestTypeDAO;
+
+  @Inject
+  PackingBasketDAO packingBasketDAO;
 
   /**
    * Creates new product
@@ -129,6 +128,11 @@ public class ProductController {
 
     for (CutPacking cutPacking : cutPackings) {
       cutPackingDAO.delete(cutPacking);
+    }
+
+    List<PackingBasket> packingBaskets = packingBasketDAO.listByProduct(product);
+    for (PackingBasket packingBasket : packingBaskets) {
+      packingBasketDAO.delete(packingBasket);
     }
 
     List<ProductPackageSize> productPackageSizes = productPackageSizeDAO.listByProduct(product);
