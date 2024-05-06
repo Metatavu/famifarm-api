@@ -65,7 +65,10 @@ public class PackingController {
       packingBody.getState(),
       packingBody.getTime(),
       campaign,
-      type
+      type,
+      packingBody.getStartTime(),
+      packingBody.getEndTime(),
+      packingBody.getAdditionalInformation()
     );
 
     if (packingBaskets != null) {
@@ -136,6 +139,9 @@ public class PackingController {
     packingDAO.updateTime(packing, packingBody.getTime(), modifier);
     packingDAO.updateCampaign(packing, campaign, modifier);
     packingDAO.updateType(packing, packingBody.getType(), modifier);
+    packingDAO.updateStartTime(packing, packingBody.getStartTime(), modifier);
+    packingDAO.updateEndTime(packing, packingBody.getEndTime(), modifier);
+    packingDAO.updateAdditionalInformation(packing, packingBody.getAdditionalInformation(), modifier);
 
     List<PackingBasket> existingBaskets = packingBasketDAO.listByPacking(packing);
     for (PackingBasket existingBasket : existingBaskets) {

@@ -59,6 +59,9 @@ public class PackingTranslator {
     result.setState(packing.getPackingState());
     result.setTime(packing.getTime());
     result.setType(packing.getType());
+    result.setStartTime(packing.getStartTime());
+    result.setEndTime(packing.getEndTime());
+    result.setAdditionalInformation(packing.getAdditionalInformation());
 
     List<PackingBasket> packingBaskets = packingBasketDAO.listByPacking(packing);
     if (packingBaskets != null) {

@@ -57,6 +57,15 @@ public class Packing {
   
   @Column(nullable = false)
   private OffsetDateTime time;
+
+  @Column
+  private OffsetDateTime startTime;
+
+  @Column
+  private OffsetDateTime endTime;
+
+  @Column
+  private String additionalInformation;
   
   @Column(nullable = false)
   @NotNull
@@ -174,6 +183,30 @@ public class Packing {
 
   public void setFacility(Facility facility) {
     this.facility = facility;
+  }
+
+  public OffsetDateTime getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(OffsetDateTime startTime) {
+    this.startTime = startTime;
+  }
+
+  public OffsetDateTime getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(OffsetDateTime endTime) {
+    this.endTime = endTime;
+  }
+
+  public String getAdditionalInformation() {
+    return additionalInformation;
+  }
+
+  public void setAdditionalInformation(String additionalInformation) {
+    this.additionalInformation = additionalInformation;
   }
 
   @PrePersist
