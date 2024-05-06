@@ -39,7 +39,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       List<PackingUsedBasket> baskets = new ArrayList<>();
       baskets.add(new PackingUsedBasket().basketCount(1).productId(product.getId()));
 
-      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN, weighings, baskets);
+      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN, weighings, baskets, OffsetDateTime.now(), null, "additional info");
       assertNotNull(packing);
       assertEquals(1, packing.getVerificationWeightings().size());
       assertEquals(1, packing.getBasketsUsed().size());
@@ -117,15 +117,21 @@ public class PackingTestsIT extends AbstractFunctionalTest {
 
       List<PackingUsedBasket> baskets = new ArrayList<>();
       baskets.add(new PackingUsedBasket().basketCount(1).productId(product.getId()));
-      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN, weighings, baskets);
+      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN, weighings, baskets, OffsetDateTime.now(), null, "additional info");
 
       packing.setState(PackingState.REMOVED);
       packing.setVerificationWeightings(null);
       packing.setBasketsUsed(null);
+      packing.setAdditionalInformation(null);
+      packing.setStartTime(null);
+      packing.setEndTime(null);
       assertNotNull(builder.admin().packings().update(packing, Facility.JOROINEN));
       Packing foundPacking = builder.admin().packings().find(packing.getId(), Facility.JOROINEN);
       assertTrue(foundPacking.getVerificationWeightings().isEmpty());
       assertTrue(foundPacking.getBasketsUsed().isEmpty());
+      assertNull(foundPacking.getAdditionalInformation());
+      assertNull(foundPacking.getStartTime());
+      assertNull(foundPacking.getEndTime());
     }
   }
   

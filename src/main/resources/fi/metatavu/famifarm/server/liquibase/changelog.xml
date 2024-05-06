@@ -1130,4 +1130,12 @@
       </column>
     </createTable>
   </changeSet>
+
+  <changeSet id="packing_additonal_fields" author="katja danilova">
+    <addColumn tableName="packing">
+      <column name="starttime" type="datetime(6)"/>
+      <column name="endtime" type="datetime(6)"/>
+      <column name="additionalinformation" type="varchar(512)"/>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>
