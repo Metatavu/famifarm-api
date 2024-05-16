@@ -38,9 +38,28 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param packedCount packed count
      * @param packingState packing status
      * @param time time of packing
+     * @param campaign campaign
+     * @param type packing type
+     * @param startTime start time
+     * @param endTime end time
+     * @param additionalInformation additional information
      * @return packing
      */
-    public Packing create(UUID creatorId, Facility facility, Product product, UUID id, PackageSize packageSize, Integer packedCount, PackingState packingState, OffsetDateTime time, Campaign campaign, PackingType type) {
+    public Packing create(
+      UUID creatorId,
+      Facility facility,
+      Product product,
+      UUID id,
+      PackageSize packageSize,
+      Integer packedCount,
+      PackingState packingState,
+      OffsetDateTime time,
+      Campaign campaign,
+      PackingType type,
+      OffsetDateTime startTime,
+      OffsetDateTime endTime,
+      String additionalInformation
+    ) {
       Packing packing = new Packing();
       packing.setCreatorId(creatorId);
       packing.setId(id);
@@ -54,6 +73,9 @@ public class PackingDAO extends AbstractDAO<Packing>{
       packing.setTime(time);
       packing.setCampaign(campaign);
       packing.setType(type);
+      packing.setStartTime(startTime);
+      packing.setEndTime(endTime);
+      packing.setAdditionalInformation(additionalInformation);
       return persist(packing);
     }
 
@@ -152,6 +174,48 @@ public class PackingDAO extends AbstractDAO<Packing>{
     public Packing updateProduct(Packing packing, Product product, UUID lastModifierId) {
       packing.setLastModifierId(lastModifierId);
       packing.setProduct(product);
+      return persist(packing);
+    }
+
+    /**
+     * Updates start time
+     *
+     * @param packing
+     * @param startTime
+     * @param lastModifierId
+     * @return updated packing
+     */
+    public Packing updateStartTime(Packing packing, OffsetDateTime startTime, UUID lastModifierId) {
+      packing.setLastModifierId(lastModifierId);
+      packing.setStartTime(startTime);
+      return persist(packing);
+    }
+
+    /**
+     * Updates end time
+     *
+     * @param packing
+     * @param endTime
+     * @param lastModifierId
+     * @return updated packing
+     */
+    public Packing updateEndTime(Packing packing, OffsetDateTime endTime, UUID lastModifierId) {
+      packing.setLastModifierId(lastModifierId);
+      packing.setEndTime(endTime);
+      return persist(packing);
+    }
+
+    /**
+     * Updates additional information
+     *
+     * @param packing
+     * @param additionalInformation
+     * @param lastModifierId
+     * @return updated packing
+     */
+    public Packing updateAdditionalInformation(Packing packing, String additionalInformation, UUID lastModifierId) {
+      packing.setLastModifierId(lastModifierId);
+      packing.setAdditionalInformation(additionalInformation);
       return persist(packing);
     }
     
