@@ -265,7 +265,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         }
         PackingBasket packingBasket = new PackingBasket();
         packingBasket.setId(UUID.randomUUID());
-        packingBasket.setProduct(product);
+        packingBasket.setProduct(basketProduct);
         packingBasket.setCount(basket.getBasketCount());
         validPackingBaskets.add(packingBasket);
       }
@@ -406,7 +406,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
         PackingBasket packingBasket = new PackingBasket();
         packingBasket.setId(UUID.randomUUID());
         packingBasket.setPacking(packing);
-        packingBasket.setProduct(product);
+        packingBasket.setProduct(basketProduct);
         packingBasket.setCount(basket.getBasketCount());
         validPackingBaskets.add(packingBasket);
       }
