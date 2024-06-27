@@ -133,6 +133,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       packing.setAdditionalInformation(null);
       packing.setStartTime(null);
       packing.setEndTime(null);
+      packing.setPackedCount(30);
 
       assertNotNull(builder.admin().packings().update(packing, Facility.JOROINEN));
 
@@ -144,6 +145,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       assertEquals(2, foundPacking.getBasketsUsed().size());
       assertEquals(1, (int) foundPacking.getBasketsUsed().stream().filter(packingUsedBasket -> packingUsedBasket.getProductId().equals(product2.getId())).count());
       assertEquals(1, (int) foundPacking.getBasketsUsed().stream().filter(packingUsedBasket -> packingUsedBasket.getProductId().equals(product.getId())).count());
+      assertEquals(30, (int) foundPacking.getPackedCount());
     }
   }
   
