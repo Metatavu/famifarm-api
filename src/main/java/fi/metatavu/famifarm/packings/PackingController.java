@@ -133,7 +133,7 @@ public class PackingController {
     UUID modifier
   ) {
     packingDAO.updatePackageSize(packing, packageSize, modifier);
-    packingDAO.updatePackedCount(packing, packing.getPackedCount(), modifier);
+    packingDAO.updatePackedCount(packing, packingBody.getPackedCount(), modifier);
     packingDAO.updatePackingState(packing, packingBody.getState(), modifier);
     packingDAO.updateProduct(packing, product, modifier);
     packingDAO.updateTime(packing, packingBody.getTime(), modifier);
