@@ -78,8 +78,10 @@ public class EventController {
   /**
    * Lists events between dates
    *
+   * @param facility facility
    * @param createdBefore created before
    * @param createdAfter created after
+   * @param eventType event type
    * @return list of events
    */
   public List<Event> listByTimeFrameAndType(Facility facility, OffsetDateTime createdBefore, OffsetDateTime createdAfter, EventType eventType) {

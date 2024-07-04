@@ -35,9 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTestResource(KeycloakResource.class)
 public class ReportTestsIT extends AbstractFunctionalTest {
 
-  @Inject
-  private Logger logger;
-
   @Test
   public void testXlsxExampleReport() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {

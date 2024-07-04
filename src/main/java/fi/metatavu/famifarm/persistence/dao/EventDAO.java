@@ -165,6 +165,7 @@ public class EventDAO extends AbstractEventDAO<Event> {
   /**
    * Lists events between dates and event type sorted by start time ascending
    *
+   * @param facility facility
    * @param createdBefore created before
    * @param createdAfter created after
    * @param eventType event type

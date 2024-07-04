@@ -23,13 +23,13 @@ public class XlsxPlantingListReport extends XlsxEventListReport {
   final int cartCountIndex = 7;
 
   private final List<ListReportColumn> columns = List.of(
-    new ListReportColumn("reports.plating_report.productHeader", productIndex),
-    new ListReportColumn("reports.plating_report.lineHeader", lineIndex),
-    new ListReportColumn("reports.plating_report.plantingDateHeader", plantingDateIndex),
-    new ListReportColumn("reports.plating_report.sowingDateHeader", sowingDateIndex),
-    new ListReportColumn("reports.plating_report.saplingDurationHeader", saplingDurationIndex),
-    new ListReportColumn("reports.plating_report.tableCountHeader", tableCountIndex),
-    new ListReportColumn("reports.plating_report.cartCountHeader", cartCountIndex)
+          new ListReportColumn("reports.plating_report.productHeader", productIndex),
+          new ListReportColumn("reports.plating_report.lineHeader", lineIndex),
+          new ListReportColumn("reports.plating_report.plantingDateHeader", plantingDateIndex),
+          new ListReportColumn("reports.plating_report.sowingDateHeader", sowingDateIndex),
+          new ListReportColumn("reports.plating_report.saplingDurationHeader", saplingDurationIndex),
+          new ListReportColumn("reports.plating_report.tableCountHeader", tableCountIndex),
+          new ListReportColumn("reports.plating_report.cartCountHeader", cartCountIndex)
   );
 
   @Override

@@ -54,8 +54,24 @@ public abstract class XlsxEventListReport extends AbstractXlsxReport {
    */
   protected abstract String getTitle(Locale locale);
 
+  /**
+   * Returns the columns for the report
+   *
+   * @return list columns
+   */
   protected abstract List<ListReportColumn> getReportColumns();
 
+  /**
+   * Sets the column value to the xlsx
+   *
+   * @param xlsxBuilder xlsxBuilder
+   * @param column column
+   * @param sheetId sheetId
+   * @param rowIndex rowIndex
+   * @param event event
+   * @param locale locale
+   * @param localizedValueController localizedValueController
+   */
   protected abstract void setColumnValueToXlsx(XlsxBuilder xlsxBuilder, ListReportColumn column, String sheetId, int rowIndex, Event event, Locale locale, LocalizedValueController localizedValueController);
 
   @Override
