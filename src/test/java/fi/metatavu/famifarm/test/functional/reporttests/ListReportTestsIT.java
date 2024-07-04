@@ -46,8 +46,8 @@ public class ListReportTestsIT extends AbstractFunctionalTest {
 
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
         for (int i = 0; i < eventCount; i++) {
-          builder.admin().reports().assertCellValue("Product name " + i, workbook, 0, i + 1, 1);
-          builder.admin().reports().assertCellValue(2, workbook, 0, i + 1, 6);
+          builder.admin().reports().assertCellValue("Product name " + i, workbook, 0, i + 3, 0);
+          builder.admin().reports().assertCellValue(2, workbook, 0, i + 3, 5);
         }
       }
     }
@@ -72,9 +72,9 @@ public class ListReportTestsIT extends AbstractFunctionalTest {
 
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
         for (int i = 0; i < eventCount; i++) {
-            builder.admin().reports().assertCellValue("Product name " + i, workbook, 0, i + 1, 1);
-            builder.admin().reports().assertCellValue(60, workbook, 0, i + 1, 7);
-            builder.admin().reports().assertCellValue(20, workbook, 0, i + 1, 11);
+            builder.admin().reports().assertCellValue("Product name " + i, workbook, 0, i + 3, 0);
+            builder.admin().reports().assertCellValue(60, workbook, 0, i + 3, 6);
+            builder.admin().reports().assertCellValue(20, workbook, 0, i + 3, 10);
         }
       }
     }
