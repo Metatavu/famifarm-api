@@ -14,7 +14,6 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 import io.quarkus.test.junit.QuarkusTest;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
 import io.quarkus.test.common.QuarkusTestResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 
 /**
  * Tests for pests
@@ -22,7 +21,6 @@ import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
  * @author Antti Leppä
  */
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class PestTestsIT extends AbstractFunctionalTest {
 

@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Antti Leppä
  */
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class EventTestsIT extends AbstractFunctionalTest {
 
@@ -66,7 +64,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       PackageSize createPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("New Test PackageSize"), 8, Facility.JOROINEN);
       Product createProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), Lists.newArrayList(createPackageSize), false, Facility.JOROINEN);
       ProductionLine createProductionLine = builder.admin().productionLines().create("5", 7, Facility.JOROINEN);
-      Event createdEvent = builder.admin().events().createSowing(createProduct, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 1, createProductionLine, Arrays.asList(seedBatch1, seedBatch2));
+      Event createdEvent = builder.admin().events().createSowing(createProduct, OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC), OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC), 1, createProductionLine, Arrays.asList(seedBatch1, seedBatch2), Facility.JOROINEN);
 
       Map<String, Object> createdData = (Map<String, Object>) createdEvent.getData();
       List<String> createdSeedBatchIds = (List<String>) createdData.get("seedBatchIds");
@@ -520,7 +518,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
       Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
-      createSowingEvent(builder, product);
+      createSowingEvent(builder, product, Facility.JOROINEN);
       createTableSpreadEvent(builder, product);
 
       builder.admin().events().assertCount(4);

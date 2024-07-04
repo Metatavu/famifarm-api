@@ -5,6 +5,8 @@ import javax.inject.Inject;
 
 import fi.metatavu.famifarm.reporting.json.JsonWastageReport;
 import fi.metatavu.famifarm.reporting.xlsx.*;
+import fi.metatavu.famifarm.reporting.xlsx.listreports.XlsxHarvestListReport;
+import fi.metatavu.famifarm.reporting.xlsx.listreports.XlsxPlantingListReport;
 
 /**
  * Report controller
@@ -59,6 +61,12 @@ public class ReportController {
   @Inject
   private XlsxlSummaryReport xlsxSummaryReport;
 
+  @Inject
+  private XlsxPlantingListReport xlsxPlantingListReport;
+
+  @Inject
+  private XlsxHarvestListReport xlsxHarvestListReport;
+
   /**
    * Returns report for given report type
    * 
@@ -100,6 +108,10 @@ public class ReportController {
         return xlsxSeedlingTimeReport;
       case SUMMARY:
         return xlsxSummaryReport;
+      case JUVA_PLANTING_LIST_REPORT:
+        return xlsxPlantingListReport;
+      case JUVA_HARVEST_LIST_REPORT:
+        return xlsxHarvestListReport;
     }
     
     return null;

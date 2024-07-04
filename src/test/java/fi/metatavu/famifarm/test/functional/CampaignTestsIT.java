@@ -3,7 +3,6 @@ package fi.metatavu.famifarm.test.functional;
 import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -22,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Campaign tests
  */
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class CampaignTestsIT extends AbstractFunctionalTest {
   @Test

@@ -18,7 +18,6 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 import io.quarkus.test.junit.QuarkusTest;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
 import io.quarkus.test.common.QuarkusTestResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 
 /**
  * Tests for products
@@ -26,7 +25,6 @@ import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
  * @author Ville Koivukangas
  */
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class ProductTestsIT extends AbstractFunctionalTest {
 

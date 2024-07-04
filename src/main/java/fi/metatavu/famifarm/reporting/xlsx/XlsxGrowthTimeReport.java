@@ -69,7 +69,7 @@ public class XlsxGrowthTimeReport extends AbstractXlsxReport {
       // Values
 
       int rowIndex = 4;
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); 
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
       List<Event> events = eventController.listByFacilityAndStartTimeAfterAndStartTimeBefore(facility, parseDate(parameters.get("toTime")), parseDate(parameters.get("fromTime")));
       List<HarvestEvent> harvestEvents = events
         .stream()

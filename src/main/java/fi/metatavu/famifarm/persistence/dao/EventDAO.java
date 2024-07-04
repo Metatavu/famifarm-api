@@ -57,8 +57,8 @@ public class EventDAO extends AbstractEventDAO<Event> {
    *
    * @param facility product facility
    * @param product product
-   * @param createdAfter created after
-   * @param createdBefore created before
+   * @param startAfter start after
+   * @param startBefore start before
    * @param firstResult first result
    * @param eventType event type
    * @param maxResults max results
@@ -147,6 +147,43 @@ public class EventDAO extends AbstractEventDAO<Event> {
     criteria.select(root);
 
     List<Predicate> restrictions = new ArrayList<>();
+
+    if (createdBefore != null) {
+      restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Event_.createdAt), createdBefore));
+    }
+
+    if (createdAfter != null) {
+      restrictions.add(criteriaBuilder.greaterThanOrEqualTo(root.get(Event_.createdAt), createdAfter));
+    }
+
+    criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
+    TypedQuery<Event> query = entityManager.createQuery(criteria);
+
+    return query.getResultList();
+  }
+
+  /**
+   * Lists events between dates and event type sorted by start time ascending
+   *
+   * @param createdBefore created before
+   * @param createdAfter created after
+   * @param eventType event type
+   * @return list of events
+   */
+  public List<Event> listByTimeFrameAndType(Facility facility, OffsetDateTime createdBefore, OffsetDateTime createdAfter, EventType eventType) {
+    EntityManager entityManager = getEntityManager();
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
+    Root<? extends Event>root = getRoot(criteria, eventType);
+    criteria.select(root);
+    criteria.orderBy(criteriaBuilder.asc(root.get(Event_.startTime)));
+
+    List<Predicate> restrictions = new ArrayList<>();
+
+    if (facility != null) {
+      root.fetch(Event_.product, JoinType.LEFT);
+      restrictions.add(criteriaBuilder.equal(root.get(Event_.product).get(Product_.facility), facility));
+    }
 
     if (createdBefore != null) {
       restrictions.add(criteriaBuilder.lessThanOrEqualTo(root.get(Event_.createdAt), createdBefore));
