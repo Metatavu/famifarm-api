@@ -71,7 +71,7 @@ public class XlsxHarvestListReport extends XlsxEventListReport {
         xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, harvestEvent.getProductionLine().getLineNumber());
         break;
       case harvestDateIndex:
-        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestDateIndex, formatOffsetDateTime(harvestEvent.getSowingDate()));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestDateIndex, formatOffsetDateTime(harvestEvent.getStartTime()));
         break;
       case sowingDateIndex:
         xlsxBuilder.setCellValue(sheetId, rowIndex, sowingDateIndex, formatOffsetDateTime(harvestEvent.getSowingDate()));

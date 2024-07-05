@@ -64,7 +64,7 @@ public class XlsxPlantingListReport extends XlsxEventListReport {
         xlsxBuilder.setCellValue(sheetId, rowIndex, sowingDateIndex, formatOffsetDateTime(plantingEvent.getSowingDate()));
         break;
       case saplingDurationIndex:
-        long saplingDuration = Duration.between(plantingEvent.getStartTime(), plantingEvent.getSowingDate()).toDays();
+        long saplingDuration = Duration.between(plantingEvent.getStartTime(), plantingEvent.getSowingDate()).abs().toDays();
         xlsxBuilder.setCellValue(sheetId, rowIndex, saplingDurationIndex, Long.toString(saplingDuration));
         break;
       case tableCountIndex:
