@@ -82,21 +82,31 @@ public abstract class XlsxEventListReport extends AbstractXlsxReport {
       List<ListReportColumn> listReportColumns = getReportColumns();
       int rowIndex = 0;
       int columnIndex = 0;
+
+      OffsetDateTime toTime = parseDate(parameters.get("toTime"));
+      OffsetDateTime fromTime = parseDate(parameters.get("fromTime"));
+
+      xlsxBuilder.setCellValue(sheetId, rowIndex, columnIndex, getTitle(locale));
+      rowIndex++;
+      xlsxBuilder.setCellValue(sheetId, rowIndex, columnIndex, localesController.getString(locale, "reports.common.dateBetween", Date.from(fromTime.toInstant()), Date.from(toTime.toInstant())));
+      rowIndex++;
+      rowIndex++;
+
       for (ListReportColumn listReportColumn : listReportColumns) {
-        xlsxBuilder.setCellValue(sheetId, rowIndex, columnIndex, listReportColumn.getHeader());
+        xlsxBuilder.setCellValue(sheetId, rowIndex, columnIndex, localesController.getString(locale, listReportColumn.getHeader()));
         columnIndex++;
       }
 
       List<Event> events = eventController.listByTimeFrameAndType(
               facility,
-              parseDate(parameters.get("toTime")),
-              parseDate(parameters.get("fromTime")),
+              toTime,
+              fromTime,
               getEventType()
       );
 
       for (Event event : events) {
         rowIndex++;
-        columnIndex = 1;
+        columnIndex = 0;
         for (ListReportColumn listReportColumn : listReportColumns) {
           setColumnValueToXlsx(xlsxBuilder, listReportColumn, sheetId, rowIndex, event, locale, localizedValueController);
           columnIndex++;

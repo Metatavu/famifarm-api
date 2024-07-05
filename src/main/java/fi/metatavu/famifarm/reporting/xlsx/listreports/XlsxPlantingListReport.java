@@ -14,13 +14,13 @@ import java.util.Locale;
 @ApplicationScoped
 public class XlsxPlantingListReport extends XlsxEventListReport {
 
-  final int productIndex = 1;
-  final int lineIndex = 2;
-  final int plantingDateIndex = 3;
-  final int sowingDateIndex = 4;
-  final int saplingDurationIndex = 5;
-  final int tableCountIndex = 6;
-  final int cartCountIndex = 7;
+  final int productIndex = 0;
+  final int lineIndex = 1;
+  final int plantingDateIndex = 2;
+  final int sowingDateIndex = 3;
+  final int saplingDurationIndex = 4;
+  final int tableCountIndex = 5;
+  final int cartCountIndex = 6;
 
   private final List<ListReportColumn> columns = List.of(
           new ListReportColumn("reports.plating_report.productHeader", productIndex),

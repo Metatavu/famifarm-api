@@ -19,17 +19,17 @@ public class XlsxHarvestListReport extends XlsxEventListReport {
   @Inject
   private HarvestEventController harvestEventController;
 
-  final int productIndex = 1;
-  final int lineIndex = 2;
-  final int harvestDateIndex = 3;
-  final int sowingDateIndex = 4;
-  final int growthDurationIndex = 5;
-  final int tableCountIndex = 6;
-  final int cropYieldKgIndex = 7;
-  final int basketCountIndex = 8;
-  final int kgPerTableIndex = 9;
-  final int gramsPerUnitIndex = 10;
-  final int kgPerBasketIndex = 11;
+  final int productIndex = 0;
+  final int lineIndex = 1;
+  final int harvestDateIndex = 2;
+  final int sowingDateIndex = 3;
+  final int growthDurationIndex = 4;
+  final int tableCountIndex = 5;
+  final int cropYieldKgIndex = 6;
+  final int basketCountIndex = 7;
+  final int kgPerTableIndex = 8;
+  final int gramsPerUnitIndex = 9;
+  final int kgPerBasketIndex = 10;
 
   private final List<ListReportColumn> columns = List.of(
           new ListReportColumn("reports.harvest_report.productHeader", productIndex),
