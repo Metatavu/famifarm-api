@@ -88,7 +88,7 @@ public abstract class XlsxEventListReport extends AbstractXlsxReport {
 
       xlsxBuilder.setCellValue(sheetId, rowIndex, columnIndex, getTitle(locale));
       rowIndex++;
-      xlsxBuilder.setCellValue(sheetId, rowIndex, columnIndex, localesController.getString(locale, "reports.common.dateBetween", fromTime, toTime));
+      xlsxBuilder.setCellValue(sheetId, rowIndex, columnIndex, localesController.getString(locale, "reports.common.dateBetween", Date.from(fromTime.toInstant()), Date.from(toTime.toInstant())));
       rowIndex++;
       rowIndex++;
 
