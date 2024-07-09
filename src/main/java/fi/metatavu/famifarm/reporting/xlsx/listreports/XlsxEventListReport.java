@@ -98,10 +98,10 @@ public abstract class XlsxEventListReport extends AbstractXlsxReport {
       }
 
       List<Event> events = eventController.listByTimeFrameAndType(
-              facility,
-              toTime,
-              fromTime,
-              getEventType()
+        facility,
+        toTime,
+        fromTime,
+        getEventType()
       );
 
       for (Event event : events) {
