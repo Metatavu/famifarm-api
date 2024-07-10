@@ -80,4 +80,31 @@ public class ListReportTestsIT extends AbstractFunctionalTest {
     }
   }
 
+  @Test
+  public void PackingListReportTest() throws Exception {
+    try (TestBuilder builder = new TestBuilder()) {
+      int eventCount = 9;
+      Facility facility = Facility.JUVA;
+      builder.admin().performedCultivationActions();
+      builder.admin().pests();
+      List<Packing> createdEvents = createPackingEvents(builder, facility, eventCount);
+
+      System.out.println(createdEvents);
+
+      String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+      String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
+
+      byte[] data = builder.admin().reports().createReport(facility, "JUVA_PACKING_LIST_REPORT", fromTime, toTime, null);
+      assertNotNull(data);
+
+      try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
+        for (int i = 0; i < eventCount; i++) {
+          builder.admin().reports().assertCellValue("test value", workbook, 0, i + 4, 0);
+          builder.admin().reports().assertCellValue(100 * 50, workbook, 0, i + 4, 2);
+          builder.admin().reports().assertCellValue(50, workbook, 0, i + 4, 3);
+        }
+      }
+    }
+  }
+
 }

@@ -4,6 +4,7 @@ package fi.metatavu.famifarm.test.functional;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +18,8 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Abstract base class for functional tests
@@ -264,6 +267,60 @@ public abstract class AbstractFunctionalTest {
     Integer amount = 50;
     
     return createHarvestEvent(builder, harvestType, product, amount);
+  }
+
+  protected List<Packing> createPackingEvents(TestBuilder builder, Facility facility, int amount) throws IOException {
+    List<Packing> createdEvents = Lists.newArrayList();
+    for (int i = 0; i < amount; i++) {
+      List<LocalizedValue> testEntry = new ArrayList<>();
+      LocalizedValue testValue = new LocalizedValue();
+
+      testValue.setLanguage("en");
+      testValue.setValue("test value");
+      testEntry.add(testValue);
+
+      PackageSize size = builder.admin().packageSizes().create(testEntry, 100, facility);
+      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, facility);
+      Product product1 = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, facility);
+      Packing newEvent = createPackingEvent(builder, List.of(product, product1), facility, i, testEntry);
+      createdEvents.add(newEvent);
+    }
+
+    return createdEvents;
+  }
+
+  protected Packing createPackingEvent(TestBuilder builder, List<Product> products, Facility facility, int seconds, List<LocalizedValue> localizedValues) throws IOException {
+    seconds = Math.min(seconds, 59);
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, seconds, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, seconds, 0, ZoneOffset.UTC);
+    Integer packedCount = 50;
+
+    List<PackingVerificationWeighing> weightings = new ArrayList<>();
+    weightings.add(new PackingVerificationWeighing().time(OffsetDateTime.now()).weight(100.0f));
+
+    List<PackingUsedBasket> baskets = new ArrayList<>();
+    products.forEach(product -> {
+      baskets.add(new PackingUsedBasket().basketCount(1).productId(product.getId()));
+    });
+
+    PackageSize size = builder.admin().packageSizes().create(localizedValues, 100, facility);
+
+    Packing packing = builder.admin().packings().create(
+      products.get(0).getId(),
+      null, PackingType.BASIC,
+      OffsetDateTime.now(),
+      packedCount,
+      PackingState.IN_STORE,
+      size,
+      facility,
+      weightings,
+      baskets,
+      startTime,
+      endTime,
+      "additional info");
+    assertNotNull(packing);
+
+    return packing;
   }
 
   /**

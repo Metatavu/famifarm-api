@@ -23,13 +23,13 @@ public class XlsxPlantingListReport extends XlsxEventListReport {
   final int cartCountIndex = 6;
 
   private final List<ListReportColumn> columns = List.of(
-          new ListReportColumn("reports.plating_report.productHeader", productIndex),
-          new ListReportColumn("reports.plating_report.lineHeader", lineIndex),
-          new ListReportColumn("reports.plating_report.plantingDateHeader", plantingDateIndex),
-          new ListReportColumn("reports.plating_report.sowingDateHeader", sowingDateIndex),
-          new ListReportColumn("reports.plating_report.saplingDurationHeader", saplingDurationIndex),
-          new ListReportColumn("reports.plating_report.tableCountHeader", tableCountIndex),
-          new ListReportColumn("reports.plating_report.cartCountHeader", cartCountIndex)
+    new ListReportColumn("reports.plating_report.productHeader", productIndex),
+    new ListReportColumn("reports.plating_report.lineHeader", lineIndex),
+    new ListReportColumn("reports.plating_report.plantingDateHeader", plantingDateIndex),
+    new ListReportColumn("reports.plating_report.sowingDateHeader", sowingDateIndex),
+    new ListReportColumn("reports.plating_report.saplingDurationHeader", saplingDurationIndex),
+    new ListReportColumn("reports.plating_report.tableCountHeader", tableCountIndex),
+    new ListReportColumn("reports.plating_report.cartCountHeader", cartCountIndex)
   );
 
   @Override
@@ -64,7 +64,7 @@ public class XlsxPlantingListReport extends XlsxEventListReport {
         xlsxBuilder.setCellValue(sheetId, rowIndex, sowingDateIndex, formatOffsetDateTime(plantingEvent.getSowingDate()));
         break;
       case saplingDurationIndex:
-        long saplingDuration = Duration.between(plantingEvent.getStartTime(), plantingEvent.getSowingDate()).toDays();
+        long saplingDuration = Duration.between(plantingEvent.getStartTime(), plantingEvent.getSowingDate()).abs().toDays();
         xlsxBuilder.setCellValue(sheetId, rowIndex, saplingDurationIndex, Long.toString(saplingDuration));
         break;
       case tableCountIndex:

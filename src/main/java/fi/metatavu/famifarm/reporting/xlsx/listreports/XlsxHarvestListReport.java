@@ -32,17 +32,17 @@ public class XlsxHarvestListReport extends XlsxEventListReport {
   final int kgPerBasketIndex = 10;
 
   private final List<ListReportColumn> columns = List.of(
-          new ListReportColumn("reports.harvest_report.productHeader", productIndex),
-          new ListReportColumn("reports.harvest_report.lineHeader", lineIndex),
-          new ListReportColumn("reports.harvest_report.harvestDateHeader", harvestDateIndex),
-          new ListReportColumn("reports.harvest_report.sowingDateHeader", sowingDateIndex),
-          new ListReportColumn("reports.harvest_report.growthTimeHeader", growthDurationIndex),
-          new ListReportColumn("reports.harvest_report.tableCountHeader", tableCountIndex),
-          new ListReportColumn("reports.harvest_report.cropYieldHeader", cropYieldKgIndex),
-          new ListReportColumn("reports.harvest_report.basketCountHeader", basketCountIndex),
-          new ListReportColumn("reports.harvest_report.kgPerTableHeader", kgPerTableIndex),
-          new ListReportColumn("reports.harvest_report.gramsPerUnitHeader", gramsPerUnitIndex),
-          new ListReportColumn("reports.harvest_report.kgPerBasketHeader", kgPerBasketIndex)
+    new ListReportColumn("reports.harvest_report.productHeader", productIndex),
+    new ListReportColumn("reports.harvest_report.lineHeader", lineIndex),
+    new ListReportColumn("reports.harvest_report.harvestDateHeader", harvestDateIndex),
+    new ListReportColumn("reports.harvest_report.sowingDateHeader", sowingDateIndex),
+    new ListReportColumn("reports.harvest_report.growthTimeHeader", growthDurationIndex),
+    new ListReportColumn("reports.harvest_report.tableCountHeader", tableCountIndex),
+    new ListReportColumn("reports.harvest_report.cropYieldHeader", cropYieldKgIndex),
+    new ListReportColumn("reports.harvest_report.basketCountHeader", basketCountIndex),
+    new ListReportColumn("reports.harvest_report.kgPerTableHeader", kgPerTableIndex),
+    new ListReportColumn("reports.harvest_report.gramsPerUnitHeader", gramsPerUnitIndex),
+    new ListReportColumn("reports.harvest_report.kgPerBasketHeader", kgPerBasketIndex)
   );
 
   @Override
@@ -71,7 +71,7 @@ public class XlsxHarvestListReport extends XlsxEventListReport {
         xlsxBuilder.setCellValue(sheetId, rowIndex, lineIndex, harvestEvent.getProductionLine().getLineNumber());
         break;
       case harvestDateIndex:
-        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestDateIndex, formatOffsetDateTime(harvestEvent.getSowingDate()));
+        xlsxBuilder.setCellValue(sheetId, rowIndex, harvestDateIndex, formatOffsetDateTime(harvestEvent.getStartTime()));
         break;
       case sowingDateIndex:
         xlsxBuilder.setCellValue(sheetId, rowIndex, sowingDateIndex, formatOffsetDateTime(harvestEvent.getSowingDate()));
