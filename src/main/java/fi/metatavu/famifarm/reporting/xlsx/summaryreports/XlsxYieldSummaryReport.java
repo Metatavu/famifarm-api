@@ -83,6 +83,8 @@ public class XlsxYieldSummaryReport extends AbstractXlsxReport {
         productYieldSummaryRows.put(product, yieldSummaryRow);
       }
 
+      System.out.println("Found: " + productYieldSummaryRows.size());
+
       for (WastageEvent wastageEvent: wastageEvents) {
         Product product = wastageEvent.getProduct();
         YieldSummaryRow yieldSummaryRow = productYieldSummaryRows.computeIfAbsent(product, k -> new YieldSummaryRow());
@@ -99,8 +101,8 @@ public class XlsxYieldSummaryReport extends AbstractXlsxReport {
 
       for (Map.Entry<Product, YieldSummaryRow> entry: productYieldSummaryRows.entrySet()) {
         Product product = entry.getKey();
+        System.out.println("Product: " + localizedValueController.getValue(product.getName(), locale) + " " + entry.getValue().harvestAmount + " " + entry.getValue().wastageAmount + " " + entry.getValue().packingAmount);
         YieldSummaryRow yieldSummaryRow = entry.getValue();
-        rowIndex++;
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
         xlsxBuilder.setCellValue(sheetId, rowIndex, basketsCollectedIndex, yieldSummaryRow.harvestAmount);
         xlsxBuilder.setCellValue(sheetId, rowIndex, wastageIndex, yieldSummaryRow.wastageAmount);
@@ -111,9 +113,8 @@ public class XlsxYieldSummaryReport extends AbstractXlsxReport {
 
         double packedFromTotal = (double) yieldSummaryRow.packingAmount / (yieldSummaryRow.harvestAmount - yieldSummaryRow.wastageAmount);
         xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromCollectedIndex, packedFromTotal * 100 + "%");
+        rowIndex++;
       }
-
-      rowIndex++;
 
       int totalHarvestAmount = productYieldSummaryRows.values().stream().mapToInt(row -> row.harvestAmount).sum();
       int totalWastageAmount = productYieldSummaryRows.values().stream().mapToInt(row -> row.wastageAmount).sum();
@@ -125,10 +126,10 @@ public class XlsxYieldSummaryReport extends AbstractXlsxReport {
       xlsxBuilder.setCellValue(sheetId, rowIndex, packingIndex, totalPackingAmount);
 
       double totalPackedFromCollected = (double) totalPackingAmount / totalHarvestAmount;
-      xlsxBuilder.setCellValue(sheetId, rowIndex + 1, packedFromTotalIndex, totalPackedFromCollected * 100 + "%");
+      xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromTotalIndex, totalPackedFromCollected * 100 + "%");
 
       double totalPackedFromTotal = (double) totalPackingAmount / (totalHarvestAmount - totalWastageAmount);
-      xlsxBuilder.setCellValue(sheetId, rowIndex + 1, packedFromCollectedIndex, totalPackedFromTotal * 100 + "%");
+      xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromCollectedIndex, totalPackedFromTotal * 100 + "%");
 
       xlsxBuilder.write(output);
     } catch (Exception e) {

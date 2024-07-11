@@ -4,10 +4,7 @@ package fi.metatavu.famifarm.test.functional;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -18,6 +15,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -310,6 +308,7 @@ public abstract class AbstractFunctionalTest {
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, seconds, 0, ZoneOffset.UTC);
     Integer packedCount = 50;
 
+
     List<PackingVerificationWeighing> weightings = new ArrayList<>();
     weightings.add(new PackingVerificationWeighing().time(OffsetDateTime.now()).weight(100.0f));
 
@@ -322,6 +321,47 @@ public abstract class AbstractFunctionalTest {
 
     Packing packing = builder.admin().packings().create(
       products.get(0).getId(),
+      null, PackingType.BASIC,
+      OffsetDateTime.now(),
+      packedCount,
+      PackingState.IN_STORE,
+      size,
+      facility,
+      weightings,
+      baskets,
+      startTime,
+      endTime,
+      "additional info");
+    assertNotNull(packing);
+
+    return packing;
+  }
+
+  protected Packing createPackingEventWithProductIds(TestBuilder builder, List<UUID> products, Facility facility, int seconds) throws IOException {
+    List<LocalizedValue> testEntry = new ArrayList<>();
+    LocalizedValue testValue = new LocalizedValue();
+
+    testValue.setLanguage("en");
+    testValue.setValue("test value");
+    testEntry.add(testValue);
+
+    seconds = Math.min(seconds, 59);
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, seconds, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, seconds, 0, ZoneOffset.UTC);
+    Integer packedCount = 2;
+
+    List<PackingVerificationWeighing> weightings = new ArrayList<>();
+    weightings.add(new PackingVerificationWeighing().time(OffsetDateTime.now()).weight(100.0f));
+
+    List<PackingUsedBasket> baskets = new ArrayList<>();
+    products.forEach(productId -> {
+      baskets.add(new PackingUsedBasket().basketCount(1).productId(productId));
+    });
+
+    PackageSize size = builder.admin().packageSizes().create(testEntry, 100, facility);
+
+    Packing packing = builder.admin().packings().create(
+      products.get(0),
       null, PackingType.BASIC,
       OffsetDateTime.now(),
       packedCount,
@@ -602,6 +642,28 @@ public abstract class AbstractFunctionalTest {
     Integer amount = 150;
     String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";
     return builder.admin().events().createWastage(product, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productionLine.getId());
+  }
+
+  /**
+   * Creates test event
+   *
+   * @param builder test builder
+   * @param facility facility
+   * @param productId product id
+   * @param seconds seconds part of events for sorting stability
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createWastageEvent(TestBuilder builder, Facility facility, UUID productId, UUID productLineId, int seconds) throws IOException {
+    WastageReason wastageReason = builder.admin().wastageReasons().create(builder.createLocalizedEntry("Test reason " + seconds, "Testi syy"), facility);
+
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, seconds, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, seconds, 0, ZoneOffset.UTC);
+
+    Integer amount = 1;
+    String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus mollis felis non dapibus. In at eros magna. Suspendisse finibus ut nunc et volutpat. Etiam sollicitudin tristique enim et rhoncus. Pellentesque quis elementum nisl. Integer at velit in sapien porttitor eleifend. Phasellus eleifend suscipit sapien eu elementum. Pellentesque et nunc a sapien tincidunt rhoncus. Vestibulum a tincidunt eros, molestie lobortis purus. Integer dignissim dignissim mauris a viverra. Etiam ut libero sit amet erat dapibus volutpat quis vel ipsum.";
+
+    return builder.admin().events().createWastage(productId, startTime, endTime, amount, wastageReason, description, EventType.HARVEST, productLineId, facility);
   }
   
   /**

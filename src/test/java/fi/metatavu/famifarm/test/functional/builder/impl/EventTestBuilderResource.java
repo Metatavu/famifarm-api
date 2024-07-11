@@ -202,6 +202,33 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     
     return addClosable(getApi().createEvent(event, Facility.JOROINEN));
   }
+
+
+  /**
+   * Creates new event
+   *
+   * @param product product
+   * @param startTime start time
+   * @param endTime end time
+   * @param amount amount
+   * @param wastageReason wastage reason
+   * @param additionalInformation additional information
+   * @param phase phase
+   * @return created event
+   */
+  public Event createWastage(UUID productId, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, EventType phase, UUID productionLineId, Facility facility) {
+    WastageEventData data = createWastageEventData(amount, wastageReason, phase, productionLineId);
+
+    Event event = new Event();
+    event.setProductId(productId);
+    event.setData(data);
+    event.setEndTime(endTime);
+    event.setStartTime(startTime);
+    event.setType(EventType.WASTAGE);
+    event.setAdditionalInformation(additionalInformation);
+
+    return addClosable(getApi().createEvent(event, facility));
+  }
   
   /**
    * Finds an Event

@@ -422,6 +422,9 @@ public class EventTestsIT extends AbstractFunctionalTest {
     try (TestBuilder builder = new TestBuilder()) {
       Facility facility = Facility.JOROINEN;
       Event createdEvent = createWastageEvent(builder, facility);
+      Event createdEvent1 = createWastageEvent(builder, facility);
+      Event createdEvent2 = createWastageEvent(builder, facility);
+      Event createdEvent3 = createWastageEvent(builder, facility);
       builder.admin().events().assertFindFailStatus(404, UUID.randomUUID(), facility);
       Event foundEvent = builder.admin().events().findEvent(createdEvent.getId());
       assertEquals(createdEvent.getId(), foundEvent.getId());
