@@ -17,7 +17,6 @@ import io.quarkus.test.common.QuarkusTestResource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 /**
  * Tests for Juva Listing reports
  *

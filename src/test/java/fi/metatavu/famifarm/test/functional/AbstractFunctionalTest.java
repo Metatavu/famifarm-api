@@ -67,6 +67,21 @@ public abstract class AbstractFunctionalTest {
     
     return createSowingEvent(builder, product, startTime, endTime, facility);
   }
+
+  /**
+   * Creates test event
+   *
+   * @param builder test builder
+   * @param product product to attach the event to
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected Event createSowingEvent(TestBuilder builder, Product product, Facility facility, int seconds) throws IOException {
+    OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, seconds, 0, ZoneOffset.UTC);
+    OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, seconds, 0, ZoneOffset.UTC);
+
+    return createSowingEvent(builder, product, startTime, endTime, facility);
+  }
   
   /**
    * Creates test event
@@ -457,6 +472,29 @@ public abstract class AbstractFunctionalTest {
       List<LocalizedValue> name = builder.createLocalizedEntry("Product name " + i, "Tuotteen nimi " + i);
       Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, facility);
       Event newEvent = createPlantingEvent(builder, product, facility, i);
+      createdEvents.add(newEvent);
+    }
+
+    return createdEvents;
+  }
+
+  /**
+   * Creates a number of test sowing events
+   *
+   * @param builder test builder
+   * @param facility facility
+   * @param amount amount of events to create
+   * @return created event
+   * @throws IOException thrown when event creation fails
+   */
+  protected List<Event> createSowingEvents(TestBuilder builder, Facility facility, Integer amount) throws IOException {
+    List<Event> createdEvents = Lists.newArrayList();
+    PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 12, facility);
+    List<LocalizedValue> name = builder.createLocalizedEntry("Product name", "Tuotteen nimi");
+    Product product = builder.admin().products().create(name, Lists.newArrayList(createdPackageSize), false, facility);
+
+    for (int i = 0; i < amount; i++) {
+      Event newEvent = createSowingEvent(builder, product, facility, i);
       createdEvents.add(newEvent);
     }
 
