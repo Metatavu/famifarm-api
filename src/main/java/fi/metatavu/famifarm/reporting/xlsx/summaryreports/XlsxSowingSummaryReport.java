@@ -52,7 +52,7 @@ public class XlsxSowingSummaryReport extends AbstractXlsxReport {
       rowIndex++;
       rowIndex++;
 
-      xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localesController.getString(locale, "reports.common.product_header"));
+      xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localesController.getString(locale, "reports.common.productHeader"));
       xlsxBuilder.setCellValue(sheetId, rowIndex, amountIndex, localesController.getString(locale, "reports.sowing_summary.amount"));
 
       Map<Product, Integer> productCounts = new HashMap<Product, Integer>();
