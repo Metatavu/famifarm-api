@@ -2,7 +2,6 @@ package fi.metatavu.famifarm.reporting.xlsx.summaryreports;
 
 import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.events.HarvestEventController;
-import fi.metatavu.famifarm.events.WastageEventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.packings.PackingController;

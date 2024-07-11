@@ -6,7 +6,6 @@ import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
-import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.reporting.xlsx.AbstractXlsxReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxBuilder;

@@ -1,19 +1,15 @@
 package fi.metatavu.famifarm.reporting.xlsx.summaryreports;
 
-import fi.metatavu.famifarm.events.EventController;
 import fi.metatavu.famifarm.localization.LocalesController;
 import fi.metatavu.famifarm.localization.LocalizedValueController;
 import fi.metatavu.famifarm.packings.PackingController;
 import fi.metatavu.famifarm.persistence.dao.PackingBasketDAO;
-import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Packing;
-import fi.metatavu.famifarm.persistence.model.PlantingEvent;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.reporting.xlsx.AbstractXlsxReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxBuilder;
 import fi.metatavu.famifarm.reporting.xlsx.listreports.data.PackingData;
-import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.Facility;
 
 import javax.enterprise.context.ApplicationScoped;

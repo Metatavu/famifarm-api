@@ -9,7 +9,6 @@ import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
 import fi.metatavu.famifarm.reporting.xlsx.AbstractXlsxReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxBuilder;
-import fi.metatavu.famifarm.reporting.xlsx.listreports.XlsxEventListReport;
 import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.Facility;
 
