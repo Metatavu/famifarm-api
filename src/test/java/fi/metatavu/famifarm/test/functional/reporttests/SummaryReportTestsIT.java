@@ -4,7 +4,6 @@ import fi.metatavu.famifarm.client.model.Event;
 import fi.metatavu.famifarm.client.model.Facility;
 import fi.metatavu.famifarm.client.model.HarvestEventData;
 import fi.metatavu.famifarm.client.model.Packing;
-import fi.metatavu.famifarm.persistence.model.HarvestEvent;
 import fi.metatavu.famifarm.test.functional.AbstractFunctionalTest;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
@@ -13,12 +12,10 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -171,15 +168,14 @@ public class SummaryReportTestsIT extends AbstractFunctionalTest {
           builder.admin().reports().assertCellValue(3, workbook, 0,  4 + i, 1);
           builder.admin().reports().assertCellValue(1, workbook, 0,  4 + i, 2);
           builder.admin().reports().assertCellValue(2, workbook, 0,  4 + i, 3);
-          //TODO truncate the output value to 2 decimal places
-          builder.admin().reports().assertCellValue("66.66666666666666%", workbook, 0,  4 + i, 4);
-          builder.admin().reports().assertCellValue("100.0%", workbook, 0,  4 + i, 5);
+          builder.admin().reports().assertCellValue("66.67%", workbook, 0,  4 + i, 4);
+          builder.admin().reports().assertCellValue("100.00%", workbook, 0,  4 + i, 5);
         }
         builder.admin().reports().assertCellValue(3 * eventCount, workbook, 0,  4 + eventCount, 1);
         builder.admin().reports().assertCellValue(eventCount, workbook, 0,  4 + eventCount, 2);
         builder.admin().reports().assertCellValue(2 * eventCount, workbook, 0,  4 + eventCount, 3);
-        builder.admin().reports().assertCellValue("66.66666666666666%", workbook, 0,  4 + eventCount, 4);
-        builder.admin().reports().assertCellValue("100.0%", workbook, 0,  4 + eventCount, 5);
+        builder.admin().reports().assertCellValue("66.67%", workbook, 0,  4 + eventCount, 4);
+        builder.admin().reports().assertCellValue("100.00%", workbook, 0,  4 + eventCount, 5);
       }
 
       // Wastage reason and event won't auto close correctly

@@ -109,10 +109,10 @@ public class XlsxYieldSummaryReport extends AbstractXlsxReport {
         xlsxBuilder.setCellValue(sheetId, rowIndex, packingIndex, yieldSummaryRow.packingAmount);
 
         double packedFromCollected = (double) yieldSummaryRow.packingAmount / yieldSummaryRow.harvestAmount;
-        xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromTotalIndex, packedFromCollected * 100 + "%");
+        xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromTotalIndex, String.format( "%.2f", packedFromCollected * 100 ) + "%");
 
         double packedFromTotal = (double) yieldSummaryRow.packingAmount / (yieldSummaryRow.harvestAmount - yieldSummaryRow.wastageAmount);
-        xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromCollectedIndex, packedFromTotal * 100 + "%");
+        xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromCollectedIndex, String.format("%.2f", packedFromTotal * 100) + "%");
         rowIndex++;
       }
 
@@ -126,10 +126,10 @@ public class XlsxYieldSummaryReport extends AbstractXlsxReport {
       xlsxBuilder.setCellValue(sheetId, rowIndex, packingIndex, totalPackingAmount);
 
       double totalPackedFromCollected = (double) totalPackingAmount / totalHarvestAmount;
-      xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromTotalIndex, totalPackedFromCollected * 100 + "%");
+      xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromTotalIndex, String.format("%.2f", totalPackedFromCollected * 100) + "%");
 
       double totalPackedFromTotal = (double) totalPackingAmount / (totalHarvestAmount - totalWastageAmount);
-      xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromCollectedIndex, totalPackedFromTotal * 100 + "%");
+      xlsxBuilder.setCellValue(sheetId, rowIndex, packedFromCollectedIndex, String.format("%.2f", totalPackedFromTotal * 100) + "%");
 
       xlsxBuilder.write(output);
     } catch (Exception e) {
