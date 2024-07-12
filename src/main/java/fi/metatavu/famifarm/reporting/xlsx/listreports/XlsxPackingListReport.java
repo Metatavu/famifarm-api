@@ -81,7 +81,7 @@ public class XlsxPackingListReport extends AbstractXlsxReport {
       for (PackingData entity : entities) {
         List<PackingBasket> baskets = entity.getPackingBaskets().stream().distinct().collect(Collectors.toList());
         for (PackingBasket basket : baskets) {
-          if (!dynamicColumns.containsKey(basket.getProduct())) {
+          if (!dynamicColumns.containsKey(basket.getProduct()) && basket.getProduct().isRawMaterial()) {
             dynamicColumns.put(basket.getProduct(), dynamicColumns.size());
             xlsxBuilder.setCellValue(sheetId, rowIndex, dynamicUsedMaterialsIndex + dynamicColumns.size(), localizedValueController.getValue(basket.getProduct().getName(), locale));
           }
@@ -102,6 +102,10 @@ public class XlsxPackingListReport extends AbstractXlsxReport {
 
         HashMap<Product, Integer> columnDynamicValues = new HashMap<>();
         for (PackingBasket basket : packingData.getPackingBaskets()) {
+          if (!basket.getProduct().isRawMaterial()) {
+            continue;
+          }
+
           if (!columnDynamicValues.containsKey(basket.getProduct())) {
             columnDynamicValues.put(basket.getProduct(), 0);
           }
