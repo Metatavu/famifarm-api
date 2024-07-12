@@ -8,6 +8,7 @@ import fi.metatavu.famifarm.reporting.xlsx.*;
 import fi.metatavu.famifarm.reporting.xlsx.listreports.XlsxHarvestListReport;
 import fi.metatavu.famifarm.reporting.xlsx.listreports.XlsxPackingListReport;
 import fi.metatavu.famifarm.reporting.xlsx.listreports.XlsxPlantingListReport;
+import fi.metatavu.famifarm.reporting.xlsx.summaryreports.*;
 
 /**
  * Report controller
@@ -71,6 +72,21 @@ public class ReportController {
   @Inject
   private XlsxPackingListReport xlsxPackingListReport;
 
+  @Inject
+  private XlsxSowingSummaryReport xlsxSowingSummaryReport;
+
+  @Inject
+  private XlsxPlantingSummaryReport xlsxPlantingSummaryReport;
+
+  @Inject
+  private XlsxPackingSummaryReport xlsxPackingSummaryReport;
+
+  @Inject
+  private XlsxHarvestSummaryReport xlsxHarvestSummaryReport;
+
+  @Inject
+  private XlsxYieldSummaryReport xlsxYieldSummaryReport;
+
   /**
    * Returns report for given report type
    * 
@@ -118,6 +134,16 @@ public class ReportController {
         return xlsxHarvestListReport;
       case JUVA_PACKING_LIST_REPORT:
         return xlsxPackingListReport;
+      case JUVA_SOWING_SUMMARY_REPORT:
+        return xlsxSowingSummaryReport;
+      case JUVA_PLANTING_SUMMARY_REPORT:
+        return xlsxPlantingSummaryReport;
+      case JUVA_PACKING_SUMMARY_REPORT:
+        return xlsxPackingSummaryReport;
+      case JUVA_HARVEST_SUMMARY_REPORT:
+        return xlsxHarvestSummaryReport;
+      case JUVA_YIELD_SUMMARY_REPORT:
+        return xlsxYieldSummaryReport;
     }
     
     return null;
