@@ -59,12 +59,16 @@ public class XlsxPackingSummaryReport extends AbstractXlsxReport {
 
       xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localesController.getString(locale, "reports.common.productHeader"));
       xlsxBuilder.setCellValue(sheetId, rowIndex, bagAmountIndex, localesController.getString(locale, "reports.packing_summary.bag_count"));
-      xlsxBuilder.setCellValue(sheetId, rowIndex, bagAmountIndex, localesController.getString(locale, "reports.packing_summary.box_count"));
+      xlsxBuilder.setCellValue(sheetId, rowIndex, boxAmountIndex, localesController.getString(locale, "reports.packing_summary.box_count"));
 
       Map<Product, Pair<Integer, Integer>> products = new HashMap<>();
 
       for (PackingData event : events) {
         Product product = event.getPacking().getProduct();
+        if (product.isRawMaterial()) {
+          continue;
+        }
+
         int boxAmount = event.getPacking().getPackedCount();
         int bagAmount = boxAmount * event.getPacking().getPackageSize().getSize();
 

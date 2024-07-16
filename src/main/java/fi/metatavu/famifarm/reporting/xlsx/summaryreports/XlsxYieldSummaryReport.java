@@ -65,9 +65,11 @@ public class XlsxYieldSummaryReport extends AbstractXlsxReport {
       rowIndex++;
 
       xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localesController.getString(locale, "reports.common.productHeader"));
-      xlsxBuilder.setCellValue(sheetId, rowIndex, basketsCollectedIndex, localesController.getString(locale, "reports.harvest_summary.tableCountHeader"));
-      xlsxBuilder.setCellValue(sheetId, rowIndex, wastageIndex, localesController.getString(locale, "reports.harvest_summary.yieldHeader"));
-      xlsxBuilder.setCellValue(sheetId, rowIndex, packingIndex, localesController.getString(locale, "reports.harvest_summary.basketCountHeader"));
+      xlsxBuilder.setCellValue(sheetId, rowIndex, basketsCollectedIndex, localesController.getString(locale, "reports.yield_summary.basketsCollected"));
+      xlsxBuilder.setCellValue(sheetId, rowIndex, wastageIndex, localesController.getString(locale, "reports.yield_summary.wasted"));
+      xlsxBuilder.setCellValue(sheetId, rowIndex, packingIndex, localesController.getString(locale, "reports.yield_summary.basketsPacked"));
+      xlsxBuilder.setCellValue(sheetId, rowIndex, packingIndex, localesController.getString(locale, "reports.yield_summary.packedFromAll"));
+      xlsxBuilder.setCellValue(sheetId, rowIndex, packingIndex, localesController.getString(locale, "reports.yield_summary.packedFromCollected"));
       rowIndex++;
 
       List<HarvestEvent> harvestEvents = eventController.listByTimeFrameAndType(facility, toTime, fromTime, EventType.HARVEST).stream().map(HarvestEvent.class::cast).collect(Collectors.toList());
@@ -101,7 +103,6 @@ public class XlsxYieldSummaryReport extends AbstractXlsxReport {
 
       for (Map.Entry<Product, YieldSummaryRow> entry: productYieldSummaryRows.entrySet()) {
         Product product = entry.getKey();
-        System.out.println("Product: " + localizedValueController.getValue(product.getName(), locale) + " " + entry.getValue().harvestAmount + " " + entry.getValue().wastageAmount + " " + entry.getValue().packingAmount);
         YieldSummaryRow yieldSummaryRow = entry.getValue();
         xlsxBuilder.setCellValue(sheetId, rowIndex, productIndex, localizedValueController.getValue(product.getName(), locale));
         xlsxBuilder.setCellValue(sheetId, rowIndex, basketsCollectedIndex, yieldSummaryRow.harvestAmount);
