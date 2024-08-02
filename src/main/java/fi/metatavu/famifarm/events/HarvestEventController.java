@@ -121,4 +121,13 @@ public class HarvestEventController {
     harvestEventDAO.delete(harvestEvent);
   }
 
+  /**
+   * Get harvest event baskets
+   * @param harvestEvent harvest event
+   *
+   * @return List of HarvestBaskets related to the event
+   */
+  public List<fi.metatavu.famifarm.persistence.model.HarvestBasket> listHarvestBaskets(HarvestEvent harvestEvent) {
+    return harvestBasketDAO.listByHarvestEvent(harvestEvent);
+  }
 }

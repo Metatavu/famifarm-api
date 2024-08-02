@@ -40,7 +40,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param seedBatches seed batch
    * @return created event
    */
-  public Event createSowing(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches) {
+  public Event createSowing(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, ProductionLine productionLine, List<SeedBatch> seedBatches, Facility facility) {
     SowingEventData data = createSowingEventData(amount, productionLine, seedBatches);
     
     Event event = new Event();
@@ -50,7 +50,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setStartTime(startTime);
     event.setType(EventType.SOWING);
     
-    return addClosable(getApi().createEvent(event, Facility.JOROINEN));
+    return addClosable(getApi().createEvent(event, facility));
   }
   
   /**
@@ -124,6 +124,31 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     
     return addClosable(getApi().createEvent(event, Facility.JOROINEN));
   }
+
+  /**
+   * Creates new event
+   *
+   * @param product product
+   * @param startTime event start time
+   * @param endTime event end time
+   * @param productionLine production line
+   * @param sowingDate sowingDate
+   * @param type type
+   * @param baskets baskets list
+   * @return created event
+   */
+  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type, List<HarvestBasket> baskets, Facility facility) {
+    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, type, baskets);
+
+    Event event = new Event();
+    event.setProductId(product != null ? product.getId() : null);
+    event.setData(data);
+    event.setEndTime(endTime);
+    event.setStartTime(startTime);
+    event.setType(EventType.HARVEST);
+
+    return addClosable(getApi().createEvent(event, facility));
+  }
   
   /**
    * Creates new event
@@ -138,7 +163,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param workerCount worker count
    * @return created event
    */
-  public Event createPlanting(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, OffsetDateTime sowingDate, Integer cellCount, Integer workerCount) {
+  public Event createPlanting(Product product, OffsetDateTime startTime, OffsetDateTime endTime, Integer gutterCount, Integer gutterNumber, ProductionLine productionLine, OffsetDateTime sowingDate, Integer cellCount, Integer workerCount, Facility facility) {
     PlantingEventData data = createPlantingEventData(gutterCount, gutterNumber, productionLine, sowingDate, cellCount, workerCount);
     
     Event event = new Event();
@@ -148,7 +173,7 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     event.setStartTime(startTime);
     event.setType(EventType.PLANTING);
     
-    return addClosable(getApi().createEvent(event, Facility.JOROINEN));
+    return addClosable(getApi().createEvent(event, facility));
   }
 
   /**
@@ -177,6 +202,33 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
     
     return addClosable(getApi().createEvent(event, Facility.JOROINEN));
   }
+
+
+  /**
+   * Creates new event
+   *
+   * @param product product
+   * @param startTime start time
+   * @param endTime end time
+   * @param amount amount
+   * @param wastageReason wastage reason
+   * @param additionalInformation additional information
+   * @param phase phase
+   * @return created event
+   */
+  public Event createWastage(UUID productId, OffsetDateTime startTime, OffsetDateTime endTime, Integer amount, WastageReason wastageReason, String additionalInformation, EventType phase, UUID productionLineId, Facility facility) {
+    WastageEventData data = createWastageEventData(amount, wastageReason, phase, productionLineId);
+
+    Event event = new Event();
+    event.setProductId(productId);
+    event.setData(data);
+    event.setEndTime(endTime);
+    event.setStartTime(startTime);
+    event.setType(EventType.WASTAGE);
+    event.setAdditionalInformation(additionalInformation);
+
+    return addClosable(getApi().createEvent(event, facility));
+  }
   
   /**
    * Finds an Event
@@ -203,7 +255,12 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param event Event to be deleted
    */
   public void delete(Event event) {
-    getApi().deleteEvent(Facility.JOROINEN, event.getId());
+    try {
+      getApi().deleteEvent(Facility.JOROINEN, event.getId());
+    } catch (FeignException e) {
+      getApi().deleteEvent(Facility.JUVA, event.getId());
+    }
+
     removeClosable(closable -> !closable.getId().equals(event.getId()));
   }
 
@@ -344,7 +401,11 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
 
   @Override
   public void clean(Event event) {
-    getApi().deleteEvent(Facility.JOROINEN, event.getId());
+    try {
+      getApi().deleteEvent(Facility.JOROINEN, event.getId());
+    } catch (FeignException e) {
+      getApi().deleteEvent(Facility.JUVA, event.getId());
+    }
   }
   
   /**

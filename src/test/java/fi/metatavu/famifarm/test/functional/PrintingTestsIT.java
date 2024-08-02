@@ -14,13 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.OffsetDateTime;
 import java.util.List;
 import io.quarkus.test.common.QuarkusTestResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 
 /**
  * Test class for printing
  */
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class PrintingTestsIT extends AbstractFunctionalTest {
     @Test

@@ -64,7 +64,7 @@ public class EventController {
     return eventDAO.findById(id);
   }
  
-    /**
+  /**
    * Lists events between dates
    * 
    * @param createdBefore created before
@@ -73,6 +73,19 @@ public class EventController {
    */
   public List<Event> listByCreatedAfterAndCreatedBefore(OffsetDateTime createdBefore, OffsetDateTime createdAfter) {
     return eventDAO.listByCreatedAfterAndCreatedBefore(createdBefore, createdAfter);
+  }
+
+  /**
+   * Lists events between dates
+   *
+   * @param facility facility
+   * @param createdBefore created before
+   * @param createdAfter created after
+   * @param eventType event type
+   * @return list of events
+   */
+  public List<Event> listByTimeFrameAndType(Facility facility, OffsetDateTime createdBefore, OffsetDateTime createdAfter, EventType eventType) {
+    return eventDAO.listByTimeFrameAndType(facility, createdBefore, createdAfter, eventType);
   }
   
   /**

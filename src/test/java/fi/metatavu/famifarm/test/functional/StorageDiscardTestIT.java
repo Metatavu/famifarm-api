@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class StorageDiscardTestIT extends AbstractFunctionalTest {
 
