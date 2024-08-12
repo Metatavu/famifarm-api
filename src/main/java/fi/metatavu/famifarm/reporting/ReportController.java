@@ -9,6 +9,14 @@ import fi.metatavu.famifarm.reporting.xlsx.listreports.XlsxHarvestListReport;
 import fi.metatavu.famifarm.reporting.xlsx.listreports.XlsxPackingListReport;
 import fi.metatavu.famifarm.reporting.xlsx.listreports.XlsxPlantingListReport;
 import fi.metatavu.famifarm.reporting.xlsx.summaryreports.*;
+import fi.metatavu.famifarm.reporting.xlsx.workhours.XlsxHarvestWorkHoursReport;
+import fi.metatavu.famifarm.reporting.xlsx.workhours.XlsxPackingWorkHoursReport;
+import fi.metatavu.famifarm.reporting.xlsx.workhours.XlsxPlantingWorkHoursReport;
+import fi.metatavu.famifarm.reporting.xlsx.workhours.XlsxSowingWorkHoursReport;
+import fi.metatavu.famifarm.reporting.xlsx.workhoursummary.XlsxHarvestWorkHourSummary;
+import fi.metatavu.famifarm.reporting.xlsx.workhoursummary.XlsxPackingWorkHourSummary;
+import fi.metatavu.famifarm.reporting.xlsx.workhoursummary.XlsxPlantingWorkHourSummary;
+import fi.metatavu.famifarm.reporting.xlsx.workhoursummary.XlsxSowingWorkHourSummary;
 
 /**
  * Report controller
@@ -87,6 +95,30 @@ public class ReportController {
   @Inject
   private XlsxYieldSummaryReport xlsxYieldSummaryReport;
 
+  @Inject
+  private XlsxSowingWorkHoursReport xlsxSowingWorkHoursReport;
+
+  @Inject
+  private XlsxPlantingWorkHoursReport xlsxPlantingWorkHoursReport;
+
+  @Inject
+  private XlsxPackingWorkHoursReport xlsxPackingWorkHoursReport;
+
+  @Inject
+  private XlsxHarvestWorkHoursReport xlsxHarvestWorkHoursReport;
+
+  @Inject
+  private XlsxPlantingWorkHourSummary xlsxPlantingWorkHourSummary;
+
+  @Inject
+  private XlsxSowingWorkHourSummary xlsxSowingWorkHourSummary;
+
+  @Inject
+  private XlsxHarvestWorkHourSummary xlsxHarvestWorkHourSummary;
+
+  @Inject
+  private XlsxPackingWorkHourSummary xlsxPackingWorkHourSummary;
+
   /**
    * Returns report for given report type
    * 
@@ -144,6 +176,22 @@ public class ReportController {
         return xlsxHarvestSummaryReport;
       case JUVA_YIELD_SUMMARY_REPORT:
         return xlsxYieldSummaryReport;
+      case JUVA_SOWING_WORK_HOURS_REPORT:
+        return xlsxSowingWorkHoursReport;
+      case JUVA_PLANTING_WORK_HOURS_REPORT:
+        return xlsxPlantingWorkHoursReport;
+      case JUVA_PACKING_WORK_HOURS_REPORT:
+        return xlsxPackingWorkHoursReport;
+      case JUVA_HARVEST_WORK_HOURS_REPORT:
+        return xlsxHarvestWorkHoursReport;
+      case JUVA_PLANTING_WORK_HOUR_SUMMARY_REPORT:
+        return xlsxPlantingWorkHourSummary;
+      case JUVA_SOWING_WORK_HOUR_SUMMARY_REPORT:
+        return xlsxSowingWorkHourSummary;
+      case JUVA_HARVEST_WORK_HOUR_SUMMARY_REPORT:
+        return xlsxHarvestWorkHourSummary;
+      case JUVA_PACKING_WORK_HOUR_SUMMARY_REPORT:
+        return xlsxPackingWorkHourSummary;
     }
     
     return null;
