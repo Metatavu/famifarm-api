@@ -7,7 +7,6 @@ import fi.metatavu.famifarm.persistence.model.Event;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.SowingEvent;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.reporting.xlsx.AbstractXlsxReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxBuilder;
 import fi.metatavu.famifarm.rest.model.EventType;
 import fi.metatavu.famifarm.rest.model.Facility;
@@ -45,7 +44,7 @@ public class XlsxSowingWorkHoursReport extends AbstractWorkHoursReport {
   @Override
   public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
-      String title = localesController.getString(locale, "reports.sowing_summary.title");
+      String title = localesController.getString(locale, "reports.sowing_work_hours.title");
       String sheetId = xlsxBuilder.createSheet(title);
       OffsetDateTime toTime = parseDate(parameters.get("toTime"));
       OffsetDateTime fromTime = parseDate(parameters.get("fromTime"));

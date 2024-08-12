@@ -8,7 +8,6 @@ import fi.metatavu.famifarm.persistence.dao.PackingBasketDAO;
 import fi.metatavu.famifarm.persistence.model.Packing;
 import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.reporting.xlsx.AbstractXlsxReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxBuilder;
 import fi.metatavu.famifarm.reporting.xlsx.listreports.data.PackingData;
 import fi.metatavu.famifarm.reporting.xlsx.workhours.AbstractWorkHoursReport;

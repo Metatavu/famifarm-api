@@ -6,7 +6,6 @@ import fi.metatavu.famifarm.packings.PackingController;
 import fi.metatavu.famifarm.persistence.dao.PackingBasketDAO;
 import fi.metatavu.famifarm.persistence.model.*;
 import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.reporting.xlsx.AbstractXlsxReport;
 import fi.metatavu.famifarm.reporting.xlsx.XlsxBuilder;
 import fi.metatavu.famifarm.reporting.xlsx.listreports.data.PackingData;
 import fi.metatavu.famifarm.rest.model.Facility;
@@ -48,7 +47,7 @@ public class XlsxPackingWorkHoursReport extends AbstractWorkHoursReport {
   @Override
   public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
     try (XlsxBuilder xlsxBuilder = new XlsxBuilder()) {
-      String title = localesController.getString(locale, "reports.sowing_summary.title");
+      String title = localesController.getString(locale, "reports.packing_work_hours.title");
       String sheetId = xlsxBuilder.createSheet(title);
       OffsetDateTime toTime = parseDate(parameters.get("toTime"));
       OffsetDateTime fromTime = parseDate(parameters.get("fromTime"));
