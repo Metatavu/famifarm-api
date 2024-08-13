@@ -38,7 +38,7 @@ public class XlsxPlantingWorkHoursReport extends AbstractWorkHoursReport {
   final int durationIndex = 2;
   final int amountIndex = 3;
   final int cartsIndex = 4;
-  final int cartsPerHourIndex = 6;
+  final int cartsPerHourIndex = 5;
 
   @Override
   public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
