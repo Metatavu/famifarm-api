@@ -69,6 +69,10 @@ public class XlsxPlantingWorkHoursReport extends AbstractWorkHoursReport {
       rowIndex++;
 
       for (Event event : events) {
+        if (event.getStartTime() == null || event.getEndTime() == null) {
+          continue;
+        }
+
         PlantingEvent plantingEvent = (PlantingEvent) event;
         Product product = plantingEvent.getProduct();
         String date = formatOffsetDateTime(plantingEvent.getStartTime());

@@ -79,6 +79,10 @@ public class XlsxPackingWorkHourSummary extends AbstractWorkHoursReport {
       System.out.println("Event list has " + events.size() + " entries");
 
       for (PackingData event : events) {
+        if (event.getPacking().getStartTime() == null || event.getPacking().getEndTime() == null) {
+          continue;
+        }
+
         Product product = event.getPacking().getProduct();
         Duration duration = Duration.between(event.getPacking().getStartTime(), event.getPacking().getEndTime()).abs();
         long boxes = event.getPacking().getPackedCount();

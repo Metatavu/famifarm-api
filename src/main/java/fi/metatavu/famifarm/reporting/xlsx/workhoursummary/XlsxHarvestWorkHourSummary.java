@@ -74,6 +74,10 @@ public class XlsxHarvestWorkHourSummary extends AbstractWorkHoursReport {
       Map<Product, ProductHarvestStats> productPlantingStatsMap = new LinkedHashMap<>();
 
       for (Event event : events) {
+        if (event.getStartTime() == null || event.getEndTime() == null) {
+          continue;
+        }
+
         HarvestEvent harvestEvent = (HarvestEvent) event;
         Product product = harvestEvent.getProduct();
         Duration duration = Duration.between(harvestEvent.getStartTime(), harvestEvent.getEndTime()).abs();

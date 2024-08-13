@@ -71,6 +71,10 @@ public class XlsxSowingWorkHoursReport extends AbstractWorkHoursReport {
       rowIndex++;
 
       for (Event event : events) {
+        if (event.getStartTime() == null || event.getEndTime() == null) {
+          continue;
+        }
+
         SowingEvent sowingEvent = (SowingEvent) event;
         Product product = sowingEvent.getProduct();
         String date = formatOffsetDateTime(sowingEvent.getStartTime());

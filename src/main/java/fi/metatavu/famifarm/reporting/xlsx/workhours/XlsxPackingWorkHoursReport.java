@@ -74,6 +74,9 @@ public class XlsxPackingWorkHoursReport extends AbstractWorkHoursReport {
       rowIndex++;
 
       for (PackingData event : events) {
+        if (event.getPacking().getStartTime() == null || event.getPacking().getEndTime() == null) {
+          continue;
+        }
         Product product = event.getPacking().getProduct();
         String date = formatOffsetDateTime(event.getPacking().getStartTime());
         Duration duration = Duration.between(event.getPacking().getStartTime(), event.getPacking().getEndTime()).abs();
