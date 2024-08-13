@@ -38,7 +38,7 @@ public class XlsxPlantingWorkHoursReport extends AbstractWorkHoursReport {
   final int durationIndex = 2;
   final int amountIndex = 3;
   final int cartsIndex = 4;
-  final int cartsPerHourIndex = 6;
+  final int cartsPerHourIndex = 5;
 
   @Override
   public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
@@ -69,6 +69,10 @@ public class XlsxPlantingWorkHoursReport extends AbstractWorkHoursReport {
       rowIndex++;
 
       for (Event event : events) {
+        if (event.getStartTime() == null || event.getEndTime() == null) {
+          continue;
+        }
+
         PlantingEvent plantingEvent = (PlantingEvent) event;
         Product product = plantingEvent.getProduct();
         String date = formatOffsetDateTime(plantingEvent.getStartTime());

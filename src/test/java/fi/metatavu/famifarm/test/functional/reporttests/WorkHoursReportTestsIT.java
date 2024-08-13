@@ -74,7 +74,7 @@ public class WorkHoursReportTestsIT extends AbstractFunctionalTest {
         builder.admin().reports().assertCellValue("Product name 0", workbook, 0, 4, 1);
         builder.admin().reports().assertCellValue(2, workbook, 0, 4, 3);
         builder.admin().reports().assertCellValue(0.125, workbook, 0, 4, 4);
-        builder.admin().reports().assertCellValue(1.5, workbook, 0, 4, 6);
+        builder.admin().reports().assertCellValue(1.5, workbook, 0, 4, 5);
       }
     }
   }

@@ -75,6 +75,10 @@ public class XlsxHarvestWorkHoursReport extends AbstractWorkHoursReport {
       rowIndex++;
 
       for (Event event : events) {
+        if (event.getStartTime() == null || event.getEndTime() == null) {
+          continue;
+        }
+
         HarvestEvent harvestEvent = (HarvestEvent) event;
         Product product = harvestEvent.getProduct();
         String date = formatOffsetDateTime(harvestEvent.getStartTime());

@@ -70,6 +70,10 @@ public class XlsxSowingWorkHourSummary extends AbstractWorkHoursReport {
       Map<Product, ProductSowingStats> productPlantingStatsMap = new LinkedHashMap<>();
 
       for (Event event : events) {
+        if (event.getStartTime() == null || event.getEndTime() == null) {
+          continue;
+        }
+
         SowingEvent sowingEvent = (SowingEvent) event;
         Product product = sowingEvent.getProduct();
         Duration duration = Duration.between(sowingEvent.getStartTime(), sowingEvent.getEndTime()).abs();
