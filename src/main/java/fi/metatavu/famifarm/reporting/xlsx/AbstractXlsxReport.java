@@ -13,4 +13,5 @@ public abstract class AbstractXlsxReport extends AbstractReport {
   public String getContentType() {
     return "application/vnd.ms-excel";
   }
+
 }
