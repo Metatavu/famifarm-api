@@ -406,13 +406,14 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Facility facility, int seconds) throws IOException {
     Integer gutterHoleCount = 50;
+    Integer cuttingHeight = 50;
     List<HarvestBasket> baskets = List.of(
       new HarvestBasket().weight(10f),
       new HarvestBasket().weight(20f),
       new HarvestBasket().weight(30f)
     );
 
-    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount, baskets, facility, seconds);
+    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount, cuttingHeight, baskets, facility, seconds);
   }
 
   /**
@@ -471,7 +472,7 @@ public abstract class AbstractFunctionalTest {
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount, List<HarvestBasket> baskets, Facility facility, int seconds) throws IOException {
+  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount, Integer cuttineHeight, List<HarvestBasket> baskets, Facility facility, int seconds) throws IOException {
     seconds = Math.min(seconds, 59);
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, seconds, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, seconds, 0, ZoneOffset.UTC);
@@ -479,7 +480,7 @@ public abstract class AbstractFunctionalTest {
 
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8, facility);
 
-    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, startTime, endTime, productionLine, sowingTime, harvestType, baskets, facility);
+    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, cuttineHeight, startTime, endTime, productionLine, sowingTime, harvestType, baskets, facility);
   }
 
   /**

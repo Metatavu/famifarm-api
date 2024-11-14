@@ -151,8 +151,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param baskets baskets list
    * @return created event
    */
-  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type, List<HarvestBasket> baskets, Facility facility) {
-    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, type, baskets);
+  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, Integer cuttingHeight, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type, List<HarvestBasket> baskets, Facility facility) {
+    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, cuttingHeight, type, baskets);
 
     Event event = new Event();
     event.setProductId(product != null ? product.getId() : null);
