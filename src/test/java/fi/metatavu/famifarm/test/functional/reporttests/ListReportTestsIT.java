@@ -1,5 +1,7 @@
 package fi.metatavu.famifarm.test.functional.reporttests;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -74,6 +76,7 @@ public class ListReportTestsIT extends AbstractFunctionalTest {
             builder.admin().reports().assertCellValue("Product name " + i, workbook, 0, i + 4, 0);
             builder.admin().reports().assertCellValue(60, workbook, 0, i + 4, 6);
             builder.admin().reports().assertCellValue(20, workbook, 0, i + 4, 10);
+            builder.admin().reports().assertCellValue(60, workbook, 0, i + 4, 11);
         }
       }
     }

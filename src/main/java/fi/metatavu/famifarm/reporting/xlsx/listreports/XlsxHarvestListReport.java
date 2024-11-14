@@ -30,6 +30,7 @@ public class XlsxHarvestListReport extends XlsxEventListReport {
   final int kgPerTableIndex = 8;
   final int gramsPerUnitIndex = 9;
   final int kgPerBasketIndex = 10;
+  final int cuttingHeightIndex = 11;
 
   private final List<ListReportColumn> columns = List.of(
     new ListReportColumn("reports.harvest_report.productHeader", productIndex),
@@ -42,7 +43,8 @@ public class XlsxHarvestListReport extends XlsxEventListReport {
     new ListReportColumn("reports.harvest_report.basketCountHeader", basketCountIndex),
     new ListReportColumn("reports.harvest_report.kgPerTableHeader", kgPerTableIndex),
     new ListReportColumn("reports.harvest_report.gramsPerUnitHeader", gramsPerUnitIndex),
-    new ListReportColumn("reports.harvest_report.kgPerBasketHeader", kgPerBasketIndex)
+    new ListReportColumn("reports.harvest_report.kgPerBasketHeader", kgPerBasketIndex),
+    new ListReportColumn("reports.harvest_report.cuttingHeightIndexHeader", cuttingHeightIndex)
   );
 
   @Override
@@ -100,6 +102,9 @@ public class XlsxHarvestListReport extends XlsxEventListReport {
       case kgPerBasketIndex:
         double kgPerCart = getYield(harvestEvent) / getBasketCount(harvestEvent);
         xlsxBuilder.setCellValue(sheetId, rowIndex, kgPerBasketIndex, kgPerCart);
+        break;
+      case cuttingHeightIndex:
+        xlsxBuilder.setCellValue(sheetId, rowIndex, cuttingHeightIndex, harvestEvent.getCuttingHeight());
         break;
     }
   }

@@ -27,97 +27,97 @@ import fi.metatavu.famifarm.reporting.xlsx.workhoursummary.XlsxSowingWorkHourSum
 public class ReportController {
   
   @Inject
-  private XlsxExampleReport xlsxExampleReport;
+  XlsxExampleReport xlsxExampleReport;
   
   @Inject
-  private XlsxWastageReport xlsxWastageReport;
+  XlsxWastageReport xlsxWastageReport;
   
   @Inject
-  private XlsxGrowthTimeReport xlsxGrowthTimeReport;
+  XlsxGrowthTimeReport xlsxGrowthTimeReport;
   
   @Inject
-  private XlsxYieldReport xlsxYieldReport;
+  XlsxYieldReport xlsxYieldReport;
   
   @Inject
-  private XlsxPlantingYieldReport xlsxPlantingYieldReport;
+  XlsxPlantingYieldReport xlsxPlantingYieldReport;
   
   @Inject
-  private XlsxSowedReport xlsxSowedReport;
+  XlsxSowedReport xlsxSowedReport;
 
   @Inject
-  private XlsxPlantedReport xlsxPlantedReport;
+  XlsxPlantedReport xlsxPlantedReport;
 
   @Inject
-  private XlsxSpreadReport xlsxSpreadReport;
+  XlsxSpreadReport xlsxSpreadReport;
 
   @Inject
-  private XlsxHarvestedReport xlsxHarvestedReport;
+  XlsxHarvestedReport xlsxHarvestedReport;
 
   @Inject
-  private XlsxProductPhaseCountReport xlsxProductPhaseCountReport;
+  XlsxProductPhaseCountReport xlsxProductPhaseCountReport;
 
   @Inject
-  private XlsxPackedReport xlsxPackedReport;
+  XlsxPackedReport xlsxPackedReport;
 
   @Inject
-  private XlsxPackedCampaingsReport xlsxPackedCampaingsReport;
+  XlsxPackedCampaingsReport xlsxPackedCampaingsReport;
 
   @Inject
-  private JsonWastageReport jsonWastageReport;
+  JsonWastageReport jsonWastageReport;
 
   @Inject
-  private XlsxSeedlingTimeReport xlsxSeedlingTimeReport;
+  XlsxSeedlingTimeReport xlsxSeedlingTimeReport;
 
   @Inject
-  private XlsxlSummaryReport xlsxSummaryReport;
+  XlsxlSummaryReport xlsxSummaryReport;
 
   @Inject
-  private XlsxPlantingListReport xlsxPlantingListReport;
+  XlsxPlantingListReport xlsxPlantingListReport;
 
   @Inject
-  private XlsxHarvestListReport xlsxHarvestListReport;
+  XlsxHarvestListReport xlsxHarvestListReport;
 
   @Inject
-  private XlsxPackingListReport xlsxPackingListReport;
+  XlsxPackingListReport xlsxPackingListReport;
 
   @Inject
-  private XlsxSowingSummaryReport xlsxSowingSummaryReport;
+  XlsxSowingSummaryReport xlsxSowingSummaryReport;
 
   @Inject
-  private XlsxPlantingSummaryReport xlsxPlantingSummaryReport;
+  XlsxPlantingSummaryReport xlsxPlantingSummaryReport;
 
   @Inject
-  private XlsxPackingSummaryReport xlsxPackingSummaryReport;
+  XlsxPackingSummaryReport xlsxPackingSummaryReport;
 
   @Inject
-  private XlsxHarvestSummaryReport xlsxHarvestSummaryReport;
+  XlsxHarvestSummaryReport xlsxHarvestSummaryReport;
 
   @Inject
-  private XlsxYieldSummaryReport xlsxYieldSummaryReport;
+  XlsxYieldSummaryReport xlsxYieldSummaryReport;
 
   @Inject
-  private XlsxSowingWorkHoursReport xlsxSowingWorkHoursReport;
+  XlsxSowingWorkHoursReport xlsxSowingWorkHoursReport;
 
   @Inject
-  private XlsxPlantingWorkHoursReport xlsxPlantingWorkHoursReport;
+  XlsxPlantingWorkHoursReport xlsxPlantingWorkHoursReport;
 
   @Inject
-  private XlsxPackingWorkHoursReport xlsxPackingWorkHoursReport;
+  XlsxPackingWorkHoursReport xlsxPackingWorkHoursReport;
 
   @Inject
-  private XlsxHarvestWorkHoursReport xlsxHarvestWorkHoursReport;
+  XlsxHarvestWorkHoursReport xlsxHarvestWorkHoursReport;
 
   @Inject
-  private XlsxPlantingWorkHourSummary xlsxPlantingWorkHourSummary;
+  XlsxPlantingWorkHourSummary xlsxPlantingWorkHourSummary;
 
   @Inject
-  private XlsxSowingWorkHourSummary xlsxSowingWorkHourSummary;
+  XlsxSowingWorkHourSummary xlsxSowingWorkHourSummary;
 
   @Inject
-  private XlsxHarvestWorkHourSummary xlsxHarvestWorkHourSummary;
+  XlsxHarvestWorkHourSummary xlsxHarvestWorkHourSummary;
 
   @Inject
-  private XlsxPackingWorkHourSummary xlsxPackingWorkHourSummary;
+  XlsxPackingWorkHourSummary xlsxPackingWorkHourSummary;
 
   /**
    * Returns report for given report type
