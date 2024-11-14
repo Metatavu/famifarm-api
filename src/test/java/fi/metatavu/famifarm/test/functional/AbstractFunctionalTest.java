@@ -406,7 +406,7 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Facility facility, int seconds) throws IOException {
     Integer gutterHoleCount = 50;
-    Integer cuttingHeight = 50;
+    Integer cuttingHeight = 60;
     List<HarvestBasket> baskets = List.of(
       new HarvestBasket().weight(10f),
       new HarvestBasket().weight(20f),
