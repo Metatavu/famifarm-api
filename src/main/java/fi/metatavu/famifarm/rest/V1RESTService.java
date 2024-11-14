@@ -2024,11 +2024,11 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer gutterHoleCount = eventData.getGutterHoleCount();
     List<HarvestBasket> baskets = eventData.getBaskets();
     OffsetDateTime sowingTime = eventData.getSowingDate();
+    Integer cuttingHeight = eventData.getCuttingHeight();
 
     HarvestEventType harvestType = eventData.getType();
     HarvestEvent event = harvestEventController.createHarvestEvent(product, startTime, endTime, harvestType,
-      productionLine, sowingTime, additionalInformation, amount, gutterHoleCount, eventData.getCuttingHeight(),
-      baskets, creatorId);
+      productionLine, sowingTime, additionalInformation, amount, gutterHoleCount, cuttingHeight, baskets, creatorId);
 
     return createOk(harvestEventTranslator.translateEvent(event));
   }
