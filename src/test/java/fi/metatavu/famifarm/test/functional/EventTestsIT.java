@@ -268,12 +268,14 @@ public class EventTestsIT extends AbstractFunctionalTest {
       baskets.add(basket2);
 
       Product createProduct = builder.admin().products().create(builder.createLocalizedEntry("Product name", "Tuotteen nimi"), List.of(), false, Facility.JOROINEN);
-      Event event = createHarvestEvent(builder, HarvestEventType.BOXING, createProduct, 0, 0, baskets);
+      Event event = createHarvestEvent(builder, HarvestEventType.BOXING, createProduct, 0, 70, 100, baskets);
       assertNotNull(event);
       HarvestEventData data = builder.admin().events().readHarvestEventData(event);
       assertNotNull(data);
       assertEquals(2, data.getBaskets().size());
       assertEquals(2f, data.getBaskets().get(0).getWeight());
+      assertEquals(70, data.getGutterHoleCount());
+      assertEquals(100, data.getCuttingHeight());
     }
   }
   
@@ -309,6 +311,7 @@ public class EventTestsIT extends AbstractFunctionalTest {
       updateData.setGutterHoleCount(150);
       updateData.setBaskets(List.of(new HarvestBasket().weight(1f)));
       updateData.setSowingDate(updateSowingTime);
+      updateData.setCuttingHeight(20);
 
       Event updateEvent = new Event(); 
       updateEvent.setId(createdEvent.getId());
