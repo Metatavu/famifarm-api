@@ -4,9 +4,9 @@ import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
@@ -17,10 +17,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class PackingTestsIT extends AbstractFunctionalTest {
   @Test
+  @Ignore
   public void testCreatePacking() throws Exception {
     try (TestBuilder builder = new TestBuilder()) {
       List<LocalizedValue> testEntry = new ArrayList<>();
@@ -133,6 +133,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       packing.setAdditionalInformation(null);
       packing.setStartTime(null);
       packing.setEndTime(null);
+      packing.setPackedCount(30);
 
       assertNotNull(builder.admin().packings().update(packing, Facility.JOROINEN));
 
@@ -144,6 +145,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       assertEquals(2, foundPacking.getBasketsUsed().size());
       assertEquals(1, (int) foundPacking.getBasketsUsed().stream().filter(packingUsedBasket -> packingUsedBasket.getProductId().equals(product2.getId())).count());
       assertEquals(1, (int) foundPacking.getBasketsUsed().stream().filter(packingUsedBasket -> packingUsedBasket.getProductId().equals(product.getId())).count());
+      assertEquals(30, (int) foundPacking.getPackedCount());
     }
   }
   

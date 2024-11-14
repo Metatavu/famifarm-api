@@ -4,7 +4,6 @@ import fi.metatavu.famifarm.client.model.Facility;
 import fi.metatavu.famifarm.client.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Ville Koivukangas
  */
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class PerformedCultivationActionTestsIT extends AbstractFunctionalTest {
 

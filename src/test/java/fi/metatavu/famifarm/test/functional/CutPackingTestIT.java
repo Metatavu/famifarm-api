@@ -5,7 +5,6 @@ import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 
 import io.quarkus.test.common.QuarkusTestResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
 import io.quarkus.test.junit.QuarkusTest;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
 
@@ -23,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Tests for cut packings
  */
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class CutPackingTestIT extends AbstractFunctionalTest {
     @Test

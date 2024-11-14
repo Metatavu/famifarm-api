@@ -1,7 +1,5 @@
-package fi.metatavu.famifarm.test.functional;
+package fi.metatavu.famifarm.test.functional.reporttests;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -12,7 +10,8 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.reporting.ReportFormat;
-import org.apache.poi.ss.usermodel.Workbook;
+import fi.metatavu.famifarm.test.functional.AbstractFunctionalTest;
+import org.apache.poi.ss.usermodel.*;
 import org.junit.jupiter.api.Test;
 
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
@@ -20,7 +19,9 @@ import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
 import io.quarkus.test.junit.QuarkusTest;
 import fi.metatavu.famifarm.test.functional.resources.KeycloakResource;
 import io.quarkus.test.common.QuarkusTestResource;
-import fi.metatavu.famifarm.test.functional.resources.MysqlResource;
+import org.slf4j.Logger;
+
+import javax.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Antti Leppä
  */
 @QuarkusTest
-@QuarkusTestResource(MysqlResource.class)
 @QuarkusTestResource(KeycloakResource.class)
 public class ReportTestsIT extends AbstractFunctionalTest {
 
@@ -119,8 +119,8 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       builder.admin().performedCultivationActions();
       builder.admin().pests();
       
-      createSowingEvent(builder, product, startTime, endTime);
-      createSowingEvent(builder, product, startTime, endTime);
+      createSowingEvent(builder, product, startTime, endTime, Facility.JOROINEN);
+      createSowingEvent(builder, product, startTime, endTime, Facility.JOROINEN);
       
       createCultivationObservationEvent(builder, product, 20d);
       createCultivationObservationEvent(builder, product, 10d);
@@ -154,9 +154,9 @@ public class ReportTestsIT extends AbstractFunctionalTest {
 
       builder.admin().wastageReasons();
       
-      createSowingEvent(builder, product, 1, startTime, endTime);
-      createSowingEvent(builder, product, 1, startTime, endTime);
-      createPlantingEvent(builder, product, 10, 3);
+      createSowingEvent(builder, product, 1, startTime, endTime, Facility.JOROINEN);
+      createSowingEvent(builder, product, 1, startTime, endTime, Facility.JOROINEN);
+      createPlantingEvent(builder, product, 10, 3, Facility.JOROINEN);
       
       startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
       endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -193,10 +193,10 @@ public class ReportTestsIT extends AbstractFunctionalTest {
 
       builder.admin().wastageReasons();
       
-      createSowingEvent(builder, product, 1, startTime, endTime);
-      createSowingEvent(builder, product, 1, startTime, endTime);
+      createSowingEvent(builder, product, 1, startTime, endTime, Facility.JOROINEN);
+      createSowingEvent(builder, product, 1, startTime, endTime, Facility.JOROINEN);
       
-      createPlantingEvent(builder, product, 25, 2);
+      createPlantingEvent(builder, product, 25, 2, Facility.JOROINEN);
       
       startTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
       endTime = OffsetDateTime.of(2022, 2, 2, 4, 5, 6, 0, ZoneOffset.UTC);
@@ -227,14 +227,14 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       ArrayList<PackageSize> packageSizes = Lists.newArrayList(createdPackageSize);
       Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), packageSizes, false, Facility.JOROINEN);
       
-      createSowingEvent(builder, product, 10, startTime, endTime);
-      createSowingEvent(builder, product, 10, startTime, endTime);
+      createSowingEvent(builder, product, 10, startTime, endTime, Facility.JOROINEN);
+      createSowingEvent(builder, product, 10, startTime, endTime, Facility.JOROINEN);
 
       Product product2 = builder.admin().products().create(builder.createLocalizedEntry("B - product", "B - tuote"), packageSizes, false, Facility.JOROINEN);
-      createSowingEvent(builder, product2, 10, startTime, endTime);
+      createSowingEvent(builder, product2, 10, startTime, endTime, Facility.JOROINEN);
 
       Product product3 = builder.admin().products().create(builder.createLocalizedEntry("C - product", "C - tuote"), packageSizes, false, Facility.JOROINEN);
-      createSowingEvent(builder, product3, 25, startTime, endTime);
+      createSowingEvent(builder, product3, 25, startTime, endTime, Facility.JOROINEN);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
@@ -260,8 +260,8 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       // Create product in Joroinen
       PackageSize createdPackageSizeJoroinen = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       Product productJoroinen = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSizeJoroinen), false, Facility.JOROINEN);
-      createSowingEvent(builder, productJoroinen, 10, startTime, endTime);
-      createPlantingEvent(builder, productJoroinen, 10, 3);
+      createSowingEvent(builder, productJoroinen, 10, startTime, endTime, Facility.JOROINEN);
+      createPlantingEvent(builder, productJoroinen, 10, 3, Facility.JOROINEN);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
@@ -276,7 +276,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
 
       // Check that Joroinen events do not show in Juva report
       byte[] dataJuva = builder.admin().reports().createReport(Facility.JUVA, "PLANTED", fromTime, toTime, null);
-      assertNotNull(data);
+      assertNotNull(dataJuva);
 
       try (Workbook workbook = builder.admin().reports().loadWorkbook(dataJuva)) {
         builder.admin().reports().assertRowNull(workbook, 0, 4);
@@ -293,7 +293,7 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
       
-      createSowingEvent(builder, product, 10, startTime, endTime);
+      createSowingEvent(builder, product, 10, startTime, endTime, Facility.JOROINEN);
       createTableSpreadEvent(builder, product);
       
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
@@ -318,10 +318,10 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       Product product = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
       
-      createSowingEvent(builder, product, 10, startTime, endTime);
-      createPlantingEvent(builder, product, 10, 3);
+      createSowingEvent(builder, product, 10, startTime, endTime, Facility.JOROINEN);
+      createPlantingEvent(builder, product, 10, 3, Facility.JOROINEN);
       createHarvestEvent(builder, HarvestEventType.BOXING, product, 3, 10, 10, List.of());
-
+      
       String fromTime = OffsetDateTime.of(2018, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       String toTime = OffsetDateTime.of(2025, 2, 1, 4, 5, 6, 0, ZoneOffset.UTC).toString();
       
@@ -367,8 +367,8 @@ public class ReportTestsIT extends AbstractFunctionalTest {
       PackageSize createdPackageSize = builder.admin().packageSizes().create(builder.createLocalizedEntry("Test PackageSize"), 8, Facility.JOROINEN);
       Product productA = builder.admin().products().create(builder.createLocalizedEntry("A - product", "A - tuote"), Lists.newArrayList(createdPackageSize), false, Facility.JOROINEN);
 
-      createSowingEvent(builder, productA, 1, startTime, endTime);
-      createPlantingEvent(builder, productA);
+      createSowingEvent(builder, productA, 1, startTime, endTime, Facility.JOROINEN);
+      createPlantingEvent(builder, productA, Facility.JOROINEN);
       createHarvestEvent(builder, HarvestEventType.CUTTING, productA);
       createHarvestEvent(builder, HarvestEventType.CUTTING, productA);
 
