@@ -39,6 +39,7 @@ public class HarvestEventTranslator extends AbstractEventTranslator<HarvestEvent
     result.setGutterCount(event.getGutterCount());
     result.setGutterHoleCount(event.getGutterHoleCount());
     result.setSowingDate(event.getSowingDate());
+    result.setCuttingHeight(event.getCuttingHeight());
 
     result.setBaskets(harvestBasketDAO.listByHarvestEvent(event).stream().map(harvestBasketEntity -> {
       HarvestBasket harvestBasket = new HarvestBasket();

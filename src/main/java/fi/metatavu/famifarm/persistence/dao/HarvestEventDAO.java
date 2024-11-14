@@ -1,14 +1,13 @@
 package fi.metatavu.famifarm.persistence.dao;
 
-import java.time.OffsetDateTime;
-import java.util.UUID;
-
-import javax.enterprise.context.ApplicationScoped;
-
-import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.HarvestEvent;
+import fi.metatavu.famifarm.persistence.model.Product;
 import fi.metatavu.famifarm.persistence.model.ProductionLine;
 import fi.metatavu.famifarm.rest.model.HarvestEventType;
+
+import javax.enterprise.context.ApplicationScoped;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 /**
  * DAO class for HarvestEvents
@@ -33,12 +32,28 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
    * @param additionalInformation additional information
    * @param gutterCount gutterCount
    * @param gutterHoleCount gutter hole count
+   * @param cuttingHeight cutting height
    * @param creatorId creator
    * @param lastModifierId last modifier
    * @return created harvest event
    */
   @SuppressWarnings ("squid:S00107")
-  public HarvestEvent create(UUID id, Product product, OffsetDateTime startTime, OffsetDateTime endTime, HarvestEventType harvestType, ProductionLine productionLine, OffsetDateTime sowingDate, Integer remainingUnits, String additionalInformation, Integer gutterCount, Integer gutterHoleCount, UUID creatorId, UUID lastModifierId) {
+  public HarvestEvent create(
+    UUID id,
+    Product product,
+    OffsetDateTime startTime,
+    OffsetDateTime endTime,
+    HarvestEventType harvestType,
+    ProductionLine productionLine,
+    OffsetDateTime sowingDate,
+    Integer remainingUnits,
+    String additionalInformation,
+    Integer gutterCount,
+    Integer gutterHoleCount,
+    Integer cuttingHeight,
+    UUID creatorId,
+    UUID lastModifierId
+  ) {
     HarvestEvent harvestEvent = new HarvestEvent();
     harvestEvent.setProduct(product);
     harvestEvent.setRemainingUnits(remainingUnits);
@@ -48,6 +63,7 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
     harvestEvent.setProductionLine(productionLine);
     harvestEvent.setGutterCount(gutterCount);
     harvestEvent.setGutterHoleCount(gutterHoleCount);
+    harvestEvent.setCuttingHeight(cuttingHeight);
     harvestEvent.setId(id);
     harvestEvent.setCreatorId(creatorId);
     harvestEvent.setLastModifierId(lastModifierId);
@@ -118,6 +134,20 @@ public class HarvestEventDAO extends AbstractEventDAO<HarvestEvent> {
   public HarvestEvent updateGutterHoleCount(HarvestEvent harvestEvent, Integer gutterHoleCount, UUID lastModifierId) {
     harvestEvent.setLastModifierId(lastModifierId);
     harvestEvent.setGutterHoleCount(gutterHoleCount);
+    return persist(harvestEvent);
+  }
+
+  /**
+   * Updates gutter cuttingHeight
+   *
+   * @param harvestEvent harvest event to be updated
+   * @param cuttingHeight new cuttingHeight
+   * @param lastModifierId modifier
+   * @return updated harvestEvent
+   */
+  public HarvestEvent updateCuttingHeight(HarvestEvent harvestEvent, Integer cuttingHeight, UUID lastModifierId) {
+    harvestEvent.setLastModifierId(lastModifierId);
+    harvestEvent.setCuttingHeight(cuttingHeight);
     return persist(harvestEvent);
   }
 

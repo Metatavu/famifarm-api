@@ -44,6 +44,9 @@ public class HarvestEvent extends Event {
   @Column(nullable = false)
   private OffsetDateTime sowingDate;
 
+  @Column
+  private Integer cuttingHeight;
+
   public HarvestEventType getHarvestType() {
     return harvestType;
   }
@@ -82,6 +85,14 @@ public class HarvestEvent extends Event {
 
   public void setGutterHoleCount(Integer gutterHoleCount) {
     this.gutterHoleCount = gutterHoleCount;
+  }
+
+  public Integer getCuttingHeight() {
+    return cuttingHeight;
+  }
+
+  public void setCuttingHeight(Integer cuttingHeight) {
+    this.cuttingHeight = cuttingHeight;
   }
 
   @Transient

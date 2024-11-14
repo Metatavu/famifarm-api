@@ -1138,4 +1138,10 @@
       <column name="additionalinformation" type="varchar(512)"/>
     </addColumn>
   </changeSet>
+
+  <changeSet id="harvest_event_cutting_height" author="katja danilova">
+    <addColumn tableName="harvestevent">
+      <column name="cuttingheight" type="integer" />
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>
