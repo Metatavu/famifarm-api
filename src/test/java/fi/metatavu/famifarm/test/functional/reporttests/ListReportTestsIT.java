@@ -1,7 +1,5 @@
 package fi.metatavu.famifarm.test.functional.reporttests;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -89,7 +87,7 @@ public class ListReportTestsIT extends AbstractFunctionalTest {
       Facility facility = Facility.JUVA;
       builder.admin().performedCultivationActions();
       builder.admin().pests();
-      List<Packing> createdEvents = createPackingEvents(builder, facility, eventCount);
+      List<Packing> createdEvents = createPackingEventsWithVerificationWeightings(builder, facility, eventCount);
 
       System.out.println(createdEvents);
 

@@ -281,6 +281,26 @@ public abstract class AbstractFunctionalTest {
     return createHarvestEvent(builder, harvestType, product, amount);
   }
 
+  protected List<Packing> createPackingEvents(TestBuilder builder, Facility facility, int amount) throws IOException {
+    List<Packing> createdEvents = Lists.newArrayList();
+    for (int i = 0; i < amount; i++) {
+      List<LocalizedValue> testEntry = new ArrayList<>();
+      LocalizedValue testValue = new LocalizedValue();
+
+      testValue.setLanguage("en");
+      testValue.setValue("test value");
+      testEntry.add(testValue);
+
+      PackageSize size = builder.admin().packageSizes().create(testEntry, 100, facility);
+      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, facility);
+      Product product1 = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, facility);
+      Packing newEvent = createPackingEvent(builder, List.of(product, product1), facility, i, testEntry);
+      createdEvents.add(newEvent);
+    }
+
+    return createdEvents;
+  }
+
   /**
    * Creates test of packing events of N size.
    * Each packing event creates new peoduct.
@@ -292,7 +312,7 @@ public abstract class AbstractFunctionalTest {
    * @return
    * @throws IOException
    */
-  protected List<Packing> createPackingEvents(TestBuilder builder, Facility facility, int amount) throws IOException {
+  protected List<Packing> createPackingEventsWithVerificationWeightings(TestBuilder builder, Facility facility, int amount) throws IOException {
     List<Packing> createdEvents = new ArrayList<>();
     for (int i = 0; i < amount; i++) {
       List<LocalizedValue> testEntry = new ArrayList<>();
