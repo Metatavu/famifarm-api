@@ -26,19 +26,19 @@ import java.util.stream.Collectors;
 public class XlsxPackingListReport extends AbstractXlsxReport {
 
   @Inject
-  private LocalesController localesController;
+  LocalesController localesController;
 
   @Inject
-  private LocalizedValueController localizedValueController;
+  LocalizedValueController localizedValueController;
 
   @Inject
-  private PackingController packingController;
+  PackingController packingController;
 
   @Inject
-  private PackingBasketDAO packingBasketDAO;
+  PackingBasketDAO packingBasketDAO;
 
   @Inject
-  private PackingVerificationWeightingDAO packingVerificationWeightingDAO;
+  PackingVerificationWeightingDAO packingVerificationWeightingDAO;
 
   final int productIndex = 0;
   final int packingDateIndex = 1;
@@ -48,7 +48,6 @@ public class XlsxPackingListReport extends AbstractXlsxReport {
 
   // After dynamic columns
   final int totalUsedMaterialsIndex = 5;
-  final int weightingResultIndex = 6;
 
   @Override
   public void createReport(OutputStream output, Facility facility, Locale locale, Map<String, String> parameters) throws ReportException {
@@ -89,7 +88,17 @@ public class XlsxPackingListReport extends AbstractXlsxReport {
       }
 
       xlsxBuilder.setCellValue(sheetId, rowIndex, totalUsedMaterialsIndex + dynamicColumns.size(), localesController.getString(locale, "reports.packing_report.totalUsedMaterials"));
-      xlsxBuilder.setCellValue(sheetId, rowIndex, weightingResultIndex + dynamicColumns.size(), localesController.getString(locale, "reports.packing_report.weightingResult"));
+
+      // Add headers for verification weightings
+      int verificationWeightingStartIndex = totalUsedMaterialsIndex + dynamicColumns.size() + 1;
+      int maxVerificationWeightings = entities.stream()
+        .mapToInt(packingData -> packingVerificationWeightingDAO.listByPacking(packingData.getPacking()).size())
+        .max()
+        .orElse(0);
+
+      for (int i = 0; i < maxVerificationWeightings; i++) {
+        xlsxBuilder.setCellValue(sheetId, rowIndex, verificationWeightingStartIndex + i, localesController.getString(locale, "reports.packing_report.weightingResult") + " " + (i + 1));
+      }
 
       for (PackingData packingData : entities) {
         rowIndex++;
@@ -119,8 +128,10 @@ public class XlsxPackingListReport extends AbstractXlsxReport {
         int totalUsedMaterials = columnDynamicValues.values().stream().mapToInt(Integer::intValue).sum();
         xlsxBuilder.setCellValue(sheetId, rowIndex, totalUsedMaterialsIndex + dynamicColumns.size(), totalUsedMaterials);
 
-        float weight = packingVerificationWeightingDAO.listByPacking(packingData.getPacking()).stream().map(PackingVerificationWeighting::getWeight).reduce(0f, Float::sum);
-        xlsxBuilder.setCellValue(sheetId, rowIndex, weightingResultIndex + dynamicColumns.size(), Float.toString(weight));
+        List<PackingVerificationWeighting> verificationWeightings = packingVerificationWeightingDAO.listByPacking(packingData.getPacking());
+        for (int i = 0; i < verificationWeightings.size(); i++) {
+          xlsxBuilder.setCellValue(sheetId, rowIndex, verificationWeightingStartIndex + i, verificationWeightings.get(i).getWeight());
+        }
       }
 
       xlsxBuilder.write(output);

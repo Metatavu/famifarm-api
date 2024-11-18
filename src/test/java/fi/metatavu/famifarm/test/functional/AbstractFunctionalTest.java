@@ -1,11 +1,6 @@
 package fi.metatavu.famifarm.test.functional;
 
 
-import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -15,7 +10,11 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
-import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -282,23 +281,60 @@ public abstract class AbstractFunctionalTest {
     return createHarvestEvent(builder, harvestType, product, amount);
   }
 
+  /**
+   * Creates test of packing events of N size.
+   * Each packing event creates new peoduct.
+   * Each packing event has +1 of weight verifications
+   *
+   * @param builder test builder
+   * @param facility facility
+   * @param amount event amount
+   * @return
+   * @throws IOException
+   */
   protected List<Packing> createPackingEvents(TestBuilder builder, Facility facility, int amount) throws IOException {
-    List<Packing> createdEvents = Lists.newArrayList();
+    List<Packing> createdEvents = new ArrayList<>();
     for (int i = 0; i < amount; i++) {
       List<LocalizedValue> testEntry = new ArrayList<>();
       LocalizedValue testValue = new LocalizedValue();
-
       testValue.setLanguage("en");
-      testValue.setValue("test value");
+      testValue.setValue("test value " + i);
       testEntry.add(testValue);
 
+      //a new product for each of the 9 events
       PackageSize size = builder.admin().packageSizes().create(testEntry, 100, facility);
-      Product product = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, facility);
-      Product product1 = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, facility);
-      Packing newEvent = createPackingEvent(builder, List.of(product, product1), facility, i, testEntry);
-      createdEvents.add(newEvent);
-    }
+      Product product = builder.admin().products().create(testEntry, Collections.singletonList(size), false, facility);
 
+      // Create different amounts of verification weightings for different products
+      List<PackingVerificationWeighing> weightings = new ArrayList<>();
+      for (int j = 0; j <= i; j++) {
+        weightings.add(new PackingVerificationWeighing().time(OffsetDateTime.now()).weight((float) i));
+      }
+
+      List<PackingUsedBasket> baskets = new ArrayList<>();
+      baskets.add(new PackingUsedBasket().basketCount(1).productId(product.getId()));
+
+      OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, i % 60, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, i % 60, 0, ZoneOffset.UTC);
+      Integer packedCount = 50;
+
+      Packing packing = builder.admin().packings().create(
+        product.getId(),
+        null, PackingType.BASIC,
+        OffsetDateTime.now(),
+        packedCount,
+        PackingState.IN_STORE,
+        size,
+        facility,
+        weightings,
+        baskets,
+        startTime,
+        endTime,
+        "additional info " + i
+      );
+      assertNotNull(packing);
+      createdEvents.add(packing);
+    }
     return createdEvents;
   }
 
