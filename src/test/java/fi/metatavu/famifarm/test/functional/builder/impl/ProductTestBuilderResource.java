@@ -49,6 +49,19 @@ public class ProductTestBuilderResource extends AbstractTestBuilderResource<Prod
     return create(name, packageSizes, null, isSubcontractorProduct, true, facility, false, false, 0.0);
   }
 
+  /**
+   * Creates new product
+   * @param name
+   * @param packageSizes
+   * @param isSubcontractorProduct
+   * @param isRaw
+   * @param facility
+   * @return
+   */
+  public Product create(List<LocalizedValue> name, List<PackageSize> packageSizes, boolean isSubcontractorProduct, boolean isRaw, Facility facility) {
+    return create(name, packageSizes, null, isSubcontractorProduct, true, facility, false, isRaw, 0.0);
+  }
+
 //  /**
 //   * Creates new product
 //   *

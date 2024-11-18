@@ -71,7 +71,7 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, String value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    if (cell != null) {
+    if (cell != null && value != null) {
       cell.setCellValue(value);
     }
     
@@ -89,7 +89,7 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellFormula(String sheetId, int rowNumber, int columnNumber, String value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    if (cell != null) {
+    if (cell != null && value != null) {
       cell.setCellFormula(value);
     }
     
@@ -137,7 +137,7 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Date value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    if (cell != null) {
+    if (cell != null && value != null) {
       cell.setCellValue(value);
       cell.setCellStyle(this.dateTimeCellStyle);
     }
@@ -156,7 +156,7 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Boolean value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    if (cell != null) {
+    if (cell != null && value != null) {
       cell.setCellValue(value);
     }
     
@@ -174,7 +174,25 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Double value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    if (cell != null) {
+    if (cell != null && value != null) {
+      cell.setCellValue(value);
+    }
+
+    return cell;
+  }
+
+  /**
+   * Sets a cell value
+   *
+   * @param sheetId sheet id
+   * @param rowNumber row number
+   * @param columnNumber column number
+   * @param value value
+   * @return cell
+   */
+  public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Float value) {
+    Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
+    if (cell != null && value != null) {
       cell.setCellValue(value);
     }
 
@@ -192,7 +210,7 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Integer value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    if (cell != null) {
+    if (cell != null && value != null) {
       cell.setCellValue(value);
     }
 
@@ -210,7 +228,7 @@ public abstract class AbstractXlsxBuilder<B extends org.apache.poi.ss.usermodel.
    */
   public Cell setCellValue(String sheetId, int rowNumber, int columnNumber, Long value) {
     Cell cell = findOrCreateCell(sheetId, rowNumber, columnNumber);
-    if (cell != null) {
+    if (cell != null && value != null) {
       cell.setCellValue(value);
     }
 
