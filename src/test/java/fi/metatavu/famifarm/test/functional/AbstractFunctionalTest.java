@@ -1,11 +1,6 @@
 package fi.metatavu.famifarm.test.functional;
 
 
-import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -15,7 +10,11 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.common.collect.Lists;
 import fi.metatavu.famifarm.client.model.*;
 import fi.metatavu.famifarm.test.functional.builder.TestBuilder;
-import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -302,6 +301,63 @@ public abstract class AbstractFunctionalTest {
     return createdEvents;
   }
 
+  /**
+   * Creates test of packing events of N size.
+   * Each packing event creates new peoduct.
+   * Each packing event has +1 of weight verifications
+   *
+   * @param builder test builder
+   * @param facility facility
+   * @param amount event amount
+   * @return
+   * @throws IOException
+   */
+  protected List<Packing> createPackingEventsWithVerificationWeightings(TestBuilder builder, Facility facility, int amount) throws IOException {
+    List<Packing> createdEvents = new ArrayList<>();
+    for (int i = 0; i < amount; i++) {
+      List<LocalizedValue> testEntry = new ArrayList<>();
+      LocalizedValue testValue = new LocalizedValue();
+      testValue.setLanguage("en");
+      testValue.setValue("test value " + i);
+      testEntry.add(testValue);
+
+      //a new product for each of the 9 events
+      PackageSize size = builder.admin().packageSizes().create(testEntry, 100, facility);
+      Product product = builder.admin().products().create(testEntry, Collections.singletonList(size), false, facility);
+
+      // Create different amounts of verification weightings for different products
+      List<PackingVerificationWeighing> weightings = new ArrayList<>();
+      for (int j = 0; j <= i; j++) {
+        weightings.add(new PackingVerificationWeighing().time(OffsetDateTime.now()).weight((float) i));
+      }
+
+      List<PackingUsedBasket> baskets = new ArrayList<>();
+      baskets.add(new PackingUsedBasket().basketCount(1).productId(product.getId()));
+
+      OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, i % 60, 0, ZoneOffset.UTC);
+      OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, i % 60, 0, ZoneOffset.UTC);
+      Integer packedCount = 50;
+
+      Packing packing = builder.admin().packings().create(
+        product.getId(),
+        null, PackingType.BASIC,
+        OffsetDateTime.now(),
+        packedCount,
+        PackingState.IN_STORE,
+        size,
+        facility,
+        weightings,
+        baskets,
+        startTime,
+        endTime,
+        "additional info " + i
+      );
+      assertNotNull(packing);
+      createdEvents.add(packing);
+    }
+    return createdEvents;
+  }
+
   protected Packing createPackingEvent(TestBuilder builder, List<Product> products, Facility facility, int seconds, List<LocalizedValue> localizedValues) throws IOException {
     seconds = Math.min(seconds, 59);
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, seconds, 0, ZoneOffset.UTC);
@@ -406,13 +462,14 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Facility facility, int seconds) throws IOException {
     Integer gutterHoleCount = 50;
+    Integer cuttingHeight = 60;
     List<HarvestBasket> baskets = List.of(
       new HarvestBasket().weight(10f),
       new HarvestBasket().weight(20f),
       new HarvestBasket().weight(30f)
     );
 
-    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount, baskets, facility, seconds);
+    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount, cuttingHeight, baskets, facility, seconds);
   }
 
   /**
@@ -427,9 +484,10 @@ public abstract class AbstractFunctionalTest {
    */
   protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount) throws IOException {
     Integer gutterHoleCount = 50;
+    Integer cuttingHeight = 150;
     List<HarvestBasket> baskets = Collections.emptyList();
 
-    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount, baskets);
+    return createHarvestEvent(builder, harvestType, product, amount, gutterHoleCount, cuttingHeight, baskets);
   }
 
 
@@ -445,14 +503,14 @@ public abstract class AbstractFunctionalTest {
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount, List<HarvestBasket> baskets) throws IOException {
+  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount, Integer cuttingHeight, List<HarvestBasket> baskets) throws IOException {
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, 6, 0, ZoneOffset.UTC);
     OffsetDateTime sowingTime = OffsetDateTime.of(2020, 1, 3, 4, 10, 6, 0, ZoneOffset.UTC);
 
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8, Facility.JOROINEN);
     
-    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, startTime, endTime, productionLine, sowingTime, harvestType, baskets);
+    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, cuttingHeight, startTime, endTime, productionLine, sowingTime, harvestType, baskets);
   }
 
 
@@ -470,7 +528,7 @@ public abstract class AbstractFunctionalTest {
    * @return created event
    * @throws IOException thrown when event creation fails
    */
-  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount, List<HarvestBasket> baskets, Facility facility, int seconds) throws IOException {
+  protected Event createHarvestEvent(TestBuilder builder, HarvestEventType harvestType, Product product, Integer amount, Integer gutterHoleCount, Integer cuttineHeight, List<HarvestBasket> baskets, Facility facility, int seconds) throws IOException {
     seconds = Math.min(seconds, 59);
     OffsetDateTime startTime = OffsetDateTime.of(2020, 2, 3, 4, 5, seconds, 0, ZoneOffset.UTC);
     OffsetDateTime endTime = OffsetDateTime.of(2020, 2, 3, 4, 10, seconds, 0, ZoneOffset.UTC);
@@ -478,7 +536,7 @@ public abstract class AbstractFunctionalTest {
 
     ProductionLine productionLine = builder.admin().productionLines().create("4", 8, facility);
 
-    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, startTime, endTime, productionLine, sowingTime, harvestType, baskets, facility);
+    return builder.admin().events().createHarvest(product, amount, gutterHoleCount, cuttineHeight, startTime, endTime, productionLine, sowingTime, harvestType, baskets, facility);
   }
 
   /**

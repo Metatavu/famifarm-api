@@ -104,6 +104,9 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * Creates new event
    * 
    * @param product product
+   * @param amount amount
+   * @param gutterHoleCount  gutter hole count
+   * @param cuttingHeight cuttingHeight
    * @param startTime event start time
    * @param endTime event end time
    * @param productionLine production line
@@ -112,8 +115,19 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param baskets baskets list
    * @return created event
    */
-  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type, List<HarvestBasket> baskets) {
-    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, type, baskets);
+  public Event createHarvest(
+    Product product,
+    Integer amount,
+    Integer gutterHoleCount,
+    Integer cuttingHeight,
+    OffsetDateTime startTime,
+    OffsetDateTime endTime,
+    ProductionLine productionLine,
+    OffsetDateTime sowingDate,
+    HarvestEventType type,
+    List<HarvestBasket> baskets
+  ) {
+    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, cuttingHeight, type, baskets);
 
     Event event = new Event();
     event.setProductId(product != null ? product.getId() : null);
@@ -137,8 +151,8 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param baskets baskets list
    * @return created event
    */
-  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type, List<HarvestBasket> baskets, Facility facility) {
-    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, type, baskets);
+  public Event createHarvest(Product product, Integer amount, Integer gutterHoleCount, Integer cuttingHeight, OffsetDateTime startTime, OffsetDateTime endTime, ProductionLine productionLine, OffsetDateTime sowingDate, HarvestEventType type, List<HarvestBasket> baskets, Facility facility) {
+    HarvestEventData data = createHarvestEventData(productionLine, sowingDate, amount, gutterHoleCount, cuttingHeight, type, baskets);
 
     Event event = new Event();
     event.setProductId(product != null ? product.getId() : null);
@@ -487,16 +501,26 @@ public class EventTestBuilderResource  extends AbstractTestBuilderResource<Event
    * @param gutterCount gutterCount
    * @param type type of event
    * @param gutterHoleCount gutter hole count
+   * @param cuttingHeight cutting height
    * @param sowingDate sowing date
    * @param baskets number of baskets
    * @return harvest event data
    */
-  private HarvestEventData createHarvestEventData(ProductionLine productionLine, OffsetDateTime sowingDate, Integer gutterCount, Integer gutterHoleCount, HarvestEventType type, List<HarvestBasket> baskets) {
+  private HarvestEventData createHarvestEventData(
+    ProductionLine productionLine,
+    OffsetDateTime sowingDate,
+    Integer gutterCount,
+    Integer gutterHoleCount,
+    Integer cuttingHeight,
+    HarvestEventType type,
+    List<HarvestBasket> baskets
+  ) {
     HarvestEventData data = new HarvestEventData();
     data.setProductionLineId(productionLine != null ? productionLine.getId() : null);
     data.setGutterCount(gutterCount);
     data.setGutterHoleCount(gutterHoleCount);
     data.setSowingDate(sowingDate);
+    data.setCuttingHeight(cuttingHeight);
     data.setType(type);
     data.setBaskets(baskets);
     return data;

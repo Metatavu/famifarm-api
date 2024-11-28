@@ -74,6 +74,7 @@ public class ListReportTestsIT extends AbstractFunctionalTest {
             builder.admin().reports().assertCellValue("Product name " + i, workbook, 0, i + 4, 0);
             builder.admin().reports().assertCellValue(60, workbook, 0, i + 4, 6);
             builder.admin().reports().assertCellValue(20, workbook, 0, i + 4, 10);
+            builder.admin().reports().assertCellValue(60, workbook, 0, i + 4, 11);
         }
       }
     }
@@ -86,7 +87,7 @@ public class ListReportTestsIT extends AbstractFunctionalTest {
       Facility facility = Facility.JUVA;
       builder.admin().performedCultivationActions();
       builder.admin().pests();
-      List<Packing> createdEvents = createPackingEvents(builder, facility, eventCount);
+      List<Packing> createdEvents = createPackingEventsWithVerificationWeightings(builder, facility, eventCount);
 
       System.out.println(createdEvents);
 
@@ -98,9 +99,14 @@ public class ListReportTestsIT extends AbstractFunctionalTest {
 
       try (Workbook workbook = builder.admin().reports().loadWorkbook(data)) {
         for (int i = 0; i < eventCount; i++) {
-          builder.admin().reports().assertCellValue("test value", workbook, 0, i + 4, 0);
-          builder.admin().reports().assertCellValue(100 * 50, workbook, 0, i + 4, 2);
-          builder.admin().reports().assertCellValue(50, workbook, 0, i + 4, 3);
+          builder.admin().reports().assertCellValue("test value "+ (8 - i), workbook, 0, i + 4, 0);
+          builder.admin().reports().assertCellValue(100 * 50, workbook, 0, i + 4, 2); //bag count
+          builder.admin().reports().assertCellValue(50, workbook, 0, i + 4, 3); // box count
+
+          for (int j = 0; j < eventCount - i; j++) {
+            builder.admin().reports().assertCellValue(8 - i, workbook, 0, i + 4, 6 + j); // weight checks
+          }
+
         }
       }
     }
