@@ -71,6 +71,7 @@ public class WastageReasonDAO extends AbstractDAO<WastageReason> {
     Root<WastageReason> root = criteria.from(WastageReason.class);
     criteria.select(root);
     criteria.where(criteriaBuilder.equal(root.get(WastageReason_.FACILITY), facility));
+    criteria.orderBy(criteriaBuilder.desc(root.get(WastageReason_.createdAt)));
 
     TypedQuery<WastageReason> query = entityManager.createQuery(criteria);
 
