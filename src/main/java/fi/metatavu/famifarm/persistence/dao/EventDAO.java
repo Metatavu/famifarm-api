@@ -71,6 +71,7 @@ public class EventDAO extends AbstractEventDAO<Event> {
     CriteriaQuery<Event> criteria = criteriaBuilder.createQuery(Event.class);
     Root<? extends Event>root = getRoot(criteria, eventType);
     criteria.select(root);
+    criteria.orderBy(criteriaBuilder.desc(root.get(Event_.createdAt)));
 
     List<Predicate> restrictions = new ArrayList<>();
 

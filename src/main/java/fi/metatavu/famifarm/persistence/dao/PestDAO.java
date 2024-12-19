@@ -68,6 +68,7 @@ public class PestDAO extends AbstractDAO<Pest> {
     Root<Pest> root = criteria.from(Pest.class);
     criteria.select(root);
     criteria.where(criteriaBuilder.equal(root.get(Pest_.facility), facility));
+    criteria.orderBy(criteriaBuilder.desc(root.get(Pest_.createdAt)));
 
     TypedQuery<Pest> query = entityManager.createQuery(criteria);
 

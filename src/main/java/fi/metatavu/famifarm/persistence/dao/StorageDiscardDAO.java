@@ -96,6 +96,7 @@ public class StorageDiscardDAO extends AbstractDAO<StorageDiscard> {
         }
 
         criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
+        criteria.orderBy(criteriaBuilder.desc(root.get(StorageDiscard_.discardDate)));
         TypedQuery<StorageDiscard> query = entityManager.createQuery(criteria);
 
         if (firstResult != null) {
