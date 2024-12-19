@@ -99,7 +99,7 @@ public class SeedBatchDAO extends AbstractDAO<SeedBatch> {
     Root<SeedBatch> root = criteria.from(SeedBatch.class);
     
     criteria.select(root);
-    
+    criteria.orderBy(criteriaBuilder.desc(root.get(SeedBatch_.createdAt)));
     List<Predicate> restrictions = new ArrayList<>();
 
     if (facility != null) {

@@ -67,6 +67,7 @@ public class CampaignDAO extends AbstractDAO<Campaign> {
     Root<Campaign> root = criteria.from(Campaign.class);
     criteria.select(root);
     criteria.where(criteriaBuilder.equal(root.get(Campaign_.facility), facility));
+    criteria.orderBy(criteriaBuilder.desc(root.get(Campaign_.createdAt)));
 
     TypedQuery<Campaign> query = entityManager.createQuery(criteria);
 

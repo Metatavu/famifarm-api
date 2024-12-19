@@ -144,6 +144,7 @@ public class ProductDAO extends AbstractDAO<Product> {
     CriteriaQuery<Product> criteria = criteriaBuilder.createQuery(Product.class);
     Root<Product> root = criteria.from(Product.class);
     criteria.select(root);
+    criteria.orderBy(criteriaBuilder.desc(root.get(Product_.createdAt)));
 
     List<Predicate> restrictions = new ArrayList<>();
     restrictions.add(criteriaBuilder.equal(root.get(Product_.facility), facility));

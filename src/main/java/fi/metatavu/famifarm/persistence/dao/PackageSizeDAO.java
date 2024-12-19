@@ -87,6 +87,7 @@ public class PackageSizeDAO extends AbstractDAO<PackageSize> {
     Root<PackageSize> root = criteria.from(PackageSize.class);
     criteria.select(root);
     criteria.where(criteriaBuilder.equal(root.get(PackageSize_.facility), facility));
+    criteria.orderBy(criteriaBuilder.desc(root.get(PackageSize_.createdAt)));
 
     TypedQuery<PackageSize> query = entityManager.createQuery(criteria);
     if (firstResult != null) {

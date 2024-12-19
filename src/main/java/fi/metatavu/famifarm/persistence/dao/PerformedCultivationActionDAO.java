@@ -67,6 +67,7 @@ public class PerformedCultivationActionDAO extends AbstractDAO<PerformedCultivat
     Root<PerformedCultivationAction> root = criteria.from(PerformedCultivationAction.class);
     criteria.select(root);
     criteria.where(criteriaBuilder.equal(root.get(PerformedCultivationAction_.facility), facility));
+    criteria.orderBy(criteriaBuilder.desc(root.get(PerformedCultivationAction_.createdAt)));
 
     TypedQuery<PerformedCultivationAction> query = entityManager.createQuery(criteria);
     if (firstResult != null) {
