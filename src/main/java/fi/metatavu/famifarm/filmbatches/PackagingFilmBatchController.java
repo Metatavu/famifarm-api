@@ -1,6 +1,7 @@
 package fi.metatavu.famifarm.filmbatches;
 
 import fi.metatavu.famifarm.persistence.dao.PackagingFilmBatchDAO;
+import fi.metatavu.famifarm.persistence.dao.PackingDAO;
 import fi.metatavu.famifarm.persistence.model.PackagingFilmBatch;
 import fi.metatavu.famifarm.rest.model.Facility;
 
@@ -19,6 +20,9 @@ public class PackagingFilmBatchController {
 
   @Inject
   public PackagingFilmBatchDAO packagingFilmBatchDAO;
+
+  @Inject
+  public PackingDAO packingDAO;
 
   /**
    * Creates new packaging film batch
@@ -56,6 +60,10 @@ public class PackagingFilmBatchController {
    * @param packagingFilmBatch packaging film batch to delete
    */
   public void delete(PackagingFilmBatch packagingFilmBatch) {
+    var packings = packingDAO.listByPackagingFilmBatch(packagingFilmBatch);
+    for (var packing : packings) {
+      packingDAO.updatePackagingFilmBatch(packing, null, packing.getLastModifierId());
+    }
     packagingFilmBatchDAO.delete(packagingFilmBatch);
   }
 

@@ -296,5 +296,23 @@ public class PackingDAO extends AbstractDAO<Packing>{
       return query.getResultList(); 
     }
 
+    public List<Packing> listByPackagingFilmBatch(PackagingFilmBatch packagingFilmBatch) {
+      EntityManager entityManager = getEntityManager();
+
+      CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+      CriteriaQuery<Packing> criteria = criteriaBuilder.createQuery(Packing.class);
+      Root<Packing> root = criteria.from(Packing.class);
+
+      criteria.select(root);
+
+      List<Predicate> restrictions = new ArrayList<>();
+      restrictions.add(criteriaBuilder.equal(root.get(Packing_.packagingFilmBatch), packagingFilmBatch));
+
+      criteria.where(criteriaBuilder.and(restrictions.toArray(new Predicate[0])));
+      TypedQuery<Packing> query = entityManager.createQuery(criteria);
+
+      return query.getResultList();
+    }
+
 }
 
