@@ -89,6 +89,9 @@ public class PackingTranslator {
       );
     }
 
+    if (packing.getPackagingFilmBatch() != null) {
+      result.setPackagingFilmBatchId(packing.getPackagingFilmBatch().getId());
+    }
     return result;
   }
 }

@@ -348,6 +348,7 @@ public abstract class AbstractFunctionalTest {
         facility,
         weightings,
         baskets,
+        null,
         startTime,
         endTime,
         "additional info " + i
@@ -385,6 +386,7 @@ public abstract class AbstractFunctionalTest {
       facility,
       weightings,
       baskets,
+      null,
       startTime,
       endTime,
       "additional info");
@@ -426,6 +428,7 @@ public abstract class AbstractFunctionalTest {
       facility,
       weightings,
       baskets,
+      null,
       startTime,
       endTime,
       "additional info");
