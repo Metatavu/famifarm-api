@@ -30,6 +30,7 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
   private CampaignTestBuilderResource campaigns;
   private CutPackingTestBuilderResource cutPackings;
   private StorageDiscardTestBuilderResource storageDiscards;
+  private PackagingFilmBatchTestResource packagingFilmBatches;
   private List<AutoCloseable> closables = new ArrayList<>();
 
   /**
@@ -252,6 +253,14 @@ public abstract class AbstractTestBuilderAuthentication implements AutoCloseable
     }
 
     return storageDiscards = this.addClosable(new StorageDiscardTestBuilderResource(createClient()));
+  }
+
+  public PackagingFilmBatchTestResource packagingFilmBatches() throws IOException {
+    if (packagingFilmBatches != null) {
+      return packagingFilmBatches;
+    }
+
+    return packagingFilmBatches = this.addClosable(new PackagingFilmBatchTestResource(createClient()));
   }
 
   /**

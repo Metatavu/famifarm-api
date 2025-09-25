@@ -1144,4 +1144,36 @@
       <column name="cuttingheight" type="integer" />
     </addColumn>
   </changeSet>
+    
+    <changeSet id="packagingfilmbatch" author="katja danilova">
+        <createTable tableName="packagingfilmbatch">
+            <column name="id" type="binary(16)">
+            <constraints unique="true" nullable="false" primaryKey="true"/>
+            </column>
+            <column name="facility" type="varchar(191)">
+              <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(191)"/>
+            <column name="active" type="boolean" />
+            <column name="arrivaltime" type="datetime(6)" />
+            <column name="creatorid" type="binary(16)">
+              <constraints nullable="false"/>
+            </column>
+            <column name="lastmodifierid" type="binary(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="createdat" type="datetime(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modifiedat" type="datetime(6)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addColumn tableName="packing">
+            <column name="packagingfilmbatch_id" type="binary(16)">
+                <constraints nullable="true" foreignKeyName="FK_PACKING_PACKAGINGFILMBATCH_ID" referencedColumnNames="id" referencedTableName="packagingfilmbatch"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -40,6 +40,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
      * @param time time of packing
      * @param campaign campaign
      * @param type packing type
+     * @param packagingFilmBatch packaging film batch
      * @param startTime start time
      * @param endTime end time
      * @param additionalInformation additional information
@@ -56,6 +57,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
       OffsetDateTime time,
       Campaign campaign,
       PackingType type,
+      PackagingFilmBatch packagingFilmBatch,
       OffsetDateTime startTime,
       OffsetDateTime endTime,
       String additionalInformation
@@ -73,6 +75,7 @@ public class PackingDAO extends AbstractDAO<Packing>{
       packing.setTime(time);
       packing.setCampaign(campaign);
       packing.setType(type);
+      packing.setPackagingFilmBatch(packagingFilmBatch);
       packing.setStartTime(startTime);
       packing.setEndTime(endTime);
       packing.setAdditionalInformation(additionalInformation);
@@ -216,6 +219,20 @@ public class PackingDAO extends AbstractDAO<Packing>{
     public Packing updateAdditionalInformation(Packing packing, String additionalInformation, UUID lastModifierId) {
       packing.setLastModifierId(lastModifierId);
       packing.setAdditionalInformation(additionalInformation);
+      return persist(packing);
+    }
+
+    /**
+     * Updates packaging film batch
+     *
+     * @param packing
+     * @param packagingFilmBatch
+     * @param lastModifierId
+     * @return updated packing
+     */
+    public Packing updatePackagingFilmBatch(Packing packing, PackagingFilmBatch packagingFilmBatch, UUID lastModifierId) {
+      packing.setLastModifierId(lastModifierId);
+      packing.setPackagingFilmBatch(packagingFilmBatch);
       return persist(packing);
     }
     

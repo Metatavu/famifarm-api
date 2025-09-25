@@ -40,6 +40,7 @@ public class PackingController {
    * @param product        product
    * @param packageSize    package size
    * @param packingBody    packing body
+   * @param packagingFilmBatch packaging film batch
    * @param packingBaskets packing baskets (incomplete objects)
    * @param campaign       campaign
    * @param type           packing type
@@ -51,6 +52,7 @@ public class PackingController {
     Product product,
     PackageSize packageSize,
     fi.metatavu.famifarm.rest.model.Packing packingBody,
+    PackagingFilmBatch packagingFilmBatch,
     List<PackingBasket> packingBaskets,
     Campaign campaign,
     PackingType type
@@ -66,6 +68,7 @@ public class PackingController {
       packingBody.getTime(),
       campaign,
       type,
+      packagingFilmBatch,
       packingBody.getStartTime(),
       packingBody.getEndTime(),
       packingBody.getAdditionalInformation()
@@ -119,6 +122,7 @@ public class PackingController {
    * @param packing             packing
    * @param packageSize         package size
    * @param packingBody         packing body
+   * @param packagingFilmBatch  packaging film batch
    * @param validPackingBaskets valid packing baskets
    * @param modifier            modifier
    * @return updated packing
@@ -127,6 +131,7 @@ public class PackingController {
     Packing packing,
     PackageSize packageSize,
     fi.metatavu.famifarm.rest.model.Packing packingBody,
+    PackagingFilmBatch packagingFilmBatch,
     List<PackingBasket> validPackingBaskets,
     Product product,
     Campaign campaign,
@@ -139,6 +144,7 @@ public class PackingController {
     packingDAO.updateTime(packing, packingBody.getTime(), modifier);
     packingDAO.updateCampaign(packing, campaign, modifier);
     packingDAO.updateType(packing, packingBody.getType(), modifier);
+    packingDAO.updatePackagingFilmBatch(packing, packagingFilmBatch, modifier);
     packingDAO.updateStartTime(packing, packingBody.getStartTime(), modifier);
     packingDAO.updateEndTime(packing, packingBody.getEndTime(), modifier);
     packingDAO.updateAdditionalInformation(packing, packingBody.getAdditionalInformation(), modifier);

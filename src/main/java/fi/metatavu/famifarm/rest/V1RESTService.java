@@ -1,30 +1,26 @@
 package fi.metatavu.famifarm.rest;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import fi.metatavu.famifarm.authentication.Roles;
 import fi.metatavu.famifarm.campaigns.CampaignController;
 import fi.metatavu.famifarm.discards.StorageDiscardController;
+import fi.metatavu.famifarm.drafts.DraftController;
+import fi.metatavu.famifarm.events.*;
+import fi.metatavu.famifarm.filmbatches.PackagingFilmBatchController;
+import fi.metatavu.famifarm.packagesizes.PackageSizeController;
 import fi.metatavu.famifarm.packings.CutPackingController;
 import fi.metatavu.famifarm.packings.CutPackingInvalidParametersException;
+import fi.metatavu.famifarm.packings.PackingController;
+import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
 import fi.metatavu.famifarm.persistence.model.*;
+import fi.metatavu.famifarm.pests.PestsController;
 import fi.metatavu.famifarm.printing.PrintingController;
-import fi.metatavu.famifarm.reporting.ReportFormat;
+import fi.metatavu.famifarm.productionlines.ProductionLineController;
+import fi.metatavu.famifarm.products.ProductController;
+import fi.metatavu.famifarm.reporting.*;
+import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.rest.model.*;
 import fi.metatavu.famifarm.rest.model.Campaign;
 import fi.metatavu.famifarm.rest.model.CampaignProduct;
@@ -33,6 +29,7 @@ import fi.metatavu.famifarm.rest.model.Draft;
 import fi.metatavu.famifarm.rest.model.Event;
 import fi.metatavu.famifarm.rest.model.HarvestBasket;
 import fi.metatavu.famifarm.rest.model.PackageSize;
+import fi.metatavu.famifarm.rest.model.PackagingFilmBatch;
 import fi.metatavu.famifarm.rest.model.Packing;
 import fi.metatavu.famifarm.rest.model.PerformedCultivationAction;
 import fi.metatavu.famifarm.rest.model.Pest;
@@ -43,35 +40,27 @@ import fi.metatavu.famifarm.rest.model.SeedBatch;
 import fi.metatavu.famifarm.rest.model.StorageDiscard;
 import fi.metatavu.famifarm.rest.model.WastageReason;
 import fi.metatavu.famifarm.rest.translate.*;
-import org.apache.commons.lang3.EnumUtils;
-import org.slf4j.Logger;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import fi.metatavu.famifarm.authentication.Roles;
-import fi.metatavu.famifarm.drafts.DraftController;
-import fi.metatavu.famifarm.events.CultivationObservationEventController;
-import fi.metatavu.famifarm.events.EventController;
-import fi.metatavu.famifarm.events.HarvestEventController;
-import fi.metatavu.famifarm.events.PlantingEventController;
-import fi.metatavu.famifarm.events.SowingEventController;
-import fi.metatavu.famifarm.events.TableSpreadEventController;
-import fi.metatavu.famifarm.events.WastageEventController;
-import fi.metatavu.famifarm.packagesizes.PackageSizeController;
-import fi.metatavu.famifarm.packings.PackingController;
-import fi.metatavu.famifarm.performedcultivationactions.PerformedCultivationActionsController;
-import fi.metatavu.famifarm.pests.PestsController;
-import fi.metatavu.famifarm.productionlines.ProductionLineController;
-import fi.metatavu.famifarm.products.ProductController;
-import fi.metatavu.famifarm.reporting.Report;
-import fi.metatavu.famifarm.reporting.ReportController;
-import fi.metatavu.famifarm.reporting.ReportException;
-import fi.metatavu.famifarm.reporting.ReportType;
-import fi.metatavu.famifarm.rest.api.V1Api;
 import fi.metatavu.famifarm.seedbatches.SeedBatchesController;
 import fi.metatavu.famifarm.seeds.SeedsController;
 import fi.metatavu.famifarm.wastagereason.WastageReasonsController;
+import org.apache.commons.lang3.EnumUtils;
+import org.slf4j.Logger;
+
+import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * V1 REST Services
@@ -212,6 +201,12 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Inject
   StorageDiscardTranslator storageDiscardTranslator;
 
+  @Inject
+  PackagingFilmBatchController packagingFilmBatchController;
+
+  @Inject
+  PackagingFilmBatchTranslator packagingFilmBatchTranslator;
+
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER, Roles.WORKER })
   @Transactional
@@ -271,6 +266,14 @@ public class V1RESTService extends AbstractApi implements V1Api {
       }
     }
 
+    fi.metatavu.famifarm.persistence.model.PackagingFilmBatch packagingFilmBatch = null;
+    if (body.getPackagingFilmBatchId() != null) {
+      packagingFilmBatch = packagingFilmBatchController.findById(body.getPackagingFilmBatchId());
+      if (packagingFilmBatch == null || packagingFilmBatch.getFacility() != facility) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
+    }
+
     return createOk(
       packingTranslator.translate(
         packingController.create(
@@ -279,6 +282,7 @@ public class V1RESTService extends AbstractApi implements V1Api {
           product,
           packageSize,
           body,
+          packagingFilmBatch,
           validPackingBaskets,
           campaign,
           packingType
@@ -411,12 +415,22 @@ public class V1RESTService extends AbstractApi implements V1Api {
         validPackingBaskets.add(packingBasket);
       }
     }
+
+    fi.metatavu.famifarm.persistence.model.PackagingFilmBatch packagingFilmBatch = null;
+    if (body.getPackagingFilmBatchId() != null) {
+      packagingFilmBatch = packagingFilmBatchController.findById(body.getPackagingFilmBatchId());
+      if (packagingFilmBatch == null || packagingFilmBatch.getFacility() != facility) {
+        return createNotFound(NOT_FOUND_MESSAGE);
+      }
+    }
+
     return createOk(
       packingTranslator.translate(
         packingController.updatePacking(
           packing,
           packageSize,
           body,
+          packagingFilmBatch,
           validPackingBaskets,
           product,
           campaign,
@@ -614,6 +628,19 @@ public class V1RESTService extends AbstractApi implements V1Api {
   }
 
   @Override
+  @RolesAllowed({Roles.ADMIN, Roles.MANAGER})
+  @Transactional
+  public Response createPackagingFilmBatch(PackagingFilmBatch packagingFilmBatch, Facility facility) {
+    return createOk(packagingFilmBatchTranslator.translatePackagingFilmBatch(
+        packagingFilmBatchController.create(
+            facility,
+            packagingFilmBatch,
+            getLoggerUserId()
+        )
+    ));
+  }
+
+  @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   @Transactional
   public Response createPerformedCultivationAction(PerformedCultivationAction body, Facility facility) {
@@ -804,6 +831,23 @@ public class V1RESTService extends AbstractApi implements V1Api {
   @Override
   @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
   @Transactional
+  public Response deletePackagingFilmBatch(Facility facility, UUID packagingFilmBatchId) {
+    fi.metatavu.famifarm.persistence.model.PackagingFilmBatch packagingFilmBatch = packagingFilmBatchController.findById(packagingFilmBatchId);
+    if (packagingFilmBatch == null) {
+      return createNotFound(String.format("Packaging film batch with id %s not found!", packagingFilmBatchId));
+    }
+
+    if (packagingFilmBatch.getFacility() != facility) {
+      return createBadRequest(String.format("Packaging film batch with id %s doesn't belong to facility %s", packagingFilmBatchId, facility));
+    }
+
+    packagingFilmBatchController.delete(packagingFilmBatch);
+    return createNoContent();
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  @Transactional
   public Response deletePerformedCultivationAction(Facility facility, UUID performedCultivationActionId) {
     fi.metatavu.famifarm.persistence.model.PerformedCultivationAction performedCultivationAction = performedCultivationActionsController
         .findPerformedCultivationAction(performedCultivationActionId);
@@ -988,6 +1032,21 @@ public class V1RESTService extends AbstractApi implements V1Api {
 
   @Override
   @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
+  public Response findPackagingFilmBatch(Facility facility, UUID packagingFilmBatchId) {
+    fi.metatavu.famifarm.persistence.model.PackagingFilmBatch packagingFilmBatch = packagingFilmBatchController.findById(packagingFilmBatchId);
+    if (packagingFilmBatch == null) {
+      return createNotFound(String.format("Packaging film batch with id %s not found!", packagingFilmBatchId));
+    }
+
+    if (packagingFilmBatch.getFacility() != facility) {
+      return createBadRequest(String.format("Packaging film batch with id %s doesn't belong to facility %s", packagingFilmBatchId, facility));
+    }
+
+    return createOk(packagingFilmBatchTranslator.translatePackagingFilmBatch(packagingFilmBatch));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
   public Response findPerformedCultivationAction(Facility facility, UUID performedCultivationActionId) {
     fi.metatavu.famifarm.persistence.model.PerformedCultivationAction performedCultivationAction = performedCultivationActionsController
         .findPerformedCultivationAction(performedCultivationActionId);
@@ -1129,6 +1188,15 @@ public class V1RESTService extends AbstractApi implements V1Api {
   public Response listPackageSizes(Facility facility, Integer firstResult, Integer maxResults) {
     List<PackageSize> result = packageSizeController.listPackageSizes(facility, firstResult, maxResults).stream()
         .map(packageSizeTranslator::translatePackageSize).collect(Collectors.toList());
+
+    return createOk(result);
+  }
+
+  @Override
+  @RolesAllowed({ Roles.WORKER, Roles.ADMIN, Roles.MANAGER })
+  public Response listPackagingFilmBatches(Facility facility, Integer firstResult, Integer maxResults, Boolean includePassive) {
+    List<PackagingFilmBatch> result = packagingFilmBatchController.list(firstResult, maxResults, facility, includePassive).stream()
+        .map(packagingFilmBatchTranslator::translatePackagingFilmBatch).collect(Collectors.toList());
 
     return createOk(result);
   }
@@ -1342,6 +1410,23 @@ public class V1RESTService extends AbstractApi implements V1Api {
     Integer size = body.getSize();
     return createOk(packageSizeTranslator
         .translatePackageSize(packageSizeController.updatePackageSize(packageSize, name, size, getLoggerUserId())));
+  }
+
+  @Override
+  @RolesAllowed({ Roles.ADMIN, Roles.MANAGER })
+  @Transactional
+  public Response updatePackagingFilmBatch(PackagingFilmBatch packagingFilmBatch, Facility facility, UUID packagingFilmBatchId) {
+    fi.metatavu.famifarm.persistence.model.PackagingFilmBatch existingPackagingFilmBatch = packagingFilmBatchController.findById(packagingFilmBatchId);
+    if (existingPackagingFilmBatch == null) {
+      return createNotFound(String.format("Packaging film batch with id %s not found!", packagingFilmBatchId));
+    }
+
+    if (existingPackagingFilmBatch.getFacility() != facility) {
+      return createBadRequest(String.format("Packaging film batch with id %s doesn't belong to facility %s", packagingFilmBatchId, facility));
+    }
+
+    fi.metatavu.famifarm.persistence.model.PackagingFilmBatch updatedPackagingFilmBatch = packagingFilmBatchController.update(existingPackagingFilmBatch, packagingFilmBatch, getLoggerUserId());
+    return createOk(packagingFilmBatchTranslator.translatePackagingFilmBatch(updatedPackagingFilmBatch));
   }
 
   @Override
