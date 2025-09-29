@@ -40,13 +40,14 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       List<PackingUsedBasket> baskets = new ArrayList<>();
       baskets.add(new PackingUsedBasket().basketCount(1).productId(product.getId()));
       baskets.add(new PackingUsedBasket().basketCount(1).productId(product1.getId()));
-
-      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN, weighings, baskets, OffsetDateTime.now(), null, "additional info");
+      PackagingFilmBatch packagingFilmBatch = builder.admin().packagingFilmBatches().create("Test PackagingFilmBatch", true, OffsetDateTime.now(), Facility.JOROINEN);
+      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN, weighings, baskets, packagingFilmBatch, OffsetDateTime.now(), null, "additional info");
       assertNotNull(packing);
       assertEquals(1, packing.getVerificationWeightings().size());
       assertEquals(2, packing.getBasketsUsed().size());
       assertEquals(1, (int) packing.getBasketsUsed().stream().filter(packingUsedBasket -> packingUsedBasket.getProductId().equals(product1.getId())).count());
       assertEquals(1, (int) packing.getBasketsUsed().stream().filter(packingUsedBasket -> packingUsedBasket.getProductId().equals(product.getId())).count());
+      assertEquals(packagingFilmBatch.getId(), packing.getPackagingFilmBatchId());
 
       builder.admin().packings().assertPackingsEqual(packing, builder.admin().packings().find(packing.getId(), Facility.JOROINEN));
       builder.admin().packings().assertFindFailStatus(404, packing.getId(), Facility.JUVA);
@@ -121,10 +122,13 @@ public class PackingTestsIT extends AbstractFunctionalTest {
 
       List<PackingUsedBasket> baskets = new ArrayList<>();
       baskets.add(new PackingUsedBasket().basketCount(1).productId(product.getId()));
-      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN, weighings, baskets, OffsetDateTime.now(), null, "additional info");
+      PackagingFilmBatch packagingFilmBatch = builder.admin().packagingFilmBatches().create("Test PackagingFilmBatch", true, OffsetDateTime.now(), Facility.JOROINEN);
+      Packing packing = builder.admin().packings().create(product.getId(), null, PackingType.BASIC, OffsetDateTime.now(), 0, PackingState.IN_STORE, size, Facility.JOROINEN, weighings, baskets, packagingFilmBatch, OffsetDateTime.now(), null, "additional info");
 
       Product product2 = builder.admin().products().create(testEntry, Lists.newArrayList(size), false, Facility.JOROINEN);
       List<PackingUsedBasket> baskets2 = new ArrayList<>();
+      PackagingFilmBatch packagingFilmBatch2 = builder.admin().packagingFilmBatches().create("2 PackagingFilmBatch", true, OffsetDateTime.now(), Facility.JOROINEN);
+      packing.setPackagingFilmBatchId(packagingFilmBatch2.getId());
       baskets2.add(new PackingUsedBasket().basketCount(1).productId(product.getId()));
       baskets2.add(new PackingUsedBasket().basketCount(1).productId(product2.getId()));
       packing.setBasketsUsed(baskets2);
@@ -146,6 +150,7 @@ public class PackingTestsIT extends AbstractFunctionalTest {
       assertEquals(1, (int) foundPacking.getBasketsUsed().stream().filter(packingUsedBasket -> packingUsedBasket.getProductId().equals(product2.getId())).count());
       assertEquals(1, (int) foundPacking.getBasketsUsed().stream().filter(packingUsedBasket -> packingUsedBasket.getProductId().equals(product.getId())).count());
       assertEquals(30, (int) foundPacking.getPackedCount());
+      assertEquals(packagingFilmBatch2.getId(), foundPacking.getPackagingFilmBatchId());
     }
   }
   

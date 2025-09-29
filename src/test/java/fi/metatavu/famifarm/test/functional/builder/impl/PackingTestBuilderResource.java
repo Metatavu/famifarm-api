@@ -46,9 +46,10 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @param packageSize
    * @param verificationWeighings
    * @param usedBaskets
+   * @param packagingFilmBatch
    * @return
    */
-  public Packing buildPackingObject(UUID productId, UUID campaignId, PackingType packingType, OffsetDateTime time, Integer packedCount, PackingState packingState, PackageSize packageSize, List<PackingVerificationWeighing> verificationWeighings, List<PackingUsedBasket> usedBaskets, OffsetDateTime startTime, OffsetDateTime endTime, String additionalInformation) {
+  public Packing buildPackingObject(UUID productId, UUID campaignId, PackingType packingType, OffsetDateTime time, Integer packedCount, PackingState packingState, PackageSize packageSize, List<PackingVerificationWeighing> verificationWeighings, List<PackingUsedBasket> usedBaskets, PackagingFilmBatch packagingFilmBatch, OffsetDateTime startTime, OffsetDateTime endTime, String additionalInformation) {
     Packing packing = new Packing();
     packing.setProductId(productId);
     packing.setCampaignId(campaignId);
@@ -56,6 +57,9 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
     packing.setTime(time);
     packing.setPackedCount(packedCount);
     packing.setState(packingState);
+    if (packagingFilmBatch != null) {
+      packing.setPackagingFilmBatchId(packagingFilmBatch.getId());
+    }
 
     packing.setVerificationWeightings(verificationWeighings);
     packing.setBasketsUsed(usedBaskets);
@@ -84,7 +88,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @return created packing
    */
   public Packing create(UUID productId, UUID campaignId, PackingType packingType, OffsetDateTime time, Integer packedCount, PackingState packingState, PackageSize packageSize, Facility facility) {
-    Packing packing = buildPackingObject(productId, campaignId, packingType, time, packedCount, packingState, packageSize, null, null, null, null, null);
+    Packing packing = buildPackingObject(productId, campaignId, packingType, time, packedCount, packingState, packageSize, null, null, null, null, null, null);
     Packing created = getApi().createPacking(packing, facility);
     packingFacilityMap.put(created.getId(), facility);
     return addClosable(created);
@@ -103,10 +107,11 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
    * @param facility
    * @param verificationWeighings
    * @param usedBaskets
+   * @param packagingFilmBatch
    * @return
    */
-  public Packing create(UUID productId, UUID campaignId, PackingType packingType, OffsetDateTime time, Integer packedCount, PackingState packingState, PackageSize packageSize, Facility facility, List<PackingVerificationWeighing> verificationWeighings, List<PackingUsedBasket> usedBaskets, OffsetDateTime startTime, OffsetDateTime endTime, String additionalInformation) {
-    Packing packing = buildPackingObject(productId, campaignId, packingType, time, packedCount, packingState, packageSize, verificationWeighings, usedBaskets, startTime, endTime, additionalInformation);
+  public Packing create(UUID productId, UUID campaignId, PackingType packingType, OffsetDateTime time, Integer packedCount, PackingState packingState, PackageSize packageSize, Facility facility, List<PackingVerificationWeighing> verificationWeighings, List<PackingUsedBasket> usedBaskets, PackagingFilmBatch packagingFilmBatch, OffsetDateTime startTime, OffsetDateTime endTime, String additionalInformation) {
+    Packing packing = buildPackingObject(productId, campaignId, packingType, time, packedCount, packingState, packageSize, verificationWeighings, usedBaskets, packagingFilmBatch, startTime, endTime, additionalInformation);
     Packing created = getApi().createPacking(packing, facility);
     packingFacilityMap.put(created.getId(), facility);
     return addClosable(created);
@@ -182,7 +187,7 @@ public class PackingTestBuilderResource extends AbstractTestBuilderResource<Pack
 
   public void assertCreateFailStatus(int expectedStatus, UUID productId, UUID campaignId, PackingType packingType, OffsetDateTime time, Integer packedCount, PackingState packingState, PackageSize packageSize, Facility facility, List<PackingUsedBasket> usedBaskets) {
     try {
-      Packing packing = buildPackingObject(productId, campaignId, packingType, time, packedCount, packingState, packageSize, null, usedBaskets, null, null, null);
+      Packing packing = buildPackingObject(productId, campaignId, packingType, time, packedCount, packingState, packageSize, null, usedBaskets, null, null, null, null);
       getApi().createPacking(packing, facility);
       fail(String.format("Expected find to fail with status %d.", expectedStatus));
     } catch (FeignException e) {

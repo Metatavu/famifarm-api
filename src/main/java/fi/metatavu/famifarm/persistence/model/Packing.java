@@ -40,6 +40,9 @@ public class Packing {
   @ManyToOne
   private Campaign campaign;
 
+  @ManyToOne
+  private PackagingFilmBatch packagingFilmBatch;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   @NotNull
@@ -115,6 +118,14 @@ public class Packing {
   
   public UUID getId() {
     return id;
+  }
+
+  public PackagingFilmBatch getPackagingFilmBatch() {
+    return packagingFilmBatch;
+  }
+
+  public void setPackagingFilmBatch(PackagingFilmBatch packagingFilmBatch) {
+    this.packagingFilmBatch = packagingFilmBatch;
   }
 
   public void setId(UUID id) {
